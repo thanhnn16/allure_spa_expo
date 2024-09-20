@@ -1,6 +1,5 @@
 import { Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { Login } from "./authen/pages/Login";
+import ScreenNavigations from "./navigation/ScreenNavigations";
 
 
 export default function Index() {
@@ -10,7 +9,7 @@ export default function Index() {
         flex: 1,
       }}
     >
-      <Login/>
+        <ScreenNavigations/>
     </View>
   );
 }
