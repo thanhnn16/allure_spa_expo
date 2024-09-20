@@ -16,6 +16,5 @@ export const AppStyles = StyleSheet.create({
         borderColor: '#717658',
         borderWidth: 1,
         backgroundColor: 'rgba(255, 255, 255, 0.5)'
-
     }
 })
