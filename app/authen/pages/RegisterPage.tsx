@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export const Register = () => {
+export const RegisterPage = () => {
   return (
     <View>
       <Text>Register</Text>
