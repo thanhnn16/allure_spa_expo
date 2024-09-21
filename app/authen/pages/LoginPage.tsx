@@ -8,7 +8,7 @@ import { AppTextInput } from '@/components/AppTextInput'
 //     navigation: any
 // }
 
-export const Login = () => {
+export const LoginPage = () => {
     return (
         <View style={styles.container}>
             <AppTextInput showIcon={true}/>
