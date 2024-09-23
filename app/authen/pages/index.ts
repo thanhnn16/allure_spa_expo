@@ -1,3 +1,4 @@
-export { Login } from './LoginPage'
-export { Register } from './RegisterPage'
-export { FlashScreen } from './SplashScreen'
+export { Login } from './Login'
+export { Register } from './Register'
+export { FlashScreen } from './FlashScreen'
+export { Onboard } from './Onboard'

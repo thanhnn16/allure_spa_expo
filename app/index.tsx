@@ -1,6 +1,16 @@
-import { Redirect } from 'expo-router';
+import { Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import ScreenNavigations from "../app/navigation/ScreenNavigations";
 
-// This file index.tsx is used to redirect the user to the /(tabs) route
+
 export default function Index() {
-  return <Redirect href="/(tabs)" />;
+  return (
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
+      <ScreenNavigations/>
+    </View>
+  );
 }
