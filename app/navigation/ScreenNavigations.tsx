@@ -5,7 +5,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { Login, Register, FlashScreen } from '../authen';
-
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
