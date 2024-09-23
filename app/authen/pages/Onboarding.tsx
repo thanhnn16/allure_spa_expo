@@ -8,11 +8,11 @@ import { NavigationProp } from '@react-navigation/native';
 
 SplashScreen.preventAutoHideAsync();
 
-interface RegisterProps {
+interface OnboardingProps {
     navigation: NavigationProp<any>;
 }
 
-export const Register: React.FC<RegisterProps> = ({ navigation }) => {
+export const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
     const [fontsLoaded] = useFonts({
         'AlexBrush-Regular': require('../../../assets/fonts/AlexBrush-Regular.ttf'),
         'OpenSans-Regular': require('../../../assets/fonts/OpenSans-Regular.ttf'),
@@ -36,11 +36,26 @@ export const Register: React.FC<RegisterProps> = ({ navigation }) => {
                     style={styles.imgName}
                     source={require('../../../assets/images/logo/nameAllure.png')}
                 />
-                <Text style={styles.txtTitleTop}>Nghệ thuật chăm da</Text>
-                <Text style={styles.txtTitleBottom}>Từ nghệ nhân Nhật Bản</Text>
+                <Text style={styles.txtTitleTop}>Chào mừng đến với Allure</Text>
+                <Text style={styles.txtTitleBottom}>Hãy bắt đầu hành trình của bạn</Text>
             </View>
             <View style={styles.container2}>
-                
+                <AppButton buttonStyle={styles.btn1} titleStyle={styles.btn1Text} title="Đăng ký" />
+                <AppButton buttonStyle={styles.btn2} titleStyle={styles.btn1Text} title="Đăng nhập" />
+                <AppButton buttonStyle={styles.btn3} titleStyle={styles.btn3Text} title="Đăng nhập bằng Zalo" />
+                <AppButton buttonStyle={styles.btn4} titleStyle={styles.btn3Text} title="Languages" />
+                <AppButton titleStyle={styles.txtLoginLater} title="Khám phá sau" />
+                <Text style={styles.termsText}>
+                    Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
+                    <Text style={styles.boldText} >
+                        Điều khoản sử dụng
+                    </Text>{' '}
+                    và{' '}
+                    <Text style={styles.boldText} >
+                        Chính sách bảo mật
+                    </Text>{' '}
+                    của chúng tôi
+                </Text>
             </View>
         </ImageBackground>
     )
@@ -61,8 +76,8 @@ const styles = StyleSheet.create({
     txtTitleTop: {
         fontSize: 32,
         color: '#717658',
-        fontFamily: 'AlexBrush-Regular',
-        marginRight: 90,
+        fontFamily: 'AlexBrush-Regular ',
+        marginRight: 90, 
         marginTop: -50,
     },
     txtTitleBottom: {
@@ -86,7 +101,7 @@ const styles = StyleSheet.create({
         marginTop: 50,
         backgroundColor: '#717658',
         borderRadius: 16,
-        justifyContent: 'center', // Center the text vertically
+        justifyContent: 'center', 
         alignItems: 'center', // Center the text horizontally
     },
     btn1Text: {
@@ -110,10 +125,10 @@ const styles = StyleSheet.create({
         width: 345,
         height: 50,
         marginTop: 12,
-        backgroundColor: 'white',
+        backgroundColor: '#717658',
         borderRadius: 16,
-        borderWidth: 3,
-        borderColor: '#717658', // Replace with your desired color
+        justifyContent: 'center', 
+        alignItems: 'center', // Center the text horizontally
     },
     btn4: {
         width: 345,
@@ -122,9 +137,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 16,
         borderWidth: 3,
-        borderColor: '#717658', // Replace with your desired color
+        borderColor: '#717658',
     },
-    txtRegisterLater: {
+    txtLoginLater: {
         marginTop: 15,
         color: '#717658',
         fontSize: 14,
@@ -143,4 +158,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Register;
+export default Onboarding;
