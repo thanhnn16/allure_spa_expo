@@ -1,17 +1,18 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/app/helper/AxiosInstance";
+import { RegisterRequest, RegisterResponse } from "@/app/authen/models/Models";
 
-export const registerThunk = createAsyncThunk(
+export const registerThunk = createAsyncThunk<RegisterResponse, RegisterRequest>(
     'user/register',
-    async (body: any) => {
+    async (body: RegisterRequest, { rejectWithValue }) => {
         try {
-            const res: any = await AxiosInstance().post('auth/register', body);
-            if (res.status === 200) {
-                return res.data
+            const res: RegisterResponse = await AxiosInstance().post('auth/register', body);
+            if (res.status_code === 200 && res.data) {
+                return res;
             }
-            return console.log(res.message);
+            return rejectWithValue(res.message || 'Registration failed');
         } catch (error: any) {
-            console.log('Lỗi đăng ký: ', error.message);
+            return rejectWithValue(error.message || 'An error occurred during registration');
         }
-    } 
+    }
 )

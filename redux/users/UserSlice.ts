@@ -2,12 +2,20 @@ import { createSlice } from "@reduxjs/toolkit";
 import { loginThunk } from "./LoginThunk";
 import { registerThunk } from "./RegisterThunk";
 import { isLoading } from "expo-font";
+import { UserLoginResponseParams, UserRegisterResponseParams } from "@/app/authen/models/Models";
 
+interface UserState {
+    user: UserLoginResponseParams| UserRegisterResponseParams | null
+    isLoading: boolean
+    error: any
+    quantity: number
+    cart: []
+}
 
-const inittialState = {
+const inittialState: UserState = {
     user: null,
     isLoading: false,
-    error: null as any,
+    error: null,
     quantity: 0,
     cart: []
 }
@@ -27,7 +35,9 @@ export const userSlice = createSlice({
             })
             .addCase(loginThunk.fulfilled, (state, action) => {
                 state.isLoading = false
-                state.user = action.payload
+                if (action.payload && action.payload.data) {
+                    state.user = action.payload.data.user
+                }
             })
             .addCase(loginThunk.rejected, (state, action) => {
                 state.isLoading = false
@@ -38,7 +48,9 @@ export const userSlice = createSlice({
             })
             .addCase(registerThunk.fulfilled, (state, action) => {
                 state.isLoading = false
-                state.user = action.payload
+                if (action.payload && action.payload.data) {
+                    state.user = action.payload.data.user
+                }
             })
             .addCase(registerThunk.rejected, (state, action) => {
                 state.isLoading = false
