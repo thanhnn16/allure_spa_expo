@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
+import { View, Image, Text, Colors } from 'react-native-ui-lib';
 import { TextInput, ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
 import SendButton from '@/components/sendButton';
 import BackButton from '@/components/backButton';
-import colors from '@/colors';
+import colors from "@/rn/colors";
 
 SplashScreen.preventAutoHideAsync();
 

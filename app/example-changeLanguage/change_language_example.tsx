@@ -1,20 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import * as Localization from 'expo-localization';
 import i18n from '@/assets/languages/i18n'
 
-const Example_ChangeLanguage = () => {
+const ChangeLanguageExample = () => {
   const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
-
-  useEffect(() => {
-    // Cập nhật ngôn ngữ hiện tại khi component mount
-    const deviceLanguage: any = Localization.getLocales()[0].languageCode;
-    console.log(deviceLanguage)
-
-    if (Object.keys(i18n.translations).includes(deviceLanguage)) {
-      setCurrentLanguage(deviceLanguage);
-    }
-  }, []);
 
   const changeLanguage = (language: string) => {
     i18n.locale = language;
@@ -62,7 +51,7 @@ const Example_ChangeLanguage = () => {
   )
 }
 
-export default Example_ChangeLanguage;
+export default ChangeLanguageExample;
 
 const styles = StyleSheet.create({
   container: {
