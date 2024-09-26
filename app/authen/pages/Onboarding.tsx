@@ -4,7 +4,8 @@ import { ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
-import AppButton from '@/components/AppButton'; // Ensure correct import of AppButton
+import AppButton from '@/components/AppButton'; 
+import SendButton from '@/components/sendButton';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -12,14 +13,6 @@ interface OnboardingProps {
   navigation: NavigationProp<any>;
 }
 
-// Load custom colors
-Colors.loadColors({
-  primary: '#717658',
-  secondary: 'white',
-  black: 'black',
-});
-
-// Common styles
 const commonButtonStyle = {
   width: 345,
   height: 50,
@@ -65,7 +58,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null; // Prevent rendering before fonts are loaded
+    return null;
   }
 
   return (
@@ -92,35 +85,25 @@ const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
         </Text>
       </View>
       <View
-  style={{
-    backgroundColor: Colors.secondary,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    paddingBottom: 20, // Optional: Adjust for spacing if needed
-    paddingTop: 40, // Optional: Adjust for spacing if needed
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center', // Center buttons horizontally
-  }}
->
-  <AppButton
-    buttonStyle={{
-      ...commonButtonStyle,
-      backgroundColor: Colors.primary,
-    }}
-    titleStyle={{ color: Colors.secondary, fontFamily: 'OpenSans-Regular', fontSize: 20 }}
-    title="Đăng ký"
-  />
-  <AppButton
-    buttonStyle={{
-      ...commonButtonStyle,
-      backgroundColor: Colors.primary,
-    }}
-    titleStyle={{ color: Colors.secondary, fontFamily: 'OpenSans-Regular', fontSize: 20 }}
-    title="Đăng nhập"
-  />
+            style={{
+              backgroundColor: Colors.secondary,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              paddingBottom: 20,
+              paddingTop: 40,
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              alignItems: 'center',
+            }}
+          >
+   <SendButton
+   title='Đăng ký'
+   />
+  <SendButton
+   title='Đăng nhập'
+   />
   <AppButton
     buttonStyle={{
       ...commonButtonStyle,
@@ -151,11 +134,11 @@ const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
     }}
     title="Khám phá sau"
   />
-  <Text style={styles.footerText}>
-    Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
-    <Text style={styles.boldText}>Điều khoản sử dụng</Text> và{' '}
-    <Text style={styles.boldText}>Chính sách bảo mật</Text> của chúng tôi
-  </Text>
+  <Text center color-black marginT-20 marginB-100 style={{ paddingHorizontal: 20 }}>
+          Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
+          <Text color-black style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
+          <Text color-black style={{ fontWeight: 'bold' }}>Chính sách bảo mật</Text> của chúng tôi
+        </Text>
 </View>
 
     </ImageBackground>
