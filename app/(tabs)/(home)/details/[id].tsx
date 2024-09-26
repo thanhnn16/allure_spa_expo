@@ -1,7 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
-import { Text ,AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon } from 'react-native-ui-lib';
+import { Text ,AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets } from 'react-native-ui-lib';
+
 import { Carousel } from 'react-native-ui-lib/src/components/carousel';
 
 
@@ -20,8 +21,8 @@ export default function DetailsScreen() {
     const createBulletPoints = (lines: string[]) => {
         return lines.map((line, index) => (
             <View key={index} row>
-                <Text>• </Text>
-                <Text text13>{line}</Text>
+                <Text h3>• </Text>
+                <Text h3>{line}</Text>
             </View>
         ));
     };
@@ -29,8 +30,8 @@ export default function DetailsScreen() {
     const createBulletPointsDescription = (lines: string[]) => {
         return lines.map((line, index) => (
             <View key={index} row>
-                <Text>• </Text>
-                <Text text13>{line}</Text>
+                <Text h3>• </Text>
+                <Text h3>{line}</Text>
             </View>
         ));
     };
@@ -52,7 +53,7 @@ export default function DetailsScreen() {
     ];
 
     return (
-        <View bg-$backgroundDefault flex padding-20>
+        <View bg-$backgroundDefault flex>
             <ScrollView
                 showsVerticalScrollIndicator={false}
             >
@@ -78,13 +79,13 @@ export default function DetailsScreen() {
                         color='#000'
                     />
                 </View>
-                <View>
-                    <Text text60 marginV-10>Làm sạch bằng lamellar Lipocollage</Text>
+                <View padding-20 gap-10>
+                    <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
                     <View row marginB-10>
                         <Image
                             source={require('@/assets/icons/ticket.svg')}
                         />
-                        <Text text16 marginL-5>100.000 VNĐ</Text>
+                        <Text h1 secondary marginL-5>100.000 VNĐ</Text>
                         <View flex right>
                             <TouchableOpacity
                                 onPress={() => {
@@ -97,7 +98,7 @@ export default function DetailsScreen() {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View row>
+                    <View row paddingR-20>
                         <Icon
                             source={require('@/assets/icons/sun.svg')}
                             size={24}
@@ -108,35 +109,58 @@ export default function DetailsScreen() {
                     </View>
                     <View 
                         row marginV-20
+                        style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
                     >
-                        <Text text60>SỐ LƯỢNG</Text>
+                        <Text h1_bold>SỐ LƯỢNG</Text>
                         <View 
-                            border-1 row flex right
+                            row gap-10
+                            style={{
+                                borderWidth: 1,
+                                borderColor: '#E0E0E0',
+                                borderRadius: 10,
+                            }}
                         >
                             <TouchableOpacity
+                                style={{
+                                    padding: 10
+                                }}
                                 onPress={() => {
                                     if (quantity > 1) setQuantity(quantity - 1);
                                 }}
                             >
                                 <Text>-</Text>
                             </TouchableOpacity>
-                            <Text>{quantity}</Text>
+                            <Text style= {{padding: 10}}>{quantity}</Text>
                             <TouchableOpacity
+                                style={{
+                                    padding: 10
+                                }}
                                 onPress={() => setQuantity(quantity + 1)}
                             >
                                 <Text>+</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <View marginT-10>
-                        <Text text60>MÔ TẢ SẢN PHẨM</Text>
-                        <View>
+                    <View marginT-10 paddingR-10>
+                        <Text h1_bold>MÔ TẢ SẢN PHẨM</Text>
+                        <View marginT-10>
                             {createBulletPointsDescription(longText)}
                         </View>
                     </View>
                 </View>
             </ScrollView>
-            <View row paddingV-10>
+            <View 
+                row padding-20
+                style={{
+                    borderTopStartRadius: 30,
+                    borderTopEndRadius: 30,
+                    borderWidth: 2,
+                    borderColor: '#E0E0E0',
+                }}
+            >
                 <View row gap-30>
                     <TouchableOpacity
                         onPress={() => {
@@ -144,10 +168,10 @@ export default function DetailsScreen() {
                         }}
                     >
                         <Icon
-                            source={require('@/assets/icons/comment.svg')}
+                            source={require('@/assets/icons/shopping-cart.svg')}
                             size={24}
                         />
-                        <Text>Đánh giá</Text>
+                        <Text h3_medium>Đánh giá</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => {
@@ -158,13 +182,13 @@ export default function DetailsScreen() {
                             source={require('@/assets/icons/shopping-cart.svg')}
                             size={24}
                         />
-                        <Text>Thêm giỏ hàng</Text>
+                        <Text h3_medium>Thêm giỏ hàng</Text>
                     </TouchableOpacity>
                 </View>
                 <View flex right>
                     <Button
                         label={'Mua ngay'}
-                        backgroundColor='#A85A29'
+                        backgroundColor='#717658'
                         borderRadius={10}
                         onPress={() => {
                             console.log('mua ha');

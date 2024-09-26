@@ -6,7 +6,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text>Home</Text>
       <Link href="/details/1">Chi tiết</Link>
-      <Link href="/details/2">Yêu thích</Link>
+      <Link href="/favorite/FavoritePage">Yêu thích</Link>
     </View>
   );
 }
