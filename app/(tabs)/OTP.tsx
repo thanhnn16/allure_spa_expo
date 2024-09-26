@@ -6,7 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
 import SendButton from '@/components/sendButton';
 import BackButton from '@/components/backButton';
-import colors from '@/colors';
+import colors from '@/rn/colors'; 
 
 SplashScreen.preventAutoHideAsync();
 

@@ -47,8 +47,8 @@ const styles = {
 
 const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
   const [fontsLoaded] = useFonts({
-    'AlexBrush-Regular': require('../../../assets/fonts/AlexBrush-Regular.ttf'),
-    'OpenSans-Regular': require('../../../assets/fonts/OpenSans-Regular.ttf'),
+    'AlexBrush-Regular': require('../../assets/fonts/AlexBrush-Regular.ttf'),
+    'OpenSans-Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
   });
 
   useEffect(() => {
