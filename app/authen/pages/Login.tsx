@@ -8,13 +8,15 @@ import AppButton from '@/components/AppButton';
 import { AppTextInput } from '@/components/AppTextInput';
 import SendButton from '@/components/sendButton';
 import BackButton from '@/components/backButton';
+import colors from '../../../rn/colors';
+import spacings from '../../../rn/spacings';
+import typography from '../../../rn/typography';
 
 SplashScreen.preventAutoHideAsync();
 
-interface RegisterProps {
+interface LoginProps {
   navigation: NavigationProp<any>;
 }
-
 
 const commonInputStyle = {
   width: 345,
@@ -23,7 +25,7 @@ const commonInputStyle = {
   marginTop: Spacings.s3,
 };
 
-const Register: React.FC<RegisterProps> = ({ navigation }) => {
+const Login: React.FC<LoginProps> = ({ navigation }) => {
   const [fontsLoaded] = useFonts({
     'AlexBrush-Regular': require('@/assets/fonts/AlexBrush-Regular.ttf'),
     'OpenSans-Regular': require('@/assets/fonts/OpenSans-Regular.ttf'),
@@ -36,7 +38,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null; 
+    return null;
   }
 
   return (
@@ -50,28 +52,10 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
           height={85}
           source={require('@/assets/images/logo/nameAllure.png')}
         />
-        <Text
-          h2
-          style={{
-            textAlign: 'center',
-            color: Colors.primary,
-            fontFamily: 'AlexBrush-Regular',
-            fontSize: 32,
-            paddingEnd: 50,
-          }}
-        >
-          Nghệ thuật chăm da
+   <Text h2 style={{ textAlign: 'center', color: Colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingEnd: 50 }}>
+              Nghệ thuật chăm da
         </Text>
-        <Text
-          h2
-          style={{
-            textAlign: 'center',
-            color: Colors.primary,
-            fontFamily: 'AlexBrush-Regular',
-            fontSize: 32,
-            paddingStart: 50,
-          }}
-        >
+        <Text h2 style={{ textAlign: 'center', color: Colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingStart: 50 }}>
           Từ nghệ nhân Nhật Bản
         </Text>
       </View>
@@ -79,13 +63,10 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
         flexS
         center
         bg-secondary
-        style={{
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          paddingBottom: 12,
-        }}
+        paddingB-12
+        style={{ borderTopLeftRadius: 30, borderTopRightRadius: 30 }}
       >
-        <AppTextInput
+       <AppTextInput
           title="Số điện thoại"
           placeholder="Nhập số điện thoại"
           containerStyle={{ ...commonInputStyle, marginBottom: 32, marginTop: 42 }}
@@ -96,43 +77,38 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
           }}
           textInputStyle={{ height: 30, color: Colors.black }}
         />
+
         <AppTextInput
-          title="Họ và tên"
-          placeholder="Nhập họ và tên"
-          containerStyle={{ ...commonInputStyle, marginBottom: 12, marginTop: 32 }}
+          title="Mật khẩu"
+          placeholder="Nhập mật khẩu"
+          containerStyle={{ ...commonInputStyle, marginBottom: 22, marginTop: 22 }}
           titleStyle={{
             fontSize: 16,
             fontFamily: 'OpenSans-Regular',
             color: Colors.primary,
           }}
           textInputStyle={{ height: 30, color: Colors.black }}
+          secureTextEntry
         />
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: 345, marginTop: Spacings.s9, marginBottom: Spacings.s3 }}>
+          <Text style={{ color: Colors.primary, fontSize: 16 }}>Quên mật khẩu?</Text>
+        </View>
+
         <SendButton
-        title='Gửi mã OTP'
+          title="Đăng nhập"
         />
         <BackButton
-         title='Quay lại'
+          title="Quay lại"
         />
-        <Text
-          center
-          color={Colors.black}
-          marginT-20
-          marginB-100
-          style={{ paddingHorizontal: Spacings.s6 }}
-        >
+
+        <Text center color={Colors.black} marginT-20 marginB-100 style={{ paddingHorizontal: Spacings.s6 }}>
           Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
-          <Text color={Colors.black} style={{ fontWeight: 'bold' }}>
-            Điều khoản sử dụng
-          </Text>{' '}
-          và{' '}
-          <Text color={Colors.black} style={{ fontWeight: 'bold' }}>
-            Chính sách bảo mật
-          </Text>{' '}
-          của chúng tôi
+          <Text color={Colors.black} style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
+          <Text color={Colors.black} style={{ fontWeight: 'bold' }}>Chính sách bảo mật</Text> của chúng tôi
         </Text>
       </View>
     </ImageBackground>
   );
 };
 
-export default Register;
+export default Login;
