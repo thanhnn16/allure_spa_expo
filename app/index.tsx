@@ -1,16 +1,16 @@
-import { Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { Login } from "./authen/pages/Login";
+import { Redirect } from 'expo-router';
+import { Link } from 'expo-router';
+import { View } from 'react-native-ui-lib';
+import Example_ChangeLanguage from './example-changeLanguage/example_changeLanguage';
 
-
+// This file index.tsx is used to redirect the user to the /(tabs) route
 export default function Index() {
+  
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      <Login/>
+    // <Redirect href="/(tabs)" />;
+    
+    <View style={{ flex: 1 }}>
+      <Example_ChangeLanguage />
     </View>
-  );
+  )
 }
