@@ -17,7 +17,10 @@ export const Login = () => {
         navigation.goBack();
     };
 
-    
+    const handleAddress = () => {
+        navigation.navigate('Address');
+    }
+
 
     return (
         <View style={styles.container}>
@@ -27,6 +30,7 @@ export const Login = () => {
             <View style={styles.buttonContainer}>
                 <Button title="Go to Register" onPress={handleRegisterNavigation} />
                 <Button title="Back" onPress={handleGoBack} />
+                <Button title="Address" onPress={handleAddress} />
             </View>
         </View>
     );
