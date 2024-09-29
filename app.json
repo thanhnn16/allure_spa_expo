@@ -13,11 +13,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.faithnippon.allurespa",
+      "supportsTablet": true,
+      "icon": "./assets/images/icon.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/Adaptive-icon.png"
+      }
     },
     "android": {
+      "package": "com.faithnippon.allurespa",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -28,7 +34,11 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
-    ]
+      "expo-font",
+      "expo-localization"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
   }
 }
