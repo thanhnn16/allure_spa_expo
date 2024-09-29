@@ -8,7 +8,9 @@ import Profile from './Profile';
 export default function Index() {
   
   return (
-    <Redirect href="/authen/onboarding" /> 
-    // <Profile />
+    // <Redirect href="/(tabs)/(home)" /> 
+    <Profile />
+    // <ChangeLanguageExample />
+    // <Redirect href="/authen/login" />
   )
 }
