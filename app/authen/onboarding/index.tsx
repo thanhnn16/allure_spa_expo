@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Link, router } from 'expo-router';
 import AppButton from '@/components/AppButton';
 import SendButton from '@/components/sendButton';
+import { I18n } from 'i18n-js';
+import i18n from '@/assets/languages/i18n';
 
 
 SplashScreen.preventAutoHideAsync();
@@ -75,7 +77,7 @@ const Onboarding: React.FC = () => {
         <SendButton title='Đăng ký' />
 
         <Link push href="/authen/login" asChild>
-          <SendButton title='Đăng nhập' />
+          <SendButton title={i18n.t('auth.login.title')} />
         </Link>
 
         <Link push href="/authen/loginZalo" asChild>
