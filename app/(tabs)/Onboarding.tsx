@@ -47,8 +47,8 @@ const styles = {
 
 const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
   const [fontsLoaded] = useFonts({
-    'AlexBrush-Regular': require('../../assets/fonts/AlexBrush-Regular.ttf'),
-    'OpenSans-Regular': require('../../assets/fonts/OpenSans-Regular.ttf'),
+    'AlexBrush-Regular': require('../../../assets/fonts/AlexBrush-Regular.ttf'),
+    'OpenSans-Regular': require('../../../assets/fonts/OpenSans-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -63,12 +63,12 @@ const Onboarding: React.FC<OnboardingProps> = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../../assets/images/authen/img_bg_authen.png')}
+      source={require('../../../assets/images/authen/img_bg_authen.png')}
       style={styles.backgroundImage}
     >
       <View center>
         <Image
-          source={require('../../assets/images/logo/nameAllure.png')}
+          source={require('../../../assets/images/logo/nameAllure.png')}
           style={styles.logo}
         />
         <Text

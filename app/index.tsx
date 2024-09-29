@@ -7,10 +7,7 @@ import ChangeLanguageExample from './example-changeLanguage/change_language_exam
 export default function Index() {
   
   return (
-    // <Redirect href="/(tabs)" />;
-    
-    <View style={{ flex: 1 }}>
-      <ChangeLanguageExample />
-    </View>
+    <Redirect href="/authen/onboarding" /> 
   )
 }
+
