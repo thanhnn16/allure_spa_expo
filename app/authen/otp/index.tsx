@@ -7,6 +7,7 @@ import { NavigationProp } from '@react-navigation/native';
 import SendButton from '@/components/sendButton';
 import BackButton from '@/components/backButton';
 import colors from "@/rn/colors";
+import { Link } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -131,9 +132,11 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
           <SendButton
             title="Xác nhận"
           />
-          <BackButton
-            title="Quay lại"
-          />
+         <Link href="/authen/otp" asChild>
+        <BackButton
+         title='Quay lại'
+        />
+        </Link>
         </View>
 
         <Text center color-black marginT-20 marginB-100 style={{ paddingHorizontal: 20 }}>
