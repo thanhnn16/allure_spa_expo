@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-
 export type AppButtonProps = {
     onPress?: () => void
     title?: string
@@ -11,12 +10,12 @@ export type AppButtonProps = {
 
 const AppButton = ({ onPress, title, buttonStyle, titleStyle }: AppButtonProps) => {
     return (
-            <TouchableOpacity
-                style={[styles.container, buttonStyle]}
-                onPress={onPress}
-            >
-                <Text style={titleStyle}>{title || 'Title'}</Text>
-            </TouchableOpacity>
+        <TouchableOpacity
+            style={[styles.container, buttonStyle]}
+            onPress={onPress}
+        >
+            <Text style={titleStyle}>{title || 'Title'}</Text>
+        </TouchableOpacity>
     )
 }
 
