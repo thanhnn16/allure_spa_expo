@@ -1,9 +1,16 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
+import { Svg } from 'react-native-svg';
 import { Text ,AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets } from 'react-native-ui-lib';
 
 import { Carousel } from 'react-native-ui-lib/src/components/carousel';
+
+import CommentIcon from '@/assets/icons/comment.svg'
+import HeartIcon from '@/assets/icons/heart.svg'
+import TicketIcon from '@/assets/icons/ticket.svg'
+import ShoppingCartIcon from '@/assets/icons/shopping-cart.svg'
+import SunIcon from '@/assets/icons/sun.svg'
 
 
 export default function DetailsScreen() {
@@ -83,26 +90,30 @@ export default function DetailsScreen() {
                     <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
                     <View row marginB-10>
                         <Image
-                            source={require('@/assets/icons/ticket.svg')}
+                            source={TicketIcon}
+                            size={24}
                         />
-                        <Text h1 secondary marginL-5>100.000 VNĐ</Text>
+                        <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
                         <View flex right>
                             <TouchableOpacity
                                 onPress={() => {
                                     console.log('luv');
                                 }}
                             >
-                                <Icon
-                                    source={require('@/assets/icons/heart.svg')}
+                                <Image
+                                    source={HeartIcon}
+                                    size={24}
                                 />
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View row paddingR-20>
-                        <Icon
-                            source={require('@/assets/icons/sun.svg')}
-                            size={24}
-                        />
+                        <View>
+                            <Image
+                                source={SunIcon}
+                                size={24}
+                            />
+                        </View>
                         <View>
                             {createBulletPoints(shortText)}
                         </View>
@@ -162,26 +173,28 @@ export default function DetailsScreen() {
                 }}
             >
                 <View row gap-30>
-                    <TouchableOpacity
-                        onPress={() => {
-                            console.log('đánh giá i');
-                        }}
-                    >
-                        <Icon
-                            source={require('@/assets/icons/shopping-cart.svg')}
-                            size={24}
-                        />
-                        <Text h3_medium>Đánh giá</Text>
-                    </TouchableOpacity>
+                    <Link href='/rating/1' asChild>
+                        <TouchableOpacity>
+                            <View center marginB-4>
+                                <Image
+                                    source={CommentIcon}
+                                    size={24}
+                                />
+                            </View>
+                            <Text h3_medium>Đánh giá</Text>
+                        </TouchableOpacity>
+                    </Link>
                     <TouchableOpacity
                         onPress={() => {
                             console.log('thêm giỏ hàng òy á');
                         }}
                     >
-                        <Icon
-                            source={require('@/assets/icons/shopping-cart.svg')}
-                            size={24}
-                        />
+                        <View center marginB-4>
+                            <Image
+                                source={ShoppingCartIcon}
+                                size={24}
+                            />
+                        </View>
                         <Text h3_medium>Thêm giỏ hàng</Text>
                     </TouchableOpacity>
                 </View>

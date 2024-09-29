@@ -1,5 +1,8 @@
 import React from 'react'
-import { View, Text, Image, AnimatedImage, Card, Dividers, Colors, } from 'react-native-ui-lib'
+import { View, Text, Image, AnimatedImage, Card, Dividers, Colors, TouchableOpacity, } from 'react-native-ui-lib'
+
+import HeartIcon from '@/assets/icons/heart.svg'
+import StarIcon from '@/assets/icons/star.svg'
 
 interface FavoriteItemProps {
     id: number;
@@ -24,12 +27,26 @@ const FavoriteItem = ({ item }: { item: FavoriteItemProps }) => {
                         <Text h2_bold>{item.name}</Text>
                     </View>
                     <View row centerV gap-8>
+                        <View row centerV gap-2>
+                            <Image
+                                source={StarIcon}
+                                size={24}
+                            />
+                        </View>
                         <Text h3>5.0</Text>
                         <Text h3>|</Text>
                         <Text h3>475 đã bán</Text>
                     </View>
-                    <View paddingV-5>
+                    <View row paddingV-5>
                         <Text h2_bold secondary>{item.price}đ</Text>
+                        <View flex right>
+                            <TouchableOpacity>
+                                <Image
+                                    source={HeartIcon}
+                                    size={24}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>

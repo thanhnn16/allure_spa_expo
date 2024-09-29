@@ -16,10 +16,14 @@ Colors.loadColors({
 });
 
 Typography.loadTypographies({
-    h1: {fontSize: 16, fontWeight: '300', lineHeight: 18, fontFamily: 'SFProText-Regular'},
-    h1_medium: {fontSize: 16, fontWeight: '500', lineHeight: 18, fontFamily: 'SFProText-Medium'},
-    h1_bold: {fontSize: 16, lineHeight: 18, fontFamily: 'SFProText-Bold'},
-    h1_semibold: {fontSize: 16, lineHeight: 18, fontFamily: 'SFProText-Semibold'},
+    h0: {fontSize: 24, fontWeight: '300', lineHeight: 24, fontFamily: 'SFProText-Regular'},
+    h0_medium: {fontSize: 24, fontWeight: '500', lineHeight: 24, fontFamily: 'SFProText-Medium'},
+    h0_bold: {fontSize: 24, fontWeight: '700', lineHeight: 24, fontFamily: 'SFProText-Bold'},
+    h0_semibold: {fontSize: 24, fontWeight: '600', lineHeight: 24, fontFamily: 'SFProText-Semibold'},
+    h1: {fontSize: 18, fontWeight: '300', lineHeight: 18, fontFamily: 'SFProText-Regular'},
+    h1_medium: {fontSize: 18, fontWeight: '500', lineHeight: 18, fontFamily: 'SFProText-Medium'},
+    h1_bold: {fontSize: 18, lineHeight: 18, fontFamily: 'SFProText-Bold'},
+    h1_semibold: {fontSize: 18, lineHeight: 18, fontFamily: 'SFProText-Semibold'},
     h2: {fontSize: 15, lineHeight: 16, fontFamily: 'SFProText-Regular'},
     h2_medium: {fontSize: 15, lineHeight: 16, fontFamily: 'SFProText-Medium'},
     h2_bold: {fontSize: 15, lineHeight: 16, fontFamily: 'SFProText-Bold'},
