@@ -39,47 +39,6 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
     return null; 
   }
 
-import React, { useEffect } from 'react';
-import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
-import { ImageBackground } from 'react-native';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
-import { NavigationProp } from '@react-navigation/native';
-import AppButton from '@/components/AppButton';
-import { AppTextInput } from '@/components/AppTextInput';
-import SendButton from '@/components/sendButton';
-import BackButton from '@/components/backButton';
-
-SplashScreen.preventAutoHideAsync();
-
-interface RegisterProps {
-  navigation: NavigationProp<any>;
-}
-
-
-const commonInputStyle = {
-  width: 345,
-  height: 45,
-  borderRadius: 8,
-  marginTop: Spacings.s3,
-};
-
-const Register: React.FC<RegisterProps> = ({ navigation }) => {
-  const [fontsLoaded] = useFonts({
-    'AlexBrush-Regular': require('@/assets/fonts/AlexBrush-Regular.ttf'),
-    'OpenSans-Regular': require('@/assets/fonts/OpenSans-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null; 
-  }
-
   return (
     <ImageBackground
       source={require('@/assets/images/authen/img_bg_authen.png')}
@@ -140,7 +99,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
         <AppTextInput
           title="Họ và tên"
           placeholder="Nhập họ và tên"
-          containerStyle={{ ...commonInputStyle, marginBottom: 32, marginTop: 32 }}
+          containerStyle={{ ...commonInputStyle, marginBottom: 12, marginTop: 32 }}
           titleStyle={{
             fontSize: 16,
             fontFamily: 'OpenSans-Regular',
@@ -176,5 +135,4 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
   );
 };
 
-export default Register;
 export default Register;
