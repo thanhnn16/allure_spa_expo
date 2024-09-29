@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { Colors } from 'react-native-ui-lib';
+import colors from '@/rn/colors';
 
 export type SendButtonProps = {
     onPress?: () => void;
@@ -30,10 +31,10 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 8,
         marginTop: 12,
-        backgroundColor: Colors.primary,
+        backgroundColor: colors.primary,
     },
     defaultTitleStyle: {
-        color: Colors.secondary,
+        color: colors.secondary,
         fontFamily: 'OpenSans-Regular',
         fontSize: 20,
     },

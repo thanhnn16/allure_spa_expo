@@ -99,7 +99,7 @@ const Register: React.FC<RegisterProps> = ({ navigation }) => {
         <AppTextInput
           title="Họ và tên"
           placeholder="Nhập họ và tên"
-          containerStyle={{ ...commonInputStyle, marginBottom: 12, marginTop: 32 }}
+          containerStyle={{ ...commonInputStyle, marginBottom: 32, marginTop: 32 }}
           titleStyle={{
             fontSize: 16,
             fontFamily: 'OpenSans-Regular',
