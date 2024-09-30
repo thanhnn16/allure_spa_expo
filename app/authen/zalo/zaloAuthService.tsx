@@ -3,7 +3,7 @@ import CryptoJS from 'crypto-js';
 import { Linking } from 'react-native';
 
 const clientId = '3131373079387573469';
-const clientSecret = 'M80CHS1ppVItBrm4GS29';
+const clientSecret = '';
 const redirectUri = 'myapp://allure_spa_expo';
 
 interface AccessTokenResponse {
