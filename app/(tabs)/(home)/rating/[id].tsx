@@ -5,6 +5,8 @@ import { Rating } from 'react-native-ratings';
 
 import StarIcon from '@/assets/icons/star.svg';
 import RatingBar from '@/components/rating/RatingBar';
+import RatingItem from './RatingItem';
+import { FlatList } from 'react-native';
 
 const data = [
   {
@@ -124,10 +126,10 @@ const RatingPage = () => {
         
       </View>
       <View>
-        {/* <FlatList
-          data={}
-          renderItem={}
-        /> */}
+        <FlatList
+          data={data}
+          renderItem={({ item }) => <RatingItem item={item} />}
+        />
       </View>
     </View>
   )
