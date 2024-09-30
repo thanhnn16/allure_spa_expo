@@ -1,22 +1,24 @@
 import React, { useEffect } from 'react';
 import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
-import { ImageBackground } from 'react-native';
+import { ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { Link, router } from 'expo-router';
-import AppButton from '@/components/AppButton';
-import SendButton from '@/components/sendButton';
+import AppButton from '@/components/buttons/AppButton';
+import SendButton from '../../../components/buttons/PrimaryButton';
+import BackButton from '../../../components/buttons/SecondaryButton';
 import { I18n } from 'i18n-js';
 import i18n from '@/assets/languages/i18n';
+
+
+import logoName from '../../../assets/images/authen/logoName.svg';
+import colors from '@/rn/colors';
+import { getBackgroundColor } from 'react-native-ui-lib/src/helpers/AvatarHelper';
 
 
 SplashScreen.preventAutoHideAsync();
 
 const commonButtonStyle = {
-  width: 345,
-  height: 50,
-  borderRadius: 8,
-  marginTop: 18,
 };
 
 
@@ -45,7 +47,7 @@ const Onboarding: React.FC = () => {
         <Image
           width={250}
           height={85}
-          source={require('@/assets/images/logo/nameAllure.png')}
+          source={logoName}
         />
         <Text
           marginR-85
@@ -62,7 +64,7 @@ const Onboarding: React.FC = () => {
       </View>
       <View
         style={{
-          backgroundColor: Colors.secondary,
+          backgroundColor: colors.white,
           borderTopLeftRadius: 30,
           borderTopRightRadius: 30,
           paddingBottom: 20,
@@ -80,38 +82,23 @@ const Onboarding: React.FC = () => {
           <SendButton title={i18n.t('auth.login.title')} />
         </Link>
 
-        <Link push href="/authen/loginZalo" asChild>
-        <AppButton
-          buttonStyle={{
-            ...commonButtonStyle,
-            backgroundColor: Colors.secondary,
-            borderWidth: 2,
-            borderColor: Colors.primary,
-          }}
-          titleStyle={{ color: Colors.primary, fontFamily: 'OpenSans-Regular', fontSize: 20 }}
-          title="Đăng nhập bằng Zalo"
-        />
+
+        <Link push href="/authen/confirmPhoneNumber" asChild>
+          <AppButton
+            titleStyle={{ color: Colors.primary, fontFamily: 'OpenSans-Regular', fontSize: 20 }}
+            title="Đăng nhập bằng Zalo"
+          />
         </Link>
+
         <AppButton
-          buttonStyle={{
-            ...commonButtonStyle,
-            backgroundColor: Colors.secondary,
-            borderWidth: 2,
-            borderColor: Colors.primary,
-          }}
           titleStyle={{ color: Colors.primary, fontFamily: 'OpenSans-Regular', fontSize: 20 }}
           title="Languages"
         />
-        <AppButton
-          titleStyle={{
-            color: Colors.black,
-            fontSize: 14,
-            fontFamily: 'OpenSans-Regular',
-            textDecorationLine: 'underline',
-            paddingTop: Spacings.s2,
-          }}
-          title="Khám phá sau"
-        />
+
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.title}>Khám phá sau</Text>
+        </TouchableOpacity>
+
         <Text center color-black marginT-20 marginB-100 style={{ paddingHorizontal: 20 }}>
           Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
           <Text color-black style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
@@ -121,5 +108,24 @@ const Onboarding: React.FC = () => {
     </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    height: 28,
+    marginVertical: 6,
+    marginHorizontal: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    color: Colors.black,
+    fontSize: 14,
+    fontFamily: 'OpenSans-Regular',
+    textDecorationLine: 'underline',
+    paddingTop: Spacings.s2,
+  },
+});
 
 export default Onboarding;
