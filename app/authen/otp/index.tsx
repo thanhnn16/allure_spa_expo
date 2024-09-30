@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
+import { View, Image, Text, Colors, Spacings, Button } from 'react-native-ui-lib';
 import { TextInput, ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
-import SendButton from '@/components/sendButton';
-import BackButton from '@/components/backButton';
+import SendButton from '../../../components/buttons/PrimaryButton';
+import BackButton from '../../../components/buttons/SecondaryButton';
 import colors from "@/rn/colors";
 import { Link } from 'expo-router';
+
+import logoName from '@/assets/images/authen/logoName.svg';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,15 +50,15 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
       source={require('@/assets/images/authen/img_bg_authen.png')}
       style={{ flex: 1 }}
     >
-      <View flex center>
+      <View center>
         <Image
-          source={require('@/assets/images/logo/nameAllure.png')}
           width={250}
           height={85}
+          source={logoName}
         />
         <Text
           marginR-50
-          style={{ fontFamily: 'AlexBrush-Regular', fontSize: 32, color: colors.primary, textAlign: 'center'}}
+          style={{ fontFamily: 'AlexBrush-Regular', fontSize: 32, color: colors.primary, textAlign: 'center' }}
         >
           Nghệ thuật chăm da
         </Text>
@@ -70,16 +72,22 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
 
       {/* OTP Input Section */}
       <View
-        flexS
-        bg-secondary
-        paddingB-12
-        style={{ borderTopLeftRadius: 30, borderTopRightRadius: 30 }}
+        style={{
+          backgroundColor: colors.white,
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+          paddingBottom: 20,
+          paddingTop: 40,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
       >
         <Text
           text60BO
           marginL-20
           marginT-20
-          style={{ fontFamily: 'OpenSans-Regular', fontSize: 16, color: Colors.black }}
         >
           Nhập OTP
         </Text>
@@ -109,34 +117,30 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
             ))}
           </View>
 
-          <View row spread marginT-20 marginL-12>
+          <View left>
             <Text text14 color={Colors.gray} style={{ fontFamily: 'OpenSans-Regular' }}>
               Mã OTP sẽ được gửi đến số 0123 456 789
             </Text>
-            <SendButton 
-              title="Gửi lại"
-              buttonStyle={{
-                width: 80,
-                height: 40,
-                borderRadius: 8,
-                backgroundColor: 'transparent',
-              }}
-              titleStyle={{
-                color: Colors.primary,
-                fontSize: 16,
-                fontFamily: 'OpenSans-Regular',
-              }}
+          </View>
+
+          <View left>
+            <Button
+              link
+              text70BO
+              right
+              color={Colors.primary}
+              label="Gửi lại"
             />
           </View>
 
           <SendButton
             title="Xác nhận"
           />
-         <Link href="/authen/otp" asChild>
-        <BackButton
-         title='Quay lại'
-        />
-        </Link>
+          <Link href="/authen/confirmPhoneNumber" asChild>
+            <BackButton
+              title='Quay lại'
+            />
+          </Link>
         </View>
 
         <Text center color-black marginT-20 marginB-100 style={{ paddingHorizontal: 20 }}>
