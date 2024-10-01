@@ -1,158 +1,8 @@
-// import { StyleSheet, View, Text, FlatList, Button, TouchableOpacity } from 'react-native';
-// import React from 'react';
-// import { MaterialIcons } from '@expo/vector-icons';
-
-// const addressData = [
-//     { id: '1', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Tèo', text3: 'Số điện thoại 1' },
-//     { id: '2', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Nè', text3: 'Số điện thoại 2' },
-//     { id: '3', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Tí', text3: 'Số điện thoại 3' },
-//     { id: '4', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Ơi', text3: 'Số điện thoại 4' },
-// ];
-
-// interface AddressItemProps {
-//     text1: string;
-//     address1: string;
-//     text2: string;
-//     text3: string;
-// }
-
-// const AddressItem: React.FC<AddressItemProps> = ({ text1, address1, text2, text3 }) => (
-//     <View>
-//         <View style={styles.row}>
-//             <View style={styles.iconTextContainer}>
-//                 <MaterialIcons name="location-on" size={24} color="black" />
-//                 <Text style={styles.iconText}>{text1}</Text>
-//             </View>
-//             <Text style={styles.sideText}>update</Text>
-//         </View>
-//         <View style={styles.column}>
-//             <Text style={styles.subText}>{address1}</Text>
-//         </View>
-//         <View style={[styles.row, styles.rowSpace]}>
-//             <Text style={[styles.subText, styles.nameText]}>{text2}</Text>
-//             <Text style={styles.subText}>{text3}</Text>
-//         </View>
-//         <View style={styles.horizontalLine} />
-//     </View>
-// );
-
-// export const Address = () => {
-//     return (
-//         <View style={styles.container}>
-//             <Text style={styles.mainText}>Địa chỉ đã lưu</Text>
-//             <FlatList
-//                 style={styles.frame}
-//                 data={addressData}
-//                 renderItem={({ item }) => (
-//                     <AddressItem
-//                         text1={item.text1}
-//                         address1={item.address1}
-//                         text2={item.text2}
-//                         text3={item.text3}
-//                     />
-//                 )}
-//                 keyExtractor={(item) => item.id}
-//             />
-//             <View style={styles.buttonFrame}>
-//                 <TouchableOpacity style={styles.buttonAddAddress} onPress={() => { /* Add your onPress handler here */ }}>
-//                     <Text style={styles.buttonAddAddressText}>Thêm địa chỉ</Text>
-//                 </TouchableOpacity>
-//             </View>
-//         </View>
-//     );
-// };
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         padding: 16,
-//         backgroundColor: '#f0f0f0', // Background color for the entire screen
-//     },
-//     frame: {
-//         width: '100%',
-//         height: 200, // Set a fixed height to make the frame shorter
-//         paddingVertical: 5, // Reduce vertical padding
-//         paddingHorizontal: 10, // Keep horizontal padding
-//         borderWidth: 2,
-//         borderColor: '#fff', // Change border color to white
-//         borderRadius: 8,
-//         backgroundColor: '#fff', // Background color for the frame
-//         marginBottom: 298, // Add margin to separate the frame from the button
-//         shadowColor: '#000', // Shadow color
-//         shadowOffset: { width: 0, height: 2 }, // Shadow offset
-//         shadowOpacity: 0.25, // Shadow opacity
-//         shadowRadius: 3.84, // Shadow radius
-//         elevation: 5, // Elevation for Android shadow
-//     },
-//     row: {
-//         flexDirection: 'row',
-//         marginBottom: 16,
-//         justifyContent: 'space-between',
-//         alignItems: 'center',
-//     },
-//     iconTextContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//     },
-//     mainText: {
-//         fontSize: 20,
-//         marginBottom: 16,
-//     },
-//     iconText: {
-//         fontSize: 18,
-//         marginLeft: 8,
-//         fontFamily: 'Inter-Bold', // Updated to use Inter-Bold
-//     },
-//     column: {
-//         marginBottom: 16,
-//     },
-//     subText: {
-//         fontSize: 16,
-//         marginBottom: 0,
-//         fontFamily: 'Inter-Regular',
-//     },
-//     nameText: {
-//         marginBottom: 0, // Remove extra margin to align with phone number
-//     },
-//     rowSpace: {
-//         justifyContent: 'space-between',
-//     },
-//     sideText: {
-//         fontSize: 16,
-//         fontFamily: 'Inter-Regular',
-//     },
-//     horizontalLine: {
-//         borderBottomColor: '#000',
-//         borderBottomWidth: 1,
-//     },
-//     buttonAddAddress: {
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         width: '100%',
-//         height: '100%',
-//         backgroundColor: '#717658',
-//         borderRadius: 8,
-//     },
-//     buttonAddAddressText: {
-//         color: 'white',
-//         fontSize: 16,
-//     },
-//     buttonFrame: {
-//         position: 'absolute',
-//         marginTop: 684,
-//         alignSelf: 'center',
-//         justifyContent: 'center',
-//         width: 259.82, // Set the width of the button
-//         height: 55, // Set the height of the button
-//         borderWidth: 2,
-//         borderColor: '#FFFFFF', // Frame color
-//         borderRadius: 8,
-//         backgroundColor: '#717658', // Background color for the frame
-//     },
-// });
-
-
-import React from "react";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Modal } from "react-native";
+import { SortableList, Button, Colors, Typography, TouchableOpacity } from "react-native-ui-lib";
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const addressData = [
     { id: '1', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Tèo', text3: 'Số điện thoại 1' },
@@ -160,20 +10,16 @@ const addressData = [
     { id: '3', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Tí', text3: 'Số điện thoại 3' },
     { id: '4', text1: 'Nhà', address1: '340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam', text2: 'Ơi', text3: 'Số điện thoại 4' },
 ];
-import { StyleSheet, View, Text } from "react-native";
-import { SortableList, Button, Colors, Typography, TouchableOpacity } from "react-native-ui-lib";
-import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 
 const onOrderChange = (data: any) => {
     console.log("Order changed:", data);
 };
 
-const AddressItem: React.FC<{ item: any }> = ({ item }) => {
+const AddressItem: React.FC<{ item: any, onLongPress: (id: string) => void }> = ({ item, onLongPress }) => {
     const navigation = useNavigation();
 
     return (
-        <View style={styles.itemContainer}>
+        <TouchableOpacity onLongPress={() => onLongPress(item.id)} style={styles.itemContainer}>
             <View style={styles.row}>
                 <View style={styles.iconTextContainer}>
                     <MaterialIcons name="home" size={24} color={Colors.black} />
@@ -191,29 +37,69 @@ const AddressItem: React.FC<{ item: any }> = ({ item }) => {
                 <Text style={styles.subText}>{item.text3}</Text>
             </View>
             <View style={styles.horizontalLine} />
-        </View>
+        </TouchableOpacity>
     );
 };
 
 export const Address = () => {
+    const [addresses, setAddresses] = useState(addressData);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+    const navigation = useNavigation();
+
+    const handleLongPress = (id: string) => {
+        setSelectedAddressId(id);
+        setModalVisible(true);
+    };
+
+    const confirmDelete = () => {
+        setAddresses(addresses.filter(address => address.id !== selectedAddressId));
+        setModalVisible(false);
+        setSelectedAddressId(null);
+    };
+
+    const cancelDelete = () => {
+        setModalVisible(false);
+        setSelectedAddressId(null);
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.mainText}>Địa chỉ đã lưu</Text>
             <View style={styles.frame}>
                 <SortableList
-                    data={addressData}
+                    flexMigration={true}
+                    data={addresses}
                     onOrderChange={onOrderChange}
-                    renderItem={({ item }) => <AddressItem item={item} />}
+                    renderItem={({ item }) => <AddressItem item={item} onLongPress={handleLongPress} />}
                     keyExtractor={(item) => item.id}
                 />
             </View>
-            <Button
-                label={'Thêm địa chỉ'}
-                size={Button.sizes.large}
-                backgroundColor={Colors.grey40}
-                onPress={() => { /* Add your onPress handler here */ }}
-                style={styles.shortButton}
-            />
+            <View>
+                <Button
+                    label={'Thêm địa chỉ'}
+                    size={Button.sizes.large}
+                    backgroundColor={Colors.grey40}
+                    onPress={() => navigation.navigate('AddAddress')}
+                    style={styles.shortButton}
+                />
+            </View>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={cancelDelete}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Bạn có chắc chắn muốn xoá địa chỉ này?</Text>
+                        <View style={styles.modalButtonContainer}>
+                            <Button label="Xoá" onPress={confirmDelete} style={styles.modalButton} />
+                            <Button label="Không" onPress={cancelDelete} style={styles.modalButton} />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -278,6 +164,11 @@ const styles = StyleSheet.create({
         color: Colors.blue30,
         ...Typography.text16,
     },
+    deleteText: {
+        fontSize: 16,
+        color: Colors.red30,
+        ...Typography.text16,
+    },
     horizontalLine: {
         borderBottomColor: Colors.black,
         borderBottomWidth: 1,
@@ -288,5 +179,30 @@ const styles = StyleSheet.create({
         height: 55,
         borderRadius: 8,
         marginTop: 24, // Increased margin
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalView: {
+        width: 300,
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 18,
+        marginBottom: 20,
+    },
+    modalButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    modalButton: {
+        width: '45%',
     },
 });

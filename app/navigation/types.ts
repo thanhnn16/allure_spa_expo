@@ -5,4 +5,5 @@ export type RootStackParamList = {
     Register: undefined;
     Address: undefined;
     UpdateAddress: undefined;
+    AddAddress: undefined;
   };

@@ -80,36 +80,12 @@ const styles = StyleSheet.create({
     noteTextField: {
         height: 100,
     },
-    container_3: {
-        marginTop: 10,
-        marginLeft: 10,
-        marginRight: 10,
-    },
-    fieldContainer_3: {
-        width: '100%', // Full width
-        height: 50,
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#fff', // Border color
-        backgroundColor: '#fff', // Background color
-        shadowColor: '#fff', // Shadow color
-        shadowOffset: { width: 0, height: 2 }, // Shadow offset
-        elevation: 5, // Elevation for Android shadow
-    },
-    buttonContainer_3: {
-        flexDirection: 'row',
-    },
     buttonText_3: {
         color: '#000',
         textAlign: 'center',
     },
-    shortButton_3: {
-        width: '100%', // Adjust width as needed
-        height: 50,
-        borderRadius: 8,
-    },
     container_4: {
-        marginTop: 29,
+        marginTop: 78,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -143,7 +119,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export const UpdateAddress = () => {
+export const AddAddress = () => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [phoneError, setPhoneError] = useState('');
@@ -289,17 +265,6 @@ export const UpdateAddress = () => {
                         value={note}
                         multiline
                         containerStyle={styles.noteTextField} // Apply custom styles
-                    />
-                </View>
-            </View>
-            <View style={styles.container_3}>
-                <View style={styles.fieldContainer_3}>
-                    <Button
-                        label="Xoá địa chỉ"
-                        onPress={() => console.log('pressed')}
-                        style={styles.shortButton_3}
-                        labelStyle={styles.buttonText_3}
-                        backgroundColor="#fff" // Set button background color to white
                     />
                 </View>
             </View>

@@ -3,6 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Login, Register, FlashScreen, Onboard, Address, } from '../authen';
 import { UpdateAddress } from '../authen/pages/UpdateAddress';
+import { AddAddress } from '../authen/pages/AddAddress';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +67,15 @@ const AuthenNavigations = () => {
             headerBackTitle: '' // Hide back button text
           }} 
         />
+      <Stack.Screen
+        name="AddAddress"
+        component={AddAddress}
+        options={{
+          title: 'Add Address',
+          headerShown: true, // Show header bar for this screen
+          headerBackTitle: '' // Hide back button text
+        }}
+      />
     </Stack.Navigator>
   );
 };
