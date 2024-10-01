@@ -24,11 +24,7 @@ export default function Index() {
   }
   
   return (
-<<<<<<< HEAD
     <Redirect href="/(tabs)/(home)" /> 
-=======
-    <Redirect href="/(tabs)/(home)/" /> 
->>>>>>> 790351ce2567656ced9d31ac174c5ac90556f0de
   )
 }
 
