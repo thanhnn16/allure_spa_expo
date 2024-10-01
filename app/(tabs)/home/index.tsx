@@ -1,6 +1,5 @@
 import { AppStyles } from '@/assets/styles/AppStyles';
 import { Link } from 'expo-router';
-<<<<<<< HEAD
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { View, Text, Image, SortableList, TouchableOpacity } from 'react-native-ui-lib'
@@ -166,36 +165,15 @@ export default function HomeScreen() {
         </View>
 
       </ScrollView>
-=======
-import { View, Text, StyleSheet } from 'react-native';
-import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
-
-function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <Text style={{fontFamily: 'SFProText-Bold'}} >Home</Text>
-      <Link href="/details/1">Chi tiết</Link>
-      <Link href="/favorite">Yêu thích</Link>
->>>>>>> 790351ce2567656ced9d31ac174c5ac90556f0de
     </View>
   );
 }
 
-<<<<<<< HEAD
 const cateArr = [
   {
     id: '1',
     name: 'Giới thiệu',
     icon: require('@/assets/images/home/icons/Introduce.png')
-=======
-export default gestureHandlerRootHOC(HomeScreen);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
->>>>>>> 790351ce2567656ced9d31ac174c5ac90556f0de
   },
   {
     id: '2',
