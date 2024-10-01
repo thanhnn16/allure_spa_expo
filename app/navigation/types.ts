@@ -4,5 +4,5 @@ export type RootStackParamList = {
     Login: undefined;
     Register: undefined;
     Address: undefined;
-    // Add other screens here
+    UpdateAddress: undefined;
   };
