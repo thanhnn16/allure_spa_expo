@@ -1,15 +1,18 @@
 import { Link } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 
-export default function HomeScreen() {
+function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text>Home</Text>
+      <Text style={{fontFamily: 'SFProText-Bold'}} >Home</Text>
       <Link href="/details/1">Chi tiết</Link>
-      <Link href="/favorite/FavoritePage">Yêu thích</Link>
+      <Link href="/favorite">Yêu thích</Link>
     </View>
   );
 }
+
+export default gestureHandlerRootHOC(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
