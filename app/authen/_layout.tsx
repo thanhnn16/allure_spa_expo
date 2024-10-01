@@ -5,26 +5,31 @@ export default function RootLayout() {
         <Stack screenOptions={{
             headerShown: false,
         }}>
-        <Stack.Screen name="authen/loginZalo" options={
-            {
-                headerShown: false,
-            }
-        } />
+             <Stack.Screen name="authen/Onboarding" options={
+                {
+                    headerShown: false,
+                }
+            } />
+            <Stack.Screen name="authen/confirmPhoneNumber" options={
+                {
+                    headerShown: false,
+                }
+            } />
 
-        <Stack.Screen name="authen/login" options={
-            {
-                headerShown: false,
-            }
-        } />
+            <Stack.Screen name="authen/login" options={
+                {
+                    headerShown: false,
+                }
+            } />
 
-        <Stack.Screen name="authen/otp" options={
-            {
-                headerShown: false,
-            }
-        } />
-        
+            <Stack.Screen name="authen/otp" options={
+                {
+                    headerShown: false,
+                }
+            } />
+
 
         </Stack>
-        
+
     );
 }
