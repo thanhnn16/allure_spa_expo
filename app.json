@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.piupin2012.allure_spa_expo"
     },
     "web": {
       "bundler": "metro",
