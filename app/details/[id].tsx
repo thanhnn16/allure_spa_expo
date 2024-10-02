@@ -209,7 +209,6 @@ export default function DetailsScreen() {
                     />
                 </View>
             </View>
-            
         </View>
     );
 }

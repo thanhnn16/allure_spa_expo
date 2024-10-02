@@ -176,13 +176,13 @@ const ConfirmPhoneNumber: React.FC<ConfirmPhoneNumberProps> = ({ navigation }) =
           onChangeText={setFullName}
           value={fullName}
         />
-        <Link href="/authen/otp" asChild>
+        <Link href="/(authen)/otp" asChild>
         <SendButton
           title="Gửi mã OTP"
           onPress={handleSendOtp}
         />
         </Link>
-        <Link href="/authen/onboarding" asChild>
+        <Link href="/(authen)/onboarding" asChild>
           <BackButton title="Quay lại" />
         </Link>
         <Text

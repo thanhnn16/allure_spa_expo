@@ -10,7 +10,7 @@ interface CateItem {
   icon: any;
 }
 
-export default function HomeScreen() {
+const HomePage = () => {
   const [cateData, setCateData] = useState<CateItem[]>(cateArr)
   const [services, setServices] = useState([]);
 
@@ -168,6 +168,7 @@ export default function HomeScreen() {
     </View>
   );
 }
+export default HomePage;
 
 const cateArr = [
   {
