@@ -2,33 +2,13 @@ import { Stack } from "expo-router";
 
 export default function RootLayout() {
     return (
-        <Stack screenOptions={{
+        <Stack 
+        initialRouteName="onboarding/index"
+        screenOptions={{
             headerShown: false,
         }}>
-             <Stack.Screen name="authen/Onboarding" options={
-                {
-                    headerShown: false,
-                }
-            } />
-            <Stack.Screen name="authen/confirmPhoneNumber" options={
-                {
-                    headerShown: false,
-                }
-            } />
-
-            <Stack.Screen name="authen/login" options={
-                {
-                    headerShown: false,
-                }
-            } />
-
-            <Stack.Screen name="authen/otp" options={
-                {
-                    headerShown: false,
-                }
-            } />
-
-
+             <Stack.Screen name="onboarding/index" />
+            
         </Stack>
 
     );

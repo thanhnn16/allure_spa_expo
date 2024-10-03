@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const ScheduledPage = () => {
+const ProfilePage = () => {
   return (
     <View>
-      <Text>ScheduledPage</Text>
+      <Text>index</Text>
     </View>
   )
 }
 
-export default ScheduledPage
+export default ProfilePage;
 
 const styles = StyleSheet.create({})

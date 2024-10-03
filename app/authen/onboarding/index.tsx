@@ -76,7 +76,9 @@ const Onboarding: React.FC = () => {
           alignItems: 'center',
         }}
       >
-        <SendButton title='Đăng ký' />
+        <Link push href="/" asChild>
+          <SendButton title='Đăng ký' />
+        </Link>
 
         <Link push href="/authen/login" asChild>
           <SendButton title={i18n.t('auth.login.title')} />

@@ -108,9 +108,11 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: 345, marginTop: Spacings.s9, marginBottom: Spacings.s3 }}>
           <Text style={{ color: Colors.primary, fontSize: 16 }}>Quên mật khẩu?</Text>
         </View>
+        <Link href="/(tabs)/home" asChild>
+          <SendButton title={i18n.t('auth.login.title')} />
+        </Link>
 
-        <SendButton title={i18n.t('auth.login.title')} />
-        <Link href="/authen/onboarding" asChild>
+        <Link href="/(authen)/onboarding" asChild>
           <BackButton />
         </Link>
 
