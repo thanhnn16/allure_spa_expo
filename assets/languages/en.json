@@ -1,0 +1,15 @@
+{
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "language": "Language",
+    "settings": "Settings",
+    "auth": {
+        "login": {
+            "title": "Login",
+            "username": "Username",
+            "password": "Password",
+            "remember": "Remember"
+            }
+       }
+  }

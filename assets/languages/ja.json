@@ -1,0 +1,15 @@
+{
+    "welcome": "ようこそ",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "language": "言語",
+    "settings": "設定",
+    "auth": {
+        "login": {
+            "title": "ログイン",
+            "username": "ユーザー名",
+            "password": "パスワード",
+            "remember": "覚えておく"
+            }
+       }
+  }

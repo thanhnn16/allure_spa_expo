@@ -1,14 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const ScheduledPage = () => {
+const StorePage = () => {
   return (
     <View>
-      <Text>ScheduledPage</Text>
+      <Text>StorePage</Text>
     </View>
   )
 }
-
-export default ScheduledPage
+export default StorePage;
 
 const styles = StyleSheet.create({})

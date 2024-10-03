@@ -13,6 +13,7 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.faithnippon.allurespa",
       "supportsTablet": true,
       "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
@@ -20,11 +21,11 @@
       }
     },
     "android": {
+      "package": "com.faithnippon.allurespa",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.piupin2012.allure_spa_expo"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -33,7 +34,18 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/SFProText-Bold.otf",
+            "./assets/fonts/SFProText-Semibold.otf",
+            "./assets/fonts/SFProText-Medium.otf",
+            "./assets/fonts/SFProText-Regular.otf"
+          ]
+        }
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

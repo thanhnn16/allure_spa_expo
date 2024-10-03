@@ -1,59 +1,33 @@
-import { StyleSheet, Text, View, Image, Button } from 'react-native';
-import React from 'react';
-import { useNavigation } from '@react-navigation/native';
+// import { StyleSheet, Text, View } from 'react-native'
+// import React from 'react'
+// import AppButton from '@/components/AppButton'
+// import { AppStyles } from '@/assets/styles/AppStyles'
+// import { AppTextInput } from '@/components/AppTextInput'
 
 // export type LoginProps = {
 //     navigation: any
 // }
 
-export const Login = () => {
-    const navigation = useNavigation();
+// export const Login = () => {
+//     return (
+//         <View style={styles.container}>
+//             <AppTextInput showIcon={true}/>
+//             <AppButton
+//                 title='Login'
+//                 buttonStyle={AppStyles.buttonFill}
+//                 titleStyle={styles.buttonTitle}
+//                 onPress={() => alert('Hello')}
+//             />
+//         </View>
+//     )
+// }
 
-    const handleRegisterNavigation = () => {
-        navigation.navigate('Register');
-    };
 
-    const handleGoBack = () => {
-        navigation.goBack();
-    };
-
-    const handleAddress = () => {
-        navigation.navigate('Address');
-    }
-
-
-    return (
-        <View style={styles.container}>
-            <View style={styles.iconallure}>
-                <Image source={require('../../../assets/images/logo/nameAllure.png')} style={styles.centerLogo} />
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button title="Go to Register" onPress={handleRegisterNavigation} />
-                <Button title="Back" onPress={handleGoBack} />
-                <Button title="Address" onPress={handleAddress} />
-            </View>
-        </View>
-    );
-};
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    buttonTitle: {
-        color: 'black',
-    },
-    iconallure: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    centerLogo: {
-        width: 237,
-        height: 175,
-    },
-    buttonContainer: {
-        marginBottom: 100,// Adjust this value to move the buttons up
-    },
-});
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//     },
+//     buttonTitle: {
+//         color: 'black',
+//     }
+// })
