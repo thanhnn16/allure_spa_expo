@@ -2,6 +2,11 @@ import { Redirect } from 'expo-router';
 import { Link } from 'expo-router';
 import { Colors, View } from 'react-native-ui-lib';
 import ChangeLanguageExample from './example-changeLanguage/change_language_example';
+import { useEffect } from 'react';
+import { useFonts } from 'expo-font';
+import ProfilePage from './Profile';
+import ProfileDetail from './Profile/profile_detail';
+import ProfileEdit from './Profile/profile_edit';
 
 export default function Index() {
   const [loaded, error] = useFonts({
@@ -22,6 +27,9 @@ export default function Index() {
   }
   
   return (
-    <Redirect href="/authen/onboarding" /> 
+    // <Redirect href="/authen/onboarding" /> 
+    // <ProfilePage />
+    // <ProfileDetail />
+    <ProfileEdit />
   )
 }
