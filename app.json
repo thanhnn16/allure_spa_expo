@@ -13,11 +13,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.faithnippon.allurespa",
+      "supportsTablet": true,
+      "icon": "./assets/images/icon.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/Adaptive-icon.png"
+      }
     },
     "android": {
+      "package": "com.faithnippon.allurespa",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -27,7 +33,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/AlexBrush-Regular.ttf",
+            "./assets/fonts/SFProText-Bold.otf",
+            "./assets/fonts/SFProText-Semibold.otf",
+            "./assets/fonts/SFProText-Medium.otf",
+            "./assets/fonts/SFProText-Regular.otf"
+          ]
+        }
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
