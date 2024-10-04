@@ -1,30 +1,24 @@
-import React from 'react';
-import { Button, Colors, Text, TouchableOpacity, View } from 'react-native-ui-lib';
-import colors from '@/rn/colors';
-import { StyleSheet } from 'react-native';
+import { Button, View } from 'react-native-ui-lib';
+import colors from '@/constants/Colors';
 
-export type SendButtonProps = {
+export type PrimaryButtonProps = {
     onPress?: () => void;
     title?: string;
-    buttonStyle?: any;
-    titleStyle?: any;
 };
 
-const PrimaryButton = ({ onPress, title = "Gửi mã OTP", buttonStyle, titleStyle }: SendButtonProps) => {
+const PrimaryButton = ({ onPress, title, }: PrimaryButtonProps) => {
     return (
-        <View center row flex marginV-6 paddingH-24>
+        <View center row flex marginV-6 height={48}>
             <Button
                 flex
                 borderRadius={8}
                 backgroundColor={colors.primary}
                 onPress={onPress}
                 label={title}
-                labelStyle={{ color: colors.white, fontSize: 20, fontFamily: 'OpenSans-Regular' }}
+                labelStyle={{ color: colors.white, fontSize: 20 }}
                 color={colors.secondary}
                 size={Button.sizes.large}
-                paddingV-12
-            >
-            </Button>
+            />
         </View>
     );
 };

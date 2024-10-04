@@ -10,36 +10,36 @@ export default function TabsLayout() {
         name="home/index"
         options={{
           title: 'Trang chủ',
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
         }}
       />
      <Tabs.Screen
         name="store/index"
         options={{
           title: 'Cửa hàng',
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="storefront-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="scheduled/index"
         options={{
-          title: 'Lịch đã đặt',
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
+          title: 'Lịch hẹn',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile/index"
         options={{
-          title: 'Cài đặt',
-          // tabBarIcon: ({ color, size }) => (
-          //   <Ionicons name="home-outline" size={size} color={color} />
-          // ),
+          title: 'Tài khoản',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>

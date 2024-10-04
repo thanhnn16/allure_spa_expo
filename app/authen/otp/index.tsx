@@ -1,15 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { View, Image, Text, Colors, Spacings, Button } from 'react-native-ui-lib';
 import { TextInput, ImageBackground } from 'react-native';
-import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
-import SendButton from '../../../components/buttons/PrimaryButton';
-import BackButton from '../../../components/buttons/SecondaryButton';
-import colors from "@/rn/colors";
+import SendButton from '@/components/buttons/PrimaryButton';
+import BackButton from '@/components/buttons/SecondaryButton';
+import colors from "@/constants/Colors";
 import { Link } from 'expo-router';
 
-import logoName from '@/assets/images/authen/logoName.svg';
+import Brand from '@/assets/images/common/logo-brand.svg';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -18,22 +17,7 @@ interface OTPProps {
 }
 
 const OTP: React.FC<OTPProps> = ({ navigation }) => {
-  const [fontsLoaded] = useFonts({
-    'AlexBrush-Regular': require('@/assets/fonts/AlexBrush-Regular.ttf'),
-    'OpenSans-Regular': require('@/assets/fonts/OpenSans-Regular.ttf'),
-  });
-
   const inputRefs = useRef<(TextInput | null)[]>([]);
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const handleInputChange = (index: number, value: string) => {
     if (value) {
@@ -54,7 +38,7 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
         <Image
           width={250}
           height={85}
-          source={logoName}
+          source={Brand}
         />
         <Text
           marginR-50
@@ -136,7 +120,7 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
           <SendButton
             title="Xác nhận"
           />
-          <Link href="/authen/confirmPhoneNumber" asChild>
+          <Link href="/authen/register" asChild>
             <BackButton
               title='Quay lại'
             />

@@ -1,4 +1,4 @@
-import { AppStyles } from '@/assets/styles/AppStyles';
+import { AppStyles } from '@/constants/AppStyles';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -63,8 +63,9 @@ const HomePage = () => {
   const renderProductItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity marginR-15 style={AppStyles.shadowItem}>
-        <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
+      <Link href={`/product/${rItem.id}`} asChild>
+        <TouchableOpacity marginR-15 style={AppStyles.shadowItem}>
+          <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-5 marginT-5>
           <Text text70H>{rItem.name}</Text>
           <View row>
@@ -75,15 +76,16 @@ const HomePage = () => {
             <Text> | 475 Đã bán</Text>
           </View>
           <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
-        </View>
-      </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Link>
     )
   }
   return (
     <View useSafeArea={true} paddingH-24 center bg-$backgroundDefault flex>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View row left marginB-15 width={345}>
-          <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
+          <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/common/logo.png')} />
           <View>
             <Text text60BO>Đức Lợi Lộc</Text>
             <Text>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>

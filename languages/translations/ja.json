@@ -1,0 +1,33 @@
+{
+    "welcome": "ようこそ",
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "language": "言語",
+    "settings": "設定",
+    "change_language": "Change language",
+    "auth": {
+        "login": {
+            "title": "ログイン",
+            "username": "ユーザー名",
+            "password": "パスワード",
+            "remember": "覚えておく",
+            "zalo": "Zaloでログイン",
+            "skip": "後でログイン",
+            "terms": "利用規約",
+            "privacy": "プライバシーポリシー",
+            "by_continue": "続行することで、当社の",
+            "and": "および",
+            "of_us": "に同意したものとみなされます"
+        },
+        "art": {
+            "title": "スキンケアの芸術",
+            "subtitle": "日本の芸術家から"
+        },
+        "register": {
+            "title": "登録",
+            "username": "ユーザー名",
+            "password": "パスワード",
+            "remember": "覚えておく"
+        }
+    }
+}
