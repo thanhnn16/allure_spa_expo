@@ -112,7 +112,7 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
           <SendButton title={i18n.t('auth.login.title')} />
         </Link>
 
-        <Link href="/(authen)/onboarding" asChild>
+        <Link href="/authen/onboarding" asChild>
           <BackButton />
         </Link>
 
