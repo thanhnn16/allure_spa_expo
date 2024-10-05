@@ -2,20 +2,40 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "types": ["node"],
     "paths": {
       "@/*": [
         "./*"
       ]
     },
     "typeRoots": [
-      "./types"
-    ]
+      "./types",
+      "./node_modules/@types",
+    ],
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "noEmit": true
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts",
-    "app/helper/AxiosInstance.js"
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
   ]
 }
