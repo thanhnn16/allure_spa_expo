@@ -22,11 +22,7 @@ export default function Index() {
   }
   
   return (
-<<<<<<< HEAD
-    <Redirect href="/authen/onboarding" /> 
-=======
     <Redirect href="/authen/" /> 
->>>>>>> ae0c62715e4775858d76fa8a1afc1084b027577c
   )
 }
 

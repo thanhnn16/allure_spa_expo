@@ -1,6 +1,4 @@
 
-
-
 const VietNamProvinces = [
     { name: "Hà Nội", lat: 21.0285, lon: 105.8542 },
     { name: "Hồ Chí Minh", lat: 10.8231, lon: 106.6297 },
