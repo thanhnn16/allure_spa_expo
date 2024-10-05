@@ -18,8 +18,8 @@ import {
   generateCodeChallenge,
   openZaloLogin,
   getAccessToken
-} from '../zalo/zaloAuthService';
-import { sendOtpRequest } from '../zalo/otpService';
+} from '../../../utils/services/zalo/zaloAuthService';
+import { sendOtpRequest } from '../../../utils/services/zalo/otpService';
 import colors from '@/rn/colors';
 
 SplashScreen.preventAutoHideAsync();
