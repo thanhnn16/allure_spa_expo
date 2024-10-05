@@ -4,18 +4,14 @@ import { ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
-import AppButton from '@/components/buttons/AppButton';
-import { AppTextInput } from '@/components/AppTextInput';
-import SendButton from '../../../components/buttons/PrimaryButton';
-import BackButton from '../../../components/buttons/SecondaryButton';
-import colors from '../../../rn/colors';
-import spacings from '../../../rn/spacings';
-import typography from '../../../rn/typography';
+import { TextInput } from '@/components/inputs/TextInput';
+import SendButton from '@/components/buttons/PrimaryButton';
+import BackButton from '@/components/buttons/SecondaryButton';
+import colors from '@/constants/Colors';
 import { Link } from 'expo-router';
 
-import logoName from '../../../assets/images/authen/logoName.svg';
-import i18n from '@/assets/languages/i18n';
-
+import Brand from '@/assets/images/common/logo-brand.svg';
+import i18n from '@/languages/i18n';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -23,29 +19,7 @@ interface LoginProps {
   navigation: NavigationProp<any>;
 }
 
-const commonInputStyle = {
-  height: 45,
-  borderRadius: 8,
-  marginTop: Spacings.s3,
-  marginVertical: 6,
-  paddingHorizontal: 24,
-};
-
-const Login: React.FC<LoginProps> = ({ navigation }) => {
-  const [fontsLoaded] = useFonts({
-    'AlexBrush-Regular': require('@/assets/fonts/AlexBrush-Regular.ttf'),
-    'OpenSans-Regular': require('@/assets/fonts/OpenSans-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
+const Login: React.FC<LoginProps> = () => {
 
   return (
     <ImageBackground
@@ -56,12 +30,12 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
         <Image
           width={250}
           height={85}
-          source={logoName}
+          source={Brand}
         />
-        <Text h2 style={{ textAlign: 'center', color: Colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingEnd: 50 }}>
+        <Text h2 style={{ textAlign: 'center', color: colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingEnd: 50 }}>
           Nghệ thuật chăm da
         </Text>
-        <Text h2 style={{ textAlign: 'center', color: Colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingStart: 50 }}>
+        <Text h2 style={{ textAlign: 'center', color: colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingStart: 50 }}>
           Từ nghệ nhân Nhật Bản
         </Text>
       </View>
@@ -79,30 +53,16 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
           alignItems: 'center',
         }}
       >
-        <AppTextInput
+        <TextInput
           title="Số điện thoại"
           placeholder="Nhập số điện thoại"
-          containerStyle={{ ...commonInputStyle, marginBottom: 32, marginTop: 42 }}
-          titleStyle={{
-            fontSize: 16,
-            fontFamily: 'OpenSans-Regular',
-            color: Colors.primary,
-          }}
-          textInputStyle={{ height: 30, color: Colors.black }}
           keyboardType="numeric"
           maxLength={10}
         />
 
-        <AppTextInput
+        <TextInput
           title="Mật khẩu"
           placeholder="Nhập mật khẩu"
-          containerStyle={{ ...commonInputStyle, marginBottom: 22, marginTop: 22 }}
-          titleStyle={{
-            fontSize: 16,
-            fontFamily: 'OpenSans-Regular',
-            color: Colors.primary,
-          }}
-          textInputStyle={{ height: 30, color: Colors.black }}
           secureTextEntry
         />
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: 345, marginTop: Spacings.s9, marginBottom: Spacings.s3 }}>
@@ -112,16 +72,13 @@ const Login: React.FC<LoginProps> = ({ navigation }) => {
           <SendButton title={i18n.t('auth.login.title')} />
         </Link>
 
-        <Link href="/authen/onboarding" asChild>
+        <Link href="/authen/" asChild>
           <BackButton />
         </Link>
-
-
-
-        <Text center color={Colors.black} marginT-20 marginB-100 style={{ paddingHorizontal: Spacings.s6 }}>
+        <Text center marginT-20 marginB-100 style={{ paddingHorizontal: Spacings.s6 }}>
           Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
-          <Text color={Colors.black} style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
-          <Text color={Colors.black} style={{ fontWeight: 'bold' }}>Chính sách bảo mật</Text> của chúng tôi
+          <Text style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
+          <Text style={{ fontWeight: 'bold' }}>Chính sách bảo mật</Text> của chúng tôi
         </Text>
       </View>
     </ImageBackground>

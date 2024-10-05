@@ -38,6 +38,7 @@
         "expo-font",
         {
           "fonts": [
+            "./assets/fonts/AlexBrush-Regular.ttf",
             "./assets/fonts/SFProText-Bold.otf",
             "./assets/fonts/SFProText-Semibold.otf",
             "./assets/fonts/SFProText-Medium.otf",
