@@ -1,6 +1,6 @@
 import { KeyboardTypeOptions } from 'react-native';
 import { View, Text, TextField } from 'react-native-ui-lib';
-import Colors from '../../constants/Colors'; // Thêm import này
+import Colors from '@/constants/Colors';
 
 export type TextInputProps = {
   title?: string;
@@ -45,7 +45,7 @@ export const TextInput = ({
           paddingHorizontal: 16,
           height: 48,
         }}
-        style={{ 
+        style={{
           height: 48,
           color: Colors.text,
         }}
