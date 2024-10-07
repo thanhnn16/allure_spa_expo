@@ -1,47 +1,65 @@
-import React from 'react';
 import { Button, View } from 'react-native-ui-lib';
-import colors from '@/rn/colors';
+import Colors from '@/constants/Colors';
 import { StyleSheet } from 'react-native';
 
 export type AppButtonProps = {
     onPress?: () => void;
     title?: string;
+    type: 'primary' | 'secondary' | 'outline' | 'text';
     buttonStyle?: any;
     titleStyle?: any;
+    disabled?: boolean;
 };
 
-const AppButton = ({ onPress, title = "Title", buttonStyle, titleStyle }: AppButtonProps) => {
+const AppButton = ({ onPress, title, type, buttonStyle, titleStyle, disabled }: AppButtonProps) => {
+    const getButtonStyles = () => {
+        switch (type) {
+            case 'primary':
+                return {
+                    backgroundColor: Colors.primary,
+                    labelStyle: { color: Colors.background, fontSize: 16, fontWeight: 'bold', ...titleStyle },
+                };
+            case 'secondary':
+                return {
+                    backgroundColor: Colors.secondary,
+                    labelStyle: { color: Colors.primary, fontSize: 16, fontWeight: 'bold', ...titleStyle },
+                };
+            case 'outline':
+                return {
+                    backgroundColor: 'transparent',
+                    outlineColor: Colors.primary,
+                    outlineWidth: 1,
+                    labelStyle: { color: Colors.primary, fontSize: 16, fontWeight: 'bold', ...titleStyle },
+                };
+            case 'text':
+                return {
+                    backgroundColor: 'transparent',
+                    labelStyle: { color: Colors.primary, fontSize: 16, fontWeight: 'bold', ...titleStyle },
+                };
+        }
+    };
+
+    const buttonStyles = getButtonStyles();
+
     return (
-        <View center row flex marginV-6 paddingH-24>
+        <View marginV-6>
             <Button
-                flex
-                borderRadius={8}
-                backgroundColor={colors.primary}
-                onPress={onPress}
                 label={title}
-                labelStyle={[styles.labelStyle, titleStyle]}
-                color={colors.secondary}
-                size={Button.sizes.large}
-                style={[styles.buttonStyle, buttonStyle]}
-                paddingV-12
+                onPress={onPress}
+                disabled={disabled}
+                {...buttonStyles}
+                style={[styles.button, buttonStyles, buttonStyle]}
             />
         </View>
     );
 };
 
-export default AppButton;
-
 const styles = StyleSheet.create({
-    buttonStyle: {
-        marginVertical: 6,
-        backgroundColor: colors.secondary,
-        borderWidth: 2,
-        borderColor: colors.primary,
-
-    },
-    labelStyle: {
-        color: colors.white,
-        fontSize: 20,
-        fontFamily: 'OpenSans-Regular',
+    button: {
+        height: 48,
+        borderRadius: 8,
+        paddingHorizontal: 16,
     },
 });
+
+export default AppButton;
