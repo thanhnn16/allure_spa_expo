@@ -7,6 +7,7 @@ import { useFonts } from 'expo-font';
 import ProfilePage from './Profile';
 import ProfileDetail from './Profile/profile_detail';
 import ProfileEdit from './Profile/profile_edit';
+import ChangePassword from './authen/changePassword';
 
 export default function Index() {
   const [loaded, error] = useFonts({
@@ -30,6 +31,7 @@ export default function Index() {
     // <Redirect href="/authen/onboarding" /> 
     // <ProfilePage />
     // <ProfileDetail />
-    <ProfileEdit />
+    // <ProfileEdit />
+    <ChangePassword />
   )
 }
