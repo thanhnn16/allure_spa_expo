@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import ProfilePage from './Profile';
 import ProfileDetail from './Profile/profile_detail';
 import ProfileEdit from './Profile/profile_edit';
+import{ useEffect } from 'react';
 
 export default function Index() {
   const [loaded, error] = useFonts({

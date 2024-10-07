@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image } from "react-native-ui-lib";
 import { useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
 import { TextInput } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import NameIcon from "@/assets/icons/user.svg";
 import PhoneIcon from "@/assets/icons/phone.svg";
 import EmailIcon from "@/assets/icons/sms.svg";
@@ -23,6 +24,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
   const [gender, setGender] = React.useState("Nam");
   const [birthday, setBirthday] = React.useState("01/01/2000");
   const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
+  const [avatar, setAvatar] = React.useState<{ uri: string }>({ uri: "@/assets/images/avt.png" });
 
   const showDatePicker = () => {
     setDatePickerVisible(true);
@@ -46,6 +48,17 @@ const ProfileEdit = (props: ProfileEditProps) => {
     { label: "Khác", value: "Khác" },
   ]);
   const [open, setOpen] = React.useState(false);
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+    if (!result.canceled) {
+      setAvatar({ uri: result.assets[0].uri });
+    }
+  };
   return (
     <View flex marginH-20 marginT-20>
       <View row centerV>
@@ -73,9 +86,10 @@ const ProfileEdit = (props: ProfileEditProps) => {
           height={76}
           borderRadius={50}
           style={{ borderColor: "#D5D6CD", borderWidth: 2 }}
-          source={require("@/assets/images/avt.png")}
+          source={avatar}
         />
         <TouchableOpacity
+        onPress={pickImage}
           style={{
             position: "absolute",
             right: 120,
