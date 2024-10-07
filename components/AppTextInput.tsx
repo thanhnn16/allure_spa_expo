@@ -1,74 +1,49 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardTypeOptions } from 'react-native';
-import React from 'react';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import colors from '@/rn/colors';
-import { Colors } from '@/constants/Colors';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React from 'react'
+import AntDesign from '@expo/vector-icons/AntDesign'
 
 export type AppTextInputProps = {
-  title?: string;
-  placeholder?: string;
-  value?: string;
-  onChangeText?: (text: string) => void;
-  titleStyle?: any;
-  textInputStyle?: any;
-  containerStyle?: any;
-  keyboardType?: KeyboardTypeOptions;
-  maxLength?: number;
-  secureTextEntry?: boolean;
-
+  title?: string
+  titleStyle?: any
+  textInputStyle?: any
+  containerStyle?: any
+  placeholder?: string
+  value?: string
+  showIcon?: boolean
+  packageIcon?: string
+  iconName?: any
+  iconColor?: string
+  iconSize?: number
+  onPressIcon?: () => void
+  onChangeText?: (text: string) => void
 }
 
 export const AppTextInput = ({
-  title,
-  placeholder,
-  value,
-  onChangeText,
-  titleStyle,
-  textInputStyle,
-  containerStyle,
-  secureTextEntry,
-  keyboardType, 
-  maxLength, 
+  title, placeholder, value, onChangeText, titleStyle, textInputStyle, containerStyle,
+  iconName, iconColor, iconSize, showIcon, onPressIcon
 }: AppTextInputProps) => {
+
   return (
-    <View style={[styles.container, containerStyle]}>
-      {title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
-      <View style={styles.inputWrapper}>
+    <View style={containerStyle}>
+      <Text style={titleStyle}>{title || 'Title'}</Text>
+      <View style={styles.containerContent}>
         <TextInput
           value={value}
           placeholder={placeholder || 'Placeholder'}
           onChangeText={onChangeText}
-          style={[styles.textInput, textInputStyle]}
-          secureTextEntry={secureTextEntry}
-          keyboardType={keyboardType} // Sử dụng thuộc tính này
-          maxLength={maxLength} // Sử dụng thuộc tính này
+          style={textInputStyle}
         />
+        {showIcon && <TouchableOpacity onPress={onPressIcon}>
+          <AntDesign name={iconName || 'questioncircle'} size={iconSize || 24} color={iconColor || 'black'} />
+        </TouchableOpacity>}
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-  },
-  title: {
-    marginBottom: 5,
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.black,
-  },
-  inputWrapper: {
-    borderWidth: 2,
-    borderRadius: 8,
-    padding: 8,
-    borderColor: colors.primary,
-    height: 48,
-    color: colors.black,
-  },
-  textInput: {
-    flex: 1,
-    height: '100%',
-    color: colors.black,
-  },
-});
+  containerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  }
+})
