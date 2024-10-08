@@ -1,11 +1,17 @@
-import React from 'react'
-import { View, Text } from 'react-native-ui-lib'
+import { useState } from 'react'
+import { View, Text, Image, Carousel, TouchableOpacity } from 'react-native-ui-lib'
+import ImageView from "react-native-image-viewing";
+import StarIcon from '@/assets/icons/star.svg';
+import PagerView from 'react-native-pager-view';
+import { Href, Link, router } from 'expo-router';
+
 
 interface RatingItemProps {
   id: number;
   rating: number;
   comment: string;
   date: string;
+  video: string;
   images: string[];
   user: {
     id: number;
@@ -15,9 +21,93 @@ interface RatingItemProps {
 };
 
 const RatingItem = ({ item }: { item: RatingItemProps }) => {
+
+  const handleImagePress = () => {
+    const video = item.video; // Replace with actual video URL
+    const images = item.images; // Use the images from the item
+    router.push(`/pager_view?video=${encodeURIComponent(video)}&images=${encodeURIComponent(JSON.stringify(images))}`);
+  };
+
+  const FooterComponent = () => {
+    return (
+      <View marginB-20 padding-20>
+
+        <View row centerV>
+          <View row gap-10 centerV>
+            <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />
+            <Text h2_bold white>{item.user.name}</Text>
+          </View>
+          <View row gap-5 flex right>
+            <Image source={StarIcon} size={13}/>
+            <Text h3_bold white>{item.rating}</Text>
+          </View>
+        </View>
+
+        <View marginV-10>
+          <Text h2 white>{item.comment}</Text>
+        </View>
+
+      </View>
+    )
+  }
+
   return (
-    <View>
-      <Text>{item.user.name}</Text>
+    <View 
+      margin-10 
+      padding-15 
+      backgroundColor='#F9FAFB'
+      style={{ borderRadius: 13 }}
+    >
+
+      {/* <ImageView
+        images={images}
+        imageIndex={0}
+        visible={visible}
+        onRequestClose={() => setIsVisible(false)}
+        swipeToCloseEnabled={true}
+        onImageIndexChange={(index) => console.log(index)}
+        doubleTapToZoomEnabled={true}
+        FooterComponent={FooterComponent}
+      /> */}
+
+      <View row centerV>
+        <View row gap-10 centerV>
+          <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />
+          <Text h2_bold>{item.user.name}</Text>
+        </View>
+        <View row gap-5 flex right>
+          <Image source={StarIcon} size={13}/>
+          <Text h3_bold>{item.rating}</Text>
+        </View>
+      </View>
+
+      <View marginV-10>
+        <Text h2>{item.comment}</Text>
+      </View>
+
+      {item.images.length > 0 && (
+        <View marginT-10 row gap-10>
+          {item.images.slice(0, 3).map((image, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={handleImagePress}
+              >
+                <Image width={40} height={40} source={{ uri: image }} />
+              </TouchableOpacity>
+          ))}
+          {item.images.length > 3 && (
+              <TouchableOpacity
+                key={item.images.length - 1}
+                onPress={handleImagePress}
+              >
+                <Image width={40} height={40} source={{ uri: item.images[3] }} />
+                <View style={{ position: 'absolute', width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
+                  <Text h2_bold secondary>{'+' + (item.images.length - 3)}</Text>
+                </View>
+              </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   )
 }
