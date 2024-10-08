@@ -46,28 +46,9 @@
           ]
         }
       ],
-      // [
-      //   "expo-media-library",
-      //   {
-      //     "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-      //     "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
-      //     "isAccessMediaLocationEnabled": true
-      //   }
-      // ],
-      // [
-      //   "expo-image-picker",
-      //   {
-      //     "cameraPermission": "$(PRODUCT_NAME) would like to use your camera to share image in a message."
-      //   }
-      // ],
-      [
-        "expo-av",
-        {
-          "microphonePermission": "$(PRODUCT_NAME) would like to use your microphone for voice recording."
-        }
-      ],
       "expo-localization",
-      "expo-video"
+      "expo-location",
+      "expo-av",
     ],
     "experiments": {
       "typedRoutes": true

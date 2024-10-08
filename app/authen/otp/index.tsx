@@ -1,14 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, forwardRef } from 'react';
 import { View, Image, Text, Colors, Spacings, Button } from 'react-native-ui-lib';
 import { TextInput, ImageBackground } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
-import SendButton from '@/components/buttons/AppButton';
-import BackButton from '@/components/buttons/AppButton';
 import colors from "@/constants/Colors";
 import { Link } from 'expo-router';
 
 import Brand from '@/assets/images/common/logo-brand.svg';
+import AppButton, { AppButtonProps } from '@/components/buttons/AppButton';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -117,11 +116,13 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
             />
           </View>
 
-          {/* <SendButton
+          <ForwardedAppButton
+            type="primary"
             title="Xác nhận"
           />
           <Link href="/authen/register" asChild>
-            <BackButton
+            <ForwardedAppButton
+              type="secondary"
               title='Quay lại'
             />
           </Link> */}
@@ -136,5 +137,10 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
     </ImageBackground>
   );
 };
+
+// Định nghĩa lại kiểu cho ForwardedAppButton
+const ForwardedAppButton = forwardRef<unknown, AppButtonProps>((props, ref) => (
+  <AppButton {...props} ref={ref} />
+));
 
 export default OTP;
