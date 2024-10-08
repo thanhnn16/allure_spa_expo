@@ -5,8 +5,8 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
 import { TextInput } from '@/components/inputs/TextInput';
-import SendButton from '@/components/buttons/PrimaryButton';
-import BackButton from '@/components/buttons/SecondaryButton';
+import SendButton from '@/components/buttons/AppButton';
+import BackButton from '@/components/buttons/AppButton';
 import colors from '@/constants/Colors';
 import { Link } from 'expo-router';
 
@@ -68,13 +68,13 @@ const Login: React.FC<LoginProps> = () => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: 345, marginTop: Spacings.s9, marginBottom: Spacings.s3 }}>
           <Text style={{ color: Colors.primary, fontSize: 16 }}>Quên mật khẩu?</Text>
         </View>
-        <Link href="/(tabs)/home" asChild>
+        {/* <Link href="/(tabs)/home" asChild>
           <SendButton title={i18n.t('auth.login.title')} />
         </Link>
 
         <Link href="/authen/" asChild>
           <BackButton />
-        </Link>
+        </Link> */}
         <Text center marginT-20 marginB-100 style={{ paddingHorizontal: Spacings.s6 }}>
           Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
           <Text style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}

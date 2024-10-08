@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import AppButton from '@/components/AppButton'
+import AppButton from '@/components/buttons/AppButton'
 import { AppStyles } from '@/assets/styles/AppStyles'
-import { AppTextInput } from '@/components/AppTextInput'
+import { TextInput } from '@/components/inputs/TextInput'
 
 // export type LoginProps = {
 //     navigation: any
@@ -11,13 +11,13 @@ import { AppTextInput } from '@/components/AppTextInput'
 export const Login = () => {
     return (
         <View style={styles.container}>
-            <AppTextInput showIcon={true}/>
-            <AppButton
+            {/* <TextInput showIcon={true}/> */}
+            {/* <AppButton
                 title='Login'
                 buttonStyle={AppStyles.buttonFill}
                 titleStyle={styles.buttonTitle}
                 onPress={() => alert('Hello')}
-            />
+            /> */}
         </View>
     )
 }

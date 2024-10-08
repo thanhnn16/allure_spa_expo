@@ -3,8 +3,8 @@ import { View, Image, Text, Colors, Spacings, Button } from 'react-native-ui-lib
 import { TextInput, ImageBackground } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
-import SendButton from '@/components/buttons/PrimaryButton';
-import BackButton from '@/components/buttons/SecondaryButton';
+import SendButton from '@/components/buttons/AppButton';
+import BackButton from '@/components/buttons/AppButton';
 import colors from "@/constants/Colors";
 import { Link } from 'expo-router';
 
@@ -117,14 +117,14 @@ const OTP: React.FC<OTPProps> = ({ navigation }) => {
             />
           </View>
 
-          <SendButton
+          {/* <SendButton
             title="Xác nhận"
           />
           <Link href="/authen/register" asChild>
             <BackButton
               title='Quay lại'
             />
-          </Link>
+          </Link> */}
         </View>
 
         <Text center color-black marginT-20 marginB-100 style={{ paddingHorizontal: 20 }}>
