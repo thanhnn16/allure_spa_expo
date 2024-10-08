@@ -20,8 +20,7 @@ const Onboarding: React.FC = ( ) => {
     <View flex>
       <Image
         source={require('@/assets/images/authen/img_bg_authen.png')}
-        overlayType="top"
-        style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0.6 }}
+        style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0.5 }}
       />
       <View paddingT-40 centerH marginB-16>
         <Image
@@ -41,6 +40,7 @@ const Onboarding: React.FC = ( ) => {
           text50BO
           center
           marginL-65
+          marginB-150
           style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
         >
           {i18n.t('auth.art.subtitle')}
@@ -50,8 +50,11 @@ const Onboarding: React.FC = ( ) => {
         bg-white
         paddingH-24
         paddingT-32
-        br30
         flex
+        style={{
+          borderTopLeftRadius: 30,
+          borderTopRightRadius: 30,
+        }}
       >
         <Link push href="/authen/register" asChild>
           {/* TODO: chỗ này dùng firebase để lấy otp đăng ký */}

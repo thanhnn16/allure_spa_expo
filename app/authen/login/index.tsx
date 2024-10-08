@@ -23,20 +23,32 @@ const Login: React.FC<LoginProps> = () => {
 
   return (
     <ImageBackground
-      source={require('@/assets/images/authen/img_bg_authen.png')}
-      style={{ flex: 1 }}
+    source={require('@/assets/images/authen/img_bg_authen.png')}
+    style={{ position: 'absolute', width: '100%', height: '100%'}}
     >
       <View center>
         <Image
           width={250}
           height={85}
+          style={{ marginTop: Spacings.s10 }}
           source={Brand}
         />
-        <Text h2 style={{ textAlign: 'center', color: colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingEnd: 50 }}>
-          Nghệ thuật chăm da
+       <Text
+          text50BO
+          center
+          marginR-85
+          style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
+        >
+          {i18n.t('auth.art.title')}
         </Text>
-        <Text h2 style={{ textAlign: 'center', color: colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, paddingStart: 50 }}>
-          Từ nghệ nhân Nhật Bản
+        <Text
+          text50BO
+          center
+          marginL-65
+          marginB-150
+          style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
+        >
+          {i18n.t('auth.art.subtitle')}
         </Text>
       </View>
       <View
