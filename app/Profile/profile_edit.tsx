@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native-ui-lib";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Picker,
+} from "react-native-ui-lib";
 import { useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
 import { TextInput } from "react-native";
@@ -24,7 +30,9 @@ const ProfileEdit = (props: ProfileEditProps) => {
   const [gender, setGender] = React.useState("Nam");
   const [birthday, setBirthday] = React.useState("01/01/2000");
   const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
-  const [avatar, setAvatar] = React.useState<{ uri: string }>({ uri: "@/assets/images/avt.png" });
+  const [avatar, setAvatar] = React.useState<{ uri: string }>({
+    uri: "@/assets/images/avt.png",
+  });
 
   const showDatePicker = () => {
     setDatePickerVisible(true);
@@ -41,12 +49,16 @@ const ProfileEdit = (props: ProfileEditProps) => {
         }/${sekectedDate.getFullYear()}`
       );
     }
-  }
+  };
   const [items, setItems] = React.useState([
     { label: "Nam", value: "Nam" },
     { label: "Nữ", value: "Nữ" },
     { label: "Khác", value: "Khác" },
   ]);
+  const handleValueChange = (value: string) => {
+    setGender(value);
+  }
+
   const [open, setOpen] = React.useState(false);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -89,7 +101,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
           source={avatar}
         />
         <TouchableOpacity
-        onPress={pickImage}
+          onPress={pickImage}
           style={{
             position: "absolute",
             right: 120,
@@ -155,34 +167,27 @@ const ProfileEdit = (props: ProfileEditProps) => {
         <View marginT-20>
           <View row centerV gap-10>
             <Image width={24} height={24} source={GenderIcon} />
-            <DropDowPicker
-              open={open}
-              value={gender}
-              items={items}
-              setOpen={setOpen}
-              setValue={setGender}
-              setItems={setItems}
-              placeholder="Chọn giới tính"
+            <Picker
+              selectedValue={gender} 
+              onChangeValue={(value: string) => handleValueChange(value as string)}
               style={{
                 borderBottomWidth: 0.5,
-                borderWidth: 0, 
                 flex: 1,
-                width: "92%",
+                height: 40,
                 borderColor: "#D5D6CD",
-                borderRadius: 10,
-                marginLeft: 0,
               }}
-              dropDownContainerStyle={{ backgroundColor: "#D5D6CD" }}
-              >
-
-              </DropDowPicker>
+            >
+              <Picker.Item label="Nam" value="Nam" />
+              <Picker.Item label="Nữ" value="Nữ" />
+              <Picker.Item label="Khác" value="Khác" />
+            </Picker>
           </View>
         </View>
         <View marginT-20>
           <View row centerV gap-10>
             <Image width={24} height={24} source={BirthdayIcon} />
             <TouchableOpacity
-            centerV
+              centerV
               onPress={showDatePicker}
               style={{
                 borderBottomWidth: 0.5,
@@ -200,7 +205,6 @@ const ProfileEdit = (props: ProfileEditProps) => {
                 mode="date"
                 is24Hour={true}
                 onChange={handleConfirm}
-                
               />
             )}
           </View>
