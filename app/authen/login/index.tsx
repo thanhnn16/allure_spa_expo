@@ -5,13 +5,12 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { NavigationProp } from '@react-navigation/native';
 import { TextInput } from '@/components/inputs/TextInput';
-import SendButton from '@/components/buttons/PrimaryButton';
-import BackButton from '@/components/buttons/SecondaryButton';
 import colors from '@/constants/Colors';
 import { Link } from 'expo-router';
 
 import Brand from '@/assets/images/common/logo-brand.svg';
 import i18n from '@/languages/i18n';
+import AppButton from '@/components/buttons/AppButton';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -81,11 +80,11 @@ const Login: React.FC<LoginProps> = () => {
           <Text style={{ color: Colors.primary, fontSize: 16 }}>Quên mật khẩu?</Text>
         </View>
         <Link href="/(tabs)/home" asChild>
-          <SendButton title={i18n.t('auth.login.title')} />
+          <AppButton type="primary" title={i18n.t('auth.login.title')} />
         </Link>
 
         <Link href="/authen/" asChild>
-          <BackButton />
+          <AppButton type="secondary" title={i18n.t('auth.login.title')} />
         </Link>
         <Text center marginT-20 marginB-100 style={{ paddingHorizontal: Spacings.s6 }}>
           Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}

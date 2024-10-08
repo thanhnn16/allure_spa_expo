@@ -96,6 +96,7 @@ const OTP: React.FC = () => {
               title="Xác nhận"
               type="primary"
               onPress={verifyOTP}
+          </View>
             />
             <AppButton
               title="Quay lại"
@@ -142,5 +143,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
 });
+
+const ForwardedAppButton = forwardRef<unknown, AppButtonProps>((props, ref) => (
+  <AppButton {...props} ref={ref} />
+));
 
 export default OTP;
