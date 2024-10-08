@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, Card } from "react-native-ui-lib";
-import { useNavigation } from "expo-router";
+import {router, useNavigation} from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
 import ArrowRight from "@/assets/icons/arrow.svg";
-import ProfileEdit from "./profile_edit";
 
 
 interface ProfileDetailProps {}
@@ -11,7 +10,7 @@ interface ProfileDetailProps {}
 const ProfileDetail = (props: ProfileDetailProps) => {
   const navigation = useNavigation();
   return (
-    <View flex marginH-20 marginT-20>
+    <View flex marginH-20 marginT-20 useSafeArea>
       <View row centerV>
         <TouchableOpacity
           onPress={() => {
@@ -44,8 +43,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             title: "Chỉnh sửa hồ sơ",
             icon: require("@/assets/images/edit.png"),
             onPress: () => {
-                navigation.navigate('ProfileEdit' as never);
-              console.log("Chỉnh sửa hồ sơ"); 
+                router.push({ pathname: "/profile/detail/edit" });
             }
           },
           {

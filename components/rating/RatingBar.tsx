@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Image, Text, Colors } from 'react-native-ui-lib'
-import * as Progress from 'react-native-progress';
+import { View, Image, Text, Colors, ProgressBar } from 'react-native-ui-lib'
 
 import StarIcon from '@/assets/icons/star.svg';
 
@@ -14,14 +13,14 @@ const RatingBar = ({ star, percent }: { star: number, percent: number }) => {
 
     <View row gap-10 centerV>
 
-        <View row centerV>
-          <Image source={StarIcon} size={13}/>
-          <Text h3_bold>{star}</Text>
-        </View>
+      <View row centerV>
+        <Image source={StarIcon} size={13} />
+        <Text h3_bold>{star}</Text>
+      </View>
 
-        <Progress.Bar progress={progress} width={100} height={2} borderRadius={100} color={Colors.black}/>
+      <ProgressBar progress={progress} style={{ width: 100, height: 2, borderRadius: 100 }} progressColor={Colors.primary} />
 
-        <Text h3_bold>{percent}%</Text>
+      <Text h3_bold>{percent}%</Text>
 
     </View>
   )

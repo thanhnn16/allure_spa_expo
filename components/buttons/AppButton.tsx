@@ -1,4 +1,4 @@
-import React, { forwardRef, ForwardedRef } from 'react';
+import React, { forwardRef } from 'react';
 import { Button, View } from 'react-native-ui-lib';
 import Colors from '@/constants/Colors';
 import { StyleSheet } from 'react-native';
@@ -10,7 +10,6 @@ export interface AppButtonProps {
     buttonStyle?: any;
     titleStyle?: any;
     disabled?: boolean;
-    // Thêm các prop khác nếu cần
 }
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {

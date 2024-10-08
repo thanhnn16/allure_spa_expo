@@ -1,12 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, Text, Alert, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, ImageBackground } from 'react-native';
 import { TextInput as RNTextInput } from 'react-native';
-import AppButton from '@/components/buttons/AppButton';
+import AppButton, { AppButtonProps } from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import colors from "@/constants/Colors";
 import Spacings from '@/constants/Spacings';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { forwardRef } from 'react-native-ui-lib';
 
 const OTP: React.FC = () => {
   const inputRefs = useRef<(RNTextInput | null)[]>([]);
@@ -96,7 +97,6 @@ const OTP: React.FC = () => {
               title="Xác nhận"
               type="primary"
               onPress={verifyOTP}
-          </View>
             />
             <AppButton
               title="Quay lại"
@@ -143,9 +143,5 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
 });
-
-const ForwardedAppButton = forwardRef<unknown, AppButtonProps>((props, ref) => (
-  <AppButton {...props} ref={ref} />
-));
 
 export default OTP;

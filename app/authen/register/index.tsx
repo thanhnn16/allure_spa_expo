@@ -5,7 +5,6 @@ import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import colors from '@/constants/Colors';
 import Spacings from '@/constants/Spacings';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { signInWithPhoneNumber } from 'firebase/auth';
 import { auth } from '@/utils/services/firebase/firebaseService';
 import { useRouter } from 'expo-router';
@@ -15,7 +14,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Register: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState('');
-  const recaptchaVerifier = useRef<FirebaseRecaptchaVerifierModal>(null);
   const { setConfirmation } = useConfirmation();
   const router = useRouter();
 
@@ -24,23 +22,6 @@ const Register: React.FC = () => {
       if (!phoneNumber) {
         Alert.alert('Lỗi', 'Vui lòng nhập số điện thoại');
         return;
-      }
-  
-      if (recaptchaVerifier.current) {
-        const formattedPhoneNumber = `+84${phoneNumber.replace(/^0/, '')}`;
-        console.log('Formatted Phone Number:', formattedPhoneNumber);
-  
-        const confirmationResult = await signInWithPhoneNumber(
-          auth,
-          formattedPhoneNumber,
-          recaptchaVerifier.current
-        );
-  
-        console.log('Confirmation Result:', confirmationResult);
-        await AsyncStorage.setItem('confirmationResult', JSON.stringify(confirmationResult));
-        router.push('/authen/otp');
-      } else {
-        console.error("Recaptcha verifier is not initialized.");
       }
     } catch (error) {
       console.error('Error sending OTP:', error);
@@ -52,11 +33,6 @@ const Register: React.FC = () => {
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={auth.app.options}
-        attemptInvisibleVerification={true}
-      />
       <ImageBackground source={require('@/assets/images/authen/img_bg_authen.png')} style={{ flex: 1 }}>
         <View style={{ marginTop: 60 }}>
           <Brand width={250} height={85} />
