@@ -1,6 +1,10 @@
 import { Redirect } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
+import ProfilePage from './Profile';
+import ProfileDetail from './Profile/profile_detail';
+import ProfileEdit from './Profile/profile_edit';
+import{ useEffect } from 'react';
+import { Login } from './authen/pages';
 
 export default function Index() {
   const [loaded, error] = useFonts({
@@ -22,7 +26,10 @@ export default function Index() {
   }
   
   return (
-    <Redirect href="/authen/" /> 
+    // <Redirect href="/(tabs)/home" /> 
+    // <ProfilePage />
+    // <ProfileDetail />
+    <ProfileEdit />
+    // <Login />
   )
 }
-
