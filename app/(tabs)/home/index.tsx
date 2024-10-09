@@ -6,6 +6,9 @@ import getLocation from '@/utils/location/locationHelper';
 import getWeather from '@/utils/weather/getWeatherData';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Double, Float } from 'react-native/Libraries/Types/CodegenTypes';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/types'; // Adjust the import path as needed
+
 
 interface CateItem {
   id: string;
@@ -20,7 +23,9 @@ interface LocationsType {
   name: string;
 }
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   const [cateData, setCateData] = useState<CateItem[]>(cateArr)
   const [services, setServices] = useState([]);
   const [temperature, setTemperature] = useState<Float>(0);
@@ -72,6 +77,8 @@ const HomePage = () => {
   }, []);
 
 
+
+
   const renderCateItem = (item: any) => {
     const rItem = item.item;
     return (
@@ -94,7 +101,7 @@ const HomePage = () => {
   const renderServiceItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, {borderRadius: 16}]} >
+      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 16 }]} >
         <Image source={require('@/assets/images/home/service1.png')} width={250} height={235} />
         <View paddingH-12 marginT-6 marginB-12>
           <Text text70H>{rItem.name}</Text>
@@ -108,7 +115,7 @@ const HomePage = () => {
   const renderProductItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, {borderRadius: 8}]}>
+      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
         <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-8 paddingB-8 marginT-5>
           <Text text70H>{rItem.name}</Text>
@@ -125,18 +132,23 @@ const HomePage = () => {
     )
   }
 
+
   return (
     <View useSafeArea={true} paddingH-24 center bg-$backgroundDefault >
       <ScrollView showsVerticalScrollIndicator={false} >
         <View row left marginB-15 width={345}>
-          <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
-          <View>
-            <Text text60BO>Đức Lộc</Text>
-            <Text>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('NotificationPage')}>
+            <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('NotNotificationPage')}>
+            <View>
+              <Text text60BO>Đức Lộc</Text>
+              <Text>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
-        <View row height={60} centerV style={[AppStyles.shadowItem, {borderRadius: 10}]} marginB-15 marginH-4 paddingH-5>
+        <View row height={60} centerV style={[AppStyles.shadowItem, { borderRadius: 10 }]} marginB-15 marginH-4 paddingH-5>
           <View row centerV>
             <Image source={{ uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png` }} width={40} height={40} />
             <Text marginL-5 text60>{temperature.toFixed(0)}°C</Text>
