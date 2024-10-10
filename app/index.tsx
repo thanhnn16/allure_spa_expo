@@ -20,9 +20,6 @@ export default function Index() {
   if (!loaded && !error) {
     return null;
   }
-  
-  return (
-    <Redirect href="/authen/" /> 
-  )
-}
 
+  return <Redirect href="/authen/" />;
+}

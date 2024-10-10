@@ -1,10 +1,10 @@
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
-import { Svg } from 'react-native-svg';
+import { Pressable, ScrollView } from 'react-native';
 import { Text ,AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets } from 'react-native-ui-lib';
+import ImageView from "react-native-image-viewing";
 
-import { Carousel } from 'react-native-ui-lib/src/components/carousel';
+import { Carousel, PageControlPosition } from 'react-native-ui-lib/src/components/carousel';
 
 import CommentIcon from '@/assets/icons/comment.svg'
 import HeartIcon from '@/assets/icons/heart.svg'
@@ -17,18 +17,34 @@ export default function DetailsScreen() {
     const { id } = useLocalSearchParams();
     const [images, setImages] = useState<{ uri: string }[]>([]);
     const [index, setIndex] = useState(0);
+    const [imageViewIndex, setImageViewIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [visible, setIsVisible] = useState(false);
+
     useEffect(() => {
         setImages([
-            { uri: 'https://picsum.photos/300/200' },
-            { uri: 'https://picsum.photos/300/200' }
+            { uri: 'https://picsum.photos/1600/900' },
+            { uri: 'https://picsum.photos/1920/1080' }
         ]);
     }, []);
+
+    const handleOpenImage = (index: number) => {
+        setImageViewIndex(index);
+        setIsVisible(true);
+    }
+
+    const FooterComponent = () => {
+        return (
+            <View marginB-20 padding-20>
+                <Text h2 white>{`${imageViewIndex} / ${images.length}`}</Text>
+            </View>
+        )
+    }
 
     const createBulletPoints = (lines: string[]) => {
         return lines.map((line, index) => (
             <View key={index} row>
-                <Text h3>• </Text>
+                <Text h2>• </Text>
                 <Text h3>{line}</Text>
             </View>
         ));
@@ -37,7 +53,7 @@ export default function DetailsScreen() {
     const createBulletPointsDescription = (lines: string[]) => {
         return lines.map((line, index) => (
             <View key={index} row>
-                <Text h3>• </Text>
+                <Text h2>• </Text>
                 <Text h3>{line}</Text>
             </View>
         ));
@@ -60,32 +76,60 @@ export default function DetailsScreen() {
     ];
 
     return (
-        <View bg-$backgroundDefault flex>
+        <View bg-$backgroundDefault flex marginT-50>
             <ScrollView
                 showsVerticalScrollIndicator={false}
             >
-                <Carousel
-                    loop
-                    autoplay
-                    autoplayInterval={3000}
+                <View 
+                    style={{ 
+                        width: '90%', 
+                        height: 200, 
+                        borderRadius: 20, 
+                        overflow: 'hidden',
+                        marginTop: 10,
+                        alignSelf: 'center',
+                    }}
                 >
-                    {images.map((item, index) => (
-                        <AnimatedImage 
-                            animationDuration={1000}
-                            source={{ uri: item.uri }}
-                            aspectRatio={4/3}
-                            cover
-                            key={index}
-                        />
-                    ))}
-                </Carousel>
-                <View paddingT-10>
-                    <PageControl
-                        currentPage={index}
-                        numOfPages={images.length}
-                        color='#000'
-                    />
+                    <Carousel
+                        loop
+                        autoplay
+                        autoplayInterval={3000}
+                        showCounter
+                        pageControlProps={{
+                            color: '#000',
+                        }}
+                        pageControlPosition={PageControlPosition.UNDER}
+                        style={{
+                            width: '100%',
+                            height: 250,
+                        }}
+                    >
+                        {images.map((item, index) => (
+                            <Pressable
+                                onPress={() => handleOpenImage(index)}
+                                key={index}
+                            >
+                                <AnimatedImage 
+                                    animationDuration={1000}
+                                    source={{ uri: item.uri }}
+                                    aspectRatio={16/9}
+                                    cover
+                                    key={index}
+                                />
+                            </Pressable>
+                        ))}
+                    </Carousel>
                 </View>
+                <ImageView
+                    images={images}
+                    imageIndex={0}
+                    visible={visible}
+                    onRequestClose={() => setIsVisible(false)}
+                    onImageIndexChange={(index) => setImageViewIndex(index)}
+                    swipeToCloseEnabled={true}
+                    doubleTapToZoomEnabled={true}
+                    FooterComponent={FooterComponent}
+                />
                 <View padding-20 gap-10>
                     <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
                     <View row marginB-10>
@@ -184,19 +228,17 @@ export default function DetailsScreen() {
                             <Text h3_medium>Đánh giá</Text>
                         </TouchableOpacity>
                     </Link>
-                    <TouchableOpacity
-                        onPress={() => {
-                            console.log('thêm giỏ hàng òy á');
-                        }}
-                    >
-                        <View center marginB-4>
-                            <Image
+                    <Link href='/favorite' asChild>
+                        <TouchableOpacity>
+                            <View center marginB-4>
+                                <Image
                                 source={ShoppingCartIcon}
                                 size={24}
                             />
-                        </View>
-                        <Text h3_medium>Thêm giỏ hàng</Text>
-                    </TouchableOpacity>
+                            </View>
+                            <Text h3_medium>Thêm giỏ hàng</Text>
+                        </TouchableOpacity>
+                    </Link>
                 </View>
                 <View flex right>
                     <Button
