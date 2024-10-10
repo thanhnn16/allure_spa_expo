@@ -8,7 +8,7 @@ import Brand from '@/assets/images/common/logo-brand.svg';
 
 SplashScreen.preventAutoHideAsync();
 
-const Onboarding: React.FC = ( ) => {
+const Onboarding: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
 
   const changeLanguage = (language: string) => {
@@ -82,10 +82,10 @@ const Onboarding: React.FC = ( ) => {
 
         <Text center text80 marginT-20>
           {i18n.t('auth.login.by_continue')}
-          <Text text80H>{i18n.t('auth.login.terms')} </Text>
+          <Text text80H> {i18n.t('auth.login.terms')} </Text>
           {''}{i18n.t('auth.login.and')} {''}
           <Text text80H>{i18n.t('auth.login.privacy')}</Text>
-          {i18n.t('auth.login.of_us')}
+          {''} {i18n.t('auth.login.of_us')}
         </Text>
       </View>
     </View>
