@@ -24,6 +24,7 @@ export default function Index() {
   if (!loaded && !error) {
     return null;
   }
+<<<<<<< HEAD
   
   return (
     // <Redirect href="/(tabs)/home" /> 
@@ -32,4 +33,8 @@ export default function Index() {
     <ProfileEdit />
     // <Login />
   )
+=======
+
+  return <Redirect href="/authen/" />;
+>>>>>>> f4644e7808094eb434dd0ea1427ec83affa0dd96
 }

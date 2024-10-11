@@ -3,9 +3,9 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function TabsLayout() {
   return (
-    <Tabs 
-    initialRouteName="home/index"
-    screenOptions={{ headerShown: false }}>
+    <Tabs
+      initialRouteName="home/index"
+      screenOptions={{ headerShown: false }}>
       <Tabs.Screen
         name="home/index"
         options={{
@@ -15,7 +15,7 @@ export default function TabsLayout() {
           ),
         }}
       />
-     <Tabs.Screen
+      <Tabs.Screen
         name="store/index"
         options={{
           title: 'Cửa hàng',
@@ -33,6 +33,7 @@ export default function TabsLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="profile/index"
         options={{
@@ -42,6 +43,24 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="profile/detail/index"
+        options={{
+          href: null
+        }}
+      />
+      <Tabs.Screen
+        name="profile/detail/edit"
+        options={{
+          href: null
+        }}
+      />
+        <Tabs.Screen
+            name="profile/address/index"
+            options={{
+                href: null
+            }}
+        />
     </Tabs>
   );
 }

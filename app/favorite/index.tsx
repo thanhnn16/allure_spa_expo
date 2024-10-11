@@ -5,7 +5,7 @@ import {
 } from 'react-native-ui-lib';
 import { data } from './data';
 import FavoriteItem from './FavoriteItem';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const renderFirstPage = () => {
     return (
@@ -43,13 +43,15 @@ const secondPage = () => {
 
 const FavoritePage = () => {
     return (
-        <TabController items={[{ label: 'Tất cả' }, { label: 'Giảm giá' }]}>
-            <TabController.TabBar />
-            <View flex>
-                <TabController.TabPage index={0}>{renderFirstPage()}</TabController.TabPage>
-                <TabController.TabPage index={1} lazy>{secondPage()}</TabController.TabPage>
-            </View>
-        </TabController>
+        <GestureHandlerRootView>
+            <TabController items={[{ label: 'Tất cả' }, { label: 'Giảm giá' }]}>
+                <TabController.TabBar height={50} containerStyle={{ marginTop: 100 }}/>
+                <View flex>
+                    <TabController.TabPage index={0}>{renderFirstPage()}</TabController.TabPage>
+                    <TabController.TabPage index={1} lazy>{secondPage()}</TabController.TabPage>
+                </View>
+            </TabController>
+        </GestureHandlerRootView>
     );
 }
 
