@@ -108,6 +108,8 @@ export const Address = () => {
     );
 }
 
+export default Address;
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

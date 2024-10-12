@@ -10,6 +10,9 @@ import NotNotificationPage from '../notification/not_index';
 const TabsLayout: React.FC = () => {
   return (
     <Tabs initialRouteName="home/index" screenOptions={{ headerShown: false }}>
+    <Tabs
+      initialRouteName="home/index"
+      screenOptions={{ headerShown: false }}>
       <Tabs.Screen
         name="home/index"
         options={{
@@ -37,6 +40,7 @@ const TabsLayout: React.FC = () => {
           ),
         }}
       />
+
       <Tabs.Screen
         name="profile/index"
         options={{
@@ -46,26 +50,27 @@ const TabsLayout: React.FC = () => {
           ),
         }}
       />
+      <Tabs.Screen
+        name="profile/detail/index"
+        options={{
+          href: null
+        }}
+      />
+      <Tabs.Screen
+        name="profile/detail/edit"
+        options={{
+          href: null
+        }}
+      />
+        <Tabs.Screen
+            name="profile/address/index"
+            options={{
+                href: null
+            }}
+        />
     </Tabs>
   );
 };
-
-const NativeStack = createNativeStackNavigator<RootStackParamList>();
-
-const Layout: React.FC = () => {
-  return (
-    <NativeStack.Navigator initialRouteName="HomePage" screenOptions={{ headerShown: false }}>
-      <NativeStack.Screen name="HomePage" component={HomePage} />
-      <NativeStack.Screen name="NotificationPage" component={NotificationPage} />
-      <NativeStack.Screen name="NotNotificationPage" component={NotNotificationPage} />
-    </NativeStack.Navigator>
-  );
-};
-
-const App: React.FC = () => {
-  return (
-    <Layout />
-  );
-};
-
+     }
 export default App;
+
