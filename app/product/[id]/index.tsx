@@ -36,7 +36,7 @@ export default function DetailsScreen() {
     const FooterComponent = () => {
         return (
             <View marginB-20 padding-20>
-                <Text h2 white>{`${imageViewIndex} / ${images.length}`}</Text>
+                <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
             </View>
         )
     }
@@ -126,6 +126,7 @@ export default function DetailsScreen() {
                     visible={visible}
                     onRequestClose={() => setIsVisible(false)}
                     onImageIndexChange={(index) => setImageViewIndex(index)}
+                    key={index}
                     swipeToCloseEnabled={true}
                     doubleTapToZoomEnabled={true}
                     FooterComponent={FooterComponent}
