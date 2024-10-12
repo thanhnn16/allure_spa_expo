@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, ListItem } from "react-native-ui-lib";
 import { StackNavigationProp } from '@react-navigation/stack';
+import {router} from "expo-router";
 
 type NotificationPageProps = {
     navigation: StackNavigationProp<any, any>;
@@ -161,7 +162,7 @@ const NotificationPage: React.FC<NotificationPageProps> = ({ navigation }) => {
             <View style={styles.header}>
                 <Button
                     iconSource={() => <Image source={require('../../assets/images/home/arrow_ios.png')} style={styles.backIcon} />}
-                    onPress={() => navigation.navigate('HomePage')}
+                    onPress={() => router.back()}
                     link style={styles.backButton}
                 />
                 <Text style={styles.headerText}>Thông báo</Text>

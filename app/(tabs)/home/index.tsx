@@ -10,9 +10,7 @@ import ButtonNotifyIcon from '@/components/buttons/ButtonNotifyIcon';
 import ButtonMessageIcon from '@/components/buttons/ButtonMessageIcon';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate, Extrapolation, SharedValue } from 'react-native-reanimated'
 import AppSearch from '@/components/inputs/AppSearch';
-import interpolateScrollY from '@/utils/animated/interpolateScrollY';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../types/types'; // Adjust the import path as needed
+import {router} from "expo-router";
 
 
 interface CateItem {
@@ -163,7 +161,9 @@ const HomePage = () => {
   const renderProductItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
+      <TouchableOpacity onPress={() => {
+        router.push('product/detail', { id: rItem.id })
+      }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
         <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-8 marginT-5>
           <Text text70H>{rItem.name}</Text>
@@ -199,7 +199,9 @@ const HomePage = () => {
           </Animated.View>
         </View>
         <View row gap-15 >
-          <ButtonNotifyIcon onPress={() => { alert('Add navigate in line 134') }} />
+          <ButtonNotifyIcon onPress={() => {
+            router.push('notification')
+          }} />
           <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
         </View>
       </View>
