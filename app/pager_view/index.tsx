@@ -1,6 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { View, Image, Text, Button, AnimatedImage } from 'react-native-ui-lib';
-import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { AnimatedImage } from 'react-native-ui-lib';
 import VideoPlayer from 'expo-video-player'
 import { useLocalSearchParams } from 'expo-router';
 import PagerView from 'react-native-pager-view';
@@ -24,7 +23,7 @@ const PagerViewPage = () => {
         }}
       />
       {parsedImages.map((images: string, index: number) => (
-        <View flex width={'100%'} height={300} key={index} style={styles.page}>
+        <View key={index} style={styles.page}>
           <AnimatedImage 
             animationDuration={300}
             source={{ uri: images }}
@@ -46,6 +45,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   page: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   }

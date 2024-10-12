@@ -1,52 +1,69 @@
-// import React, { useState } from 'react';
-// import { GestureHandlerRootView } from 'react-native-gesture-handler';
-// import { Channel as ChannelType, StreamChat } from 'stream-chat';
-// import { Channel, ChannelList, Chat, MessageInput, MessageList, MessageType, OverlayProvider, Thread } from 'stream-chat-expo';
+import { Href, router } from 'expo-router';
+import { View, Text, TouchableOpacity, Image } from 'react-native-ui-lib';
+import { StyleSheet, FlatList } from 'react-native';
 
-// const client = StreamChat.getInstance('3n8dprq8z4p5');
+const chatData = [
+  { id: '1', title: 'CSKH', icon: require('@/assets/icons/cskh.svg'), message: 'Bạn đã đặt hàng thành công cho đơn hàng: Làm sạch bằng lamellar..', time: '1h' },
+  { id: '2', title: 'Chăm sóc AI', icon: require('@/assets/icons/ai.svg'), message: 'Bạn đã hủy lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy l..', time: '2h' },
+];
 
-// await client.connectUser(
-//   {
-//     id: 'jlahey',
-//     name: 'Jim Lahey',
-//     image: 'https://i.imgur.com/fR9Jz14.png',
-//   },
-//   'user_token',
-// );
+const ChatCskh = () => {
+  return router.push('/chat/message_screen' as Href<string>)
+}
 
-// const channel = client.channel('messaging', 'the_park', {
-//   name: 'The Park',
-// });
+const ChatScreen = () => {
+  const renderItem = ({ item }: { item: typeof chatData[0] }) => (
+    <TouchableOpacity
+      onPress={ChatCskh}
+      style={styles.chatItem}>
+      <View style={styles.iconContainer}>
+        <Image source={item.icon} />
+      </View>
+      <View style={styles.messageContainer}>
+        <Text h2_bold>{item.title}</Text>
+        <Text h3>{item.message}</Text>
+      </View>
+      <Text h3>{item.time}</Text>
+    </TouchableOpacity>
+  );
 
-// await channel.create();
+  return (
+    <View flex bg-$backgroundDefault padding-16>
+      <Text h0_bold>Chat</Text>
+      <FlatList
+        data={chatData}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+      />
+    </View>
+  );
+};
 
-// const index = () => {
+const styles = StyleSheet.create({
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  chatItem: {
+    flexDirection: 'row',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  iconContainer: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#e0f7fa',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  messageContainer: {
+    flex: 1,
+    alignSelf: 'center',
+  },
+});
 
-//   const [channel, setChannel] = useState<ChannelType>();
-//   const [thread, setThread] = useState<MessageType | null>();
-
-//   return (
-//     <GestureHandlerRootView style={{ flex: 1 }}>
-//       <OverlayProvider>
-//         <Chat client={client}>
-//           {channel ? (
-//             <Channel channel={channel} keyboardVerticalOffset={0}  threadList={!!thread}>
-//               {thread ? (
-//                 <Thread />
-//               ) : (
-//                 <>
-//                   <MessageList onThreadSelect={setThread} />
-//                   <MessageInput />
-//                 </>
-//               )}
-//             </Channel>
-//           ) : (
-//             <ChannelList onSelect={setChannel} />
-//           )}
-//         </Chat>
-//       </OverlayProvider>
-//     </GestureHandlerRootView>
-//   )
-// }
-
-// export default index
+export default ChatScreen;

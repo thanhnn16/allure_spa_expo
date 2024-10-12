@@ -11,6 +11,9 @@ import ButtonMessageIcon from '@/components/buttons/ButtonMessageIcon';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate, Extrapolation, SharedValue } from 'react-native-reanimated'
 import AppSearch from '@/components/inputs/AppSearch';
 import interpolateScrollY from '@/utils/animated/interpolateScrollY';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/types'; // Adjust the import path as needed
+
 
 interface CateItem {
   id: string;
@@ -129,6 +132,8 @@ const HomePage = () => {
   }, []);
 
 
+
+
   const renderCateItem = (item: any) => {
     const rItem = item.item;
     return (
@@ -175,9 +180,9 @@ const HomePage = () => {
     )
   }
 
+
   return (
     <View useSafeArea={true} paddingH-24 center bg-$backgroundDefault >
-
       <View row marginT-25 width={345} height={60}>
         <View >
           <Animated.View style={headerHideStyle({ offset: useOffset, height: 48 })}>
