@@ -19,6 +19,11 @@ interface RewardProps {}
 
 const Reward: React.FC<RewardProps> = () => {
   const [selectedPage, setSelectedPage] = React.useState(0);
+  const pagerRef = React.useRef<PagerView>(null);
+  const handlePageChange = (page: number) => {
+    setSelectedPage(page);
+    pagerRef.current?.setPage(page);
+  };
   return (
     <View flex marginH-20 marginT-40>
       <View row centerV>
@@ -46,9 +51,9 @@ const Reward: React.FC<RewardProps> = () => {
           </Text>
         </View>
       </View>
-      <View row marginT-20 style={{}}>
+      <View row marginT-20>
         <TouchableOpacity
-          onPress={() => setSelectedPage(0)}
+          onPress={() => handlePageChange(0)}
           style={{
             flex: 1,
             borderRadius: 10,
@@ -77,7 +82,7 @@ const Reward: React.FC<RewardProps> = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setSelectedPage(1)}
+          onPress={() => handlePageChange(1)}
           style={{
             flex: 1,
             borderRadius: 10,
