@@ -9,6 +9,7 @@ import ChangePassword from './authen/changePassword';
 import Voucher from './voucher';
 import Rewward from './reward';
 
+
 export default function Index() {
   const [loaded, error] = useFonts({
     'SFProText-Bold': require('@/assets/fonts/SFProText-Bold.otf'),
@@ -28,10 +29,5 @@ export default function Index() {
     return null;
   }
 
-  // return <Redirect href="app/voucher" />;
-  return (
-    <Rewward />
-  );
-  
-  
+  return <Redirect href="/authen" />
 }
