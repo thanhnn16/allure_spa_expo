@@ -17,7 +17,6 @@ import AddressIcon from "@/assets/icons/location.svg";
 import GenderIcon from "@/assets/icons/gender.svg";
 import BirthdayIcon from "@/assets/icons/birthday.svg";
 // import RNPickerSelect from "react-native-picker-select";
-import DropDowPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 interface ProfileEditProps {}
 

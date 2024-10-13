@@ -1,19 +1,3 @@
-<<<<<<< HEAD
-// import { StyleSheet, Text, View } from 'react-native'
-// import React from 'react'
-
-// const ProfilePage = () => {
-//   return (
-//     <View>
-//       <Text>index</Text>
-//     </View>
-//   )
-// }
-
-// export default ProfilePage;
-
-// const styles = StyleSheet.create({})
-=======
 import ArrowRight from "@/assets/icons/arrow.svg";
 import { View, Text, Card, Image, TouchableOpacity } from "react-native-ui-lib";
 import { Href, Link } from "expo-router";
@@ -167,4 +151,3 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
->>>>>>> f4644e7808094eb434dd0ea1427ec83affa0dd96

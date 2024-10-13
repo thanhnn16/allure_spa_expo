@@ -4,7 +4,10 @@ import ProfilePage from './Profile';
 import ProfileDetail from './Profile/profile_detail';
 import ProfileEdit from './Profile/profile_edit';
 import{ useEffect } from 'react';
-import { Login } from './authen/pages';
+import ChangePassword from './authen/changePassword';
+// import { Login } from './authen/login';
+import Voucher from './voucher';
+import Rewward from './reward';
 
 export default function Index() {
   const [loaded, error] = useFonts({
@@ -24,17 +27,11 @@ export default function Index() {
   if (!loaded && !error) {
     return null;
   }
-<<<<<<< HEAD
-  
-  return (
-    // <Redirect href="/(tabs)/home" /> 
-    // <ProfilePage />
-    // <ProfileDetail />
-    <ProfileEdit />
-    // <Login />
-  )
-=======
 
-  return <Redirect href="/authen/" />;
->>>>>>> f4644e7808094eb434dd0ea1427ec83affa0dd96
+  // return <Redirect href="app/voucher" />;
+  return (
+    <Rewward />
+  );
+  
+  
 }
