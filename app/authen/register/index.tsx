@@ -1,20 +1,17 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, Image, Alert, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, ImageBackground, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Image, Text, Colors } from 'react-native-ui-lib';
 import { TextInput } from '@/components/inputs/TextInput';
 import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import colors from '@/constants/Colors';
 import Spacings from '@/constants/Spacings';
-import { signInWithPhoneNumber } from 'firebase/auth';
-import { auth } from '@/utils/services/firebase/firebaseService';
 import { useRouter } from 'expo-router';
-import { useConfirmation } from '@/utils/services/firebase/ConfirmationResult';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from '@/languages/i18n';
 
 const Register: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState('');
-  const { setConfirmation } = useConfirmation();
   const router = useRouter();
 
   const sendOTP = async () => {
@@ -29,64 +26,91 @@ const Register: React.FC = () => {
       Alert.alert('Lỗi', errorMessage);
     }
   };
-  
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-      <ImageBackground source={require('@/assets/images/authen/img_bg_authen.png')} style={{ flex: 1 }}>
-        <View style={{ marginTop: 60 }}>
-          <Brand width={250} height={85} />
-          <Text style={{ textAlign: 'center', color: colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32, marginTop: 10 }}>
-            Nghệ thuật chăm da
-          </Text>
-          <Text style={{ textAlign: 'center', color: colors.primary, fontFamily: 'AlexBrush-Regular', fontSize: 32 }}>
-            Từ nghệ nhân Nhật Bản
-          </Text>
-        </View>
-        <View style={styles.container}>
-          <TextInput
-            title="Số điện thoại"
-            placeholder="Nhập số điện thoại"
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            keyboardType="phone-pad"
-          />
-          <TextInput
-            title="Họ và tên"
-            placeholder="Nhập họ và tên"
-            value={fullName}
-            onChangeText={setFullName}
-          />
-          <AppButton
-            title="Gửi OTP"
-            type="primary"
-            onPress={sendOTP}
-          />
-
-          <AppButton title="Quay lại" type="outline" onPress={() => router.back()} />
-          <Text style={{ textAlign: 'center', color: colors.black, marginTop: 20, marginBottom: 100, paddingHorizontal: Spacings.s6 }}>
-            Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
-            <Text style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
-            <Text style={{ fontWeight: 'bold' }}>Chính sách bảo mật</Text> của chúng tôi
-          </Text>
-        </View>
-      </ImageBackground>
-    </KeyboardAvoidingView>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ImageBackground
+          source={require('@/assets/images/authen/img_bg_authen.png')}
+          style={{ flex: 1 }}
+        >
+          <View paddingT-40 centerH marginB-16>
+            <Image
+              source={Brand}
+              width={250}
+              height={85}
+            />
+            <Text
+              text50BO
+              center
+              marginR-85
+              style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
+            >
+              {i18n.t('auth.art.title')}
+            </Text>
+            <Text
+              text50BO
+              center
+              marginL-65
+              marginB-150
+              style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
+            >
+              {i18n.t('auth.art.subtitle')}
+            </Text>
+          </View>
+          <View
+            style={{
+              backgroundColor: colors.white,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              paddingTop: 40,
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              paddingHorizontal: Spacings.s5,
+            }}>
+            <TextInput
+              title="Số điện thoại"
+              placeholder="Nhập số điện thoại"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
+            <TextInput
+              title="Họ và tên"
+              placeholder="Nhập họ và tên"
+              value={fullName}
+              onChangeText={setFullName}
+            />
+            <View style={{ paddingHorizontal: Spacings.s6, marginBottom: 30 }}>
+              <AppButton
+                title="Gửi OTP"
+                type="primary"
+                onPress={sendOTP}
+              />
+              <AppButton
+                title="Quay lại"
+                type="outline"
+                onPress={() => router.back()}
+                marginT-12
+              />
+            </View>
+            <Text center text80 marginT-20 marginB-50>
+              {i18n.t('auth.login.by_continue')}
+              <Text text80H> {i18n.t('auth.login.terms')} </Text>
+              {''}{i18n.t('auth.login.and')} {''}
+              <Text text80H>{i18n.t('auth.login.privacy')}</Text>
+              {''} {i18n.t('auth.login.of_us')}
+            </Text>
+          </View>
+        </ImageBackground>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 20,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
-});
 
 export default Register;

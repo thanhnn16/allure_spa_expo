@@ -44,6 +44,7 @@ export const TextInput = ({
           borderRadius: 8,
           paddingHorizontal: 16,
           height: 48,
+          marginBottom: 16,
         }}
         style={{
           height: 48,
