@@ -5,6 +5,8 @@
     "language": "言語",
     "settings": "設定",
     "change_language": "Change language",
+    "back": "戻る",
+    "sendOTP": "OTPを送信",
     "auth": {
         "login": {
             "title": "ログイン",
