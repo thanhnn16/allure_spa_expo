@@ -15,9 +15,6 @@ import { hideStyle, showStyle } from './animated';
 import { useDispatch, useSelector } from 'react-redux'
 import { getTreatmentsThunk } from '@/redux/treatment';
 
-import {router} from "expo-router";
-
-
 
 interface CateItem {
   id: string;
