@@ -1,6 +1,13 @@
 import { Redirect } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
+import ProfilePage from './Profile';
+import ProfileDetail from './Profile/profile_detail';
+import ProfileEdit from './Profile/profile_edit';
+import{ useEffect } from 'react';
+import ChangePassword from './authen/changePassword';
+// import { Login } from './authen/login';
+import Voucher from './voucher';
+import Rewward from './reward';
 
 
 export default function Index() {
