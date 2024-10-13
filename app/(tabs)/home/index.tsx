@@ -15,6 +15,8 @@ import { hideStyle, showStyle } from './animated';
 import { useDispatch, useSelector } from 'react-redux'
 import { getTreatmentsThunk } from '@/redux/treatment';
 
+import {router} from "expo-router";
+
 
 
 interface CateItem {
@@ -142,10 +144,10 @@ const HomePage = () => {
   const renderProductItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity
-        onPress={() => { router.push('product/detail', { id: rItem.id }) }}
-        marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}
-      >
+
+      <TouchableOpacity onPress={() => {
+        router.push('product/detail', { id: rItem.id })
+      }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
         <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-8 marginT-5>
           <Text text70H>{rItem.name}</Text>
@@ -175,6 +177,7 @@ const HomePage = () => {
                   <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
                 </View>
               </View>
+
             </Animated.View>
             <Animated.View style={showStyle(scrollOffset)}>
               <Text text50BO color='#717658'>Khám phá</Text>

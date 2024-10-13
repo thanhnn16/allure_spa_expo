@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocalSearchParams } from 'expo-router';
+import {router, useLocalSearchParams} from 'expo-router';
 import { View, Text, Image, Button, Colors } from 'react-native-ui-lib';
 import { Rating } from 'react-native-ratings';
 
@@ -14,7 +14,7 @@ import { BlurView } from 'expo-blur';
 const RatingPage = () => {
   const { id } = useLocalSearchParams();
   const [isBuy, setIsBuy] = useState(true);
-  
+
   return (
     <View bg-$backgroundDefault flex>
       <View padding-20 row centerV>
@@ -30,7 +30,7 @@ const RatingPage = () => {
               ratingBackgroundColor='#E0E0E0'
               ratingColor='#FFC700'
               ratingTextColor='#000'
-              
+
             />
           </View>
         </View>
@@ -56,8 +56,8 @@ const RatingPage = () => {
       </View>
 
       {isBuy && (
-        <BlurView 
-          style={{ 
+        <BlurView
+          style={{
             flex: 1,
             position: 'absolute',
             bottom: 0,
@@ -69,14 +69,16 @@ const RatingPage = () => {
           // tint='light'
           // experimentalBlurMethod='dimezisBlurView'
         >
-          <Button 
-              label='Thêm đánh giá' 
+          <Button
+              label='Thêm đánh giá'
               labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
               backgroundColor={Colors.primary}
               padding-20
               borderRadius={10}
               style={{ width: 240, height: 40, alignSelf: 'center', marginVertical: 10 }}
-              onPress={() => console.log('mua ha')}
+              onPress={() => {
+                router.back();
+              }}
               />
         </BlurView>
       )}
