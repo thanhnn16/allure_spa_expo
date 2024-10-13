@@ -5,6 +5,8 @@
     "language": "Language",
     "settings": "Settings",
     "change_language": "Change language",
+    "back": "Back",
+    "sendOTP": "Send OTP",
     "auth": {
         "login": {
             "title": "Login",

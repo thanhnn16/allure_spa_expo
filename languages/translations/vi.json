@@ -5,6 +5,8 @@
     "language": "Ngôn ngữ",
     "settings": "Cài đặt",
     "change_language": "Change language",
+    "back": "Quay lại",
+    "sendOTP": "Gửi OTP",
     "auth": {
         "login": {
             "title": "Đăng nhập",
@@ -30,4 +32,4 @@
             "remember": "Ghi nhớ"
         }
     }
-  }
+}
