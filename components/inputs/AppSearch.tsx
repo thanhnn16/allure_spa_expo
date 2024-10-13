@@ -11,7 +11,7 @@ type AppSearchProps = {
 
 const AppSearch = ({ value, onChangeText }: AppSearchProps) => {
     return (
-        <View row width={345} height={40} paddingH-5 center marginV-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
+        <View row width={'100%'} height={40} paddingH-5 center marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
 
             <AntDesign name="search1" size={24} color="rgba(113, 118, 88, 0.5)" />
             <TextField

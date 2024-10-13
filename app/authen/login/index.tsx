@@ -12,6 +12,8 @@ import Brand from '@/assets/images/common/logo-brand.svg';
 import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';
 
+
+
 SplashScreen.preventAutoHideAsync();
 
 interface LoginProps {
@@ -19,6 +21,8 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = () => {
+
+  
 
   return (
     <ImageBackground

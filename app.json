@@ -18,14 +18,20 @@
       "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Adaptive-icon.png"
+      },
+      "infoPlist": {
+      "NSAppTransportSecurity": { 
+        "NSAllowsArbitraryLoads": true 
       }
+    }
     },
     "android": {
       "package": "com.faithnippon.allurespa",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",
@@ -48,10 +54,14 @@
       ],
       "expo-localization",
       "expo-location",
-      "expo-av",
+      "expo-av"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "updates": {
+     "url": "192.168.1.63:8000/api/"
+     }
+   
   }
 }
