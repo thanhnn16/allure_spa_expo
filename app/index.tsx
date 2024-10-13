@@ -2,6 +2,7 @@ import { Redirect } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
 
+
 export default function Index() {
   const [loaded, error] = useFonts({
     'SFProText-Bold': require('@/assets/fonts/SFProText-Bold.otf'),
@@ -21,5 +22,5 @@ export default function Index() {
     return null;
   }
 
-  return <Redirect href="/authen/" />;
+  return <Redirect href="/authen" />
 }

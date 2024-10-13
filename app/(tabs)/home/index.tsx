@@ -1,18 +1,20 @@
 import { AppStyles } from '@/constants/AppStyles';
 import { useEffect, useState } from 'react';
-import { FlatList, ScrollView } from 'react-native';
-import { View, Text, Image, SortableList, TouchableOpacity } from 'react-native-ui-lib';
+import { FlatList, Pressable, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Carousel, PageControlPosition, AnimatedImage } from 'react-native-ui-lib';
 import getLocation from '@/utils/location/locationHelper';
 import getWeather from '@/utils/weather/getWeatherData';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Double, Float } from 'react-native/Libraries/Types/CodegenTypes';
 import ButtonNotifyIcon from '@/components/buttons/ButtonNotifyIcon';
 import ButtonMessageIcon from '@/components/buttons/ButtonMessageIcon';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate, Extrapolation, SharedValue } from 'react-native-reanimated'
+import Animated, { useSharedValue, SharedValue, useAnimatedScrollHandler } from 'react-native-reanimated'
 import AppSearch from '@/components/inputs/AppSearch';
-import interpolateScrollY from '@/utils/animated/interpolateScrollY';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../types/types'; // Adjust the import path as needed
+import { Href, router } from "expo-router";
+import { hideStyle, showStyle } from './animated';
+import { useDispatch, useSelector } from 'react-redux'
+import { getTreatmentsThunk } from '@/redux/treatment';
+
 
 
 interface CateItem {
@@ -40,52 +42,22 @@ const HomePage = () => {
   const [location, setLocation] = useState<LocationsType | null>(null);
   const [weatherIcon, setWeatherIcon] = useState<string>('')
   const [currentDate, setCurrentDate] = useState<string>('')
+  const [banner, setBanner] = useState([
+    { uri: 'https://intphcm.com/data/upload/banner-spa-cta.jpg' },
+    { uri: 'https://easysalon.vn/wp-content/uploads/2019/12/banner-spa.jpg' },
+    { uri: 'https://i.pinimg.com/originals/4f/25/c1/4f25c16a936656f89e38796eda8898e2.jpg' },
+  ]);
+  const [bannerViewIndex, setBannerViewIndex] = useState(0);
+  const [bannerVisible, setBannerVisible] = useState(false);
+  const scrollOffset = useSharedValue(0);
+  const dispatch = useDispatch();
 
-  const useOffset = useSharedValue(0);
+  const getTreatment = async() => {
+    const res = await dispatch(getTreatmentsThunk());
+    console.log(res)
+  }
 
-  const headerHideStyle = ({ offset, height }: HeaderStyleParams) =>
-    useAnimatedStyle(() => {
-      const headerHeightAnimated = interpolate(
-        offset.value,
-        [0, height],
-        [height, 0],
-        Extrapolation.CLAMP
-      );
-
-      const headerOpacityAnimated = interpolate(
-        offset.value,
-        [0, height],
-        [1, 0],
-        Extrapolation.CLAMP
-      );
-
-      return {
-        height: withTiming(headerHeightAnimated),
-        opacity: withTiming(headerOpacityAnimated),
-      };
-    }, []);
-
-  const headerShowStyle = ({ offset, height }: HeaderStyleParams) =>
-    useAnimatedStyle(() => {
-      const headerHeightAnimated = interpolate(
-        offset.value,
-        [height, 0],
-        [height, 0],
-        Extrapolation.CLAMP
-      )
-
-      const headerOpacityAnimated = interpolate(
-        offset.value,
-        [height, 0],
-        [1, 0], // Opacity của header khi cuộn
-        Extrapolation.CLAMP
-      );
-
-      return {
-        height: withTiming(headerHeightAnimated),
-        opacity: withTiming(headerOpacityAnimated),
-      };
-    }, []);
+  getTreatment();
 
   useEffect(() => {
     const getProducts = async () => {
@@ -131,9 +103,16 @@ const HomePage = () => {
     setCurrentDate(`${weekday}, ngày ${day}/${month}/${year}`);
   }, []);
 
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollOffset.value = event.contentOffset.y;
+    },
+  });
 
-
-
+  const handleOpenImage = (index: number) => {
+    setBannerViewIndex(index);
+    setBannerVisible(true);
+  }
   const renderCateItem = (item: any) => {
     const rItem = item.item;
     return (
@@ -163,7 +142,10 @@ const HomePage = () => {
   const renderProductItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
+      <TouchableOpacity
+        onPress={() => { router.push('product/detail', { id: rItem.id }) }}
+        marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}
+      >
         <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-8 marginT-5>
           <Text text70H>{rItem.name}</Text>
@@ -180,126 +162,165 @@ const HomePage = () => {
     )
   }
 
-
   return (
-    <View useSafeArea={true} paddingH-24 center bg-$backgroundDefault >
-      <View row marginT-25 width={345} height={60}>
-        <View >
-          <Animated.View style={headerHideStyle({ offset: useOffset, height: 48 })}>
-            <View row>
-              <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
-              <View>
-                <Text text60BO>Đức Lộc</Text>
-                <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+    <View bg-$backgroundDefault>
+      <View useSafeArea={true} marginH-24 center  >
+        <View row marginT-25 width={'100%'} height={60} style={{ justifyContent: 'space-between' }}>
+          <View >
+            <Animated.View style={hideStyle(scrollOffset)}>
+              <View row>
+                <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
+                <View>
+                  <Text text60BO>Đức Lộc</Text>
+                  <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+                </View>
+              </View>
+            </Animated.View>
+            <Animated.View style={showStyle(scrollOffset)}>
+              <Text text50BO color='#717658'>Khám phá</Text>
+            </Animated.View>
+          </View>
+          <View row gap-15 >
+            <ButtonNotifyIcon onPress={() => {
+              router.push('notification' as Href<string>);
+            }} />
+            <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
+          </View>
+        </View>
+        <Animated.View style={[hideStyle(scrollOffset), { width: '100%' }]}>
+          <View row height={60} centerV style={[AppStyles.shadowItem, { borderRadius: 10 }]} marginB-15 marginH-4 paddingH-5>
+            <View row centerV>
+              <Image source={{ uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png` }} width={40} height={40} />
+              <Text marginL-5 text60>{temperature.toFixed(0)}°C</Text>
+            </View>
+
+            <View height={30} width={2} backgroundColor="#717658" marginL-15 marginR-15 />
+
+            <View>
+              <Text text70BO>{currentDate}</Text>
+              <View row marginT-2 centerV>
+                <FontAwesome6 name="location-dot" size={16} color="black" />
+                <Text marginL-5 text80>{location?.name}</Text>
               </View>
             </View>
-          </Animated.View>
-          <Animated.View style={headerShowStyle({ offset: useOffset, height: 48 })}>
-            <Text text50BO color='#717658'>Khám phá</Text>
-          </Animated.View>
-        </View>
-        <View row gap-15 >
-          <ButtonNotifyIcon onPress={() => { alert('Add navigate in line 134') }} />
-          <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
-        </View>
-      </View>
-      <Animated.View style={headerHideStyle({ offset: useOffset, height: 60 })}>
-        <View row height={60} width={345} centerV style={[AppStyles.shadowItem, { borderRadius: 10 }]} marginB-15 marginH-4 paddingH-5>
-          <View row centerV>
-            <Image source={{ uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png` }} width={40} height={40} />
-            <Text marginL-5 text60>{temperature.toFixed(0)}°C</Text>
+          </View>
+        </Animated.View>
+
+        <Animated.View style={showStyle(scrollOffset)}>
+          <AppSearch />
+        </Animated.View>
+
+        <Animated.ScrollView
+          style={{ marginTop: 15 }}
+          showsVerticalScrollIndicator={false}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16} // This ensures smooth animation
+        >
+          <View
+            height={170}
+            width={'100%'}
+            style={{
+              overflow: 'hidden',
+              marginTop: 10,
+              alignSelf: 'center',
+              borderRadius: 12
+            }}
+          >
+
+            <Carousel
+              loop
+              autoplay
+              autoplayInterval={3000}
+              showCounter
+              pageControlProps={{
+                color: '#000',
+              }}
+              pageControlPosition={PageControlPosition.UNDER}
+            >
+              {banner.map((item, index) => (
+                <Pressable
+                  onPress={() => handleOpenImage(index)}
+                  key={index}
+                >
+                  <AnimatedImage
+                    animationDuration={1000}
+                    source={item}
+                    aspectRatio={16 / 9}
+                    cover
+                    key={index}
+                    style={{ resizeMode: 'cover', borderRadius: 12 }}
+                  />
+                </Pressable>
+              ))}
+            </Carousel>
           </View>
 
-          <View height={30} width={2} backgroundColor="#717658" marginL-15 marginR-15 />
+          <View width={'100%'} height={65} marginT-15>
+            <FlatList
+              data={cateArr}
+              renderItem={renderCateItem}
+              keyExtractor={item => item.id.toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
 
-          <View>
-            <Text text70BO>{currentDate}</Text>
-            <View row marginT-2 centerV>
-              <FontAwesome6 name="location-dot" size={16} color="black" />
-              <Text marginL-5 text80>{location?.name}</Text>
+          {/* Dịch vụ */}
+          <View width={'100%'} height={380} marginT-15>
+            <View row spread marginB-15>
+              <Text text60BO >Dịch vụ nổi bật</Text>
+              <TouchableOpacity>
+                <Text underline style={{ color: '#717658' }}>Xem thêm</Text>
+              </TouchableOpacity>
             </View>
-          </View>
-        </View>
-      </Animated.View>
 
-      <Animated.View style={headerShowStyle({ offset: useOffset, height: 50 })}>
-        <AppSearch />
-      </Animated.View>
-
-      <ScrollView
-        style={{ marginTop: 15 }}
-        showsVerticalScrollIndicator={false}
-        onScroll={(e) => {
-          useOffset.value = e.nativeEvent.contentOffset.y
-        }} >
-
-        <Image borderRadius={12} width={345} height={163} source={require('@/assets/images/home/PanerHome.png')} />
-
-        <View width={345} height={65} marginT-15>
-          <FlatList
-            data={cateArr}
-            renderItem={renderCateItem}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-
-        {/* Dịch vụ */}
-        <View width={345} height={380} marginT-15>
-          <View row spread marginB-15>
-            <Text text60BO >Dịch vụ nổi bật</Text>
-            <TouchableOpacity>
-              <Text underline style={{ color: '#717658' }}>Xem thêm</Text>
-            </TouchableOpacity>
+            <FlatList
+              data={services}
+              renderItem={renderServiceItem}
+              keyExtractor={item => item.id.toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
 
-          <FlatList
-            data={services}
-            renderItem={renderServiceItem}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+          {/* Sản phẩm nổi bật */}
+          <View width={'100%'} height={340} marginT-15>
+            <View row spread marginB-15>
+              <Text text60BO >Sản phẩm nổi bật</Text>
+              <TouchableOpacity>
+                <Text underline style={{ color: '#717658' }}>Xem thêm</Text>
+              </TouchableOpacity>
+            </View>
 
-        {/* Sản phẩm nổi bật */}
-        <View width={345} height={340} marginT-15>
-          <View row spread marginB-15>
-            <Text text60BO >Sản phẩm nổi bật</Text>
-            <TouchableOpacity>
-              <Text underline style={{ color: '#717658' }}>Xem thêm</Text>
-            </TouchableOpacity>
+            <FlatList
+              data={services}
+              renderItem={renderProductItem}
+              keyExtractor={item => item.id.toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
 
-          <FlatList
-            data={services}
-            renderItem={renderProductItem}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+          {/* Sản phẩm bán chạy */}
+          <View width={'100%'} height={350} >
+            <View row spread marginB-15>
+              <Text text60BO >Sản phẩm bán chạy</Text>
+              <TouchableOpacity>
+                <Text underline style={{ color: '#717658' }}>Xem thêm</Text>
+              </TouchableOpacity>
+            </View>
 
-        {/* Sản phẩm bán chạy */}
-        <View width={345} height={350} >
-          <View row spread marginB-15>
-            <Text text60BO >Sản phẩm bán chạy</Text>
-            <TouchableOpacity>
-              <Text underline style={{ color: '#717658' }}>Xem thêm</Text>
-            </TouchableOpacity>
+            <FlatList
+              data={services}
+              renderItem={renderProductItem}
+              keyExtractor={item => item.id.toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
 
-          <FlatList
-            data={services}
-            renderItem={renderProductItem}
-            keyExtractor={item => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-
-      </ScrollView>
+        </Animated.ScrollView>
+      </View>
     </View>
   );
 }
