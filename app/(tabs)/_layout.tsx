@@ -71,3 +71,4 @@ const TabsLayout: React.FC = () => {
     );
 }
 export default TabsLayout;
+

@@ -1,7 +1,7 @@
 import { AppStyles } from '@/constants/AppStyles';
 import { useEffect, useState } from 'react';
-import { FlatList, Pressable, ScrollView } from 'react-native';
-import { View, Text, Image, TouchableOpacity, Carousel, PageControlPosition, AnimatedImage } from 'react-native-ui-lib';
+import { FlatList, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Carousel, PageControlPosition, AnimatedImage, Spacings } from 'react-native-ui-lib';
 import getLocation from '@/utils/location/locationHelper';
 import getWeather from '@/utils/weather/getWeatherData';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -13,8 +13,8 @@ import AppSearch from '@/components/inputs/AppSearch';
 import { Href, router } from "expo-router";
 import { hideStyle, showStyle } from './animated';
 import { useDispatch, useSelector } from 'react-redux'
-import { getTreatmentsThunk } from '@/redux/treatment';
-
+import { getTreatmentsThunk, getTreatmentCateThunk } from '@/redux/treatment';
+import { TreatmentResponeModel } from '@/types/treatment.type';
 
 
 interface CateItem {
@@ -35,7 +35,11 @@ interface HeaderStyleParams {
   height: number;
 }
 
+
+
 const HomePage = () => {
+  const dispatch = useDispatch();
+
   const [cateData, setCateData] = useState<CateItem[]>(cateArr)
   const [services, setServices] = useState<any>([]);
   const [temperature, setTemperature] = useState<Float>(0);
@@ -49,15 +53,20 @@ const HomePage = () => {
   ]);
   const [bannerViewIndex, setBannerViewIndex] = useState(0);
   const [bannerVisible, setBannerVisible] = useState(false);
+  const [treatments, setTreatments] = useState([]);
+
   const scrollOffset = useSharedValue(0);
-  const dispatch = useDispatch();
 
-  const getTreatment = async() => {
-    const res = await dispatch(getTreatmentsThunk());
-    console.log(res)
-  }
+  const { treatmentsList } = useSelector((state: any) => state.treatment);
+  useEffect(() => {
+    dispatch(getTreatmentsThunk(1));
+  }, [dispatch]);
 
-  getTreatment();
+  useEffect(() => {
+    if (treatmentsList && treatmentsList.data) {
+      setTreatments(treatmentsList.data);
+    }
+  }, [treatmentsList]);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -110,6 +119,7 @@ const HomePage = () => {
   });
 
   const handleOpenImage = (index: number) => {
+    // Tạm thời để như vậy nha
     setBannerViewIndex(index);
     setBannerVisible(true);
   }
@@ -125,14 +135,19 @@ const HomePage = () => {
     )
   }
 
-  const renderServiceItem = (item: any) => {
+  const renderTreatmentsItem = (item: any) => {
     const rItem = item.item;
+
+    const truncateText = (text: string, maxLength: number) => {
+      if (text.length <= maxLength) return text;
+      return text.slice(0, maxLength).trim() + '...';
+    };
     return (
-      <TouchableOpacity marginR-15 marginB-5 style={[AppStyles.shadowItem, { borderRadius: 16 }]} >
-        <Image source={require('@/assets/images/home/service1.png')} width={250} height={235} />
+      <TouchableOpacity marginR-15 marginB-5 style={[AppStyles.shadowItem, { borderRadius: 16, width: 230, height: 'auto' }]} >
+        <Image source={require('@/assets/images/home/service1.png')} width={'100%'} height={210} style={{ resizeMode: 'stretch' }} />
         <View paddingH-12 marginT-6>
           <Text text70H>{rItem.name}</Text>
-          <Text style={{ color: '#8C8585' }}>{rItem.describe}</Text>
+          <Text style={{ color: '#8C8585' }}>{truncateText(rItem.description, 50)}</Text>
           <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
         </View>
       </TouchableOpacity>
@@ -142,10 +157,10 @@ const HomePage = () => {
   const renderProductItem = (item: any) => {
     const rItem = item.item;
     return (
-      <TouchableOpacity
-        onPress={() => { router.push('product/detail', { id: rItem.id }) }}
-        marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}
-      >
+
+      <TouchableOpacity onPress={() => {
+        router.push('product/detail', { id: rItem.id })
+      }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
         <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-8 marginT-5>
           <Text text70H>{rItem.name}</Text>
@@ -175,6 +190,7 @@ const HomePage = () => {
                   <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
                 </View>
               </View>
+
             </Animated.View>
             <Animated.View style={showStyle(scrollOffset)}>
               <Text text50BO color='#717658'>Khám phá</Text>
@@ -216,44 +232,27 @@ const HomePage = () => {
           onScroll={scrollHandler}
           scrollEventThrottle={16} // This ensures smooth animation
         >
-          <View
-            height={170}
-            width={'100%'}
-            style={{
-              overflow: 'hidden',
-              marginTop: 10,
-              alignSelf: 'center',
-              borderRadius: 12
-            }}
-          >
-
+          <View style={styles.carouselContainer}>
             <Carousel
               loop
               autoplay
               autoplayInterval={3000}
-              showCounter
-              pageControlProps={{
-                color: '#000',
-              }}
               pageControlPosition={PageControlPosition.UNDER}
+              containerStyle={styles.carousel}
             >
               {banner.map((item, index) => (
-                <Pressable
-                  onPress={() => handleOpenImage(index)}
-                  key={index}
-                >
+                <View key={index} style={styles.slideContainer}>
                   <AnimatedImage
-                    animationDuration={1000}
                     source={item}
-                    aspectRatio={16 / 9}
-                    cover
-                    key={index}
-                    style={{ resizeMode: 'cover', borderRadius: 12 }}
+                    style={styles.image}
+                    animationDuration={1000}
                   />
-                </Pressable>
+                  <View style={styles.touchableOverlay} onTouchEnd={() => handleOpenImage(index)} />
+                </View>
               ))}
             </Carousel>
           </View>
+
 
           <View width={'100%'} height={65} marginT-15>
             <FlatList
@@ -275,9 +274,9 @@ const HomePage = () => {
             </View>
 
             <FlatList
-              data={services}
-              renderItem={renderServiceItem}
-              keyExtractor={item => item.id.toString()}
+              data={treatments}
+              renderItem={renderTreatmentsItem}
+              keyExtractor={(item: TreatmentResponeModel) => item.id.toString()}
               horizontal
               showsHorizontalScrollIndicator={false}
             />
@@ -325,6 +324,31 @@ const HomePage = () => {
   );
 }
 export default HomePage;
+
+const styles = StyleSheet.create({
+  carouselContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    height: 160,
+    marginTop: 10,
+  },
+  carousel: {
+    height: 200,
+  },
+  slideContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    height: 160,
+  },
+  image: {
+    height: '100%',
+    width: '100%',
+    resizeMode: 'stretch',
+  },
+  touchableOverlay: {
+    ...StyleSheet.absoluteFillObject,
+  },
+});
 
 const cateArr = [
   {
