@@ -158,6 +158,7 @@ const HomePage = () => {
     const rItem = item.item;
     return (
 
+
       <TouchableOpacity onPress={() => {
         router.push('product/detail', { id: rItem.id })
       }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
@@ -190,6 +191,7 @@ const HomePage = () => {
                   <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
                 </View>
               </View>
+
 
             </Animated.View>
             <Animated.View style={showStyle(scrollOffset)}>
