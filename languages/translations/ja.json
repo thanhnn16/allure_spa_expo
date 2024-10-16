@@ -4,42 +4,45 @@
     "logout": "ログアウト",
     "language": "言語",
     "settings": "設定",
-    "change_language": "Change Language",
+    "change_language": "言語を変更する",
     "back": "戻る",
     "sendOTP": "OTPを送信",
     "auth": {
-      "login": {
-        "title": "ログイン",
-        "username": "電話番号",
-        "password": "パスワード",
-        "remember": "記憶する",
-        "zalo": "Zaloでログイン",
-        "skip": "後でログインする",
-        "terms": "利用規約",
-        "privacy": "プライバシーポリシー",
-        "by_continue": "ログインすることにより、あなたは同意します",
-        "and": "および",
-        "of_us": "当社の",
-        "forgot_password": "パスワードを忘れましたか？"
-      },
-      "art": {
-        "title": "スキンケアのアート",
-        "subtitle": "日本の職人から"
-      },
-      "register": {
-        "title": "登録",
-        "username": "電話番号",
-        "fullname": "フルネーム",
-        "password": "パスワード",
-        "otp": "OTPを入力",
-        "resend_otp": "コードを再送する",
-        "confirm": "確認"
-      }
+        "login": {
+            "title": "ログイン",
+            "username": "電話番号",
+            "password": "パスワード",
+            "remember": "記憶する",
+            "zalo": "Zaloでログイン",
+            "skip": "後でログインする",
+            "terms": "利用規約",
+            "privacy": "プライバシーポリシー",
+            "by_continue": "ログインすることにより、あなたは",
+            "and": "および",
+            "of_us": "当社の",
+            "forgot_password": "パスワードを忘れましたか？"
+        },
+        "art": {
+            "title": "スキンケアのアート",
+            "subtitle": "日本の職人から"
+        },
+        "register": {
+            "title": "登録",
+            "username": "電話番号",
+            "fullname": "氏名",
+            "password": "新しいパスワード",
+            "confirm_password": "パスワードの確認",
+            "agree_terms": "登録することで、利用規約とプライバシーポリシーに同意したことになります。",
+            "register_button": "登録",
+            "back_button": "戻る",
+            "er-ror": "エラーが発生しました。再試行してください。"
+        }
     },
     "terms": "利用規約",
     "privacy": "プライバシーポリシー",
     "otp": {
-      "otp_input": "OTPを入力"
+        "otp_input": "OTPを入力",
+        "resend_otp": "コードを再送する"
     }
   }
   

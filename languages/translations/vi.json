@@ -4,7 +4,7 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
     "settings": "Cài đặt",
-    "change_language": "Change Language",
+    "change_language": "Thay đổi ngôn ngữ",
     "back": "Quay lại",
     "sendOTP": "Gửi OTP",
     "auth": {
@@ -23,22 +23,25 @@
             "forgot_password": "Quên mật khẩu?"
         },
         "art": {
-            "title": "Nghệ thuật chăm da",
+            "title": "Nghệ thuật chăm sóc da",
             "subtitle": "Từ nghệ nhân Nhật Bản"
         },
         "register": {
             "title": "Đăng ký",
-            "username": "Số điện thoại",
-            "fullname": "Tên của bạn",
-            "password": "Mật khẩu",
-            "otp": "Nhập OTP",
-            "resend_otp": "Gửi lại mã",
-            "confirm": "Xác nhận"
+            "phone_number": "Số điện thoại",
+            "fullname": "Họ và tên",
+            "password": "Mật khẩu mới",
+            "confirm_password": "Xác nhận mật khẩu",
+            "agree_terms": "Bằng cách đăng ký, bạn sẽ đồng ý với Điều khoản sử dụng và Chính sách bảo mật của chúng tôi",
+            "register_button": "Đăng ký",
+            "back_button": "Quay lại",
+            "er-ror": "Có lỗi xảy ra, vui lòng thử lại sau."
         }
     },
     "terms": "Điều khoản sử dụng",
     "privacy": "Chính sách bảo mật",
     "otp": {
-        "otp_input": "Nhập OTP"
+        "otp_input": "Nhập OTP",
+        "resend_otp": "Gửi lại mã"
     }
 }

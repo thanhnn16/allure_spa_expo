@@ -8,38 +8,41 @@
     "back": "Back",
     "sendOTP": "Send OTP",
     "auth": {
-      "login": {
-        "title": "Login",
-        "username": "Phone Number",
-        "password": "Password",
-        "remember": "Remember Me",
-        "zalo": "Login with Zalo",
-        "skip": "Login Later",
-        "terms": "Terms of Service",
-        "privacy": "Privacy Policy",
-        "by_continue": "By logging in, you agree to our",
-        "and": "and",
-        "of_us": "of us",
-        "forgot_password": "Forgot password?"
-      },
-      "art": {
-        "title": "The Art of Skincare",
-        "subtitle": "From Japanese Artisans"
-      },
-      "register": {
-        "title": "Register",
-        "username": "Phone Number",
-        "fullname": "Full Name",
-        "password": "Password",
-        "otp": "Enter OTP",
-        "resend_otp": "Resend Code",
-        "confirm": "Confirm"
-      }
+        "login": {
+            "title": "Login",
+            "username": "Phone Number",
+            "password": "Password",
+            "remember": "Remember Me",
+            "zalo": "Login with Zalo",
+            "skip": "Login Later",
+            "terms": "Terms of Service",
+            "privacy": "Privacy Policy",
+            "by_continue": "By logging in, you agree to our",
+            "and": "and",
+            "of_us": "of us",
+            "forgot_password": "Forgot password?"
+        },
+        "art": {
+            "title": "The Art of Skincare",
+            "subtitle": "From Japanese Artisans"
+        },
+        "register": {
+            "title": "Register",
+            "phone_number": "Phone Number",
+            "fullname": "Full Name",
+            "password": "New Password",
+            "confirm_password": "Confirm Password",
+            "agree_terms": "By registering, you agree to our Terms of Service and Privacy Policy",
+            "register_button": "Register",
+            "back_button": "Back",
+            "er-ror": "An error occurred, please try again."
+        }
     },
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "otp": {
-      "otp_input": "Enter OTP"
+        "otp_input": "Enter OTP",
+        "resend_otp": "Resend Code"
     }
   }
   
