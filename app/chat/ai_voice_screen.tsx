@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const AIScreen = () => {
+const AIVoiceScreen = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Chăm sóc AI</Text>
@@ -64,4 +64,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AIScreen;
+export default AIVoiceScreen;

@@ -6,6 +6,8 @@ import {
 import { data } from './data';
 import FavoriteItem from './FavoriteItem';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
+import AppBar from '@/components/app_bar/app_bar';
+import { SafeAreaView } from 'react-native';
 
 const renderFirstPage = () => {
     return (
@@ -44,13 +46,16 @@ const secondPage = () => {
 const FavoritePage = () => {
     return (
         <GestureHandlerRootView>
-            <TabController items={[{ label: 'Tất cả' }, { label: 'Giảm giá' }]}>
-                <TabController.TabBar height={50} containerStyle={{ marginTop: 100 }}/>
-                <View flex>
-                    <TabController.TabPage index={0}>{renderFirstPage()}</TabController.TabPage>
-                    <TabController.TabPage index={1} lazy>{secondPage()}</TabController.TabPage>
-                </View>
-            </TabController>
+            <SafeAreaView style={{ flex: 1 }}>
+                    <AppBar title='Yêu thích' />
+                    <TabController items={[{ label: 'Tất cả' }, { label: 'Giảm giá' }]}>
+                        <TabController.TabBar height={50} />
+                        <View flex>
+                            <TabController.TabPage index={0}>{renderFirstPage()}</TabController.TabPage>
+                            <TabController.TabPage index={1} lazy>{secondPage()}</TabController.TabPage>
+                        </View>
+                    </TabController>
+            </SafeAreaView>
         </GestureHandlerRootView>
     );
 }
