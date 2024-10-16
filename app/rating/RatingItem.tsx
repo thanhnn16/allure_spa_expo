@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { View, Text, Image, Carousel, TouchableOpacity } from 'react-native-ui-lib'
-import ImageView from "react-native-image-viewing";
-import StarIcon from '@/assets/icons/star.svg';
-import PagerView from 'react-native-pager-view';
+
 import { Href, Link, router } from 'expo-router';
 
+import StarIcon from '@/assets/icons/star.svg';
 
 interface RatingItemProps {
   id: number;
@@ -23,33 +22,10 @@ interface RatingItemProps {
 const RatingItem = ({ item }: { item: RatingItemProps }) => {
 
   const handleImagePress = () => {
-    const video = item.video; // Replace with actual video URL
-    const images = item.images; // Use the images from the item
-    router.push(`/pager_view?video=${encodeURIComponent(video)}&images=${encodeURIComponent(JSON.stringify(images))}`);
+    router.push(
+      `/pager_view?id=${item.id}`
+    );
   };
-
-  const FooterComponent = () => {
-    return (
-      <View marginB-20 padding-20>
-
-        <View row centerV>
-          <View row gap-10 centerV>
-            <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />
-            <Text h2_bold white>{item.user.name}</Text>
-          </View>
-          <View row gap-5 flex right>
-            <Image source={StarIcon} size={13}/>
-            <Text h3_bold white>{item.rating}</Text>
-          </View>
-        </View>
-
-        <View marginV-10>
-          <Text h2 white>{item.comment}</Text>
-        </View>
-
-      </View>
-    )
-  }
 
   return (
     <View 
