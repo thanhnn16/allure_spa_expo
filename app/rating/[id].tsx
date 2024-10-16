@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useLocalSearchParams } from 'expo-router';
+import {router, useLocalSearchParams} from 'expo-router';
 import { View, Text, Image, Button, Colors } from 'react-native-ui-lib';
 import { Rating } from 'react-native-ratings';
 
@@ -83,7 +83,6 @@ const RatingPage = () => {
             />
           </BlurView>
         )}
-
       </View>
     </SafeAreaView>
   )

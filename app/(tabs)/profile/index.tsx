@@ -19,6 +19,7 @@ const ProfilePage = () => {
           borderRadius={16}
           backgroundColor={colors.secondary}
           paddingH-12
+          
         >
           <View row gap-10 centerV>
             <Image

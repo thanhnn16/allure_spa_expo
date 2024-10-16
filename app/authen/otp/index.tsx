@@ -1,13 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, Alert, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, ImageBackground } from 'react-native';
+import { Alert, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, ImageBackground } from 'react-native';
+import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
 import { TextInput as RNTextInput } from 'react-native';
 import AppButton, { AppButtonProps } from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import colors from "@/constants/Colors";
-import Spacings from '@/constants/Spacings';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { forwardRef } from 'react-native-ui-lib';
+import i18n from '@/languages/i18n';
 
 const OTP: React.FC = () => {
   const inputRefs = useRef<(RNTextInput | null)[]>([]);
@@ -41,7 +42,7 @@ const OTP: React.FC = () => {
     if (!otp.every((value) => value)) {
       Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ mã OTP');
       return;
-    } 
+    }
     else {
       const otpValue = otp.join('');
       router.push('/home');
@@ -59,8 +60,8 @@ const OTP: React.FC = () => {
           source={require('@/assets/images/authen/img_bg_authen.png')}
           style={{ flex: 1 }}
         >
-          <View  style={{ marginTop: 60 }}>
-           
+          <View style={{ marginTop: 60 }}>
+
             <Text style={{ fontFamily: 'AlexBrush-Regular', fontSize: 32, color: colors.primary, textAlign: 'center', marginTop: 10 }}>
               Nghệ thuật chăm da
             </Text>
@@ -103,10 +104,12 @@ const OTP: React.FC = () => {
               type="secondary"
               onPress={() => router.back()}
             />
-            <Text style={{ textAlign: 'center', marginTop: 20, marginBottom: 50 }}>
-              Bằng cách tiếp tục, bạn sẽ đồng ý với{' '}
-              <Text style={{ fontWeight: 'bold' }}>Điều khoản sử dụng</Text> và{' '}
-              <Text style={{ fontWeight: 'bold' }}>Chính sách bảo mật</Text> của chúng tôi
+            <Text center text80 marginT-20 marginB-50>
+              {i18n.t('auth.login.by_continue')}
+              <Text text80H> {i18n.t('auth.login.terms')} </Text>
+              {''}{i18n.t('auth.login.and')} {''}
+              <Text text80H>{i18n.t('auth.login.privacy')}</Text>
+              {''} {i18n.t('auth.login.of_us')}
             </Text>
           </View>
         </ImageBackground>
