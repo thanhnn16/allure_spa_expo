@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, FlatList, TextInput, TouchableWithoutFeedback, Platform, Keyboard, KeyboardAvoidingView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { Image, View, Text, TouchableOpacity, Button, Colors } from 'react-native-ui-lib';
-
+import * as ImagePicker from "expo-image-picker";
 
 
 import SunIcon from '@/assets/icons/sun.svg';
@@ -11,7 +11,7 @@ import MessageBubble from '@/components/message/message_bubble';
 import messagesData from './data';
 import MessageTextInput from '@/components/message/message_textinput';
 import AppBar from '@/components/app_bar/app_bar';
-const MessageScreen = () => {
+const MessageAI = () => {
   const [message, setMessage] = useState('');
   const [messageStatus, setMessageStatus] = useState('Đã gửi');
   const scrollRef = useRef<FlatList>(null);
@@ -62,7 +62,7 @@ const MessageScreen = () => {
       >
         <SafeAreaView style={{ flex: 1 }}>
 
-          <AppBar title="CSKH" />
+          <AppBar title="Chăm sóc AI" />
 
           <FlatList
             data={messagesData}
@@ -76,12 +76,12 @@ const MessageScreen = () => {
           />
           
           <MessageTextInput
-            placeholder="Nhắn cho CSKH..."
+            placeholder="Nhắn cho chăm sóc AI..."
             message={message}
             setMessage={setMessage}
             handleSend={handleSend}
             isCamera={true}
-            isAI={false}
+            isAI={true}
           />
 
         </SafeAreaView>
@@ -105,4 +105,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessageScreen;
+export default MessageAI;
