@@ -7,6 +7,8 @@ import i18n from '@/languages/i18n';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import { TextInput } from '@/components/inputs/TextInput';
 import colors from 'react-native-ui-lib/src/style/colors';
+import { useDispatch } from 'react-redux';
+import { getTreatmentsThunk } from '@/redux/treatment';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,6 +19,8 @@ const Onboarding: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
+
+  const dispatch = useDispatch();
 
   const changeLanguage = (language: string) => {
     i18n.locale = language;
@@ -116,7 +120,7 @@ const Onboarding: React.FC = () => {
               <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.zalo')}</Text>
             </View>
             <View style={{ paddingHorizontal: Spacings.s6, marginBottom: 30 }}>
-              <Link href="/(tabs)/home" asChild>
+              <Link href="/(tabs)/home" asChild onPress={() => {dispatch(getTreatmentsThunk())}}>
                 <AppButton type="primary" title={i18n.t('auth.login.title')} />
               </Link>
               <AppButton

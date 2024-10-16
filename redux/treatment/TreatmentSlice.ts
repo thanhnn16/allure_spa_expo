@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCategoriesThunk } from "@/redux/treatment/getCategoriesThunk";
+import { getTreatmentCateThunk } from "@/redux/treatment/getTreatmentCateThunk";
 import { getTreatmentsThunk } from './getTreatmentsThunk';
-import { TreatmentCategoriesRespone, TreatmentsResponeParams } from "@/types/treatment.type";
+import { TreatmentCategoriesResponeParams, TreatmentsResponeParams } from "@/types/treatment.type";
 
 interface initialStateType {
-    treatmentCategories: TreatmentCategoriesRespone | null;
+    treatmentCategories: TreatmentCategoriesResponeParams | null;
     treatmentsList: TreatmentsResponeParams | null;
     current_page: number;
     isLoadding: boolean;
@@ -35,14 +35,14 @@ export const treatmentSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(getCategoriesThunk.pending, (state) => {
+            .addCase(getTreatmentCateThunk.pending, (state) => {
                 state.isLoadding = true;
             })
-            .addCase(getCategoriesThunk.fulfilled, (state: any, action) => {
+            .addCase(getTreatmentCateThunk.fulfilled, (state: any, action) => {
                 state.isLoadding = false;
                 state.treatmentCategories = action.payload;
             })
-            .addCase(getCategoriesThunk.rejected, (state, action) => {
+            .addCase(getTreatmentCateThunk.rejected, (state, action) => {
                 state.isLoadding = false;
                 state.error = action.error
             })
