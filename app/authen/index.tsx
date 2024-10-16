@@ -140,7 +140,7 @@ const Onboarding: React.FC = () => {
                 onLoginPress={() => {
                   return axios.post('/api/auth/login', {
                     phone_number: phoneNumber,
-                    password: password,
+                    password: password,   
                   })
                     .then((response) => {
                       if (response.status === 200) {
