@@ -120,10 +120,10 @@ const Onboarding: React.FC = () => {
                       const nextLanguage =
                         currentLanguage === 'en'
                           ? 'ja'
-                          : currentLanguage === 'ja'
+                          : currentLanguage  === 'ja'
                           ? 'vi'
                           : 'en';
-                      changeLanguage(nextLanguage);
+                      changeLanguage (nextLanguage);
                     }}
                   />
                   <Link href="/(tabs)/home" asChild>
