@@ -1,18 +1,10 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import HomePage from '@/app/(tabs)/home';
-import NotificationPage from '@/app/notification';
-import { RootStackParamList } from '@/app/(tabs)/types/types'; // Adjust the import path as needed
-import NotNotificationPage from '../notification/not_index';
 
 const TabsLayout: React.FC = () => {
   return (
     <Tabs initialRouteName="home/index" screenOptions={{ headerShown: false }}>
-    <Tabs
-      initialRouteName="home/index"
-      screenOptions={{ headerShown: false }}>
       <Tabs.Screen
         name="home/index"
         options={{
@@ -40,7 +32,6 @@ const TabsLayout: React.FC = () => {
           ),
         }}
       />
-
       <Tabs.Screen
         name="profile/index"
         options={{
@@ -51,26 +42,13 @@ const TabsLayout: React.FC = () => {
         }}
       />
       <Tabs.Screen
-        name="profile/detail/index"
+        name="settings"
         options={{
-          href: null
+          href: null,
         }}
       />
-      <Tabs.Screen
-        name="profile/detail/edit"
-        options={{
-          href: null
-        }}
-      />
-        <Tabs.Screen
-            name="profile/address/index"
-            options={{
-                href: null
-            }}
-        />
     </Tabs>
-  </Tabs>
   );
 };
-export default TabsLayout;
 
+export default TabsLayout;
