@@ -24,7 +24,7 @@ export const TextInput = ({
   label, // Thêm label vào props
 }: TextInputProps) => {
   return (
-    <View width="100%" paddingH-24>
+    <View width="100%">
       {title && <Text text70BO marginB-8 color={Colors.text}>{title}</Text>}
       <TextField
         value={value}
