@@ -1,5 +1,5 @@
 import { SafeAreaView, StyleSheet, FlatList, Image, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Animated from 'react-native-reanimated'
 import { View, Text, TouchableOpacity } from 'react-native-ui-lib';
 import { Href, router } from "expo-router";
@@ -10,24 +10,33 @@ import { AppStyles } from '@/constants/AppStyles';
 
 const items = [
   { id: 1, name: 'Tất cả' },
-  { id: 2, name: 'Sắp tới' },
-  { id: 3, name: 'Đã hoàn thành' },
-  { id: 4, name: 'Bị hoãn' },
+  { id: 2, name: 'Sữa rửa mặt' },
+  { id: 3, name: 'Tẩy trang' },
+  { id: 4, name: 'Làm trắng da' },
 ];
 
-const products = [
-  { id: 1, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/home/product1.png') },
-  { id: 2, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp2.png') },
-  { id: 3, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp3.png') },
-  { id: 7, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp2.png') },
-  { id: 4, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp4.png') },
-  { id: 5, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp5.png') },
-  { id: 6, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp6.png') },
-  { id: 8, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp6.png') },
+const allProducts = [
+  { id: 1, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/home/product1.png'), category: 1 },
+  { id: 2, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp2.png'), category: 2 },
+  { id: 3, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp3.png'), category: 3 },
+  { id: 4, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp4.png'), category: 4 },
+  { id: 5, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp5.png'), category: 1 },
+  { id: 6, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp6.png'), category: 2 },
+  { id: 7, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp2.png'), category: 3 },
+  { id: 8, name: 'Bản sao làm sạch Lipocollage Lamellar', price: '1.560.000đ', image: require('@/assets/images/sp6.png'), category: 4 },
 ];
 
 const StorePage = () => {
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<number>(1);
+  const [products, setProducts] = useState(allProducts);
+
+  useEffect(() => {
+    if (selectedItem === 1) {
+      setProducts(allProducts);
+    } else {
+      setProducts(allProducts.filter(product => product.category === selectedItem));
+    }
+  }, [selectedItem]);
 
   const renderItem = (item: { id: number; name: string }, index: number) => {
     const isSelected = item.id === selectedItem;
