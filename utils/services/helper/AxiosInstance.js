@@ -1,10 +1,14 @@
 import axios from "axios";
 
-const AxiosInstance = (contentType = 'application/json') => {
+// baseURL: `https://allurespa.io.vn/`
 
+const AxiosInstance = (contentType = 'application/json') => {
+    
     const axiosInstance = axios.create({
         baseURL: `https://allure-spa-1139e6106faa.herokuapp.com/api/`
     });
+
+
 
     axiosInstance.interceptors.request.use(
         async (config) => {
