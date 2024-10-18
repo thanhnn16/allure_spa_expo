@@ -206,7 +206,7 @@ const HomePage = () => {
           }}
         >
 
-          {/* <RenderCarousel banner={banner} /> */}
+          <RenderCarousel banner={banner} />
 
           {/* Danh mục */}
           <RenderCategory cateData={cateArr} />

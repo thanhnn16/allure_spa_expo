@@ -1,3 +1,4 @@
+import React from "react";
 import { FlatList } from "react-native"
 import { View, Text, TouchableOpacity } from "react-native-ui-lib"
 
@@ -8,7 +9,7 @@ interface renderSectionProps {
     onPressMore: any;
 }
 
-const RenderSection = ({title, data, renderItem, onPressMore}: renderSectionProps): JSX.Element => {
+const RenderSection: React.FC<renderSectionProps> = ({ title, data, renderItem, onPressMore }) => {
   return (
     <View gap-10 marginV-15 >
       <View row spread >

@@ -7,7 +7,7 @@ interface RenderCategoryProps {
     cateData: any
 }
 
-const RenderCategory = ({ cateData }: RenderCategoryProps): JSX.Element => {
+const RenderCategory: React.FC<RenderCategoryProps> = ({ cateData }) => {
 
     const renderCateItem = (item: any) => {
         const rItem = item.item;

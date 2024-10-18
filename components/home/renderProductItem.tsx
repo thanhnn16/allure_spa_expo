@@ -2,7 +2,10 @@ import { AppStyles } from '@/constants/AppStyles';
 import React from 'react';
 import { TouchableOpacity, Image, View, Text } from 'react-native-ui-lib';
 
-const RenderProductItem = (item: any) => {
+interface RenderProductItemProps {
+  item: any
+}
+const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
     const rItem = item.item;
     return (
       <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 8, width: 150, height: 270 }]} >

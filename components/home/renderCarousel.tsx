@@ -1,8 +1,12 @@
+import React from 'react'
 import { StyleSheet } from 'react-native'
 import { AnimatedImage, Carousel, PageControlPosition, View } from 'react-native-ui-lib'
 
-const RenderCarousel = (banner: any): JSX.Element => {
+interface RenderCarouselProps {
+  banner: Array<{ uri: string }>
+}
 
+const RenderCarousel: React.FC<RenderCarouselProps> = ({ banner }) => {
     return (
         <View style={styles.carouselContainer}>
             <Carousel
@@ -12,7 +16,7 @@ const RenderCarousel = (banner: any): JSX.Element => {
                 pageControlPosition={PageControlPosition.UNDER}
                 containerStyle={styles.carousel}
             >
-                {banner.map((item: any, index: number) => (
+                {banner.map((item, index) => (
                     <View key={index} style={styles.slideContainer}>
                         <AnimatedImage
                             source={item}
