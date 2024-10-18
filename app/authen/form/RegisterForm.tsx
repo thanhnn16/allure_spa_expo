@@ -99,11 +99,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           onPress={handleRegister}
           loading={loading}
         />
-        <AppButton
-          type="text"
-          title={i18n.t('auth.register.back_button')}
-          onPress={onBackPress}
-        />
+        <AppButton title={i18n.t('back')} type="outline" onPress={onBackPress} marginT-12 />
       </View>
     </>
   );

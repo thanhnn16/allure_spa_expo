@@ -14,7 +14,7 @@ interface LoginZaloFormProps {
   onBackPress: () => void;
 }
 
-const LoginForm: React.FC<LoginZaloFormProps> = ({
+const LoginZaloForm: React.FC<LoginZaloFormProps> = ({
   phoneNumber,
   fullName,
   setPhoneNumber,
@@ -53,4 +53,4 @@ const LoginForm: React.FC<LoginZaloFormProps> = ({
   );
 };
 
-export default LoginForm;
+export default LoginZaloForm;

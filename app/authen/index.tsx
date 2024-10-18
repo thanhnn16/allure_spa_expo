@@ -96,40 +96,40 @@ const Onboarding: React.FC = () => {
             }}
           >
             {viewState === 'default' ? (
-          
-                <View>
-                  <AppButton
-                    title={i18n.t('auth.register.title')}
-                    type="primary"
-                    onPress={() => handleButtonClick('register')}
-                  />
-                  <AppButton
-                    title={i18n.t('auth.login.title')}
-                    type="primary"
-                    onPress={() => handleButtonClick('login')}
-                  />
-                  <AppButton
-                    title={i18n.t('auth.login.zalo')}
-                    type="secondary"
-                    onPress={() => handleButtonClick('changed')}
-                  />
-                  <AppButton
-                    title={i18n.t('change_language')}
-                    type="secondary"
-                    onPress={() => {
-                      const nextLanguage =
-                        currentLanguage === 'en'
-                          ? 'ja'
-                          : currentLanguage  === 'ja'
+
+              <View>
+                <AppButton
+                  title={i18n.t('auth.register.title')}
+                  type="primary"
+                  onPress={() => handleButtonClick('register')}
+                />
+                <AppButton
+                  title={i18n.t('auth.login.title')}
+                  type="primary"
+                  onPress={() => handleButtonClick('login')}
+                />
+                <AppButton
+                  title={i18n.t('auth.login.zalo')}
+                  type="secondary"
+                  onPress={() => handleButtonClick('zalo')}
+                />
+                <AppButton
+                  title={i18n.t('change_language')}
+                  type="secondary"
+                  onPress={() => {
+                    const nextLanguage =
+                      currentLanguage === 'en'
+                        ? 'ja'
+                        : currentLanguage === 'ja'
                           ? 'vi'
                           : 'en';
-                      changeLanguage (nextLanguage);
-                    }}
-                  />
-                  <Link href="/(tabs)/home" asChild>
-                    <AppButton title={i18n.t('auth.login.skip')} type="text" />
-                  </Link>
-                </View>
+                    changeLanguage(nextLanguage);
+                  }}
+                />
+                <Link href="/(tabs)/home" asChild>
+                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
+                </Link>
+              </View>
             ) : viewState === 'login' ? (
               <LoginForm
                 phoneNumber={phoneNumber}
@@ -140,7 +140,7 @@ const Onboarding: React.FC = () => {
                 onLoginPress={() => {
                   return axios.post('/api/auth/login', {
                     phone_number: phoneNumber,
-                    password: password,   
+                    password: password,
                   })
                     .then((response) => {
                       if (response.status === 200) {
@@ -156,7 +156,7 @@ const Onboarding: React.FC = () => {
                         Alert.alert('Error', 'Network error, please try again');
                       }
                     });
-                 }}  
+                }}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : viewState === 'register' ? (
@@ -191,7 +191,7 @@ const Onboarding: React.FC = () => {
                         Alert.alert('Error', 'Network error, please try again');
                       }
                     });
-                 }}
+                }}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : viewState === 'zalo' ? (
@@ -203,7 +203,7 @@ const Onboarding: React.FC = () => {
                 onZaloPress={() => { }}
                 onLoginPress={() => {
 
-                 }}
+                }}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : null}
