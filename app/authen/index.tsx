@@ -14,9 +14,11 @@ const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
   const [viewState, setViewState] = useState('default');
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
+  const [fullName, setFullName] = useState('');
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(10)).current;
@@ -43,6 +45,54 @@ const Onboarding: React.FC = () => {
     i18n.locale = nextLanguage;
     setCurrentLanguage(nextLanguage);
   };
+
+  const handleRegisterPress = async () => {
+    try {
+      const response = await axios.post('/api/auth/register', {
+        phone_number: phoneNumber,
+        full_name: fullName,
+        password: password,
+        password_confirmation: password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+
+        // Transition to login form after successful registration
+        handleButtonClick('login');
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.response) {
+        Alert.alert('Error', err.response.data.message || 'Registration failed');
+      } else {
+        Alert.alert('Error', 'Network error, please try again');
+      }
+    }
+  };
+
+
+  const handleLoginPress = async () => {
+    try {
+      const response = await axios.post('/api/auth/login', {
+        phone_number: phoneNumber,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        // Handle successful login (e.g., navigate to the home screen)
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.response) {
+        Alert.alert('Error', err.response.data.message || 'Login failed');
+      } else {
+        Alert.alert('Error', 'Network error, please try again');
+      }
+    }
+  };
+
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
@@ -137,61 +187,18 @@ const Onboarding: React.FC = () => {
                 setPhoneNumber={setPhoneNumber}
                 setPassword={setPassword}
                 onZaloPress={() => { }}
-                onLoginPress={() => {
-                  return axios.post('/api/auth/login', {
-                    phone_number: phoneNumber,
-                    password: password,
-                  })
-                    .then((response) => {
-                      if (response.status === 200) {
-                        Alert.alert('Success', response.data.message);
-                        // Handle successful login (e.g., navigate to the home screen)
-                      }
-                    })
-                    .catch((error) => {
-                      const err = error as any;
-                      if (err.response) {
-                        Alert.alert('Error', err.response.data.message || 'Login failed');
-                      } else {
-                        Alert.alert('Error', 'Network error, please try again');
-                      }
-                    });
-                }}
+                onLoginPress={handleLoginPress}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : viewState === 'register' ? (
               <RegisterForm
                 phoneNumber={phoneNumber}
-                fullName={''}
+                fullName={fullName}
                 password={password}
                 setPhoneNumber={setPhoneNumber}
-                setFullName={() => { }}
+                setFullName={setFullName}
                 setPassword={setPassword}
-                onRegisterPress={() => {
-                  function backToLogin() {
-                    handleButtonClick('login');
-                  }
-
-                  return axios.post('/api/auth/register', {
-                    phone_number: phoneNumber,
-                    password: password,
-                  })
-                    .then((response) => {
-                      if (response.status === 200) {
-                        Alert.alert('Success', response.data.message);
-                        // Handle successful registration (e.g., navigate to the login screen)
-                        backToLogin();
-                      }
-                    })
-                    .catch((error) => {
-                      const err = error as any;
-                      if (err.response) {
-                        Alert.alert('Error', err.response.data.message || 'Registration failed');
-                      } else {
-                        Alert.alert('Error', 'Network error, please try again');
-                      }
-                    });
-                }}
+                onRegisterPress={handleRegisterPress}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : viewState === 'zalo' ? (

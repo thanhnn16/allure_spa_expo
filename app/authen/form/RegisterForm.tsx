@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { View } from 'react-native-ui-lib';
-import axios from 'axios';
 import { TextInput } from '@/components/inputs/TextInput';
 import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';
+import { registerUser } from '@/app/authen/api/apiService';
 import { Alert } from 'react-native';
 
+
 interface RegisterFormProps {
+
   phoneNumber: string;
+
   fullName: string;
+
   password: string;
-  setPhoneNumber: (text: string) => void;
-  setFullName: (text: string) => void;
-  setPassword: (text: string) => void;
-  onRegisterPress: () => Promise<void>;
+
+  setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
+
+  setFullName: React.Dispatch<React.SetStateAction<string>>;
+
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+
+  onRegisterPress: () => Promise<void>
+
   onBackPress: () => void;
+
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
@@ -34,30 +44,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       Alert.alert(i18n.t('auth.register.password_mismatch'), i18n.t('auth.register.check_password'));
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      const response = await axios.post('/api/auth/register', {
-        full_name: fullName,
-        phone_number: phoneNumber,
-        password: password,
-        password_confirmation: confirmPassword,
-      });
-
-      if (response.status === 201) {
-        Alert.alert(i18n.t('auth.register.success'), response.data.message);
-      }
-    } catch (error: any) {
-      if (error.response && error.response.status === 422) {
-        Alert.alert(i18n.t('auth.register.error'), error.response.data.message);
+      const result = await registerUser(fullName, phoneNumber, password, confirmPassword);
+  
+      if (result && result.success) {
+        Alert.alert(i18n.t('auth.register.success'), result.message);
+        
+        onRegisterPress(); 
       } else {
-        Alert.alert(i18n.t('auth.register.error'), i18n.t('auth.register.unknown_error'));
+        Alert.alert(i18n.t('auth.register.error'), result?.message ?? i18n.t('auth.register.unknown_error'));
       }
+    } catch (error) {
+      Alert.alert(i18n.t('auth.register.error'), i18n.t('auth.register.unknown_error'));
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <>
@@ -106,3 +112,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 };
 
 export default RegisterForm;
+function onRegisterPress() {
+  throw new Error('Function not implemented.');
+}
+
