@@ -11,13 +11,24 @@ export const loginThunk = createAsyncThunk<UserLoginResponseParams, LoginRequest
   'user/login',
   async (body: LoginRequest, { rejectWithValue }) => {
     try {
-      const res = await AxiosInstance().post<UserLoginResponseParams>('auth/login', body);
+      console.log('Login request body:', body); // Log the request body
+
+      const res = await AxiosInstance().post<UserLoginResponseParams>('auth/login', {
+        phone_number: body.phoneNumber,
+        password: body.password
+      });
+      console.log('Login response:', res); // Log the response
+
       if (res.data.success) {
+        console.log('Login successful:', res.data); // Log success
         return res.data;
       }
+
+      console.log('Login failed:', res.data.message); // Log failure message
       return rejectWithValue(res.data.message || 'Login failed');
     } catch (error: any) {
-      return rejectWithValue(error.message || 'An error occurred during login');
+      console.error('Login error:', error); // Log error
+      return rejectWithValue(error.data.message || 'An error occurred during login');
     }
   }
 );

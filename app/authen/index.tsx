@@ -9,6 +9,7 @@ import LoginZaloForm from './form/LoginZaloForm';
 import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import axios from 'axios';
+import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
@@ -78,10 +79,11 @@ const Onboarding: React.FC = () => {
         phone_number: phoneNumber,
         password: password,
       });
-
+  
       if (response.status === 200) {
         Alert.alert('Success', response.data.message);
-        // Xử lý logic sau khi đăng nhập thành công
+        console.log('Navigating to Home...');
+        router.push('/(tabs)/home'); // Đảm bảo đường dẫn chính xác
       }
     } catch (error) {
       const err = error as any;
@@ -92,12 +94,20 @@ const Onboarding: React.FC = () => {
       }
     }
   };
+  
 
   const renderForm = () => {
     switch (viewState) {
       case 'login':
         return (
-          <LoginForm />
+          <LoginForm
+            phoneNumber={phoneNumber}
+            password={password}
+            setPhoneNumber={setPhoneNumber}
+            setPassword={setPassword}
+            onLoginPress={handleLoginPress}
+            onBackPress={() => handleButtonClick('default')}
+          />
         );
       case 'register':
         return (
@@ -105,7 +115,6 @@ const Onboarding: React.FC = () => {
             phoneNumber={phoneNumber}
             fullName={fullName}
             password={password}
-
             setPhoneNumber={setPhoneNumber}
             setFullName={setFullName}
             setPassword={setPassword}

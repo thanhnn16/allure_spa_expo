@@ -31,16 +31,16 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Login Thunk Handlers
       .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(loginThunk.fulfilled, (state, action: PayloadAction<UserLoginResponseParams>) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
-        state.error = null;
+        if (action.payload) {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        }
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
@@ -51,10 +51,11 @@ export const userSlice = createSlice({
       })
       .addCase(registerThunk.fulfilled, (state, action: PayloadAction<UserRegisterResponseParams>) => {
         state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
-        state.error = null;
+        if (action.payload) {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        }
       })
       .addCase(registerThunk.rejected, (state, action) => {
         state.isLoading = false;

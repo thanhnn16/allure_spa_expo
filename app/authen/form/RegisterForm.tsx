@@ -50,8 +50,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
       } else {
         Alert.alert(i18n.t('auth.register.error'), result?.message ?? i18n.t('auth.register.unknown_error'));
       }
-    } catch (error) {
-Alert.alert(i18n.t('auth.register.error'), i18n.t('auth.register.unknown_error'));
+    } catch (error: any) {
+      Alert.alert(i18n.t('auth.register.error'), error.message || i18n.t('auth.register.unknown_error'));
     } finally {
       setLoading(false);
     }

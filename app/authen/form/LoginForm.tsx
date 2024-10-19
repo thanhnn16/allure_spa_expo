@@ -1,61 +1,62 @@
-import React from 'react';
-import { View, Alert, Text } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native-ui-lib';
 import { TextInput } from '@/components/inputs/TextInput';
-import AppButton from '@/components/buttons/AppButton';
 import i18n from '@/languages/i18n';
-// import { loginUser } from '@/app/authen/api/apiService';
-import { Colors, TouchableOpacity } from 'react-native-ui-lib';
+import AppButton from '@/components/buttons/AppButton';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/redux/ReduxStore';
+import { loginThunk } from '@/redux/users/LoginThunk';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { Link } from 'expo-router';
+import { Alert } from 'react-native';
 
 interface LoginFormProps {
-
-  phoneNumber: string;
-
-  password: string;
-
-  setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
-
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
-
-  onZaloPress: () => void;
-
-  onLoginPress: () => Promise<void>;
-
   onBackPress: () => void;
-
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({
-  phoneNumber,
-  password,
-  setPhoneNumber,
-  setPassword,
-  onZaloPress,
-  onBackPress,
-}) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
-  const onLoginPress = async () => {
-    const result = await loginUser(phoneNumber, password);
+  const handleLogin = async () => {
+    setLoading(true);
 
-    if (result) {
-      if (result.success) {
-        Alert.alert('Success', result.message);
-        // Handle successful login (e.g., navigate to the home screen)
+    try {
+      const resultAction = await dispatch(loginThunk({ phoneNumber, password }));
+      const result = unwrapResult(resultAction);
+
+      if (result && result.success) {
+        Alert.alert(i18n.t('auth.login.success'), result.message);
+        // Navigate to Home screen using Link
+        <Link href="/(tabs)/home" asChild>
+          <AppButton title={i18n.t('auth.login.title')} type="primary" />
+        </Link>
       } else {
-        Alert.alert('Error', result.message);
+        Alert.alert(i18n.t('auth.login.error'), result?.message ?? i18n.t('auth.login.unknown_error'));
       }
-    } else {
-      Alert.alert('Error', 'An unexpected error occurred.');
+    } catch (error: any) {
+      if (error.status === 500) {
+        Alert.alert(i18n.t('auth.login.error'), i18n.t('auth.login.invalid_credentials'));
+      } else {
+        Alert.alert(i18n.t('auth.login.error'), error.message || i18n.t('auth.login.unknown_error'));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <TextInput
-        title={i18n.t('auth.login.username')}
-        placeholder={i18n.t('auth.login.username')}
+        title={i18n.t('auth.register.phone_number')}
+        placeholder={i18n.t('auth.register.phone_number')}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
       />
+
       <TextInput
         title={i18n.t('auth.login.password')}
         placeholder={i18n.t('auth.login.password')}
@@ -63,21 +64,18 @@ const LoginForm: React.FC<LoginFormProps> = ({
         value={password}
         onChangeText={setPassword}
       />
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: '90%', marginBottom: 20 }}>
 
-        <TouchableOpacity onPress={onZaloPress}>
-          <Text style={{ color: Colors.primary, fontSize: 16 }}>
-            {i18n.t('auth.login.zalo')}
-          </Text>
-        </TouchableOpacity>
+      <View marginT-20>
+        <AppButton
+          type="primary"
+          title={i18n.t('auth.login.title')}
+          onPress={handleLogin}
+          loading={loading}
+        />
       </View>
-      <View style={{ marginBottom: 20 }}>
-        <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={onLoginPress} />
-        <AppButton title={i18n.t('back')} type="outline" onPress={onBackPress} marginT-12 />
-      </View>
+      <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
     </>
   );
 };
 
 export default LoginForm;
-

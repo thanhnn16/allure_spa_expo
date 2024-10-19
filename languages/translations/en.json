@@ -20,7 +20,11 @@
             "by_continue": "By logging in, you agree to our",
             "and": "and",
             "of_us": "of us",
-            "forgot_password": "Forgot password?"
+            "forgot_password": "Forgot password?",
+            "success": "Login successful",
+            "error": "Login failed",
+            "invalid_credentials": "Invalid phone number or password",
+            "unknown_error": "An unknown error occurred"
         },
         "art": {
             "title": "The Art of Skincare",

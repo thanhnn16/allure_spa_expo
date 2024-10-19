@@ -13,13 +13,26 @@ export const registerThunk = createAsyncThunk<UserRegisterResponseParams, Regist
   'user/register',
   async (body: RegisterRequest, { rejectWithValue }) => {
     try {
-      const res = await AxiosInstance().post<UserRegisterResponseParams>('auth/register', body);
+      console.log('Register request body:', body); // Log the request body
+
+      const res = await AxiosInstance().post<UserRegisterResponseParams>('auth/register', {
+        full_name: body.fullName,
+        phone_number: body.phoneNumber,
+        password: body.password,
+        password_confirmation: body.confirmPassword
+      });
+      console.log('Register response:', res.data); // Log the response
+
       if (res.data.success) {
+        console.log('Registration successful:', res.data); // Log success
         return res.data;
       }
+
+      console.log('Registration failed:', res.data.message); // Log failure message
       return rejectWithValue(res.data.message || 'Registration failed');
     } catch (error: any) {
-      return rejectWithValue(error.message || 'An error occurred during registration');
+      console.error('Registration error:', error); // Log error
+      return rejectWithValue(error.data.message || 'An error occurred during registration');
     }
   }
 );
