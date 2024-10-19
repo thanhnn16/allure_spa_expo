@@ -1,18 +1,25 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
-import { RegisterRequest, RegisterResponse } from "@/app/authen/models/Models";
+import { UserRegisterResponseParams } from "@/app/authen/models/Models";
 
-export const registerThunk = createAsyncThunk<RegisterResponse, RegisterRequest>(
-    'user/register',
-    async (body: RegisterRequest, { rejectWithValue }) => {
-        try {
-            const res: RegisterResponse = await AxiosInstance().post('auth/register', body);
-            if (res.status_code === 200 && res.data) {
-                return res;
-            }
-            return rejectWithValue(res.message || 'Registration failed');
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'An error occurred during registration');
-        }
+interface RegisterRequest {
+  fullName: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export const registerThunk = createAsyncThunk<UserRegisterResponseParams, RegisterRequest>(
+  'user/register',
+  async (body: RegisterRequest, { rejectWithValue }) => {
+    try {
+      const res = await AxiosInstance().post<UserRegisterResponseParams>('auth/register', body);
+      if (res.data.success) {
+        return res.data;
+      }
+      return rejectWithValue(res.data.message || 'Registration failed');
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'An error occurred during registration');
     }
-)
+  }
+);

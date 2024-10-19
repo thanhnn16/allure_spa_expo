@@ -3,7 +3,7 @@ import { View, Alert, Text } from 'react-native';
 import { TextInput } from '@/components/inputs/TextInput';
 import AppButton from '@/components/buttons/AppButton';
 import i18n from '@/languages/i18n';
-import { loginUser } from '@/app/authen/api/apiService';
+// import { loginUser } from '@/app/authen/api/apiService';
 import { Colors, TouchableOpacity } from 'react-native-ui-lib';
 
 interface LoginFormProps {
