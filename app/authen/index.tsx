@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Animated, Dimensions, Alert } from 'react-native';
-import { View, Image, Text, Colors } from 'react-native-ui-lib';
+import { View, Image, Text, Colors, Modal, TouchableOpacity } from 'react-native-ui-lib';
 import { Link } from 'expo-router/build/link/Link';
 import i18n from '@/languages/i18n';
 import LoginForm from './form/LoginForm';
@@ -9,14 +9,21 @@ import LoginZaloForm from './form/LoginZaloForm';
 import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import axios from 'axios';
+import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '@/redux/language/LanguageSlice';
 
 const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
+  const dispatch = useDispatch();
+
+  const currentLanguage = useSelector((state: any) => state.language?.currentLanguage ?? 'en');
   const [viewState, setViewState] = useState('default');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [, forceUpdate] = useState({});
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(10)).current;
@@ -39,10 +46,28 @@ const Onboarding: React.FC = () => {
     setViewState(newState);
   };
 
+  useEffect(() => {
+    i18n.locale = currentLanguage;
+    forceUpdate({});
+  }, [currentLanguage]);
+
   const changeLanguage = (nextLanguage: string) => {
-    i18n.locale = nextLanguage;
-    setCurrentLanguage(nextLanguage);
+    dispatch(setLanguage(nextLanguage));
+    setModalVisible(false);
   };
+
+  const renderSelectLanguage = (key: string) => {
+    switch (key) {
+      case 'en':
+        return 'English';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'ja':
+        return '日本語';
+      default:
+        return 'English';
+    }
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
@@ -96,40 +121,41 @@ const Onboarding: React.FC = () => {
             }}
           >
             {viewState === 'default' ? (
-          
-                <View>
-                  <AppButton
-                    title={i18n.t('auth.register.title')}
-                    type="primary"
-                    onPress={() => handleButtonClick('register')}
-                  />
-                  <AppButton
-                    title={i18n.t('auth.login.title')}
-                    type="primary"
-                    onPress={() => handleButtonClick('login')}
-                  />
-                  <AppButton
-                    title={i18n.t('auth.login.zalo')}
-                    type="secondary"
-                    onPress={() => handleButtonClick('changed')}
-                  />
-                  <AppButton
-                    title={i18n.t('change_language')}
-                    type="secondary"
-                    onPress={() => {
-                      const nextLanguage =
-                        currentLanguage === 'en'
-                          ? 'ja'
-                          : currentLanguage === 'ja'
-                          ? 'vi'
-                          : 'en';
-                      changeLanguage(nextLanguage);
-                    }}
-                  />
-                  <Link href="/(tabs)/home" asChild>
-                    <AppButton title={i18n.t('auth.login.skip')} type="text" />
-                  </Link>
-                </View>
+
+              <View>
+                <AppButton
+                  title={i18n.t('auth.register.title')}
+                  type="primary"
+                  onPress={() => handleButtonClick('register')}
+                />
+                <AppButton
+                  title={i18n.t('auth.login.title')}
+                  type="primary"
+                  onPress={() => handleButtonClick('login')}
+                />
+                <AppButton
+                  title={i18n.t('auth.login.zalo')}
+                  type="secondary"
+                  onPress={() => handleButtonClick('changed')}
+                />
+                <AppButton
+                  title={i18n.t('change_language')}
+                  type="secondary"
+                  onPress={() => {
+                    setModalVisible(true);
+                    // const nextLanguage =
+                    //   currentLanguage === 'en'
+                    //     ? 'ja'
+                    //     : currentLanguage === 'ja'
+                    //       ? 'vi'
+                    //       : 'en';
+                    // changeLanguage(nextLanguage);
+                  }}
+                />
+                <Link href="/(tabs)/home" asChild>
+                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
+                </Link>
+              </View>
             ) : viewState === 'login' ? (
               <LoginForm
                 phoneNumber={phoneNumber}
@@ -140,7 +166,7 @@ const Onboarding: React.FC = () => {
                 onLoginPress={() => {
                   return axios.post('/api/auth/login', {
                     phone_number: phoneNumber,
-                    password: password,   
+                    password: password,
                   })
                     .then((response) => {
                       if (response.status === 200) {
@@ -156,7 +182,7 @@ const Onboarding: React.FC = () => {
                         Alert.alert('Error', 'Network error, please try again');
                       }
                     });
-                 }}  
+                }}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : viewState === 'register' ? (
@@ -191,7 +217,7 @@ const Onboarding: React.FC = () => {
                         Alert.alert('Error', 'Network error, please try again');
                       }
                     });
-                 }}
+                }}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : viewState === 'zalo' ? (
@@ -203,7 +229,7 @@ const Onboarding: React.FC = () => {
                 onZaloPress={() => { }}
                 onLoginPress={() => {
 
-                 }}
+                }}
                 onBackPress={() => handleButtonClick('default')}
               />
             ) : null}
@@ -218,6 +244,22 @@ const Onboarding: React.FC = () => {
               {' '} {i18n.t('auth.login.of_us')}
             </Text>
           </Animated.View>
+
+          <Modal 
+          visible={modalVisible}
+          transparent={true} 
+          animationType='fade' 
+          >
+            <View flex center backgroundColor='rgba(0, 0, 0, 0.5)'  >
+              <View  center backgroundColor='white' style={{ padding: 30, borderRadius: 10, gap: 10,  }}>
+                {Object.keys(i18n.translations).map((key) => (
+                  <TouchableOpacity key={key} onPress={() => changeLanguage(key)}>
+                    <Text>{renderSelectLanguage(key)}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </Modal>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

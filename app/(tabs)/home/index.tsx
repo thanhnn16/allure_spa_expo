@@ -12,7 +12,7 @@ import Animated, { useSharedValue, SharedValue, useAnimatedScrollHandler } from 
 import AppSearch from '@/components/inputs/AppSearch';
 import { Href, router } from "expo-router";
 import { hideStyle, showStyle } from './animated';
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import { getTreatmentsThunk, getTreatmentCateThunk } from '@/redux/treatment';
 import { TreatmentResponeModel } from '@/types/treatment.type';
 import RenderSection from '../../../components/home/renderSection';
@@ -74,6 +74,7 @@ const HomePage = () => {
       try {
         const res = await fetch("https://66fa1d4eafc569e13a9a70d9.mockapi.io/api/v1/products");
         const data = await res.json();
+        console.log("Get products: ", data)
         if (data) setServices(data);
       } catch (error: any) {
         console.log("Get products error: ", error.message)
@@ -219,21 +220,21 @@ const HomePage = () => {
 
             }} />
 
-          <RenderSection
+          {services && <RenderSection
             title='Sản phẩm nổi bật'
             data={services}
             renderItem={RenderProductItem}
             onPressMore={() => {
 
-            }} />
+            }} />}
 
-          <RenderSection
+         {services && <RenderSection
             title='Sản phẩm bán chạy'
             data={services}
             renderItem={RenderProductItem}
             onPressMore={() => {
 
-            }} />
+            }} />}
 
         </Animated.ScrollView>
       </View>
