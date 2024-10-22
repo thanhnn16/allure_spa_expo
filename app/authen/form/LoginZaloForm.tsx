@@ -1,55 +1,53 @@
-import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native-ui-lib';
+import React, { useState } from 'react';
+import { View } from 'react-native-ui-lib';
 import { TextInput } from '@/components/inputs/TextInput';
-import AppButton from '@/components/buttons/AppButton';
 import i18n from '@/languages/i18n';
+import AppButton from '@/components/buttons/AppButton';
 
 interface LoginZaloFormProps {
-  phoneNumber: string;
-  fullName: string;
-  setPhoneNumber: (text: string) => void;
-  setPassword: (text: string) => void;
-  onZaloPress: () => void;
-  onLoginPress: () => void;
+  sendOtpPress: () => void;
   onBackPress: () => void;
 }
 
-const LoginZaloForm: React.FC<LoginZaloFormProps> = ({
-  phoneNumber,
-  fullName,
-  setPhoneNumber,
-  setPassword,
-  onZaloPress,
-  onLoginPress,
-  onBackPress,
-}) => {
+const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ sendOtpPress, onBackPress }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSendOtp = async () => {
+    setLoading(true);
+    // Simulate OTP sending process
+    setTimeout(() => {
+      setLoading(false);
+      sendOtpPress(); // Call the sendOtpPress function to change the form
+    }, 1000);
+  };
+
   return (
-    <>
+    <View>
       <TextInput
-        title={i18n.t('auth.login.username')}
-        placeholder={i18n.t('auth.login.username')}
+        title={i18n.t('auth.register.phone_number')}
+        placeholder={i18n.t('auth.register.phone_number')}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
       />
       <TextInput
         title={i18n.t('auth.register.fullname')}
         placeholder={i18n.t('auth.register.fullname')}
-        secureTextEntry
         value={fullName}
+        onChangeText={setFullName}
       />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-          width: '90%',
-        }}
-      >
+      <View marginT-10 marginB-20>
+        <AppButton
+          type="primary"
+          title={i18n.t('sendOTP')}
+          loading={loading}
+          onPress={handleSendOtp}
+        />
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
       </View>
-      <View style={{ marginBottom: 20 }}>
-        <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={onLoginPress} />
-        <AppButton title={i18n.t('back')} type="outline" onPress={onBackPress} marginT-12 />
-      </View>
-    </>
+    </View>
   );
 };
 

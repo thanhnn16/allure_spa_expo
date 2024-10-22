@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Animated, Dimensions, Alert } from 'react-native';
 import { View, Image, Text, Colors } from 'react-native-ui-lib';
-import { Link } from 'expo-router/build/link/Link';
+import { Link } from 'expo-router';
 import i18n from '@/languages/i18n';
 import LoginForm from './form/LoginForm';
 import RegisterForm from './form/RegisterForm';
 import LoginZaloForm from './form/LoginZaloForm';
+import OTP from './otp';
 import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import axios from 'axios';
@@ -62,7 +63,9 @@ const Onboarding: React.FC = () => {
       });
 
       if (response.status === 200) {
-        Alert.alert('Success', response.data.message);handleButtonClick('login');}
+        Alert.alert('Success', response.data.message);
+        handleButtonClick('login');
+      }
     } catch (error) {
       const err = error as any;
       if (err.response) {
@@ -79,11 +82,11 @@ const Onboarding: React.FC = () => {
         phone_number: phoneNumber,
         password: password,
       });
-  
+
       if (response.status === 200) {
         Alert.alert('Success', response.data.message);
         console.log('Navigating to Home...');
-        router.push('/(tabs)/home'); // Đảm bảo đường dẫn chính xác
+        router.push('/(tabs)/home'); // Ensure the path is correct
       }
     } catch (error) {
       const err = error as any;
@@ -94,7 +97,14 @@ const Onboarding: React.FC = () => {
       }
     }
   };
-  
+
+  const handlesendOtpPress = () => {
+    setViewState('otp');
+  };
+
+  const handleBackPress = () => {
+    setViewState('default');
+  };
 
   const renderForm = () => {
     switch (viewState) {
@@ -106,7 +116,7 @@ const Onboarding: React.FC = () => {
             setPhoneNumber={setPhoneNumber}
             setPassword={setPassword}
             onLoginPress={handleLoginPress}
-            onBackPress={() => handleButtonClick('default')}
+            onBackPress={handleBackPress}
           />
         );
       case 'register':
@@ -119,19 +129,25 @@ const Onboarding: React.FC = () => {
             setFullName={setFullName}
             setPassword={setPassword}
             onRegisterPress={handleRegisterPress}
-            onBackPress={() => handleButtonClick('default')}
+            onBackPress={handleBackPress}
           />
         );
       case 'zalo':
         return (
           <LoginZaloForm
-            phoneNumber={''}
-            fullName={''}
-            setPhoneNumber={() => { }}
-            setPassword={() => { }}
-            onZaloPress={() => { }}
-            onLoginPress={() => { }}
-            onBackPress={() => handleButtonClick('default')}
+            phoneNumber={phoneNumber}
+            fullName={fullName}
+            sendOtpPress={handlesendOtpPress}
+            onBackPress={handleBackPress}
+          />
+        );
+      case 'otp':
+        return (
+          <OTP
+            phoneNumber={phoneNumber}
+            fullName={fullName}
+            sendOtpPress={handlesendOtpPress}
+            onBackPress={handleBackPress}
           />
         );
       default:

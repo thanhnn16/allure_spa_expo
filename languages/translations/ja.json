@@ -14,13 +14,17 @@
             "password": "パスワード",
             "remember": "記憶する",
             "zalo": "Zaloでログイン",
-            "skip": "後でログインする",
+            "skip": "後でログイン",
             "terms": "利用規約",
             "privacy": "プライバシーポリシー",
             "by_continue": "ログインすることにより、あなたは",
             "and": "および",
             "of_us": "当社の",
-            "forgot_password": "パスワードを忘れましたか？"
+            "forgot_password": "パスワードを忘れましたか？",
+            "success": "ログイン成功",
+            "error": "ログイン失敗",
+            "invalid_credentials": "無効な電話番号またはパスワード",
+            "unknown_error": "不明なエラーが発生しました"
         },
         "art": {
             "title": "スキンケアのアート",
@@ -28,14 +32,19 @@
         },
         "register": {
             "title": "登録",
-            "username": "電話番号",
+            "phone_number": "電話番号",
             "fullname": "氏名",
             "password": "新しいパスワード",
             "confirm_password": "パスワードの確認",
             "agree_terms": "登録することで、利用規約とプライバシーポリシーに同意したことになります。",
             "register_button": "登録",
             "back_button": "戻る",
-            "er-ror": "エラーが発生しました。再試行してください。"
+            "password_mismatch": "パスワードが一致しません",
+            "check_password": "パスワードを確認してください",
+            "error": "エラーが発生しました",
+            "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください。",
+            "success": "登録成功",
+            "register_fail": "登録失敗。もう一度やり直してください。"
         }
     },
     "terms": "利用規約",
@@ -44,5 +53,4 @@
         "otp_input": "OTPを入力",
         "resend_otp": "コードを再送する"
     }
-  }
-  
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native-ui-lib';
+import { Colors, Spacings, View, Text } from 'react-native-ui-lib';
 import { TextInput } from '@/components/inputs/TextInput';
 import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';
@@ -62,15 +62,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
         onChangeText={setPassword}
       />
 
-      <View marginT-20>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end'}}>
+        <Text style={{ color: Colors.primary, fontSize: 16 }}>Quên mật khẩu?</Text>
+      </View>
+
+      <View marginT-20 marginB-20>
         <AppButton
           type="primary"
           title={i18n.t('auth.login.title')}
           onPress={handleLogin}
           loading={loading}
         />
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+
       </View>
-      <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
     </>
   );
 };

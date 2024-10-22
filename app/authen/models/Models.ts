@@ -21,3 +21,9 @@ export interface User {
     user: User;
     token: string;
   }
+
+  export interface UserLoginZaloParams {
+    phoneNumber: string;
+    fullName: string;
+  }
+

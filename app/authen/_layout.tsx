@@ -8,9 +8,6 @@ export default function RootLayout() {
                 headerShown: false,
             }}>
             <Stack.Screen name="index" />
-            <Stack.Screen name="form/LoginForm" />
-            <Stack.Screen name="form/RegisterForm" />
-            <Stack.Screen name="form/loginZaloForm" />
         </Stack>
     );
 }
