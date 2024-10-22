@@ -1,7 +1,7 @@
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView } from 'react-native';
-import { Text, AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets } from 'react-native-ui-lib';
+import { Pressable, ScrollView } from 'react-native';
+import { Text ,AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets } from 'react-native-ui-lib';
 import ImageView from "react-native-image-viewing";
 
 import { Carousel, PageControlPosition } from 'react-native-ui-lib/src/components/carousel';
@@ -11,7 +11,6 @@ import HeartIcon from '@/assets/icons/heart.svg'
 import TicketIcon from '@/assets/icons/ticket.svg'
 import ShoppingCartIcon from '@/assets/icons/shopping-cart.svg'
 import SunIcon from '@/assets/icons/sun.svg'
-import AppBar from '@/components/app_bar/app_bar';
 
 
 export default function DetailsScreen() {
@@ -77,174 +76,173 @@ export default function DetailsScreen() {
     ];
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-            <View bg-$backgroundDefault flex>
-                <AppBar title='' />
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
+        <View bg-$backgroundDefault flex marginT-50>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
+                <View 
+                    style={{ 
+                        width: '90%', 
+                        height: 200, 
+                        borderRadius: 20, 
+                        overflow: 'hidden',
+                        marginTop: 10,
+                        alignSelf: 'center',
+                    }}
                 >
-                    <View
+                    <Carousel
+                        loop
+                        autoplay
+                        autoplayInterval={3000}
+                        showCounter
+                        pageControlProps={{
+                            color: '#000',
+                        }}
+                        pageControlPosition={PageControlPosition.UNDER}
                         style={{
-                            width: '90%',
-                            height: 200,
-                            borderRadius: 20,
-                            overflow: 'hidden',
-                            marginTop: 10,
-                            alignSelf: 'center',
+                            width: '100%',
+                            height: 250,
                         }}
                     >
-                        <Carousel
-                            loop
-                            autoplay
-                            autoplayInterval={3000}
-                            showCounter
-                            pageControlProps={{
-                                color: '#000',
-                            }}
-                            pageControlPosition={PageControlPosition.UNDER}
-                            style={{
-                                width: '100%',
-                                height: 250,
-                            }}
-                        >
-                            {images.map((item, index) => (
-                                <Pressable
-                                    onPress={() => handleOpenImage(index)}
+                        {images.map((item, index) => (
+                            <Pressable
+                                onPress={() => handleOpenImage(index)}
+                                key={index}
+                            >
+                                <AnimatedImage 
+                                    animationDuration={1000}
+                                    source={{ uri: item.uri }}
+                                    aspectRatio={16/9}
+                                    cover
                                     key={index}
-                                >
-                                    <AnimatedImage
-                                        animationDuration={1000}
-                                        source={{ uri: item.uri }}
-                                        aspectRatio={16 / 9}
-                                        cover
-                                        key={index}
-                                    />
-                                </Pressable>
-                            ))}
-                        </Carousel>
+                                />
+                            </Pressable>
+                        ))}
+                    </Carousel>
+                </View>
+                <ImageView
+                    images={images}
+                    imageIndex={0}
+                    visible={visible}
+                    onRequestClose={() => setIsVisible(false)}
+                    onImageIndexChange={(index) => setImageViewIndex(index)}
+                    key={index}
+                    swipeToCloseEnabled={true}
+                    doubleTapToZoomEnabled={true}
+                    FooterComponent={FooterComponent}
+                />
+                <View padding-20 gap-10>
+                    <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
+                    <View row marginB-10>
+                        <Image
+                            source={TicketIcon}
+                            size={24}
+                        />
+                        <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
+                        <View flex right>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    console.log('luv');
+                                }}
+                            >
+                                <Image
+                                    source={HeartIcon}
+                                    size={24}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                    <ImageView
-                        images={images}
-                        imageIndex={0}
-                        visible={visible}
-                        onRequestClose={() => setIsVisible(false)}
-                        onImageIndexChange={(index) => setImageViewIndex(index)}
-                        key={index}
-                        swipeToCloseEnabled={true}
-                        doubleTapToZoomEnabled={true}
-                        FooterComponent={FooterComponent}
-                    />
-                    <View padding-20 gap-10>
-                        <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
-                        <View row marginB-10>
+                    <View row paddingR-20>
+                        <View>
                             <Image
-                                source={TicketIcon}
+                                source={SunIcon}
                                 size={24}
                             />
-                            <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
-                            <View flex right>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        console.log('luv');
-                                    }}
-                                >
-                                    <Image
-                                        source={HeartIcon}
-                                        size={24}
-                                    />
-                                </TouchableOpacity>
-                            </View>
                         </View>
-                        <View row paddingR-20>
-                            <View>
+                        <View>
+                            {createBulletPoints(shortText)}
+                        </View>
+                    </View>
+                    <View 
+                        row marginV-20
+                        style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Text h1_bold>SỐ LƯỢNG</Text>
+                        <View 
+                            row gap-10
+                            style={{
+                                borderWidth: 1,
+                                borderColor: '#E0E0E0',
+                                borderRadius: 10,
+                            }}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    padding: 10
+                                }}
+                                onPress={() => {
+                                    if (quantity > 1) setQuantity(quantity - 1);
+                                }}
+                            >
+                                <Text>-</Text>
+                            </TouchableOpacity>
+                            <Text style= {{padding: 10}}>{quantity}</Text>
+                            <TouchableOpacity
+                                style={{
+                                    padding: 10
+                                }}
+                                onPress={() => setQuantity(quantity + 1)}
+                            >
+                                <Text>+</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View marginT-10 paddingR-10>
+                        <Text h1_bold>MÔ TẢ SẢN PHẨM</Text>
+                        <View marginT-10>
+                            {createBulletPointsDescription(longText)}
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+            <View 
+                row padding-20
+                style={{
+                    borderTopStartRadius: 30,
+                    borderTopEndRadius: 30,
+                    borderWidth: 2,
+                    borderColor: '#E0E0E0',
+                }}
+            >
+                <View row gap-30>
+                    <Link href='/rating/1' asChild>
+                        <TouchableOpacity>
+                            <View center marginB-4>
                                 <Image
-                                    source={SunIcon}
+                                    source={CommentIcon}
                                     size={24}
                                 />
                             </View>
-                            <View>
-                                {createBulletPoints(shortText)}
+                            <Text h3_medium>Đánh giá</Text>
+                        </TouchableOpacity>
+                    </Link>
+                    <Link href='/favorite' asChild>
+                        <TouchableOpacity>
+                            <View center marginB-4>
+                                <Image
+                                source={ShoppingCartIcon}
+                                size={24}
+                            />
                             </View>
-                        </View>
-                        <View
-                            row marginV-20
-                            style={{
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Text h1_bold>SỐ LƯỢNG</Text>
-                            <View
-                                row gap-10
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: '#E0E0E0',
-                                    borderRadius: 10,
-                                }}
-                            >
-                                <TouchableOpacity
-                                    style={{
-                                        padding: 10
-                                    }}
-                                    onPress={() => {
-                                        if (quantity > 1) setQuantity(quantity - 1);
-                                    }}
-                                >
-                                    <Text>-</Text>
-                                </TouchableOpacity>
-                                <Text style={{ padding: 10 }}>{quantity}</Text>
-                                <TouchableOpacity
-                                    style={{
-                                        padding: 10
-                                    }}
-                                    onPress={() => setQuantity(quantity + 1)}
-                                >
-                                    <Text>+</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View marginT-10 paddingR-10>
-                            <Text h1_bold>MÔ TẢ SẢN PHẨM</Text>
-                            <View marginT-10>
-                                {createBulletPointsDescription(longText)}
-                            </View>
-                        </View>
-                    </View>
-                </ScrollView>
-                <View
-                    row padding-20
-                    style={{
-                        borderTopStartRadius: 30,
-                        borderTopEndRadius: 30,
-                        borderWidth: 2,
-                        borderColor: '#E0E0E0',
-                    }}
-                >
-                    <View row gap-30>
-                        <Link href='/rating/1' asChild>
-                            <TouchableOpacity>
-                                <View center marginB-4>
-                                    <Image
-                                        source={CommentIcon}
-                                        size={24}
-                                    />
-                                </View>
-                                <Text h3_medium>Đánh giá</Text>
-                            </TouchableOpacity>
-                        </Link>
-                        <Link href='/favorite' asChild>
-                            <TouchableOpacity>
-                                <View center marginB-4>
-                                    <Image
-                                        source={ShoppingCartIcon}
-                                        size={24}
-                                    />
-                                </View>
-                                <Text h3_medium>Thêm giỏ hàng</Text>
-                            </TouchableOpacity>
-                        </Link>
-                    </View>
-                    <View flex right>
+                            <Text h3_medium>Thêm giỏ hàng</Text>
+                        </TouchableOpacity>
+                    </Link>
+                </View>
+                <View flex right>
+                <Link href='/cart_shop/cart_empty' asChild>
                         <Button
                             label={'Mua ngay'}
                             backgroundColor='#717658'
@@ -253,9 +251,9 @@ export default function DetailsScreen() {
                                 console.log('mua ha');
                             }}
                         />
-                    </View>
+                    </Link>
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 }

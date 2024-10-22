@@ -5,12 +5,11 @@ import { View, Text, Image, TouchableOpacity, Carousel, PageControlPosition, Ani
 import getLocation from '@/utils/location/locationHelper';
 import getWeather from '@/utils/weather/getWeatherData';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { Double, Float } from 'react-native/Libraries/Types/CodegenTypes';
 import ButtonNotifyIcon from '@/components/buttons/ButtonNotifyIcon';
 import ButtonMessageIcon from '@/components/buttons/ButtonMessageIcon';
-import Animated, { useSharedValue, SharedValue, useAnimatedScrollHandler } from 'react-native-reanimated'
+import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
 import AppSearch from '@/components/inputs/AppSearch';
-import { Href, router } from "expo-router";
+import { Href, Link, router } from "expo-router";
 import { hideStyle, showStyle } from './animated';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTreatmentsThunk, getTreatmentCateThunk } from '@/redux/treatment';
@@ -28,9 +27,9 @@ interface CateItem {
 }
 
 interface LocationsType {
-  distance: Double;
-  lat: Double;
-  lon: Double;
+  distance: number;
+  lat: number;
+  lon: number;
   name: string;
 }
 
@@ -42,12 +41,12 @@ interface HeaderStyleParams {
 const HomePage = () => {
   const dispatch = useDispatch();
 
-  const [cateData, setCateData] = useState<CateItem[]>(cateArr)
+  const [cateData, setCateData] = useState<CateItem[]>(cateArr);
   const [services, setServices] = useState<any>([]);
-  const [temperature, setTemperature] = useState<Float>(0);
+  const [temperature, setTemperature] = useState<number>(0);
   const [location, setLocation] = useState<LocationsType | null>(null);
-  const [weatherIcon, setWeatherIcon] = useState<string>('')
-  const [currentDate, setCurrentDate] = useState<string>('')
+  const [weatherIcon, setWeatherIcon] = useState<string>('');
+  const [currentDate, setCurrentDate] = useState<string>('');
   const [banner, setBanner] = useState([
     { uri: 'https://intphcm.com/data/upload/banner-spa-cta.jpg' },
     { uri: 'https://easysalon.vn/wp-content/uploads/2019/12/banner-spa.jpg' },
@@ -77,30 +76,35 @@ const HomePage = () => {
         console.log("Get products: ", data)
         if (data) setServices(data);
       } catch (error: any) {
-        console.log("Get products error: ", error.message)
+        console.log("Get products error: ", error.message);
       }
     };
+
     (async () => {
       try {
         const nearestProvince = await getLocation();
-        const weatherData = await getWeather(nearestProvince.lat, nearestProvince.lon);
-
-        if (nearestProvince) setLocation(nearestProvince);
-        if (weatherData) {
-          setWeatherIcon(weatherData.weather[0].icon);
-          const temperatureData = weatherData['main']['temp'];
-          if (temperatureData > 50) {
-            setTemperature((temperatureData - 273.15));
-          } else {
-            setTemperature(weatherData['main']['temp']);
-          }
-
+        if (!nearestProvince) {
+          throw new Error("Failed to get location");
         }
 
+        const weatherData = await getWeather(nearestProvince.lat, nearestProvince.lon);
+        if (!weatherData) {
+          throw new Error("Failed to fetch weather data");
+        }
+
+        setLocation(nearestProvince);
+        setWeatherIcon(weatherData.weather[0].icon);
+        const temperatureData = weatherData['main']['temp'];
+        if (temperatureData > 50) {
+          setTemperature((temperatureData - 273.15));
+        } else {
+          setTemperature(weatherData['main']['temp']);
+        }
       } catch (error: any) {
-        console.log("Get weather error: ", error.message)
+        console.log("Get weather error: ", error.message);
       }
     })();
+
     getProducts();
   }, []);
 
@@ -120,6 +124,22 @@ const HomePage = () => {
     },
   });
 
+  const handleOpenImage = (index: number) => {
+    setBannerViewIndex(index);
+    setBannerVisible(true);
+  };
+
+  const renderCateItem = (item: any) => {
+    const rItem = item.item;
+    return (
+      <TouchableOpacity center marginR-20>
+        <View width={44} height={44} backgroundColor='#F3F4F6' center style={{ borderRadius: 30 }}>
+          <Image source={rItem.icon} width={24} height={24} />
+        </View>
+        <Text marginT-5>{rItem.name}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const renderTreatmentsItem = (item: any) => {
     const rItem = item.item;
@@ -128,6 +148,17 @@ const HomePage = () => {
       if (text?.length <= maxLength) return text;
       return text?.slice(0, maxLength).trim() + '...';
     };
+    return (
+      <TouchableOpacity marginR-15 marginB-5 style={[AppStyles.shadowItem, { borderRadius: 16, width: 230, height: 'auto' }]}>
+        <Image source={require('@/assets/images/home/service1.png')} width={'100%'} height={210} style={{ resizeMode: 'stretch' }} />
+        <View paddingH-12 marginT-6>
+          <Text text70H>{rItem.name}</Text>
+          <Text style={{ color: '#8C8585' }}>{truncateText(rItem.description, 50)}</Text>
+          <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
     return (
       <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 16, width: 230, height: 'auto' }]} >
@@ -142,8 +173,8 @@ const HomePage = () => {
           </View>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
   return (
     <View bg-$backgroundDefault useSafeArea flex>
@@ -156,7 +187,9 @@ const HomePage = () => {
               <View row>
                 <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
                 <View>
-                  <Text text60BO>Đức Lộc</Text>
+                  <Link href={"/settings/index" as Href<string>}>
+                    <Text text60BO>Đức Lộc</Text>
+                  </Link>
                   <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
                 </View>
               </View>
@@ -165,7 +198,7 @@ const HomePage = () => {
               <Text text50BO color='#717658'>Khám phá</Text>
             </Animated.View>
           </View>
-          <View row gap-15 >
+          <View row gap-15>
             <ButtonNotifyIcon onPress={() => {
               router.push('notification' as Href<string>);
             }} />
@@ -190,12 +223,10 @@ const HomePage = () => {
             </View>
           </View>
         </Animated.View>
-
         {/* Search */}
         <Animated.View style={showStyle(scrollOffset)}>
           <AppSearch />
         </Animated.View>
-
         <Animated.ScrollView
           style={{}}
           showsVerticalScrollIndicator={false}
@@ -240,7 +271,8 @@ const HomePage = () => {
       </View>
     </View>
   );
-}
+};
+
 export default HomePage;
 
 
@@ -276,4 +308,4 @@ const cateArr = [
     name: 'Tin tức',
     icon: require('@/assets/images/home/icons/News.png')
   }
-]
+];
