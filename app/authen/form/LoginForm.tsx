@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/ReduxStore';
 import { loginThunk } from '@/redux/users/LoginThunk';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { Alert } from 'react-native';
 
 interface LoginFormProps {
@@ -29,10 +29,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
 
       if (result && result.success) {
         Alert.alert(i18n.t('auth.login.success'), result.message);
-        // Navigate to Home screen using Link
-        <Link href="/(tabs)/home" asChild>
-          <AppButton title={i18n.t('auth.login.title')} type="primary" />
-        </Link>
+        router.replace('/(tabs)/home')
       } else {
         Alert.alert(i18n.t('auth.login.error'), result?.message ?? i18n.t('auth.login.unknown_error'));
       }
