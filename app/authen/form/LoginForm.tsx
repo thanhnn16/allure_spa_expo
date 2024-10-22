@@ -74,7 +74,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
           loading={loading}
         />
         <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
-
       </View>
     </>
   );
