@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { View } from 'react-native-ui-lib';
+import { View, Alert } from 'react-native';
 import { TextInput } from '@/components/inputs/TextInput';
 import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';
+import { generateCodeChallenge, generateCodeVerifier, openZaloLogin } from '@/utils/services/zalo/zaloAuthService';
 
 interface LoginZaloFormProps {
   sendOtpPress: () => void;
   onBackPress: () => void;
 }
+
+const isValidVietnamesePhoneNumber = (phoneNumber: string) => {
+  const regex = /^(?:\+84|0)(?:3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+  return regex.test(phoneNumber);
+};
 
 const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ sendOtpPress, onBackPress }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -15,12 +21,31 @@ const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ sendOtpPress, onBackPress
   const [loading, setLoading] = useState(false);
 
   const handleSendOtp = async () => {
+    if (!isValidVietnamesePhoneNumber(phoneNumber)) {
+      Alert.alert(i18n.t('auth.invalid_phone_number'));
+      return;
+    }
+
+    if (!fullName) {
+      Alert.alert(i18n.t('auth.enter_full_name'));
+      return;
+    }
+
+    if (loading) return; // Prevent multiple submissions
     setLoading(true);
-    // Simulate OTP sending process
-    setTimeout(() => {
+
+    try {
+      const codeVerifier = generateCodeVerifier();
+      const codeChallenge = generateCodeChallenge(codeVerifier);
+  
+      openZaloLogin(codeChallenge, phoneNumber, fullName);
+      sendOtpPress(); // Adjust to proceed to the next step after opening the login
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      Alert.alert(i18n.t('auth.otp_error'));
+    } finally {
       setLoading(false);
-      sendOtpPress(); // Call the sendOtpPress function to change the form
-    }, 1000);
+    }
   };
 
   return (
