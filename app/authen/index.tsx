@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Animated, Dimensions, Alert } from 'react-native';
-import { View, Image, Text, Colors } from 'react-native-ui-lib';
-import { Link } from 'expo-router';
+import { View, Image, Text, Colors, Modal, TouchableOpacity } from 'react-native-ui-lib';
+import { Link } from 'expo-router/build/link/Link';
 import i18n from '@/languages/i18n';
 import LoginForm from './form/LoginForm';
 import RegisterForm from './form/RegisterForm';
@@ -11,16 +11,23 @@ import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import axios from 'axios';
 import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '@/redux/language/LanguageSlice';
 
 const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
+  const dispatch = useDispatch();
+
+  const currentLanguage = useSelector((state: any) => state.language?.currentLanguage ?? 'en');
   const [viewState, setViewState] = useState('default');
   const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [, forceUpdate] = useState({});
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(10)).current;
@@ -151,7 +158,28 @@ const Onboarding: React.FC = () => {
       default:
         return null;
     }
+  useEffect(() => {
+    i18n.locale = currentLanguage;
+    forceUpdate({});
+  }, [currentLanguage]);
+
+  const changeLanguage = (nextLanguage: string) => {
+    dispatch(setLanguage(nextLanguage));
+    setModalVisible(false);
   };
+
+  const renderSelectLanguage = (key: string) => {
+    switch (key) {
+      case 'en':
+        return 'English';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'ja':
+        return '日本語';
+      default:
+        return 'English';
+    }
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
