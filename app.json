@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "allurespa",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -17,21 +17,27 @@
       "supportsTablet": true,
       "icon": "./assets/images/icon.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Adaptive-icon.png"
+        "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "infoPlist": {
-      "NSAppTransportSecurity": { 
-        "NSAllowsArbitraryLoads": true 
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
-    }
     },
     "android": {
       "package": "com.faithnippon.allurespa",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Adaptive-icon.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -60,8 +66,12 @@
       "typedRoutes": true
     },
     "updates": {
-     "url": "192.168.1.63:8000/api/"
-     }
-   
+      "url": "192.168.1.63:8000/api/"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "33c05c90-3876-4bf5-b86d-9b112d505205"
+      }
+    }
   }
 }

@@ -6,6 +6,8 @@ import { Href, router } from 'expo-router';
 
 import MicIcon from '@/assets/icons/mic.svg';
 import CameraIcon from '@/assets/icons/camera.svg';
+import { useState } from 'react';
+import i18n from '@/languages/i18n';
 
 
 interface MessageTextInputProps {
@@ -15,21 +17,24 @@ interface MessageTextInputProps {
     handleSend: () => void;
     isAI: boolean;
     isCamera: boolean;
+    selectedImages: string[];
+    setSelectedImages: (images: string[]) => void;
 }
 
-const MessageTextInput = ({ 
-    placeholder, message, setMessage, handleSend, isAI, isCamera 
+const MessageTextInput = ({
+    placeholder, message, setMessage, handleSend, isAI, isCamera, selectedImages, setSelectedImages
 }: MessageTextInputProps) => {
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 0.5,
+    const handleSelectImages = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection: true,
+            aspect: [4, 3],
+            quality: 1,
         });
+
         if (!result.canceled) {
-          console.log(result.assets[0].uri);
+            setSelectedImages(result.assets.map(asset => asset.uri));
         }
     };
 
@@ -49,7 +54,7 @@ const MessageTextInput = ({
         >
             {isCamera && (
                 <View width={40} height={40} centerV marginT-5>
-                    <TouchableOpacity onPress={pickImage}>
+                    <TouchableOpacity onPress={handleSelectImages}>
                         <Image source={CameraIcon} />
                     </TouchableOpacity>
                 </View>
@@ -69,19 +74,18 @@ const MessageTextInput = ({
                             <Image source={MicIcon} />
                         </TouchableOpacity>
                     </View>
-
                 )}
 
             </View>
 
             <Button
                 size={Button.sizes.small}
-                label="Gửi"
+                label={i18n.t('chat.send').toString()}
                 backgroundColor={Colors.primary}
                 onPress={handleSend}
             />
         </BlurView>
-    )
+    );
 }
 
 export default MessageTextInput

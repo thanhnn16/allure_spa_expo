@@ -160,7 +160,7 @@ const HomePage = () => {
 
 
       <TouchableOpacity onPress={() => {
-        router.push('product/detail', { id: rItem.id })
+        router.push({ pathname: '/product/[id]', params: { id: rItem.id } }) // Updated to use a single object
       }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
         <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
         <View paddingH-8 marginT-5>
@@ -202,7 +202,9 @@ const HomePage = () => {
             <ButtonNotifyIcon onPress={() => {
               router.push('notification' as Href<string>);
             }} />
-            <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
+            <ButtonMessageIcon onPress={() => {
+              router.push('/chat' as Href<string>);
+            }} />
           </View>
         </View>
         <Animated.View style={[hideStyle(scrollOffset), { width: '100%' }]}>

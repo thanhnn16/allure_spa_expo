@@ -1,7 +1,7 @@
 import { Link, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView } from 'react-native';
-import { Text, AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets } from 'react-native-ui-lib';
+import { Text, AnimatedImage, Button, Image, TouchableOpacity, View, PageControl, Icon, Assets, PanningProvider } from 'react-native-ui-lib';
 import ImageView from "react-native-image-viewing";
 
 import { Carousel, PageControlPosition } from 'react-native-ui-lib/src/components/carousel';
@@ -12,6 +12,8 @@ import TicketIcon from '@/assets/icons/ticket.svg'
 import ShoppingCartIcon from '@/assets/icons/shopping-cart.svg'
 import SunIcon from '@/assets/icons/sun.svg'
 import AppBar from '@/components/app_bar/app_bar';
+import i18n from '@/languages/i18n';
+import AppDialog from '@/components/dialog/AppDialog';
 
 
 export default function DetailsScreen() {
@@ -21,7 +23,7 @@ export default function DetailsScreen() {
     const [imageViewIndex, setImageViewIndex] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [visible, setIsVisible] = useState(false);
-
+    const [dialogVisible, setDialogVisible] = useState(false);
     useEffect(() => {
         setImages([
             { uri: 'https://picsum.photos/1600/900' },
@@ -144,9 +146,7 @@ export default function DetailsScreen() {
                             <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
                             <View flex right>
                                 <TouchableOpacity
-                                    onPress={() => {
-                                        console.log('luv');
-                                    }}
+                                    onPress={() => console.log('mua ha')}
                                 >
                                     <Image
                                         source={HeartIcon}
@@ -154,6 +154,7 @@ export default function DetailsScreen() {
                                     />
                                 </TouchableOpacity>
                             </View>
+
                         </View>
                         <View row paddingR-20>
                             <View>
@@ -173,7 +174,7 @@ export default function DetailsScreen() {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text h1_bold>SỐ LƯỢNG</Text>
+                            <Text h1_bold>{i18n.t('productDetail.quantity')}</Text>
                             <View
                                 row gap-10
                                 style={{
@@ -204,7 +205,7 @@ export default function DetailsScreen() {
                             </View>
                         </View>
                         <View marginT-10 paddingR-10>
-                            <Text h1_bold>MÔ TẢ SẢN PHẨM</Text>
+                            <Text h1_bold>{i18n.t('productDetail.product_description')}</Text>
                             <View marginT-10>
                                 {createBulletPointsDescription(longText)}
                             </View>
@@ -229,7 +230,7 @@ export default function DetailsScreen() {
                                         size={24}
                                     />
                                 </View>
-                                <Text h3_medium>Đánh giá</Text>
+                                <Text h3_medium>{i18n.t('productDetail.reviews')}</Text>
                             </TouchableOpacity>
                         </Link>
                         <Link href='/favorite' asChild>
@@ -240,13 +241,13 @@ export default function DetailsScreen() {
                                         size={24}
                                     />
                                 </View>
-                                <Text h3_medium>Thêm giỏ hàng</Text>
+                                <Text h3_medium>{i18n.t('productDetail.add_to_cart')}</Text>
                             </TouchableOpacity>
                         </Link>
                     </View>
                     <View flex right>
                         <Button
-                            label={'Mua ngay'}
+                            label={i18n.t('productDetail.buy_now').toString()}
                             backgroundColor='#717658'
                             borderRadius={10}
                             onPress={() => {
