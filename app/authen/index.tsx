@@ -135,8 +135,6 @@ const Onboarding: React.FC = () => {
       case 'zalo':
         return (
           <LoginZaloForm
-            phoneNumber={phoneNumber}
-            fullName={fullName}
             sendOtpPress={handlesendOtpPress}
             onBackPress={handleBackPress}
           />
