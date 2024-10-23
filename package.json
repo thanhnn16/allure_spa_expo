@@ -19,7 +19,7 @@
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.4.1",
-    "@reduxjs/toolkit": "^2.2.7",
+    "@reduxjs/toolkit": "^2.3.0",
     "@types/crypto-js": "^4.2.2",
     "axios": "^1.7.7",
     "crypto-js": "^4.2.0",
