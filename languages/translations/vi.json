@@ -48,5 +48,43 @@
     "otp": {
         "otp_input": "Nhập OTP",
         "resend_otp": "Gửi lại mã"
+    },
+    "profile": {
+        "my_account": "Tài khoản của tôi",
+        "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
+        "purchase_policy": "Chính sách mua hàng và đổi trả",
+        "policy_description": "Chính sách áp dụng cho Allure Spa",
+        "order_address": "Địa chỉ đặt hàng",
+        "address_list": "Danh sách địa chỉ",
+        "logout": "Đăng xuất",
+        "help_support": "Trợ giúp & Hỗ trợ",
+        "about_app": "Về ứng dụng",
+        "settings": "Cài đặt",
+        "more": "Thêm",
+        "edit_profile": "Chỉnh sửa hồ sơ",
+        "change_password": "Đổi mật khẩu",
+        "history_login": "Lịch sử đăng nhập",
+        "dowload_information": "Tải thông tin xuống",
+        "delete_account": "Xóa tài khoản",
+        "change_info": "Đổi thông tin"
+    },
+    "voucher": {
+        "title": "Giảm giá",
+        "all" : "Tất cả",
+        "birrthday" : "Sinh nhật",
+        "event" : "Sự kiện",
+        "prominent" : "Nổi bật",
+        "gift" : "Quà tặng",
+        "many_offers_comingsoon" : "Nhiều ưu đãi sắp tới"
+
+    },
+    "reward":{
+        "title": "Phần thưởng",
+       "cosmetic" : "Mỹ phẩm",
+       "spa": "Spa",
+       "changed": "475 đã đổi",
+       "change_now": "Đổi ngay",
+       "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
+       "title_spa":"Liệu trình Photo Facial"
     }
 }

@@ -46,11 +46,52 @@
             "success": "Registration successful",
             "register_fail": "Registration failed, please try again."
         }
+
     },
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "otp": {
         "otp_input": "Enter OTP",
         "resend_otp": "Resend Code"
+    },
+    "profile": {
+        "my_account": "My Account",
+        "edit_personal_info": "Edit personal information",
+        "purchase_policy": "Purchase and return policy",
+        "policy_description": "Policy applicable to Allure Spa",
+        "order_address": "Order address",
+        "address_list": "Address list",
+        "logout": "Logout",
+        "help_support": "Help & Support",
+        "about_app": "About the App",
+        "settings": "Settings",
+        "more": "More",
+        "edit_profile": "Edit Profile",
+        "change_password": "Change Password",
+        "history_login": "Login History",
+        "dowload_information": "Download Information",
+        "delete_account": "Delete Account",
+        "change_info": "Change Information"
+    },
+
+    "voucher": {
+        "title": "Voucher",
+        "all" : "All",
+        "birrthday" : "Birthday",
+        "event" : "Event",
+        "prominent" : "Prominent",
+        "gift" : "Gift",
+        "many_offers_comingsoon" : "Many offers coming soon"
+
+    },
+    "reward":{
+        "title": "Exchange reward",
+       "cosmetic" : "Cosmetic",
+       "spa": "Spa",
+       "changed": "475 changed",
+       "change_now": "Change now",
+       "title_cosmetic": "Lipocollage Lamellar Cleansing Copy",
+       "title_spa": "Treatment Photo Facial"
     }
+    
 }

@@ -43,7 +43,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             title: "Chỉnh sửa hồ sơ",
             icon: require("@/assets/images/edit.png"),
             onPress: () => {
-                router.push({ pathname: "/profile/detail/edit" });
+                router.push({ pathname: "/profile/detail/edit", params: {} });
             }
           },
           {
