@@ -1,33 +1,48 @@
 import axios from "axios";
 
-// baseURL: `https://allurespa.io.vn/`
-// baseURL: `https://allure-spa-1139e6106faa.herokuapp.com/api/`
-
 const AxiosInstance = (contentType = 'application/json') => {
-    
     const axiosInstance = axios.create({
-        baseURL: `192.168.1.63:8000/api/`
+        baseURL: `https://allurespa.io.vn/api/`
     });
-
-
 
     axiosInstance.interceptors.request.use(
         async (config) => {
-            const token = '';
+            const token = ''; // Add logic to retrieve token if needed
             config.headers = {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json',
                 'Content-Type': contentType
-            }
+            };
             return config;
         },
         err => Promise.reject(err)
     );
 
     axiosInstance.interceptors.response.use(
-        res => res.data,
-        err => Promise.reject(err)
+        res => res,
+        err => {
+            if (err.response) {
+                // Return error data from response
+                return Promise.reject({
+                    status: err.response.status,
+                    data: err.response.data
+                });
+            } else if (err.request) {
+                // Request was made but no response received
+                return Promise.reject({
+                    status: 'REQUEST_ERROR',
+                    data: err.request
+                });
+            } else {
+                // Error setting up the request
+                return Promise.reject({
+                    status: 'ERROR',
+                    data: err.message
+                });
+            }
+        }
     );
+
     return axiosInstance;
 };
 

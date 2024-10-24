@@ -1,168 +1,249 @@
-import React, { useState } from 'react';
-import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
-import { Link, useRouter } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import AppButton from '@/components/buttons/AppButton';
+import React, { useRef, useState, useEffect } from 'react';
+import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Animated, Dimensions, Alert } from 'react-native';
+import { View, Image, Text, Colors, Modal, TouchableOpacity } from 'react-native-ui-lib';
+import { Link } from 'expo-router/build/link/Link';
 import i18n from '@/languages/i18n';
+import LoginForm from './form/LoginForm';
+import RegisterForm from './form/RegisterForm';
+import LoginZaloForm from './form/LoginZaloForm';
+import OTP from './otp';
+import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
-import { TextInput } from '@/components/inputs/TextInput';
-import colors from 'react-native-ui-lib/src/style/colors';
+import axios from 'axios';
+import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '@/redux/language/LanguageSlice';
 
-SplashScreen.preventAutoHideAsync();
+const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
-  const [viewState, setViewState] = useState('default');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
+  const dispatch = useDispatch();
 
-  const changeLanguage = (language: string) => {
-    i18n.locale = language;
-    setCurrentLanguage(language);
-  };
+  const currentLanguage = useSelector((state: any) => state.language?.currentLanguage ?? 'en');
+  const [viewState, setViewState] = useState('default');
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
+
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [, forceUpdate] = useState({});
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const translateYAnim = useRef(new Animated.Value(10)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(translateYAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [viewState]);
 
   const handleButtonClick = (newState: string) => {
     setViewState(newState);
   };
 
-  const sendOTP = () => {
-    console.log('OTP sent to:', phoneNumber);
+  const changeLanguage = (nextLanguage: string) => {
+    i18n.locale = nextLanguage;
+    setCurrentLanguage(nextLanguage);
   };
 
+  const toggleLanguage = () => {
+    const nextLanguage = currentLanguage === 'en' ? 'ja' : currentLanguage === 'ja' ? 'vi' : 'en';
+    changeLanguage(nextLanguage);
+  };
+
+  const handleRegisterPress = async () => {
+    try {
+      const response = await axios.post('/api/auth/register', {
+        phone_number: phoneNumber,
+        full_name: fullName,
+        password: password,
+        password_confirmation: password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        handleButtonClick('login');
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.response) {
+        Alert.alert('Error', err.response.data.message || 'Registration failed');
+      } else {
+        Alert.alert('Error', 'Network error, please try again');
+      }
+    }
+  };
+
+  const handleLoginPress = async () => {
+    try {
+      const response = await axios.post('/api/auth/login', {
+        phone_number: phoneNumber,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        console.log('Navigating to Home...');
+        router.push('/(tabs)/home'); // Ensure the path is correct
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.response) {
+        Alert.alert('Error', err.response.data.message || 'Login failed');
+      } else {
+        Alert.alert('Error', 'Network error, please try again');
+      }
+    }
+  };
+
+  const handlesendOtpPress = () => {
+    setViewState('otp');
+  };
+
+  const handleBackPress = () => {
+    setViewState('default');
+  };
+
+  const renderForm = () => {
+    switch (viewState) {
+      case 'login':
+        return (
+          <LoginForm
+            phoneNumber={phoneNumber}
+            password={password}
+            setPhoneNumber={setPhoneNumber}
+            setPassword={setPassword}
+            onLoginPress={handleLoginPress}
+            onBackPress={handleBackPress}
+          />
+        );
+      case 'register':
+        return (
+          <RegisterForm
+            phoneNumber={phoneNumber}
+            fullName={fullName}
+            password={password}
+            setPhoneNumber={setPhoneNumber}
+            setFullName={setFullName}
+            setPassword={setPassword}
+            onRegisterPress={handleRegisterPress}
+            onBackPress={handleBackPress}
+          />
+        );
+      case 'zalo':
+        return (
+          <LoginZaloForm
+            sendOtpPress={handlesendOtpPress}
+            onBackPress={handleBackPress}
+          />
+        );
+      case 'otp':
+        return (
+          <OTP
+            phoneNumber={phoneNumber}
+            fullName={fullName}
+            sendOtpPress={handlesendOtpPress}
+            onBackPress={handleBackPress}
+          />
+        );
+      default:
+        return null;
+    }
+  useEffect(() => {
+    i18n.locale = currentLanguage;
+    forceUpdate({});
+  }, [currentLanguage]);
+
+  const changeLanguage = (nextLanguage: string) => {
+    dispatch(setLanguage(nextLanguage));
+    setModalVisible(false);
+  };
+
+  const renderSelectLanguage = (key: string) => {
+    switch (key) {
+      case 'en':
+        return 'English';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'ja':
+        return '日本語';
+      default:
+        return 'English';
+    }
+  }
+
   return (
-    <View flex>
-      <Image
-        source={require('@/assets/images/authen/img_bg_authen.png')}
-        style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0.5 }}
-      />
-      <View paddingT-40 centerH marginB-16>
-        <Image source={Brand} width={250} height={85} />
-        <Text
-          text50BO
-          center
-          marginR-85
-          style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
-        >
-          {i18n.t('auth.art.title')}
-        </Text>
-        <Text
-          text50BO
-          center
-          marginL-65
-          marginB-150
-          style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
-        >
-          {i18n.t('auth.art.subtitle')}
-        </Text>
-      </View>
-
-      <View
-        bg-white
-        paddingH-24
-        paddingT-32
-        flex
-        style={{
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-        }}
-      >
-        {viewState === 'default' ? (
-          <View>
-            <AppButton
-              title={i18n.t('auth.register.title')}
-              type='primary'
-              onPress={() => handleButtonClick('register')}
-            />
-            <AppButton
-              title={i18n.t('auth.login.title')}
-              type='primary'
-              onPress={() => handleButtonClick('login')}
-            />
-            <AppButton
-              title={i18n.t('auth.login.zalo')}
-              type='secondary'
-              onPress={() => handleButtonClick('changed')}
-            />
-            <AppButton
-              title={i18n.t('change_language')}
-              type='secondary'
-              onPress={() => {
-                const nextLanguage = currentLanguage === 'en' ? 'ja' : currentLanguage === 'ja' ? 'vi' : 'en';
-                changeLanguage(nextLanguage);
-              }}
-            />
-            <Link href="/(tabs)/home" asChild>
-              <AppButton title={i18n.t('auth.login.skip')} type='text' />
-            </Link>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
+          <Image
+            source={require('@/assets/images/authen/img_bg_authen.png')}
+            style={{
+              position: 'absolute',
+              width: '100%',
+              height: '100%',
+              opacity: 0.5,
+            }}
+          />
+          <View paddingT-40 centerH marginB-16>
+            <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
+            <Text text50BO center marginR-85 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+              {i18n.t('auth.art.title')}
+            </Text>
+            <Text text50BO center marginL-65 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+              {i18n.t('auth.art.subtitle')}
+            </Text>
           </View>
-        ) : viewState === 'login' ? (
-          <>
-            <TextInput
-              title={i18n.t('auth.login.username')}
-              placeholder={i18n.t('auth.login.username')}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-            />
-            <TextInput
-              title={i18n.t('auth.login.password')}
-              placeholder={i18n.t('auth.login.password')}
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', width: 345, marginBottom: Spacings.s3 }}>
-              <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.zalo')}</Text>
-            </View>
-            <View style={{ paddingHorizontal: Spacings.s6, marginBottom: 30 }}>
-              <Link href="/(tabs)/home" asChild>
-                <AppButton type="primary" title={i18n.t('auth.login.title')} />
-              </Link>
-              <AppButton
-                title={i18n.t('back')}
-                type="outline"
-                onPress={() => setViewState('default')}
-                marginT-12
-              />
-            </View>
-          </>
-        ) : (
-          <>
-            <TextInput
-              title={i18n.t('auth.login.username')}
-              placeholder={i18n.t('auth.login.username')}
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
-            />
-            <TextInput
-              title={i18n.t('auth.register.username')}
-              placeholder={i18n.t('auth.register.username')}
-              value={fullName}
-              onChangeText={setFullName}
-            />
-            <View style={{ paddingHorizontal: Spacings.s6, marginBottom: 30 }}>
-              <AppButton title={i18n.t('sendOTP')} type="primary" onPress={sendOTP} />
-              <AppButton
-                title={i18n.t('back')}
-                type="outline"
-                onPress={() => setViewState('default')}
-                marginT-12
-              />
-            </View>
-          </>
-        )}
 
-        <Text center text80 marginT-20>
-          {i18n.t('auth.login.by_continue')}
-          <Text text80H> {i18n.t('auth.login.terms')} </Text>
-          {''}{i18n.t('auth.login.and')} {''}
-          <Text text80H>{i18n.t('auth.login.privacy')}</Text>
-          {''} {i18n.t('auth.login.of_us')}
-        </Text>
-      </View>
-    </View>
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: translateYAnim }],
+              backgroundColor: 'white',
+              width: '100%',
+              paddingHorizontal: 24,
+              paddingTop: 32,
+              paddingBottom: 20,
+              position: 'absolute',
+              bottom: 0,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+            }}
+          >
+            {viewState === 'default' ? (
+              <View>
+                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
+                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
+                <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
+                <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
+                <Link href="/(tabs)/home" asChild>
+                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
+                </Link>
+              </View>
+            ) : (
+              renderForm()
+            )}
+
+            <Text center text80>
+              {i18n.t('auth.login.by_continue')}
+              <Text text80H> {i18n.t('auth.login.terms')} </Text>
+              {i18n.t('auth.login.and')}
+              <Text text80H> {i18n.t('auth.login.privacy')} </Text>
+              {i18n.t('auth.login.of_us')}
+            </Text>
+          </Animated.View>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

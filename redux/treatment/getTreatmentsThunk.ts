@@ -4,14 +4,11 @@ import AxiosInstance from "@/utils/services/helper/AxiosInstance";
 
 export const getTreatmentsThunk: any = createAsyncThunk(
     'treatment',
-    async (_, { rejectWithValue }) => {
-        console.log('Get treatments')
+    async (page, { rejectWithValue }) => {
         try {
             console.log(`Full request url ${AxiosInstance().defaults.baseURL}treatments`);
-            const res: TreatmentsResponeParams = await AxiosInstance().get('treatments');
+            const res: TreatmentsResponeParams = await AxiosInstance().get(`treatments?page=${page}`);
 
-            
-            // const res: TreatmentsResponeParams = await fetch('http://192.168.1.63:8000/api/treatments')
             if (res.status_code === 200 && res.data) {
                 return res.data;
             }

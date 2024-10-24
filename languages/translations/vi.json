@@ -4,32 +4,49 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
     "settings": "Cài đặt",
-    "change_language": "Change language",
+    "change_language": "Change Language",
     "back": "Quay lại",
     "sendOTP": "Gửi OTP",
     "auth": {
         "login": {
             "title": "Đăng nhập",
-            "username": "Tên đăng nhập",
+            "username": "Số điện thoại",
             "password": "Mật khẩu",
             "remember": "Ghi nhớ",
             "zalo": "Đăng nhập bằng Zalo",
             "skip": "Đăng nhập sau",
             "terms": "Điều khoản sử dụng",
             "privacy": "Chính sách bảo mật",
-            "by_continue": "Bằng cách tiếp tục, bạn đồng ý với",
+            "by_continue": "Bằng cách đăng nhập, bạn sẽ đồng ý với",
             "and": "và",
-            "of_us": "của chúng tôi"
+            "of_us": "của chúng tôi",
+            "forgot_password": "Quên mật khẩu?"
         },
         "art": {
-            "title": "Nghệ thuật chăm da",
+            "title": "Nghệ thuật chăm sóc da",
             "subtitle": "Từ nghệ nhân Nhật Bản"
         },
         "register": {
             "title": "Đăng ký",
-            "username": "Tên đăng nhập",
-            "password": "Mật khẩu",
-            "remember": "Ghi nhớ"
+            "phone_number": "Số điện thoại",
+            "fullname": "Họ và tên",
+            "password": "Mật khẩu mới",
+            "confirm_password": "Xác nhận mật khẩu",
+            "agree_terms": "Bằng cách đăng ký, bạn sẽ đồng ý với Điều khoản sử dụng và Chính sách bảo mật của chúng tôi",
+            "register_button": "Đăng ký",
+            "back_button": "Quay lại",
+            "password_mismatch": "Mật khẩu không khớp",
+            "check_password": "Vui lòng kiểm tra lại mật khẩu của bạn",
+            "error": "Có lỗi xảy ra",
+            "unknown_error": "Lỗi không xác định, vui lòng thử lại sau",
+            "success": "Đăng ký thành công",
+            "register_fail": "Đăng ký thất bại, vui lòng thử lại sau."
         }
+    },
+    "terms": "Điều khoản sử dụng",
+    "privacy": "Chính sách bảo mật",
+    "otp": {
+        "otp_input": "Nhập OTP",
+        "resend_otp": "Gửi lại mã"
     }
 }

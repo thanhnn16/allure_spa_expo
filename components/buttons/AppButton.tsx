@@ -10,6 +10,7 @@ export interface AppButtonProps {
     buttonStyle?: any;
     titleStyle?: any;
     disabled?: boolean;
+    loading?: boolean; // Add loading prop
 }
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
@@ -48,6 +49,7 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
                 label={props.title}
                 onPress={props.onPress}
                 disabled={props.disabled}
+                loading={props.loading}
                 {...buttonStyles}
                 style={[styles.button, buttonStyles, props.buttonStyle]}
             />
@@ -59,7 +61,6 @@ const styles = StyleSheet.create({
     button: {
         height: 48,
         borderRadius: 8,
-        paddingHorizontal: 16,
     },
 });
 

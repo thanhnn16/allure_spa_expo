@@ -10,6 +10,7 @@ import Voucher from './voucher';
 import Rewward from './reward';
 
 
+
 export default function Index() {
   const [loaded, error] = useFonts({
     'SFProText-Bold': require('@/assets/fonts/SFProText-Bold.otf'),

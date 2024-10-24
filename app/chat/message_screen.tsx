@@ -1,78 +1,92 @@
-import React, { useState } from 'react';
-import { StyleSheet, FlatList, TextInput } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, FlatList, TextInput, TouchableWithoutFeedback, Platform, Keyboard, KeyboardAvoidingView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
 import { Image, View, Text, TouchableOpacity, Button, Colors } from 'react-native-ui-lib';
 
-import MicIcon from '@/assets/icons/mic.svg'
-import CameraIcon from '@/assets/icons/camera.svg'
+
+
+import SunIcon from '@/assets/icons/sun.svg';
 import { Href, router } from 'expo-router';
-
-const messagesData = [
-  { id: '1', text: 'hehe', sender: 'user', time: '' },
-  { id: '2', text: 'bên mình uy tín quá a', sender: 'user', time: '' },
-  { id: '3', text: 'cảm ơn đã ủng hộ bên mình nhé', sender: 'support', time: '' },
-  { id: '4', text: 'mình thấy dịch vụ rất oke', sender: 'user', time: '' },
-  { id: '5', text: 'sắp tới mình sẽ ủng hộ tiếp', sender: 'user', time: '19:30' },
-  { id: '6', text: 'ad ơi', sender: 'user', time: '' },
-];
-
-const ChatCSKH = () => {
+import { BlurView } from 'expo-blur';
+import MessageBubble from '@/components/message/message_bubble';
+import messagesData from './data';
+import MessageTextInput from '@/components/message/message_textinput';
+import AppBar from '@/components/app_bar/app_bar';
+const MessageScreen = () => {
   const [message, setMessage] = useState('');
+  const [messageStatus, setMessageStatus] = useState('Đã gửi');
+  const scrollRef = useRef<FlatList>(null);
 
-  const renderItem = ({ item }: { item: typeof messagesData[0] }) => (
-    <View style={[styles.messageContainer, item.sender === 'user' ? styles.userMessage : styles.supportMessage]}>
-      <Text h2 style={item.sender === 'user' ? styles.userMessageText : styles.supportMessageText}>{item.text}</Text>
-      {item.time ? <Text h3 style={item.sender === 'user' ? styles.userMessageText : styles.supportMessageText}>{item.time}</Text> : null}
-    </View>
-  );
 
   const handleSend = () => {
-    if (message.trim()) {
-      setMessage('');
-    }
+    if (message.trim() === '') return;
+    const newMessage = { id: (messagesData.length + 1).toString(), text: message, sender: 'user', time: new Date().toLocaleTimeString().split(':').slice(0, 2).join(':') };
+    messagesData.push(newMessage);
+    setMessageStatus('Đang gửi');
+    setMessage('');
+    scrollRef.current?.scrollToEnd({ animated: true });
+
+    setTimeout(() => {
+      setMessageStatus('Đã gửi');
+    }, 4000);
+    
+    setTimeout(() => {
+      setMessageStatus('Đã đọc');
+    }, 6000);
   };
 
-  const handleAI = () => {
-    router.push('/chat/ai_screen' as Href<string>)
-  }
+  const handleRead = () => {
+    return (
+      <View style={styles.statusContainer}>
+        <Text>{messageStatus}</Text>
+        {messageStatus === 'Đã đọc'}
+        {messageStatus === 'Đang gửi' && <ActivityIndicator size="small" color={Colors.primary} style={{ marginLeft: 5 }} />}
+      </View>
+    );
+  };
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   return (
-    <View flex bg-$backgroundDefault padding-16>
-      <Text h0_bold>CSKH</Text>
-      <FlatList
-        data={messagesData}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.messagesList}
-      />
-      <View row>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1, backgroundColor: '#ffffff' }}
+      >
+        <SafeAreaView style={{ flex: 1 }}>
 
-        <View width={40} height={40} centerV marginT-5>
-          <Image source={CameraIcon} />
-        </View>
+          <AppBar title="CSKH" />
 
-        <View row flex style={styles.inputContainer}>
-          <TextInput
-            placeholder="Nhắn cho CSKH..."
-            value={message}
-            onChangeText={setMessage}
-            onSubmitEditing={handleSend}
-            style={styles.input}
+          <FlatList
+            data={messagesData}
+            renderItem={({ item }) => <MessageBubble item={item} />}
+            ref={scrollRef}
+            onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16 }}
+            ListFooterComponent={handleRead}
           />
-          <View flex right centerV>
-            <TouchableOpacity onPress={handleAI}>
-              <Image source={MicIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
+          
+          <MessageTextInput
+            placeholder="Nhắn cho CSKH..."
+            message={message}
+            setMessage={setMessage}
+            handleSend={handleSend}
+            isCamera={true}
+            isAI={false}
+          />
 
-        <Button
-          size={Button.sizes.small}
-          label="Gửi"
-          backgroundColor={Colors.primary}
-          onPress={handleSend}
-        />
-      </View>
-    </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -80,48 +94,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 16,
+    paddingHorizontal: 16,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  messagesList: {
-    paddingBottom: 16,
-  },
-  messageContainer: {
-    marginVertical: 4,
-    padding: 10,
-    borderRadius: 10,
-    maxWidth: '80%',
-  },
-  userMessage: {
-    backgroundColor: Colors.primary,
-    alignSelf: 'flex-end',
-  },
-  supportMessage: {
-    backgroundColor: '#f1f1f1',
-    alignSelf: 'flex-start',
-  },
-  userMessageText: {
-    color: Colors.white,
-  },
-  supportMessageText: {
-    color: Colors.black,
-  },
-  inputContainer: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 20,
-    paddingVertical: 5,
-    paddingStart: 10,
-    marginRight: 10,
-  },
-  input: {
-    width: '85%',
+  
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 10,
   },
 });
 
-export default ChatCSKH;
+export default MessageScreen;

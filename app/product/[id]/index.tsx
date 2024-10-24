@@ -242,14 +242,16 @@ export default function DetailsScreen() {
                     </Link>
                 </View>
                 <View flex right>
-                    <Button
-                        label={'Mua ngay'}
-                        backgroundColor='#717658'
-                        borderRadius={10}
-                        onPress={() => {
-                            console.log('mua ha');
-                        }}
-                    />
+                <Link href='/cart_shop/cart_empty' asChild>
+                        <Button
+                            label={'Mua ngay'}
+                            backgroundColor='#717658'
+                            borderRadius={10}
+                            onPress={() => {
+                                console.log('mua ha');
+                            }}
+                        />
+                    </Link>
                 </View>
             </View>
         </View>

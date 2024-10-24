@@ -14,7 +14,7 @@ export interface TreatmentCategoriesModel {
     category_name: string;
 }
 
-export interface TreatmentCategoriesRespone extends ResponeDefaultParams {
+export interface TreatmentCategoriesResponeParams extends ResponeDefaultParams {
     data: TreatmentCategoriesModel[]
 }
 
