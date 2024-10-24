@@ -17,7 +17,7 @@ import AddressIcon from "@/assets/icons/location.svg";
 import GenderIcon from "@/assets/icons/gender.svg";
 import BirthdayIcon from "@/assets/icons/birthday.svg";
 // import RNPickerSelect from "react-native-picker-select";
-import DateTimePicker from "@react-native-community/datetimepicker";
+// import DateTimePicker from "@react-native-community/datetimepicker";
 interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
@@ -167,8 +167,8 @@ const ProfileEdit = (props: ProfileEditProps) => {
           <View row centerV gap-10>
             <Image width={24} height={24} source={GenderIcon} />
             <Picker
-              selectedValue={gender} 
-              onChangeValue={(value: string) => handleValueChange(value as string)}
+              value={gender} 
+              onChange={(value: string) => handleValueChange(value as string)}
               style={{
                 borderBottomWidth: 0.5,
                 flex: 1,
@@ -199,12 +199,13 @@ const ProfileEdit = (props: ProfileEditProps) => {
               <Text>{birthday}</Text>
             </TouchableOpacity>
             {isDatePickerVisible && (
-              <DateTimePicker
-                value={new Date()}
-                mode="date"
-                is24Hour={true}
-                onChange={handleConfirm}
-              />
+              // <DateTimePicker
+              //   value={new Date()}
+              //   mode="date"
+              //   is24Hour={true}
+              //   onChange={handleConfirm}
+              // />
+              null
             )}
           </View>
         </View>

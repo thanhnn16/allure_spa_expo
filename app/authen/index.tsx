@@ -180,10 +180,10 @@ const Onboarding: React.FC = () => {
           />
           <View paddingT-40 centerH marginB-16>
             <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
-            <Text text50BO center marginR-85 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+            <Text  center marginR-85 onboarding_title>
               {i18n.t('auth.art.title')}
             </Text>
-            <Text text50BO center marginL-65 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+            <Text  center marginL-65 onboarding_title>
               {i18n.t('auth.art.subtitle')}
             </Text>
           </View>
