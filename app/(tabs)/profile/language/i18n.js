@@ -17,7 +17,6 @@ const resources = {
       about_app: "About the App",
       settings: "Settings",
       more: "More",
-      // Thêm các từ khóa khác
     }
   },
   vi: {
@@ -33,7 +32,6 @@ const resources = {
       about_app: "Giới thiệu về ứng dụng",
       settings: "Cài đặt",
       more: "More",
-      // Thêm các từ khóa khác
     }
   }
 };
@@ -43,7 +41,7 @@ i18n
   .init({
     resources,
     lng: 'vi', // Ngôn ngữ mặc định
-    fallbackLng: 'vi',
+    fallbackLng: 'en',// Ngôn ngữ dự phòng
     interpolation: {
       escapeValue: false
     }
