@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "allure_spa_expo",
+    "name": "Allure Spa",
     "slug": "allure_spa_expo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,9 +16,6 @@
       "bundleIdentifier": "com.faithnippon.allurespa",
       "supportsTablet": true,
       "icon": "./assets/images/icon.png",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Adaptive-icon.png"
-      },
       "infoPlist": {
       "NSAppTransportSecurity": { 
         "NSAllowsArbitraryLoads": true 
@@ -30,8 +27,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/Adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "usesCleartextTraffic": true
+      }
     },
     "web": {
       "bundler": "metro",
@@ -58,10 +54,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "updates": {
-     "url": "192.168.1.63:8000/api/"
-     }
-   
+    }
   }
 }

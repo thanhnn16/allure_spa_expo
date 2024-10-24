@@ -10,12 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { forwardRef } from 'react-native-ui-lib';
 import i18n from '@/languages/i18n';
 
-interface OTPProps {
-  verifyOTP: () => void;
-  onBackPress: () => void;
-}
-
-const OTP: React.FC<OTPProps> = ({ verifyOTP, onBackPress }) => {
+const OTP: React.FC = () => {
   const inputRefs = useRef<(RNTextInput | null)[]>([]);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [confirmation, setConfirmation] = useState<any>(null);
@@ -86,7 +81,7 @@ const OTP: React.FC<OTPProps> = ({ verifyOTP, onBackPress }) => {
           onPress={handleVerifyOTP}
           loading={false}
         />
-        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
       </View>
     </View>
 

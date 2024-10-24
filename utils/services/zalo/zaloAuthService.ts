@@ -49,13 +49,13 @@ export const generateCodeChallenge = (codeVerifier: string): string => {
 };
 
 // Get Zalo OAuth URL
-export const getZaloOauthUrl = (codeChallenge: string, state: string): string => {
-  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&state=${state}&code_challenge_method=S256`;
+export const getZaloOauthUrl = (codeChallenge: string): string => {
+  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&state=test&code_challenge_method=S256`;
 };
 
 // Open Zalo login URL
-export const openZaloLogin = (codeChallenge: string, state: string): void => {
-  const url = getZaloOauthUrl(codeChallenge, state);
+export const openZaloLogin = (codeChallenge: string): void => {
+  const url = getZaloOauthUrl(codeChallenge);
   Linking.openURL(url);
 };
 
