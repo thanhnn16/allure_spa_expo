@@ -2,7 +2,7 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Image, Button, ListItem, Colors } from "react-native-ui-lib";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 
 interface Product {
     id: number;
@@ -91,17 +91,16 @@ const ProductList = () => {
                 <Text style={styles.totalText}>Tổng cộng: </Text>
                 <Text style={styles.totalPrice}>{calculateTotalPrice().toLocaleString()} VNĐ</Text>
             </View>
-            <Button
-              label='Tiếp Tục'
-              labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-              backgroundColor={Colors.primary}
-              padding-20
-              borderRadius={10}
-              style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-              onPress={() => {
-                router.back();
-              }}
-              />
+            <Link href="/payment" asChild>
+                <Button
+                    label='Tiếp Tục'
+                    labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+                    backgroundColor={Colors.primary}
+                    padding-20
+                    borderRadius={10}
+                    style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+                />
+            </Link>
         </View>
     );
 };
