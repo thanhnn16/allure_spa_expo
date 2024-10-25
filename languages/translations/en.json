@@ -14,6 +14,8 @@
             "password": "Password",
             "remember": "Remember Me",
             "zalo": "Login with Zalo",
+            "enter_full_name": "Enter your full name",
+            "invalid_full_name": "Invalid full name",
             "skip": "Login Later",
             "terms": "Terms of Service",
             "privacy": "Privacy Policy",
@@ -23,8 +25,14 @@
             "forgot_password": "Forgot password?",
             "success": "Login successful",
             "error": "Login failed",
+            "unknown_error": "An unknown error occurred, please try again later",
             "invalid_credentials": "Invalid phone number or password",
-            "unknown_error": "An unknown error occurred"
+            "empty_phone_number": "You have not entered a phone number",
+            "invalid_phone_number": "Invalid phone number",
+            "empty_password": "You have not entered a password",
+            "invalid_password_special_char": "Password must not contain special characters",
+            "invalid_password_length": "Password must be at least 8 characters long",
+            "server_error": "Server error, please try again later"
         },
         "art": {
             "title": "The Art of Skincare",
@@ -44,7 +52,14 @@
             "error": "An error occurred",
             "unknown_error": "An unknown error occurred, please try again later",
             "success": "Registration successful",
-            "register_fail": "Registration failed, please try again."
+            "register_fail": "Registration failed, please try again later.",
+            "invalid_phone_number": "Invalid phone number",
+            "empty_phone_number": "You have not entered a phone number",
+            "empty_full_name": "You have not entered a full name",
+            "invalid_full_name": "Full name must not contain numbers",
+            "empty_password": "You have not entered a password",
+            "invalid_password_special_char": "Password must not contain special characters",
+            "invalid_password_length": "Password must be at least 8 characters long"
         }
 
     },
