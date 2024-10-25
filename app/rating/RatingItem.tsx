@@ -35,17 +35,6 @@ const RatingItem = ({ item }: { item: RatingItemProps }) => {
       style={{ borderRadius: 13 }}
     >
 
-      {/* <ImageView
-        images={images}
-        imageIndex={0}
-        visible={visible}
-        onRequestClose={() => setIsVisible(false)}
-        swipeToCloseEnabled={true}
-        onImageIndexChange={(index) => console.log(index)}
-        doubleTapToZoomEnabled={true}
-        FooterComponent={FooterComponent}
-      /> */}
-
       <View row centerV>
         <View row gap-10 centerV>
           <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />

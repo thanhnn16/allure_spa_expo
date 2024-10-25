@@ -54,6 +54,37 @@
         "otp_input": "Enter OTP",
         "resend_otp": "Resend Code"
     },
+    "pageTitle": {
+        "chat": "Chat",
+        "favorite": "Favorite",
+        "cart": "Cart",
+        "order": "Order",
+        "notification": "Notification",
+        "profile": "Profile"
+    },
+    "productDetail": {
+        "quantity": "QUANTITY",
+        "product_description": "PRODUCT DESCRIPTION",
+        "reviews": "Reviews",
+        "add_to_cart": "Add to cart",
+        "buy_now": "Buy now"
+    },
+    "rating": {
+        "add_review": "Add review",
+        "base_on": "Based on",
+        "reviews": "reviews",
+        "how_do_you_feel": "How do you feel",
+        "feel_about_product": "Feel about product",
+        "type_content": "Type content",
+        "images": "Images",
+        "send_review": "Send review"
+    },
+    "chat": {
+        "customer_care": "Customer care",
+        "chat_with_ai": "Chat with AI",
+        "send": "Send",
+        "chat_with": "Chat with"
+    },
     "profile": {
         "my_account": "My Account",
         "edit_personal_info": "Edit personal information",

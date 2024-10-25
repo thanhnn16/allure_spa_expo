@@ -148,8 +148,32 @@ const HomePage = () => {
           <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
         </View>
       </TouchableOpacity>
-    );
-  };
+    )
+  }
+
+  const renderProductItem = (item: any) => {
+    const rItem = item.item;
+    return (
+
+
+      <TouchableOpacity onPress={() => {
+        router.push({ pathname: '/product/[id]', params: { id: rItem.id } }) // Updated to use a single object
+      }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
+        <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
+        <View paddingH-8 marginT-5>
+          <Text text70H>{rItem.name}</Text>
+          <View row>
+            <View row>
+              <Image source={require('@/assets/images/home/icons/yellowStar.png')} width={15} height={15} />
+              <Text style={{ color: '#8C8585' }}>5.0</Text>
+            </View>
+            <Text> | 475 Đã bán</Text>
+          </View>
+          <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
   return (
     <View bg-$backgroundDefault useSafeArea flex>
@@ -176,7 +200,9 @@ const HomePage = () => {
             <ButtonNotifyIcon onPress={() => {
               router.push('notification' as Href<string>);
             }} />
-            <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
+            <ButtonMessageIcon onPress={() => {
+              router.push('/chat' as Href<string>);
+            }} />
           </View>
         </View>
 
