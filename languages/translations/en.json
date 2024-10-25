@@ -92,6 +92,14 @@
        "change_now": "Change now",
        "title_cosmetic": "Lipocollage Lamellar Cleansing Copy",
        "title_spa": "Treatment Photo Facial"
+    },
+    "aboutapp": {
+        "title": "About App",
+        "title1": "The Allure Spa app is the perfect solution for those who love beauty and want to explore high-quality spa products and services from Japan. Designed exclusively for Allure Spa customers, this app not only provides a convenient shopping experience but also helps customers easily access high-class beauty treatments.",
+        "title2": "Basic information of Allure Spa application:",
+        "name_app":"App Name: Allure Spa",
+        "developer":"Developer: Allure Spa",
+        "version":"Version: 1.0.0",
+        "date_release":"Release Date: 01/01/2021"
     }
-    
 }

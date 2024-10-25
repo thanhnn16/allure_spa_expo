@@ -86,5 +86,14 @@
        "change_now": "Đổi ngay",
        "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
        "title_spa":"Liệu trình Photo Facial"
+    },
+    "aboutapp": {
+        "title": "Giới thiệu về ứng dụng",
+        "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
+        "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
+        "name_app":"Tên ứng dụng: Allure Spa",
+        "developer":"Nhà phát triển: Allure Spa",
+        "version":"Phiên bản: 1.0.0",
+        "date_release":"Ngày phát hành: 01/01/2021"
     }
 }
