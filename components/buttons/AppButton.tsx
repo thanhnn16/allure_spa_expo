@@ -11,6 +11,7 @@ export interface AppButtonProps {
     titleStyle?: any;
     disabled?: boolean;
     loading?: boolean; // Add loading prop
+    children?: React.ReactNode; // Add children prop
 }
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
@@ -52,7 +53,9 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
                 loading={props.loading}
                 {...buttonStyles}
                 style={[styles.button, buttonStyles, props.buttonStyle]}
-            />
+            >
+                {props.children}
+            </Button>
         </View>
     );
 });

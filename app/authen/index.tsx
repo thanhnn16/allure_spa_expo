@@ -19,7 +19,7 @@ const { width, height } = Dimensions.get('window');
 const Onboarding: React.FC = () => {
   const dispatch = useDispatch();
 
-  const currentLanguage = useSelector((state: any) => state.language?.currentLanguage ?? 'en');
+  const selectedLanguage = useSelector((state: any) => state.language?.currentLanguage ?? 'en');
   const [viewState, setViewState] = useState('default');
   const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
 
@@ -50,14 +50,14 @@ const Onboarding: React.FC = () => {
     setViewState(newState);
   };
 
-  const changeLanguage = (nextLanguage: string) => {
+  const updateLanguage = (nextLanguage: string) => {
     i18n.locale = nextLanguage;
     setCurrentLanguage(nextLanguage);
   };
 
   const toggleLanguage = () => {
     const nextLanguage = currentLanguage === 'en' ? 'ja' : currentLanguage === 'ja' ? 'vi' : 'en';
-    changeLanguage(nextLanguage);
+    updateLanguage(nextLanguage);
   };
 
   const handleRegisterPress = async () => {
@@ -114,50 +114,48 @@ const Onboarding: React.FC = () => {
   };
 
   const renderForm = () => {
-    switch (viewState) {
-      case 'login':
-        return (
-          <LoginForm
-            phoneNumber={phoneNumber}
-            password={password}
-            setPhoneNumber={setPhoneNumber}
-            setPassword={setPassword}
-            onLoginPress={handleLoginPress}
-            onBackPress={handleBackPress}
-          />
-        );
-      case 'register':
-        return (
-          <RegisterForm
-            phoneNumber={phoneNumber}
-            fullName={fullName}
-            password={password}
-            setPhoneNumber={setPhoneNumber}
-            setFullName={setFullName}
-            setPassword={setPassword}
-            onRegisterPress={handleRegisterPress}
-            onBackPress={handleBackPress}
-          />
-        );
-      case 'zalo':
-        return (
-          <LoginZaloForm
-            sendOtpPress={handlesendOtpPress}
-            onBackPress={handleBackPress}
-          />
-        );
-      case 'otp':
-        return (
-          <OTP
-            phoneNumber={phoneNumber}
-            fullName={fullName}
-            sendOtpPress={handlesendOtpPress}
-            onBackPress={handleBackPress}
-          />
-        );
-      default:
-        return null;
-    }
+    return (
+        <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: translateYAnim }] }}>
+          {viewState === 'login' && (
+              <LoginForm
+                  phoneNumber={phoneNumber}
+                  password={password}
+                  setPhoneNumber={setPhoneNumber}
+                  setPassword={setPassword}
+                  onLoginPress={handleLoginPress}
+                  onBackPress={handleBackPress}
+              />
+          )}
+          {viewState === 'register' && (
+              <RegisterForm
+                  phoneNumber={phoneNumber}
+                  fullName={fullName}
+                  password={password}
+                  setPhoneNumber={setPhoneNumber}
+                  setFullName={setFullName}
+                  setPassword={setPassword}
+                  onRegisterPress={handleRegisterPress}
+                  onBackPress={handleBackPress}
+              />
+          )}
+          {viewState === 'zalo' && (
+              <LoginZaloForm
+                  sendOtpPress={handlesendOtpPress}
+                  onBackPress={handleBackPress}
+              />
+          )}
+          {viewState === 'otp' && (
+              <OTP
+                  phoneNumber={phoneNumber}
+                  fullName={fullName}
+                  sendOtpPress={handlesendOtpPress}
+                  onBackPress={handleBackPress}
+              />
+          )}
+        </Animated.View>
+    );
+  };
+
   useEffect(() => {
     i18n.locale = currentLanguage;
     forceUpdate({});
@@ -182,68 +180,68 @@ const Onboarding: React.FC = () => {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <Image
-            source={require('@/assets/images/authen/img_bg_authen.png')}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              opacity: 0.5,
-            }}
-          />
-          <View paddingT-40 centerH marginB-16>
-            <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
-            <Text text50BO center marginR-85 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
-              {i18n.t('auth.art.title')}
-            </Text>
-            <Text text50BO center marginL-65 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
-              {i18n.t('auth.art.subtitle')}
-            </Text>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
+            <Image
+                source={require('@/assets/images/authen/img_bg_authen.png')}
+                style={{
+                  position: 'absolute',
+                  width: '100%',
+                  height: '100%',
+                  opacity: 0.5,
+                }}
+            />
+            <View paddingT-40 centerH marginB-16>
+              <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
+              <Text text50BO center marginR-85 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+                {i18n.t('auth.art.title')}
+              </Text>
+              <Text text50BO center marginL-65 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+                {i18n.t('auth.art.subtitle')}
+              </Text>
+            </View>
+
+            <Animated.View
+                style={{
+                  opacity: fadeAnim,
+                  transform: [{ translateY: translateYAnim }],
+                  backgroundColor: 'white',
+                  width: '100%',
+                  paddingHorizontal: 24,
+                  paddingTop: 32,
+                  paddingBottom: 20,
+                  position: 'absolute',
+                  bottom: 0,
+                  borderTopLeftRadius: 30,
+                  borderTopRightRadius: 30,
+                }}
+            >
+              {viewState === 'default' ? (
+                  <View>
+                    <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
+                    <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
+                    <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
+                    <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
+                    <Link href="/(tabs)/home" asChild>
+                      <AppButton title={i18n.t('auth.login.skip')} type="text" />
+                    </Link>
+                  </View>
+              ) : (
+                  renderForm()
+              )}
+
+              <Text center text80>
+                {i18n.t('auth.login.by_continue')}
+                <Text text80H> {i18n.t('auth.login.terms')} </Text>
+                {i18n.t('auth.login.and')}
+                <Text text80H> {i18n.t('auth.login.privacy')} </Text>
+                {i18n.t('auth.login.of_us')}
+              </Text>
+            </Animated.View>
           </View>
-
-          <Animated.View
-            style={{
-              opacity: fadeAnim,
-              transform: [{ translateY: translateYAnim }],
-              backgroundColor: 'white',
-              width: '100%',
-              paddingHorizontal: 24,
-              paddingTop: 32,
-              paddingBottom: 20,
-              position: 'absolute',
-              bottom: 0,
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-            }}
-          >
-            {viewState === 'default' ? (
-              <View>
-                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
-                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
-                <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
-                <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
-                <Link href="/(tabs)/home" asChild>
-                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
-                </Link>
-              </View>
-            ) : (
-              renderForm()
-            )}
-
-            <Text center text80>
-              {i18n.t('auth.login.by_continue')}
-              <Text text80H> {i18n.t('auth.login.terms')} </Text>
-              {i18n.t('auth.login.and')}
-              <Text text80H> {i18n.t('auth.login.privacy')} </Text>
-              {i18n.t('auth.login.of_us')}
-            </Text>
-          </Animated.View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
   );
 };
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Text } from 'react-native';
 import { TextInput } from '@/components/inputs/TextInput';
 import i18n from '@/languages/i18n';
-import AppButton from '@/components/buttons/AppButton';
 import { generateCodeChallenge, generateCodeVerifier, openZaloLogin } from '@/utils/services/zalo/zaloAuthService';
+import AppButton from "@/components/buttons/AppButton";
 
 interface LoginZaloFormProps {
   sendOtpPress: () => void;
@@ -19,60 +19,94 @@ const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ sendOtpPress, onBackPress
   const [phoneNumber, setPhoneNumber] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+  const [fullNameError, setFullNameError] = useState('');
+
+  const isValidFullName = (name: string) => {
+    const regex = /^[^\d]+$/; // Allows any character except digits
+    return regex.test(name);
+  };
 
   const handleSendOtp = async () => {
+    let valid = true;
+
     if (!isValidVietnamesePhoneNumber(phoneNumber)) {
-      Alert.alert(i18n.t('auth.invalid_phone_number'));
-      return;
+      setPhoneError(i18n.t('auth.login.invalid_phone_number'));
+      valid = false;
+    } else {
+      setPhoneError('');
     }
 
     if (!fullName) {
-      Alert.alert(i18n.t('auth.enter_full_name'));
-      return;
+      setFullNameError(i18n.t('auth.login.enter_full_name'));
+      valid = false;
+    } else if (!isValidFullName(fullName)) {
+      setFullNameError(i18n.t('auth.login.invalid_full_name'));
+      valid = false;
+    } else {
+      setFullNameError('');
     }
 
-    if (loading) return; // Prevent multiple submissions
+    if (!valid || loading) return;
+
     setLoading(true);
 
     try {
       const codeVerifier = generateCodeVerifier();
       const codeChallenge = generateCodeChallenge(codeVerifier);
-  
+
       openZaloLogin(codeChallenge, phoneNumber, fullName);
       sendOtpPress(); // Adjust to proceed to the next step after opening the login
     } catch (error) {
       console.error('Error sending OTP:', error);
-      Alert.alert(i18n.t('auth.otp_error'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View>
-      <TextInput
-        title={i18n.t('auth.register.phone_number')}
-        placeholder={i18n.t('auth.register.phone_number')}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-      />
-      <TextInput
-        title={i18n.t('auth.register.fullname')}
-        placeholder={i18n.t('auth.register.fullname')}
-        value={fullName}
-        onChangeText={setFullName}
-      />
-      <View marginT-10 marginB-20>
-        <AppButton
-          type="primary"
-          title={i18n.t('sendOTP')}
-          loading={loading}
-          onPress={handleSendOtp}
+      <View>
+        <TextInput
+            title={i18n.t('auth.register.phone_number')}
+            placeholder={i18n.t('auth.register.phone_number')}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            keyboardType="phone-pad"
+            onBlur={() => {
+              if (!isValidVietnamesePhoneNumber(phoneNumber)) {
+                setPhoneError(i18n.t('auth.login.invalid_phone_number'));
+              } else {
+                setPhoneError('');
+              }
+            }}
         />
-        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+        {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
+
+        <TextInput
+            title={i18n.t('auth.register.fullname')}
+            placeholder={i18n.t('auth.register.fullname')}
+            value={fullName}
+            onChangeText={setFullName}
+            onBlur={() => {
+              if (!isValidFullName(fullName)) {
+                setFullNameError(i18n.t('auth.login.invalid_full_name'));
+              } else {
+                setFullNameError('');
+              }
+            }}
+        />
+        {fullNameError ? <Text style={{ color: 'red' }}>{fullNameError}</Text> : null}
+
+        <View marginT-10 marginB-20>
+          <AppButton
+                type="primary"
+                title={i18n.t('sendOTP')}
+                onPress={handleSendOtp}
+                loading={loading}
+          />
+          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+        </View>
       </View>
-    </View>
   );
 };
 

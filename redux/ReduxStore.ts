@@ -2,19 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { treatmentSlice } from "./treatment/TreatmentSlice";
 import userReducer from "./users/UserSlice";
 
-export const reduxStore = configureStore({
-  reducer: {
-    user: userReducer,
-    treatment: treatmentSlice.reducer
-  }
-});
+// Removed duplicate reduxStore declaration
 
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { userSlice } from "./users/UserSlice";
-import { treatmentSlice } from "./treatment/TreatmentSlice";
+// import { treatmentSlice } from "./treatment/TreatmentSlice";
 import languageReducer from "./language/LanguageSlice";
 
 const persistConfig = {

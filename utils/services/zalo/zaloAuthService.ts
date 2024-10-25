@@ -53,7 +53,8 @@ export const getZaloOauthUrl = (codeChallenge: string, state: string): string =>
 
 // Open Zalo login URL
 export const openZaloLogin = (codeChallenge: string, phoneNumber: string, fullName: string): void => {
-  const url = getZaloOauthUrl(codeChallenge);
+  const state = 'someStateValue'; // You can replace 'someStateValue' with the actual state value you need
+  const url = getZaloOauthUrl(codeChallenge, state);
   Linking.openURL(url);
 };
 
