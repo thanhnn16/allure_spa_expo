@@ -54,6 +54,12 @@ const TabsLayout: React.FC = () => {
         }}
       />
       <Tabs.Screen
+        name="profile/aboutapp/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="profile/detail/index"
         options={{
           href: null,
