@@ -33,10 +33,6 @@ interface LocationsType {
   name: string;
 }
 
-interface HeaderStyleParams {
-  offset: SharedValue<number>;
-  height: number;
-}
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -124,11 +120,6 @@ const HomePage = () => {
     },
   });
 
-  const handleOpenImage = (index: number) => {
-    setBannerViewIndex(index);
-    setBannerVisible(true);
-  };
-
   const renderCateItem = (item: any) => {
     const rItem = item.item;
     return (
@@ -157,29 +148,36 @@ const HomePage = () => {
           <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
         </View>
       </TouchableOpacity>
-    );
-  };
+    )
+  }
 
+  const renderProductItem = (item: any) => {
+    const rItem = item.item;
     return (
-      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 16, width: 230, height: 'auto' }]} >
-        <Image source={require('@/assets/images/home/service1.png')} width={'100%'} height={210} style={{ resizeMode: 'stretch' }} />
-        <View flex paddingH-10 paddingV-5 gap-2 >
+
+
+      <TouchableOpacity onPress={() => {
+        router.push({ pathname: '/product/[id]', params: { id: rItem.id } }) // Updated to use a single object
+      }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
+        <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
+        <View paddingH-8 marginT-5>
           <Text text70H>{rItem.name}</Text>
-          <View flex-1>
-            <Text style={{ color: '#8C8585' }}>{truncateText(rItem.description, 50)}</Text>
+          <View row>
+            <View row>
+              <Image source={require('@/assets/images/home/icons/yellowStar.png')} width={15} height={15} />
+              <Text style={{ color: '#8C8585' }}>5.0</Text>
+            </View>
+            <Text> | 475 Đã bán</Text>
           </View>
-          <View bottom>
-            <Text text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
-          </View>
+          <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
         </View>
       </TouchableOpacity>
-    );
-  };
+    )
+  }
 
   return (
     <View bg-$backgroundDefault useSafeArea flex>
       <View marginH-24 center style={{ marginTop: Platform.OS === 'ios' ? 15 : 25 }}>
-
         {/* Header */}
         <View row centerV width={'100%'} height={60} style={{ justifyContent: 'space-between' }}>
           <View >
@@ -202,7 +200,9 @@ const HomePage = () => {
             <ButtonNotifyIcon onPress={() => {
               router.push('notification' as Href<string>);
             }} />
-            <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
+            <ButtonMessageIcon onPress={() => {
+              router.push('/chat' as Href<string>);
+            }} />
           </View>
         </View>
 

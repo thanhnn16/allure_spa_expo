@@ -11,10 +11,13 @@ import MessageBubble from '@/components/message/message_bubble';
 import messagesData from './data';
 import MessageTextInput from '@/components/message/message_textinput';
 import AppBar from '@/components/app_bar/app_bar';
+import SelectImagesBar from '@/components/images/SelectImagesBar';
+import i18n from '@/languages/i18n';
 const MessageAI = () => {
   const [message, setMessage] = useState('');
   const [messageStatus, setMessageStatus] = useState('Đã gửi');
   const scrollRef = useRef<FlatList>(null);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
 
   const handleSend = () => {
@@ -62,7 +65,7 @@ const MessageAI = () => {
       >
         <SafeAreaView style={{ flex: 1 }}>
 
-          <AppBar title="Chăm sóc AI" />
+          <AppBar title={i18n.t('chat.chat_with_ai')} />
 
           <FlatList
             data={messagesData}
@@ -74,14 +77,23 @@ const MessageAI = () => {
             contentContainerStyle={{ paddingHorizontal: 16 }}
             ListFooterComponent={handleRead}
           />
-          
+
+          {selectedImages.length > 0 && (
+            <SelectImagesBar
+              selectedImages={selectedImages}
+              setSelectedImages={setSelectedImages}
+            />
+          )}
+
           <MessageTextInput
-            placeholder="Nhắn cho chăm sóc AI..."
+            placeholder={i18n.t('chat.chat_with') + ' ' + i18n.t('chat.chat_with_ai') + ".."}
             message={message}
             setMessage={setMessage}
             handleSend={handleSend}
             isCamera={true}
             isAI={true}
+            selectedImages={selectedImages}
+            setSelectedImages={setSelectedImages}
           />
 
         </SafeAreaView>

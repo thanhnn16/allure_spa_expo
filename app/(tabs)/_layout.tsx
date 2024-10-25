@@ -42,7 +42,31 @@ const TabsLayout: React.FC = () => {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="profile/setting/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="profile/address/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="profile/aboutapp/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="profile/detail/index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="profile/detail/edit"
         options={{
           href: null,
         }}

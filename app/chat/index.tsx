@@ -5,10 +5,11 @@ import { StyleSheet, FlatList, SafeAreaView } from 'react-native';
 import IconCskh from '@/assets/icons/cskh.svg'
 import IconAi from '@/assets/icons/ai.svg'
 import AppBar from '@/components/app_bar/app_bar';
+import i18n from '@/languages/i18n';
 
 const chatData = [
-  { id: '0', title: 'CSKH', message: 'Bạn đã đặt hàng thành công cho đơn hàng: Làm sạch bằng lamellar..', time: '1h' },
-  { id: '1', title: 'Chăm sóc AI', message: 'Bạn đã hủy lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy l..', time: '2h' },
+  { id: '0', title: i18n.t('chat.customer_care'), message: 'Bạn đã đặt hàng thành công cho đơn hàng: Làm sạch bằng lamellar..', time: '1h' },
+  { id: '1', title: i18n.t('chat.chat_with_ai'), message: 'Bạn đã hủy lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy l..', time: '2h' },
 ];
 
 const handleChatScreen = (id: string) => {
@@ -37,7 +38,7 @@ const ChatScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View flex bg-$backgroundDefault>
-        <AppBar title="Chat" />
+        <AppBar title={i18n.t('pageTitle.chat')} />
         <FlatList
           data={chatData}
           renderItem={renderItem}
