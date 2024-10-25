@@ -33,10 +33,6 @@ interface LocationsType {
   name: string;
 }
 
-interface HeaderStyleParams {
-  offset: SharedValue<number>;
-  height: number;
-}
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -124,11 +120,6 @@ const HomePage = () => {
     },
   });
 
-  const handleOpenImage = (index: number) => {
-    setBannerViewIndex(index);
-    setBannerVisible(true);
-  };
-
   const renderCateItem = (item: any) => {
     const rItem = item.item;
     return (
@@ -160,26 +151,9 @@ const HomePage = () => {
     );
   };
 
-    return (
-      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 16, width: 230, height: 'auto' }]} >
-        <Image source={require('@/assets/images/home/service1.png')} width={'100%'} height={210} style={{ resizeMode: 'stretch' }} />
-        <View flex paddingH-10 paddingV-5 gap-2 >
-          <Text text70H>{rItem.name}</Text>
-          <View flex-1>
-            <Text style={{ color: '#8C8585' }}>{truncateText(rItem.description, 50)}</Text>
-          </View>
-          <View bottom>
-            <Text text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View bg-$backgroundDefault useSafeArea flex>
       <View marginH-24 center style={{ marginTop: Platform.OS === 'ios' ? 15 : 25 }}>
-
         {/* Header */}
         <View row centerV width={'100%'} height={60} style={{ justifyContent: 'space-between' }}>
           <View >

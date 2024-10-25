@@ -2,7 +2,14 @@ import react from "react";
 import { Redirect } from "expo-router";
 import { useFonts } from "expo-font";
 
-import { View, Text, Card, Image, TouchableOpacity, ScrollBar } from "react-native-ui-lib";
+import {
+  View,
+  Text,
+  Card,
+  Image,
+  TouchableOpacity,
+  ScrollBar,
+} from "react-native-ui-lib";
 import { Href, Link } from "expo-router";
 import colors from "@/constants/Colors";
 import BackButton from "@/assets/icons/back.svg";
@@ -12,7 +19,7 @@ interface AboutAppProps {}
 
 const AboutApp = () => {
   return (
-    <View flex marginH-20 marginT-20 useSafeArea>
+    <View flex marginH-20 marginT-40 useSafeArea>
       <View row centerV>
         <TouchableOpacity
           onPress={() => {
@@ -31,21 +38,17 @@ const AboutApp = () => {
           </Text>
         </View>
       </View>
-      <View center>
+      <View center marginT-40>
         <Image
-          width={76}
-          height={76}
+          width={300}
+          height={300}
           borderRadius={50}
-          source={require("@/assets/images/logo.png")}
+          source={require("@/assets/images/logo/logo.png")}
         />
       </View>
-      <ScrollBar
-        style={{ flex: 1, width: "100%" }}
-        contentContainerStyle={{ padding: 20 }}
-        scrollEnabled 
-      >
-      <View center marginT-10>
-        <Text>
+
+      <View width={"100%"} height={"100%"}>
+        <Text text80BL>
           Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích
           làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao
           đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure
@@ -53,14 +56,22 @@ const AboutApp = () => {
           còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc
           đẹp đẳng cấp.
         </Text>
-        <Text text60BL >Các thông tin cơ bản của ứng dụng Allure Spa:</Text>
-        <Text text60BL >- Tên ứng dụng: Allure Spa</Text>
-        <Text text60BL >- Phiên bản 1.0.0</Text>
-        <Text text60BL>- Nhà phát triển: Ong lười</Text>
-        <Text text60BL >- Ngày phát hành: 01/01/2022</Text>
+        <Text marginT-20 text70BL>
+          Các thông tin cơ bản của ứng dụng Allure Spa:
+        </Text>
+        <Text marginT-20 text70BL>
+          - Tên ứng dụng: Allure Spa
+        </Text>
+        <Text marginT-20 text70BL>
+          - Phiên bản 1.0.0
+        </Text>
+        <Text marginT-20 text70BL>
+          - Nhà phát triển: Ong lười
+        </Text>
+        <Text marginT-20 text70BL>
+          - Ngày phát hành: 01/01/2022
+        </Text>
       </View>
-      </ScrollBar>
-     
     </View>
   );
 };

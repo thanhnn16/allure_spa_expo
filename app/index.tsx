@@ -8,7 +8,6 @@ import ChangePassword from './authen/changePassword';
 // import { Login } from './authen/login';
 import Voucher from './voucher';
 import Rewward from './reward';
-import AboutApp from './(tabs)/profile/aboutapp';
 
 
 
@@ -31,6 +30,5 @@ export default function Index() {
     return null;
   }
 
-  // return <Redirect href="/authen" />
-  return <AboutApp />;
+  return <Redirect href="/authen" />
 }

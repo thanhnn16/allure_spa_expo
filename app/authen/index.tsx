@@ -13,16 +13,16 @@ import axios from 'axios';
 import { router } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '@/redux/language/LanguageSlice';
+import { RootState } from '@/redux/ReduxStore';
 
 const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
   const dispatch = useDispatch();
 
-  const currentLanguage = useSelector((state: any) => state.language?.currentLanguage ?? 'en');
+  const currentLanguage = useSelector((state: RootState) => state.language?.currentLanguage ?? 'en');
   const [viewState, setViewState] = useState('default');
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
-
+  
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -52,7 +52,8 @@ const Onboarding: React.FC = () => {
 
   const changeLanguage = (nextLanguage: string) => {
     i18n.locale = nextLanguage;
-    setCurrentLanguage(nextLanguage);
+    dispatch(setLanguage(nextLanguage));
+    setModalVisible(false);
   };
 
   const toggleLanguage = () => {
@@ -118,11 +119,6 @@ const Onboarding: React.FC = () => {
       case 'login':
         return (
           <LoginForm
-            phoneNumber={phoneNumber}
-            password={password}
-            setPhoneNumber={setPhoneNumber}
-            setPassword={setPassword}
-            onLoginPress={handleLoginPress}
             onBackPress={handleBackPress}
           />
         );
@@ -135,38 +131,26 @@ const Onboarding: React.FC = () => {
             setPhoneNumber={setPhoneNumber}
             setFullName={setFullName}
             setPassword={setPassword}
-            onRegisterPress={handleRegisterPress}
             onBackPress={handleBackPress}
           />
         );
       case 'zalo':
         return (
-          <LoginZaloForm
-            sendOtpPress={handlesendOtpPress}
-            onBackPress={handleBackPress}
-          />
+          <LoginZaloForm />
         );
       case 'otp':
         return (
-          <OTP
-            phoneNumber={phoneNumber}
-            fullName={fullName}
-            sendOtpPress={handlesendOtpPress}
-            onBackPress={handleBackPress}
-          />
+          <OTP />
         );
       default:
         return null;
     }
+  };
+
   useEffect(() => {
     i18n.locale = currentLanguage;
     forceUpdate({});
   }, [currentLanguage]);
-
-  const changeLanguage = (nextLanguage: string) => {
-    dispatch(setLanguage(nextLanguage));
-    setModalVisible(false);
-  };
 
   const renderSelectLanguage = (key: string) => {
     switch (key) {
@@ -196,10 +180,10 @@ const Onboarding: React.FC = () => {
           />
           <View paddingT-40 centerH marginB-16>
             <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
-            <Text text50BO center marginR-85 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+            <Text  center marginR-85 onboarding_title>
               {i18n.t('auth.art.title')}
             </Text>
-            <Text text50BO center marginL-65 style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}>
+            <Text  center marginL-65 onboarding_title>
               {i18n.t('auth.art.subtitle')}
             </Text>
           </View>
