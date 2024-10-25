@@ -38,98 +38,57 @@ const OTP: React.FC = () => {
     }
   };
 
-  const verifyOTP = async () => {
-    if (!otp.every((value) => value)) {
-      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ mã OTP');
-      return;
-    }
-    else {
-      const otpValue = otp.join('');
-      router.push('/home');
-    }
-
-  };
+  const handleVerifyOTP = async () => {
+      if (!otp.every((value) => value)) {
+        Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ mã OTP');
+        return;
+      }
+      else {
+        const otpValue = otp.join('');
+        router.push('/home');
+      }
+  
+    };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <ImageBackground
-          source={require('@/assets/images/authen/img_bg_authen.png')}
-          style={{ flex: 1 }}
-        >
-          <View style={{ marginTop: 60 }}>
+    <View>
+      <Text style={{ marginBottom: 50, fontSize: 20, fontWeight: 'bold', flexDirection: 'row', justifyContent: 'flex-end' }}>Nhập OTP</Text>
+      <View style={styles.otpContainer}>
+        {[...Array(6)].map((_, index) => (
+          <RNTextInput
+            key={index}
+            ref={(ref) => (inputRefs.current[index] = ref)}
+            style={styles.otpInput}
+            keyboardType="numeric"
+            maxLength={1}
+            onChangeText={(value) => handleInputChange(index, value)}
+            value={otp[index]}
+            onFocus={() => inputRefs.current[index]?.setNativeProps({ selection: { start: 0, end: 1 } })}
+          />
+        ))}
+      </View>
+      <Text style={{ marginTop: 10, fontSize: 14, color: colors.gray }}>Mã OTP sẽ được gửi đến số {"+84 1231 23123"}</Text>
 
-            <Text style={{ fontFamily: 'AlexBrush-Regular', fontSize: 32, color: colors.primary, textAlign: 'center', marginTop: 10 }}>
-              Nghệ thuật chăm da
-            </Text>
-            <Text style={{ fontFamily: 'AlexBrush-Regular', fontSize: 32, color: colors.primary }}>
-              Từ nghệ nhân Nhật Bản
-            </Text>
-          </View>
+      <Text style={{
+        marginTop: 10, alignSelf: 'flex-end',
+        color: colors.primary, fontSize: 20
+      }}>Gửi lại</Text>
 
-          <View style={styles.container}>
-            <Text style={{ marginBottom: 20, fontSize: 20, fontWeight: 'bold' }}>Nhập OTP</Text>
-            <View style={styles.otpContainer}>
-              {[...Array(6)].map((_, index) => (
-                <RNTextInput
-                  key={index}
-                  ref={(ref) => (inputRefs.current[index] = ref)}
-                  style={styles.otpInput}
-                  keyboardType="numeric"
-                  maxLength={1}
-                  onChangeText={(value) => handleInputChange(index, value)}
-                  value={otp[index]}
-                  onFocus={() => inputRefs.current[index]?.setNativeProps({ selection: { start: 0, end: 1 } })}
-                />
-              ))}
-            </View>
-            <Text style={{ marginTop: 10, fontSize: 14, color: colors.gray }}>Mã OTP sẽ được gửi đến số {"+84 1231 23123"}</Text>
-            <AppButton
-              title="Gửi lại"
-              type="outline"
-              onPress={() => {
-                Alert.alert('Thông báo', 'Gửi lại OTP chưa được triển khai.');
-              }}
-            />
-            <AppButton
-              title="Xác nhận"
-              type="primary"
-              onPress={verifyOTP}
-            />
-            <AppButton
-              title="Quay lại"
-              type="secondary"
-              onPress={() => router.back()}
-            />
-            <Text center text80 marginT-20 marginB-50>
-              {i18n.t('auth.login.by_continue')}
-              <Text text80H> {i18n.t('auth.login.terms')} </Text>
-              {''}{i18n.t('auth.login.and')} {''}
-              <Text text80H>{i18n.t('auth.login.privacy')}</Text>
-              {''} {i18n.t('auth.login.of_us')}
-            </Text>
-          </View>
-        </ImageBackground>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+      <View marginT-20 marginB-45>
+        <AppButton
+          type="primary"
+          title={i18n.t('auth.register.title')}
+          onPress={handleVerifyOTP}
+          loading={false}
+        />
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
+      </View>
+    </View>
+
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 20,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-  },
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

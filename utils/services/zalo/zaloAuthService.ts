@@ -1,12 +1,14 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 
-const clientId = '3131373079387573469';
-const clientSecret = '';
-const redirectUri = 'myapp://allure_spa_expo';
+const clientId = process.env.ZALO_CLIENT_ID;
+const clientSecret = process.env.ZALO_CLIENT_SECRET;
+const redirectUri = Platform.OS === 'ios' 
+  ? 'allurespa://' 
+  : 'allurespa://oauth';
 
-interface AccessTokenResponse {
+export interface AccessTokenResponse {
   access_token: string;
   refresh_token: string;
   expires_in: number;
@@ -28,7 +30,7 @@ interface UserProfile {
   name: string;
 }
 
-// Hàm tạo code_verifier
+// Function to generate code_verifier
 export const generateCodeVerifier = (): string => {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let codeVerifier = '';
@@ -39,56 +41,69 @@ export const generateCodeVerifier = (): string => {
   return codeVerifier;
 };
 
-// Hàm tạo code_challenge
+// Function to generate code_challenge
 export const generateCodeChallenge = (codeVerifier: string): string => {
   const hashed = CryptoJS.SHA256(codeVerifier);
   const base64Encoded = CryptoJS.enc.Base64.stringify(hashed);
   return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 
-// Lấy URL OAuth của Zalo
+// Get Zalo OAuth URL
 export const getZaloOauthUrl = (codeChallenge: string): string => {
-  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${redirectUri}&code_challenge=${codeChallenge}&code_challenge_method=S256&response_type=code`;
+  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&state=test&code_challenge_method=S256`;
 };
 
-// Mở URL đăng nhập Zalo
+// Open Zalo login URL
 export const openZaloLogin = (codeChallenge: string): void => {
   const url = getZaloOauthUrl(codeChallenge);
   Linking.openURL(url);
 };
 
-// Lấy AccessToken từ OAuth code
+// Fetch AccessToken using OAuth code
 export const getAccessToken = async (oauthCode: string, codeVerifier: string): Promise<AccessTokenResponse | undefined> => {
+  console.log('Fetching access token with oauthCode:', oauthCode);
   try {
-    const response = await axios.post<AccessTokenResponse>('https://oauth.zaloapp.com/v4/access_token', {
-      app_id: clientId,
-      app_secret: clientSecret,
-      code: oauthCode,
-      grant_type: 'authorization_code',
-      code_verifier: codeVerifier,
-      redirect_uri: redirectUri,
+    const response = await axios.post<AccessTokenResponse>('https://oauth.zaloapp.com/v4/access_token', null, {
+      params: {
+        code: oauthCode,
+        app_id: clientId,
+        grant_type: 'authorization_code',
+        code_verifier: codeVerifier,
+      },
+      headers: {
+        'secret_key': clientSecret,
+      },
     });
 
+    // Log the received tokens
     const { access_token, refresh_token, expires_in } = response.data;
     console.log('Access Token:', access_token);
     console.log('Refresh Token:', refresh_token);
     console.log('Expires In:', expires_in);
 
-    // Trả về các token để sử dụng tiếp
     return { access_token, refresh_token, expires_in };
   } catch (error) {
-    console.error('Error fetching AccessToken:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('Error fetching AccessToken:', error.response?.data || error.message);
+    } else {
+      console.error('Error fetching AccessToken:', error);
+    }
     return undefined;
   }
 };
 
-// Làm mới AccessToken bằng RefreshToken
+// Refresh AccessToken using RefreshToken
 export const refreshAccessToken = async (refreshToken: string): Promise<RefreshTokenResponse | undefined> => {
   try {
-    const response = await axios.post<RefreshTokenResponse>('https://oauth.zaloapp.com/v4/access_token', {
-      app_id: clientId,
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
+    const response = await axios.post<RefreshTokenResponse>('https://oauth.zaloapp.com/v4/access_token', null, {
+      params: {
+        refresh_token: refreshToken,
+        app_id: clientId,
+        grant_type: 'refresh_token',
+      },
+      headers: {
+        'secret_key': clientSecret,
+      },
     });
 
     const { access_token, refresh_token, expires_in } = response.data;
@@ -96,7 +111,6 @@ export const refreshAccessToken = async (refreshToken: string): Promise<RefreshT
     console.log('New Refresh Token:', refresh_token);
     console.log('Expires In:', expires_in);
 
-    // Trả về các token mới
     return { access_token, refresh_token, expires_in };
   } catch (error) {
     console.error('Error refreshing AccessToken:', error);
@@ -104,19 +118,24 @@ export const refreshAccessToken = async (refreshToken: string): Promise<RefreshT
   }
 };
 
-// Xác minh RefreshToken
+// Validate RefreshToken
 export const validateRefreshToken = async (refreshToken: string): Promise<boolean> => {
   try {
-    const response = await axios.post<ValidateRefreshTokenResponse>('https://oauth.zaloapp.com/v4/refresh_token/validate', {
-      app_id: clientId,
-      refresh_token: refreshToken,
+    const response = await axios.get<ValidateRefreshTokenResponse>('https://oauth.zaloapp.com/v4/refresh_token/validate', {
+      params: {
+        refresh_token: refreshToken,
+        app_id: clientId,
+      },
+      headers: {
+        'secret_key': clientSecret,
+      },
     });
 
     if (response.data.errorCode === 0) {
-      console.log('RefreshToken còn hiệu lực');
+      console.log('RefreshToken is valid');
       return true;
     } else {
-      console.log('RefreshToken đã hết hiệu lực');
+      console.log('RefreshToken is invalid');
       return false;
     }
   } catch (error) {
@@ -125,7 +144,7 @@ export const validateRefreshToken = async (refreshToken: string): Promise<boolea
   }
 };
 
-// Lấy thông tin người dùng từ AccessToken
+// Fetch user profile using AccessToken
 export const getZaloUserProfile = async (accessToken: string): Promise<UserProfile | undefined> => {
   try {
     const response = await axios.get<UserProfile>(`https://graph.zalo.me/v4.0/me?access_token=${accessToken}`);
@@ -138,7 +157,7 @@ export const getZaloUserProfile = async (accessToken: string): Promise<UserProfi
   }
 };
 
-// Đăng xuất khỏi Zalo
+// Logout from Zalo
 export const logoutFromZalo = (): void => {
   const url = `https://oauth.zaloapp.com/v4/logout?app_id=${clientId}`;
   Linking.openURL(url);

@@ -4,7 +4,7 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
     "settings": "Cài đặt",
-    "change_language": "Thay đổi ngôn ngữ",
+    "change_language": "Change Language",
     "back": "Quay lại",
     "sendOTP": "Gửi OTP",
     "auth": {
@@ -35,7 +35,12 @@
             "agree_terms": "Bằng cách đăng ký, bạn sẽ đồng ý với Điều khoản sử dụng và Chính sách bảo mật của chúng tôi",
             "register_button": "Đăng ký",
             "back_button": "Quay lại",
-            "er-ror": "Có lỗi xảy ra, vui lòng thử lại sau."
+            "password_mismatch": "Mật khẩu không khớp",
+            "check_password": "Vui lòng kiểm tra lại mật khẩu của bạn",
+            "error": "Có lỗi xảy ra",
+            "unknown_error": "Lỗi không xác định, vui lòng thử lại sau",
+            "success": "Đăng ký thành công",
+            "register_fail": "Đăng ký thất bại, vui lòng thử lại sau."
         }
     },
     "terms": "Điều khoản sử dụng",

@@ -1,61 +1,68 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { User, UserLoginResponseParams, UserRegisterResponseParams } from "@/app/authen/models/Models";
 import { loginThunk } from "./LoginThunk";
 import { registerThunk } from "./RegisterThunk";
-import { isLoading } from "expo-font";
-import { UserLoginResponseParams, UserRegisterResponseParams } from "@/app/authen/models/Models";
 
 interface UserState {
-    user: UserLoginResponseParams| UserRegisterResponseParams | null
-    isLoading: boolean
-    error: any
-    quantity: number
-    cart: []
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
 }
 
-const inittialState: UserState = {
-    user: null,
-    isLoading: false,
-    error: null,
-    quantity: 0,
-    cart: []
-}
+const initialState: UserState = {
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+};
 
 export const userSlice = createSlice({
-    name: 'user',
-    initialState: inittialState,
-    reducers: {
-        setUser(state, action) {
-            state.user = action.payload
-        }
+  name: "user",
+  initialState,
+  reducers: {
+    logout(state: UserState) {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(loginThunk.pending, (state) => {
-                state.isLoading = true
-            })
-            .addCase(loginThunk.fulfilled, (state, action) => {
-                state.isLoading = false
-                if (action.payload && action.payload.data) {
-                    state.user = action.payload.data.user
-                }
-            })
-            .addCase(loginThunk.rejected, (state, action) => {
-                state.isLoading = false
-                state.error = action.error
-            })
-            .addCase(registerThunk.pending, (state) => {
-                state.isLoading = true
-            })
-            .addCase(registerThunk.fulfilled, (state, action) => {
-                state.isLoading = false
-                if (action.payload && action.payload.data) {
-                    state.user = action.payload.data.user
-                }
-            })
-            .addCase(registerThunk.rejected, (state, action) => {
-                state.isLoading = false
-                state.error = action.error
-            })
-    }
-})
+  },
+  extraReducers: (builder: ActionReducerMapBuilder<UserState>) => {
+    builder
+      .addCase(loginThunk.pending, (state: UserState) => {
+        state.isLoading = true;
+      })
+      .addCase(loginThunk.fulfilled, (state: UserState, action: PayloadAction<UserLoginResponseParams>) => {
+        state.isLoading = false;
+        if (action.payload) {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(loginThunk.rejected, (state: UserState, action: PayloadAction<string | undefined>) => {
+        state.isLoading = false;
+        state.error = action.payload || "Login failed";
+      })
+      .addCase(registerThunk.pending, (state: UserState) => {
+        state.isLoading = true;
+      })
+      .addCase(registerThunk.fulfilled, (state: UserState, action: PayloadAction<UserRegisterResponseParams>) => {
+        state.isLoading = false;
+        if (action.payload) {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(registerThunk.rejected, (state: UserState, action: PayloadAction<string | undefined>) => {
+        state.isLoading = false;
+        state.error = action.payload || "Registration failed";
+      });
+  },
+});
 
+export const { logout } = userSlice.actions;
+export default userSlice.reducer;

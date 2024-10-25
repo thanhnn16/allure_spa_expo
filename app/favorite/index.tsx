@@ -2,12 +2,13 @@ import React from 'react';
 import {
     TabController,
     View,
+    Colors,
 } from 'react-native-ui-lib';
 import { data } from './data';
 import FavoriteItem from './FavoriteItem';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppBar from '@/components/app_bar/app_bar';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const renderFirstPage = () => {
     return (
@@ -45,16 +46,32 @@ const secondPage = () => {
 
 const FavoritePage = () => {
     return (
-        <GestureHandlerRootView>
-            <SafeAreaView style={{ flex: 1 }}>
-                    <AppBar title='Yêu thích' />
-                    <TabController items={[{ label: 'Tất cả' }, { label: 'Giảm giá' }]}>
-                        <TabController.TabBar height={50} />
-                        <View flex>
-                            <TabController.TabPage index={0}>{renderFirstPage()}</TabController.TabPage>
-                            <TabController.TabPage index={1} lazy>{secondPage()}</TabController.TabPage>
-                        </View>
-                    </TabController>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+                <AppBar title='Yêu thích' />
+                <TabController
+                    items={[
+                        { label: 'Tất cả' },
+                        { label: 'Giảm giá' }
+                    ]}
+                >
+                    <TabController.TabBar
+                        enableShadow
+                        backgroundColor={Colors.white}
+                        labelColor={Colors.$textDefault}
+                        selectedLabelColor={Colors.$textPrimary}
+                        indicatorStyle={{ backgroundColor: Colors.$textPrimary, height: 2 }}
+                        containerStyle={{ height: 48 }}
+                    />
+                    <View flex>
+                        <TabController.TabPage index={0}>
+                            {renderFirstPage()}
+                        </TabController.TabPage>
+                        <TabController.TabPage index={1}>
+                            {secondPage()}
+                        </TabController.TabPage>
+                    </View>
+                </TabController>
             </SafeAreaView>
         </GestureHandlerRootView>
     );

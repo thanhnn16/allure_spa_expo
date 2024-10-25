@@ -1,56 +1,45 @@
-import React from 'react';
-import { View, TouchableOpacity, Text } from 'react-native-ui-lib';
+import React, { useState } from 'react';
 import { TextInput } from '@/components/inputs/TextInput';
-import AppButton from '@/components/buttons/AppButton';
 import i18n from '@/languages/i18n';
+import AppButton from '@/components/buttons/AppButton';
+import { generateCodeChallenge, generateCodeVerifier, openZaloLogin } from '@/utils/services/zalo/zaloAuthService';
+import { router } from 'expo-router';
+import { Text, View } from 'react-native-ui-lib';
+const isValidVietnamesePhoneNumber = (phoneNumber: string) => {
+  const regex = /^(?:\+84|0)(?:3[2-9]|5[6|8|9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+  return regex.test(phoneNumber);
+};
 
-interface LoginZaloFormProps {
-  phoneNumber: string;
-  fullName: string;
-  setPhoneNumber: (text: string) => void;
-  setPassword: (text: string) => void;
-  onZaloPress: () => void;
-  onLoginPress: () => void;
-  onBackPress: () => void;
-}
+const LoginZaloForm: React.FC = () => {
+  const [loading, setLoading] = useState(false);
 
-const LoginForm: React.FC<LoginZaloFormProps> = ({
-  phoneNumber,
-  fullName,
-  setPhoneNumber,
-  setPassword,
-  onZaloPress,
-  onLoginPress,
-  onBackPress,
-}) => {
+  const handleSendOtp = async () => {
+    try {
+      const codeVerifier = generateCodeVerifier();
+      const codeChallenge = generateCodeChallenge(codeVerifier);
+  
+      openZaloLogin(codeChallenge);
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <>
-      <TextInput
-        title={i18n.t('auth.login.username')}
-        placeholder={i18n.t('auth.login.username')}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-      />
-      <TextInput
-        title={i18n.t('auth.register.fullname')}
-        placeholder={i18n.t('auth.register.fullname')}
-        secureTextEntry
-        value={fullName}
-      />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-          width: '90%',
-        }}
-      >
+    <View>
+      <Text text70H>{i18n.t('auth.login_with_zalo')}</Text>
+      <View marginT-10 marginB-20>
+        <AppButton
+          type="primary"
+          title={i18n.t('sendOTP')}
+          loading={loading}
+          onPress={handleSendOtp}
+        />
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
       </View>
-      <View style={{ marginBottom: 20 }}>
-        <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={onLoginPress} />
-        <AppButton title={i18n.t('back')} type="outline" onPress={onBackPress} marginT-12 />
-      </View>
-    </>
+    </View>
   );
 };
 
-export default LoginForm;
+export default LoginZaloForm;

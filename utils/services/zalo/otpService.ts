@@ -18,6 +18,6 @@ export const sendOtpRequest = async (phoneNumber: string, accessToken: string): 
     return response.data;
   } catch (error) {
     console.error('Error sending OTP:', error);
-    return undefined;
+    return undefined; 
   }
 };

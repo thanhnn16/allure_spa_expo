@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { View } from 'react-native-ui-lib';
-import axios from 'axios';
 import { TextInput } from '@/components/inputs/TextInput';
 import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/redux/ReduxStore';
+import { registerThunk } from '@/redux/users/RegisterThunk';
+import { unwrapResult } from '@reduxjs/toolkit';
 import { Alert } from 'react-native';
 
 interface RegisterFormProps {
   phoneNumber: string;
   fullName: string;
   password: string;
-  setPhoneNumber: (text: string) => void;
-  setFullName: (text: string) => void;
-  setPassword: (text: string) => void;
-  onRegisterPress: () => Promise<void>;
+  setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
+  setFullName: React.Dispatch<React.SetStateAction<string>>;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
   onBackPress: () => void;
 }
 
@@ -28,6 +30,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -38,22 +41,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     setLoading(true);
 
     try {
-      const response = await axios.post('/api/auth/register', {
-        full_name: fullName,
-        phone_number: phoneNumber,
-        password: password,
-        password_confirmation: confirmPassword,
-      });
+      const resultAction = await dispatch(registerThunk({ fullName, phoneNumber, password, confirmPassword }));
+      const result = unwrapResult(resultAction);
 
-      if (response.status === 201) {
-        Alert.alert(i18n.t('auth.register.success'), response.data.message);
+      if (result && result.success) {
+        Alert.alert(i18n.t('auth.register.success'), result.message);
+        onBackPress();
+      } else {
+        Alert.alert(i18n.t('auth.register.error'), result?.message ?? i18n.t('auth.register.unknown_error'));
       }
     } catch (error: any) {
-      if (error.response && error.response.status === 422) {
-        Alert.alert(i18n.t('auth.register.error'), error.response.data.message);
-      } else {
-        Alert.alert(i18n.t('auth.register.error'), i18n.t('auth.register.unknown_error'));
-      }
+      Alert.alert(i18n.t('auth.register.error'), error.message || i18n.t('auth.register.unknown_error'));
     } finally {
       setLoading(false);
     }
@@ -99,11 +97,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           onPress={handleRegister}
           loading={loading}
         />
-        <AppButton
-          type="text"
-          title={i18n.t('auth.register.back_button')}
-          onPress={onBackPress}
-        />
+        <AppButton title={i18n.t('back')} type="outline" onPress={onBackPress} marginT-12 />
       </View>
     </>
   );

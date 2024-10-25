@@ -20,7 +20,11 @@
             "by_continue": "By logging in, you agree to our",
             "and": "and",
             "of_us": "of us",
-            "forgot_password": "Forgot password?"
+            "forgot_password": "Forgot password?",
+            "success": "Login successful",
+            "error": "Login failed",
+            "invalid_credentials": "Invalid phone number or password",
+            "unknown_error": "An unknown error occurred"
         },
         "art": {
             "title": "The Art of Skincare",
@@ -35,7 +39,12 @@
             "agree_terms": "By registering, you agree to our Terms of Service and Privacy Policy",
             "register_button": "Register",
             "back_button": "Back",
-            "er-ror": "An error occurred, please try again."
+            "password_mismatch": "Passwords do not match",
+            "check_password": "Please check your password",
+            "error": "An error occurred",
+            "unknown_error": "An unknown error occurred, please try again later",
+            "success": "Registration successful",
+            "register_fail": "Registration failed, please try again."
         }
     },
     "terms": "Terms of Service",

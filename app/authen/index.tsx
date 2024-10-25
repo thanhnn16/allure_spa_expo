@@ -1,22 +1,33 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Animated, Dimensions, Alert } from 'react-native';
-import { View, Image, Text, Colors } from 'react-native-ui-lib';
+import { View, Image, Text, Colors, Modal, TouchableOpacity } from 'react-native-ui-lib';
 import { Link } from 'expo-router/build/link/Link';
 import i18n from '@/languages/i18n';
 import LoginForm from './form/LoginForm';
 import RegisterForm from './form/RegisterForm';
 import LoginZaloForm from './form/LoginZaloForm';
+import OTP from './otp';
 import AppButton from '@/components/buttons/AppButton';
 import Brand from '@/assets/images/common/logo-brand.svg';
 import axios from 'axios';
+import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '@/redux/language/LanguageSlice';
+import { RootState } from '@/redux/ReduxStore';
 
 const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
+  const dispatch = useDispatch();
+
+  const currentLanguage = useSelector((state: RootState) => state.language?.currentLanguage ?? 'en');
   const [viewState, setViewState] = useState('default');
+  
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.locale);
+  const [fullName, setFullName] = useState('');
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [, forceUpdate] = useState({});
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(10)).current;
@@ -41,8 +52,118 @@ const Onboarding: React.FC = () => {
 
   const changeLanguage = (nextLanguage: string) => {
     i18n.locale = nextLanguage;
-    setCurrentLanguage(nextLanguage);
+    dispatch(setLanguage(nextLanguage));
+    setModalVisible(false);
   };
+
+  const toggleLanguage = () => {
+    const nextLanguage = currentLanguage === 'en' ? 'ja' : currentLanguage === 'ja' ? 'vi' : 'en';
+    changeLanguage(nextLanguage);
+  };
+
+  const handleRegisterPress = async () => {
+    try {
+      const response = await axios.post('/api/auth/register', {
+        phone_number: phoneNumber,
+        full_name: fullName,
+        password: password,
+        password_confirmation: password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        handleButtonClick('login');
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.response) {
+        Alert.alert('Error', err.response.data.message || 'Registration failed');
+      } else {
+        Alert.alert('Error', 'Network error, please try again');
+      }
+    }
+  };
+
+  const handleLoginPress = async () => {
+    try {
+      const response = await axios.post('/api/auth/login', {
+        phone_number: phoneNumber,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', response.data.message);
+        console.log('Navigating to Home...');
+        router.push('/(tabs)/home'); // Ensure the path is correct
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.response) {
+        Alert.alert('Error', err.response.data.message || 'Login failed');
+      } else {
+        Alert.alert('Error', 'Network error, please try again');
+      }
+    }
+  };
+
+  const handlesendOtpPress = () => {
+    setViewState('otp');
+  };
+
+  const handleBackPress = () => {
+    setViewState('default');
+  };
+
+  const renderForm = () => {
+    switch (viewState) {
+      case 'login':
+        return (
+          <LoginForm
+            onBackPress={handleBackPress}
+          />
+        );
+      case 'register':
+        return (
+          <RegisterForm
+            phoneNumber={phoneNumber}
+            fullName={fullName}
+            password={password}
+            setPhoneNumber={setPhoneNumber}
+            setFullName={setFullName}
+            setPassword={setPassword}
+            onBackPress={handleBackPress}
+          />
+        );
+      case 'zalo':
+        return (
+          <LoginZaloForm />
+        );
+      case 'otp':
+        return (
+          <OTP />
+        );
+      default:
+        return null;
+    }
+  };
+
+  useEffect(() => {
+    i18n.locale = currentLanguage;
+    forceUpdate({});
+  }, [currentLanguage]);
+
+  const renderSelectLanguage = (key: string) => {
+    switch (key) {
+      case 'en':
+        return 'English';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'ja':
+        return '日本語';
+      default:
+        return 'English';
+    }
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
@@ -58,24 +179,11 @@ const Onboarding: React.FC = () => {
             }}
           />
           <View paddingT-40 centerH marginB-16>
-            <Image
-              source={Brand}
-              style={{ width: width * 0.6, height: height * 0.1 }}
-            />
-            <Text
-              text50BO
-              center
-              marginR-85
-              style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
-            >
+            <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
+            <Text  center marginR-85 onboarding_title>
               {i18n.t('auth.art.title')}
             </Text>
-            <Text
-              text50BO
-              center
-              marginL-65
-              style={{ fontFamily: 'AlexBrush-Regular', color: Colors.primary }}
-            >
+            <Text  center marginL-65 onboarding_title>
               {i18n.t('auth.art.subtitle')}
             </Text>
           </View>
@@ -96,126 +204,25 @@ const Onboarding: React.FC = () => {
             }}
           >
             {viewState === 'default' ? (
-          
-                <View>
-                  <AppButton
-                    title={i18n.t('auth.register.title')}
-                    type="primary"
-                    onPress={() => handleButtonClick('register')}
-                  />
-                  <AppButton
-                    title={i18n.t('auth.login.title')}
-                    type="primary"
-                    onPress={() => handleButtonClick('login')}
-                  />
-                  <AppButton
-                    title={i18n.t('auth.login.zalo')}
-                    type="secondary"
-                    onPress={() => handleButtonClick('changed')}
-                  />
-                  <AppButton
-                    title={i18n.t('change_language')}
-                    type="secondary"
-                    onPress={() => {
-                      const nextLanguage =
-                        currentLanguage === 'en'
-                          ? 'ja'
-                          : currentLanguage === 'ja'
-                          ? 'vi'
-                          : 'en';
-                      changeLanguage(nextLanguage);
-                    }}
-                  />
-                  <Link href="/(tabs)/home" asChild>
-                    <AppButton title={i18n.t('auth.login.skip')} type="text" />
-                  </Link>
-                </View>
-            ) : viewState === 'login' ? (
-              <LoginForm
-                phoneNumber={phoneNumber}
-                password={password}
-                setPhoneNumber={setPhoneNumber}
-                setPassword={setPassword}
-                onZaloPress={() => { }}
-                onLoginPress={() => {
-                  return axios.post('/api/auth/login', {
-                    phone_number: phoneNumber,
-                    password: password,   
-                  })
-                    .then((response) => {
-                      if (response.status === 200) {
-                        Alert.alert('Success', response.data.message);
-                        // Handle successful login (e.g., navigate to the home screen)
-                      }
-                    })
-                    .catch((error) => {
-                      const err = error as any;
-                      if (err.response) {
-                        Alert.alert('Error', err.response.data.message || 'Login failed');
-                      } else {
-                        Alert.alert('Error', 'Network error, please try again');
-                      }
-                    });
-                 }}  
-                onBackPress={() => handleButtonClick('default')}
-              />
-            ) : viewState === 'register' ? (
-              <RegisterForm
-                phoneNumber={phoneNumber}
-                fullName={''}
-                password={password}
-                setPhoneNumber={setPhoneNumber}
-                setFullName={() => { }}
-                setPassword={setPassword}
-                onRegisterPress={() => {
-                  function backToLogin() {
-                    handleButtonClick('login');
-                  }
-
-                  return axios.post('/api/auth/register', {
-                    phone_number: phoneNumber,
-                    password: password,
-                  })
-                    .then((response) => {
-                      if (response.status === 200) {
-                        Alert.alert('Success', response.data.message);
-                        // Handle successful registration (e.g., navigate to the login screen)
-                        backToLogin();
-                      }
-                    })
-                    .catch((error) => {
-                      const err = error as any;
-                      if (err.response) {
-                        Alert.alert('Error', err.response.data.message || 'Registration failed');
-                      } else {
-                        Alert.alert('Error', 'Network error, please try again');
-                      }
-                    });
-                 }}
-                onBackPress={() => handleButtonClick('default')}
-              />
-            ) : viewState === 'zalo' ? (
-              <LoginZaloForm
-                phoneNumber={''}
-                fullName={''}
-                setPhoneNumber={() => { }}
-                setPassword={() => { }}
-                onZaloPress={() => { }}
-                onLoginPress={() => {
-
-                 }}
-                onBackPress={() => handleButtonClick('default')}
-              />
-            ) : null}
+              <View>
+                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
+                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
+                <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
+                <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
+                <Link href="/(tabs)/home" asChild>
+                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
+                </Link>
+              </View>
+            ) : (
+              renderForm()
+            )}
 
             <Text center text80>
               {i18n.t('auth.login.by_continue')}
               <Text text80H> {i18n.t('auth.login.terms')} </Text>
-              {' '}
               {i18n.t('auth.login.and')}
-              {' '}
-              <Text text80H>{i18n.t('auth.login.privacy')}</Text>
-              {' '} {i18n.t('auth.login.of_us')}
+              <Text text80H> {i18n.t('auth.login.privacy')} </Text>
+              {i18n.t('auth.login.of_us')}
             </Text>
           </Animated.View>
         </View>
