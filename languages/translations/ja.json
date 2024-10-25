@@ -52,5 +52,53 @@
     "otp": {
         "otp_input": "OTPを入力",
         "resend_otp": "コードを再送する"
+    },
+    "profile": {
+        "my_account": "マイアカウント",
+        "edit_personal_info": "個人情報を編集",
+        "purchase_policy": "購入と返品ポリシー",
+        "policy_description": "購入と返品に関するポリシー",
+        "order_address": "注文住所",
+        "address_list": "住所リスト",
+        "logout": "ログアウト",
+        "help_support": "ヘルプ＆サポート",
+        "about_app": "アプリについて",
+        "settings": "設定",
+        "more": "もっと見る",
+        "edit_profile": "プロフィールを編集",
+        "change_password": "パスワードを変更",
+        "history_login": "ログイン履歴",
+        "dowload_information": "情報をダウンロード",
+        "delete_account": "アカウントを削除",
+        "change_info": "情報を変更"
+    },
+     "voucher": {
+        "title": "クーポン",
+        "all" : "すべて",
+        "birrthday" : "誕生日",
+        "event" : " イベント",
+        "prominent" : "目立つ",
+        "gift" : "ギフト",
+        "many_offers_comingsoon" : "多くのオファーが近日公開予定"
+
+    },
+    "reward":{
+        "title": "報酬",
+       "cosmetic" : "化粧品",
+       "spa": "スパ",
+       "changed": "475 交換済み",
+       "change_now": "今すぐ変更",
+       "title_cosmetic": "リポコラージュ ラメラ クレンジング コピー",
+       "title_spa": "トリートメントフォトフェイシャル"
+    },
+    "aboutapp": {
+        "title": "アプリについて",
+        "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
+        "title2": "Allure Spaアプリケーションの基本情報:",
+        "name_app":"アプリ名: Allure Spa",
+        "developer":"開発者: Allure Spa",
+        "version":"バージョン: 1.0.0",
+        "date_release":"発売日: 01/01/2021"
     }
+
 }

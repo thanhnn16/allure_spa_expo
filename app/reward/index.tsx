@@ -22,7 +22,9 @@ const Reward: React.FC<RewardProps> = () => {
   const pagerRef = React.useRef<PagerView>(null);
   const handlePageChange = (page: number) => {
     setSelectedPage(page);
-    pagerRef.current?.setPage(page);
+    if(pagerRef.current) {
+      pagerRef.current.setPageWithoutAnimation(page);
+    }
   };
   return (
     <View flex marginH-20 marginT-40>
@@ -91,7 +93,7 @@ const Reward: React.FC<RewardProps> = () => {
         >
           <Text
             style={{
-              color: selectedPage === 0 ? "#717658" : colors.black,
+              color: selectedPage === 1 ? "#717658" : colors.black,
               textAlign: "center",
             }}
           >
@@ -111,6 +113,7 @@ const Reward: React.FC<RewardProps> = () => {
         </TouchableOpacity>
       </View>
       <PagerView
+        ref={pagerRef}
         style={{ flex: 1, marginTop: 20 }}
         initialPage={0}
         onPageSelected={(e) => {
