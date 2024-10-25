@@ -10,8 +10,8 @@ interface ProfileDetailProps {}
 const ProfileDetail = (props: ProfileDetailProps) => {
   const navigation = useNavigation();
   return (
-    <View flex marginH-20 marginT-20 useSafeArea>
-      <View row centerV>
+    <View flex  marginT-40 useSafeArea>
+      <View row centerV marginH-20>
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
@@ -26,7 +26,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
           </Text>
         </View>
       </View>
-      <View center marginT-30 gap-7>
+      <View center marginT-50 gap-7>
         <Image
           width={76}
           height={76}
@@ -37,7 +37,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
         <Text text60>Nguyễn Văn Tèo</Text>
         <Text gray>+84 346 542 636</Text>
       </View>
-      <Card width={"100%"} marginT-20>
+      <Card marginH-20 marginT-60 paddingH-20>
         {[
           {
             title: "Chỉnh sửa hồ sơ",
@@ -78,6 +78,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
           <TouchableOpacity key={index} onPress={item.onPress}>
             <View  row padding-10 gap-20 center>
               <TouchableOpacity
+              
                 style={{
                   width: 50,
                   height: 50,
@@ -85,6 +86,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
                   backgroundColor: "#F7F7F7",
                   justifyContent: "center",
                   alignItems: "center",
+                  marginLeft:-20,
                 }}
               >
                 <Image source={item.icon} width={24} height={24} />
