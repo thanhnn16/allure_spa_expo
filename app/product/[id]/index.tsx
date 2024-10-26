@@ -94,14 +94,13 @@ export default function DetailsScreen() {
                         alignSelf: 'center',
                     }}
                 >
-                    <View
-                        style={{
-                            width: '90%',
-                            height: 200,
-                            borderRadius: 20,
-                            overflow: 'hidden',
-                            marginTop: 10,
-                            alignSelf: 'center',
+                    <Carousel
+                        onChangePage={(index: number) => setIndex(index)}
+                        pageControlPosition={PageControlPosition.OVER}
+                        pageControlProps={{
+                            size: 10,
+                            color: '#ffffff',
+                            inactiveColor: '#c4c4c4'
                         }}
                     >
                         {images.map((item, index) => (
@@ -150,91 +149,57 @@ export default function DetailsScreen() {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <ImageView
-                        images={images}
-                        imageIndex={0}
-                        visible={visible}
-                        onRequestClose={() => setIsVisible(false)}
-                        onImageIndexChange={(index) => setImageViewIndex(index)}
-                        key={index}
-                        swipeToCloseEnabled={true}
-                        doubleTapToZoomEnabled={true}
-                        FooterComponent={FooterComponent}
-                    />
-                    <View padding-20 gap-10>
-                        <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
-                        <View row marginB-10>
+                    <View row paddingR-20>
+                        <View>
                             <Image
-                                source={TicketIcon}
+                                source={SunIcon}
                                 size={24}
                             />
-                            <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
-                            <View flex right>
-                                <TouchableOpacity
-                                    onPress={() => console.log('mua ha')}
-                                >
-                                    <Image
-                                        source={HeartIcon}
-                                        size={24}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-
                         </View>
-                        <View row paddingR-20>
-                            <View>
-                                <Image
-                                    source={SunIcon}
-                                    size={24}
-                                />
-                            </View>
-                            <View>
-                                {createBulletPoints(shortText)}
-                            </View>
+                        <View>
+                            {createBulletPoints(shortText)}
                         </View>
                     </View>
+                </View>
+                <View
+                    row marginV-20
+                    style={{
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text h1_medium>{i18n.t('productDetail.quantity')}</Text>
                     <View
-                        row marginV-20
+                        row gap-10
                         style={{
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
+                            borderWidth: 1,
+                            borderColor: '#E0E0E0',
+                            borderRadius: 10,
                         }}
                     >
-                        <Text h1_medium>{i18n.t('productDetail.quantity')}</Text>
-                        <View
-                            row gap-10
+                        <TouchableOpacity
                             style={{
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
+                                padding: 10
                             }}
+                            onPress={() => setQuantity(Math.max(1, quantity - 1))}
                         >
-                            <Text h1_bold>{i18n.t('productDetail.quantity')}</Text>
-                            <View
-                                row gap-10
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: '#E0E0E0',
-                                    borderRadius: 10,
-                                }}
-                            >
-                                <Text>-</Text>
-                            </TouchableOpacity>
-                            <Text style={{ padding: 10 }}>{quantity}</Text>
-                            <TouchableOpacity
-                                style={{
-                                    padding: 10
-                                }}
-                                onPress={() => setQuantity(quantity + 1)}
-                            >
-                                <Text>+</Text>
-                            </TouchableOpacity>
-                        </View>
+                            <Text>-</Text>
+                        </TouchableOpacity>
+                        <Text style={{ padding: 10 }}>{quantity}</Text>
+                        <TouchableOpacity
+                            style={{
+                                padding: 10
+                            }}
+                            onPress={() => setQuantity(quantity + 1)}
+                        >
+                            <Text>+</Text>
+                        </TouchableOpacity>
                     </View>
-                    <View marginT-10 paddingR-10>
-                        <Text h1_medium>{i18n.t('productDetail.product_description')}</Text>
-                        <View marginT-10>
-                            {createBulletPointsDescription(longText)}
-                        </View>
+                </View>
+                <View marginT-10 paddingR-10>
+                    <Text h1_medium>{i18n.t('productDetail.product_description')}</Text>
+                    <View marginT-10>
+                        {createBulletPointsDescription(longText)}
                     </View>
                 </View>
             </ScrollView>

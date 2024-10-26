@@ -26,7 +26,6 @@ const TabsLayout: React.FC = () => {
       />
       <Tabs.Screen
         name="chat/index"
-        name="chat/index"
         options={{
           title: 'Chat',
           tabBarIcon: ({ color, size }) => (
@@ -90,12 +89,6 @@ const TabsLayout: React.FC = () => {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="profile/setting/index"
-        options={{
-          href: null,
-        }}
-      /> */}
       <Tabs.Screen
         name="profile/address/index"
         options={{
