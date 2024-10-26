@@ -47,8 +47,6 @@ export const generateCodeChallenge = (codeVerifier: string): string => {
   const base64Encoded = CryptoJS.enc.Base64.stringify(hashed);
   return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
-
-// Get Zalo OAuth URL
 export const getZaloOauthUrl = (codeChallenge: string): string => {
   return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&state=test&code_challenge_method=S256`;
 };
@@ -110,7 +108,7 @@ export const refreshAccessToken = async (refreshToken: string): Promise<RefreshT
     console.log('New Access Token:', access_token);
     console.log('New Refresh Token:', refresh_token);
     console.log('Expires In:', expires_in);
-
+    
     return { access_token, refresh_token, expires_in };
   } catch (error) {
     console.error('Error refreshing AccessToken:', error);

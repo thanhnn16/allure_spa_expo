@@ -4,7 +4,7 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
     "settings": "Cài đặt",
-    "change_language": "Change Language",
+    "change_language": "Thay đổi ngôn ngữ",
     "back": "Quay lại",
     "sendOTP": "Gửi OTP",
     "auth": {
@@ -14,13 +14,25 @@
             "password": "Mật khẩu",
             "remember": "Ghi nhớ",
             "zalo": "Đăng nhập bằng Zalo",
+            "enter_full_name": "Nhập họ và tên",
+            "invalid_full_name": "Họ và tên không được chứa số",
             "skip": "Đăng nhập sau",
             "terms": "Điều khoản sử dụng",
             "privacy": "Chính sách bảo mật",
             "by_continue": "Bằng cách đăng nhập, bạn sẽ đồng ý với",
             "and": "và",
             "of_us": "của chúng tôi",
-            "forgot_password": "Quên mật khẩu?"
+            "forgot_password": "Quên mật khẩu?",
+            "success": "Đăng nhập thành công",
+            "error": "Đăng nhập thất bại",
+            "unknown_error": "Lỗi không xác định, vui lòng thử lại sau",
+            "invalid_credentials": "Thông tin đăng nhập không hợp lệ",
+            "empty_phone_number": "Bạn chưa nhập số điện thoại",
+            "invalid_phone_number": "Số điện thoại không hợp lệ",
+            "empty_password": "Bạn chưa nhập mật khẩu",
+            "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
+            "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự",
+            "server_error": "Lỗi từ máy chủ, vui lòng thử lại sau"
         },
         "art": {
             "title": "Nghệ thuật chăm sóc da",
@@ -40,7 +52,14 @@
             "error": "Có lỗi xảy ra",
             "unknown_error": "Lỗi không xác định, vui lòng thử lại sau",
             "success": "Đăng ký thành công",
-            "register_fail": "Đăng ký thất bại, vui lòng thử lại sau."
+            "register_fail": "Đăng ký thất bại, vui lòng thử lại sau.",
+            "invalid_phone_number": "Số điện thoại không hợp lệ",
+            "empty_phone_number": "Bạn chưa nhập số điện thoại",
+            "empty_full_name": "Bạn chưa nhập họ và tên",
+            "invalid_full_name": "Họ và tên không được chứa số",
+            "empty_password": "Bạn chưa nhập mật khẩu",
+            "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
+            "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự"
         }
     },
     "terms": "Điều khoản sử dụng",

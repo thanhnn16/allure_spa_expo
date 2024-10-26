@@ -4,7 +4,7 @@
     "logout": "ログアウト",
     "language": "言語",
     "settings": "設定",
-    "change_language": "Change Language",
+    "change_language": "言語を変更",
     "back": "戻る",
     "sendOTP": "OTPを送信",
     "auth": {
@@ -14,6 +14,8 @@
             "password": "パスワード",
             "remember": "記憶する",
             "zalo": "Zaloでログイン",
+            "enter_full_name": "氏名を入力",
+            "invalid_full_name": "無効な氏名",
             "skip": "後でログインする",
             "terms": "利用規約",
             "privacy": "プライバシーポリシー",
@@ -23,8 +25,14 @@
             "forgot_password": "パスワードを忘れましたか？",
             "success": "ログイン成功",
             "error": "ログイン失敗",
-            "invalid_credentials": "無効な電話番号またはパスワード",
-            "unknown_error": "不明なエラーが発生しました"
+            "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください",
+            "invalid_credentials": "無効な電話番号またはパス��ード",
+            "empty_phone_number": "電話番号が入力されていません",
+            "invalid_phone_number": "無効な電話番号",
+            "empty_password": "パスワードが入力されていません",
+            "invalid_password_special_char": "パスワードに特殊文字を含めることはできません",
+            "invalid_password_length": "パスワードは8文字以上でな���ればなりません",
+            "server_error": "サーバーエラー、後でもう一度お試しください"
         },
         "art": {
             "title": "スキンケアのアート",
@@ -36,22 +44,60 @@
             "fullname": "氏名",
             "password": "新しいパスワード",
             "confirm_password": "パスワードの確認",
-            "agree_terms": "登録することで、利用規約とプライバシーポリシーに同意したことになります。",
+            "agree_terms": "登録することにより、あなたは当社の利用規約とプライバシーポリシーに同意し��ことになります",
             "register_button": "登録",
             "back_button": "戻る",
             "password_mismatch": "パスワードが一致しません",
             "check_password": "パスワードを確認してください",
             "error": "エラーが発生しました",
-            "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください。",
+            "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください",
             "success": "登録成功",
-            "register_fail": "登録失敗。もう一度やり直してください。"
+            "register_fail": "登録に失敗しました。もう一度お試しください。",
+            "invalid_phone_number": "無効な電話番号",
+            "empty_phone_number": "電話番号が入力されていません",
+            "empty_full_name": "氏名が入力されていません",
+            "invalid_full_name": "氏名に数字を含めることはできません",
+            "empty_password": "パスワードが入力されていません",
+            "invalid_password_special_char": "パスワードに特��文字を含めることはできません",
+            "invalid_password_length": "パスワードは8文字以上でなければなりません"
         }
     },
     "terms": "利用規約",
     "privacy": "プライバシーポリシー",
     "otp": {
         "otp_input": "OTPを入力",
-        "resend_otp": "コードを再送する"
+        "resend_otp": "コードを再送信"
+    },
+    "pageTitle": {
+        "chat": "チャット",
+        "favorite": "お気に入り",
+        "cart": "カート",
+        "order": "注文",
+        "notification": "通知",
+        "profile": "プロフィール"
+    },
+    "productDetail": {
+        "quantity": "数量",
+        "product_description": "商品説明",
+        "reviews": "レビュー",
+        "add_to_cart": "カートに追加",
+        "buy_now": "今すぐ購入"
+    },
+    "rating": {
+        "add_review": "レビューを追加",
+        "base_on": "ベース",
+        "reviews": "レビュー",
+        "how_do_you_feel": "どのように感じますか",
+        "feel_about_product": "商品についての感想",
+        "type_content": "コンテンツを入力",
+        "images": "画像",
+        "send_review": "レビューを送信"
+    },
+    "chat": {
+        "customer_care": "カスタマーケア",
+        "chat_with_ai": "AIとチャット",
+        "send": "送信",
+        "chat_with": "チャット"
     },
     "pageTitle": {
         "chat": "チャット",

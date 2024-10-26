@@ -50,7 +50,7 @@ const Onboarding: React.FC = () => {
     setViewState(newState);
   };
 
-  const changeLanguage = (nextLanguage: string) => {
+  const updateLanguage = (nextLanguage: string) => {
     i18n.locale = nextLanguage;
     dispatch(setLanguage(nextLanguage));
     setModalVisible(false);
@@ -58,7 +58,7 @@ const Onboarding: React.FC = () => {
 
   const toggleLanguage = () => {
     const nextLanguage = currentLanguage === 'en' ? 'ja' : currentLanguage === 'ja' ? 'vi' : 'en';
-    changeLanguage(nextLanguage);
+    updateLanguage(nextLanguage);
   };
 
   const handleRegisterPress = async () => {
@@ -187,47 +187,8 @@ const Onboarding: React.FC = () => {
               {i18n.t('auth.art.subtitle')}
             </Text>
           </View>
-
-          <Animated.View
-            style={{
-              opacity: fadeAnim,
-              transform: [{ translateY: translateYAnim }],
-              backgroundColor: 'white',
-              width: '100%',
-              paddingHorizontal: 24,
-              paddingTop: 32,
-              paddingBottom: 20,
-              position: 'absolute',
-              bottom: 0,
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-            }}
-          >
-            {viewState === 'default' ? (
-              <View>
-                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
-                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
-                <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
-                <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
-                <Link href="/(tabs)/home" asChild>
-                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
-                </Link>
-              </View>
-            ) : (
-              renderForm()
-            )}
-
-            <Text center text80>
-              {i18n.t('auth.login.by_continue')}
-              <Text text80H> {i18n.t('auth.login.terms')} </Text>
-              {i18n.t('auth.login.and')}
-              <Text text80H> {i18n.t('auth.login.privacy')} </Text>
-              {i18n.t('auth.login.of_us')}
-            </Text>
-          </Animated.View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
   );
 };
 

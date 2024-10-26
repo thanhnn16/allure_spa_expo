@@ -12,12 +12,18 @@ const isValidVietnamesePhoneNumber = (phoneNumber: string) => {
 
 const LoginZaloForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+  const [fullNameError, setFullNameError] = useState('');
+
+  const isValidFullName = (name: string) => {
+    const regex = /^[^\d]+$/; // Allows any character except digits
+    return regex.test(name);
+  };
 
   const handleSendOtp = async () => {
     try {
       const codeVerifier = generateCodeVerifier();
       const codeChallenge = generateCodeChallenge(codeVerifier);
-  
       openZaloLogin(codeChallenge);
     } catch (error) {
       console.error('Error sending OTP:', error);
@@ -25,7 +31,6 @@ const LoginZaloForm: React.FC = () => {
       setLoading(false);
     }
   };
-
   return (
     <View>
       <Text text70H>{i18n.t('auth.login_with_zalo')}</Text>
@@ -38,7 +43,6 @@ const LoginZaloForm: React.FC = () => {
         />
         <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
       </View>
-    </View>
   );
 };
 

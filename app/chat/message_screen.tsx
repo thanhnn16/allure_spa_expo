@@ -89,7 +89,6 @@ const MessageScreen = () => {
         useSafeArea
         addBottomView
       >
-
       <MessageTextInput
         placeholder={i18n.t('chat.chat_with') + ' ' + i18n.t('chat.customer_care') + ".."}
         message={message}
@@ -103,7 +102,6 @@ const MessageScreen = () => {
       </KeyboardTrackingView>
 
     </SafeAreaView>
-
   );
 };
 

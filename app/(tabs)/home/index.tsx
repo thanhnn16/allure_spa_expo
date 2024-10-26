@@ -202,7 +202,6 @@ const HomePage = () => {
                   </View>
                 </View>
               </Animated.View>
-
               <Animated.View style={[showStyle(scrollOffset), { justifyContent: 'center' }]}>
                 <Text h0_bold color='#717658'>Khám phá</Text>
               </Animated.View>

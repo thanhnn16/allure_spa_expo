@@ -94,18 +94,14 @@ export default function DetailsScreen() {
                         alignSelf: 'center',
                     }}
                 >
-                    <Carousel
-                        loop
-                        autoplay
-                        autoplayInterval={3000}
-                        showCounter
-                        pageControlProps={{
-                            color: '#000',
-                        }}
-                        pageControlPosition={PageControlPosition.UNDER}
+                    <View
                         style={{
-                            width: '100%',
-                            height: 250,
+                            width: '90%',
+                            height: 200,
+                            borderRadius: 20,
+                            overflow: 'hidden',
+                            marginTop: 10,
+                            alignSelf: 'center',
                         }}
                     >
                         {images.map((item, index) => (
@@ -153,17 +149,48 @@ export default function DetailsScreen() {
                                 />
                             </TouchableOpacity>
                         </View>
-
                     </View>
-                    <View row paddingR-20>
-                        <View>
+                    <ImageView
+                        images={images}
+                        imageIndex={0}
+                        visible={visible}
+                        onRequestClose={() => setIsVisible(false)}
+                        onImageIndexChange={(index) => setImageViewIndex(index)}
+                        key={index}
+                        swipeToCloseEnabled={true}
+                        doubleTapToZoomEnabled={true}
+                        FooterComponent={FooterComponent}
+                    />
+                    <View padding-20 gap-10>
+                        <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
+                        <View row marginB-10>
                             <Image
-                                source={SunIcon}
+                                source={TicketIcon}
                                 size={24}
                             />
+                            <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
+                            <View flex right>
+                                <TouchableOpacity
+                                    onPress={() => console.log('mua ha')}
+                                >
+                                    <Image
+                                        source={HeartIcon}
+                                        size={24}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
                         </View>
-                        <View>
-                            {createBulletPoints(shortText)}
+                        <View row paddingR-20>
+                            <View>
+                                <Image
+                                    source={SunIcon}
+                                    size={24}
+                                />
+                            </View>
+                            <View>
+                                {createBulletPoints(shortText)}
+                            </View>
                         </View>
                     </View>
                     <View
@@ -177,17 +204,17 @@ export default function DetailsScreen() {
                         <View
                             row gap-10
                             style={{
-                                borderWidth: 1,
-                                borderColor: '#E0E0E0',
-                                borderRadius: 10,
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
                             }}
                         >
-                            <TouchableOpacity
+                            <Text h1_bold>{i18n.t('productDetail.quantity')}</Text>
+                            <View
+                                row gap-10
                                 style={{
-                                    padding: 10
-                                }}
-                                onPress={() => {
-                                    if (quantity > 1) setQuantity(quantity - 1);
+                                    borderWidth: 1,
+                                    borderColor: '#E0E0E0',
+                                    borderRadius: 10,
                                 }}
                             >
                                 <Text>-</Text>
