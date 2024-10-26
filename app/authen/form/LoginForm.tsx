@@ -10,12 +10,7 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { router } from 'expo-router';
 import { ActivityIndicator, Alert } from 'react-native';
 
-interface LoginFormProps {
-  onBackPress: () => void;
-  sendOtpPress: () => void;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onBackPress, sendOtpPress }) => {
+const LoginForm: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -72,7 +67,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress, sendOtpPress }) => {
       if (result && result.success) {
         Alert.alert(i18n.t('auth.login.success'), result.message);
         router.replace('/(tabs)/home');
-        sendOtpPress();
       } else {
         Alert.alert(i18n.t('auth.login.error'), result?.message ?? i18n.t('auth.login.unknown_error'));
       }
@@ -127,7 +121,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress, sendOtpPress }) => {
               {i18n.t('auth.login.title')}
             </Text>}
           </AppButton>
-          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
         </View>
       </>
   );

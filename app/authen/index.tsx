@@ -22,7 +22,7 @@ const Onboarding: React.FC = () => {
 
   const currentLanguage = useSelector((state: RootState) => state.language?.currentLanguage ?? 'en');
   const [viewState, setViewState] = useState('default');
-  
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -119,7 +119,6 @@ const Onboarding: React.FC = () => {
       case 'login':
         return (
           <LoginForm
-            onBackPress={handleBackPress}
           />
         );
       case 'register':
@@ -157,7 +156,7 @@ const Onboarding: React.FC = () => {
       case 'en':
         return 'English';
       case 'vi':
-        return 'Tiếng Việt';
+        return 'Tiếng Việt';
       case 'ja':
         return '日本語';
       default:
@@ -178,17 +177,54 @@ const Onboarding: React.FC = () => {
               opacity: 0.5,
             }}
           />
-          <View paddingT-40 centerH marginB-16>
+          <View paddingT-48 centerH marginB-16>
             <Image source={Brand} style={{ width: width * 0.6, height: height * 0.1 }} />
-            <Text  center marginR-85 onboarding_title>
+            <Text center marginR-85 onboarding_title>
               {i18n.t('auth.art.title')}
             </Text>
-            <Text  center marginL-65 onboarding_title>
+            <Text center marginL-65 onboarding_title>
               {i18n.t('auth.art.subtitle')}
             </Text>
           </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
+          <Animated.View
+            style={{
+              opacity: fadeAnim,
+              transform: [{ translateY: translateYAnim }],
+              backgroundColor: 'white',
+              width: '100%',
+              paddingHorizontal: 24,
+              paddingTop: 32,
+              paddingBottom: 20,
+              position: 'absolute',
+              bottom: 0,
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+            }}
+          >
+            {viewState === 'default' ? (
+              <View>
+                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
+                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
+                <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
+                <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
+                <Link href="/(tabs)/home" asChild>
+                  <AppButton title={i18n.t('auth.login.skip')} type="text" />
+                </Link>
+              </View>
+            ) : (
+              renderForm()
+            )}
+            <Text center text80>
+              {i18n.t('auth.login.by_continue')}
+              <Text text80H> {i18n.t('auth.login.terms')} </Text>
+              {i18n.t('auth.login.and')}
+              <Text text80H> {i18n.t('auth.login.privacy')} </Text>
+              {i18n.t('auth.login.of_us')}
+            </Text>
+          </Animated.View>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -254,9 +254,9 @@ export default function DetailsScreen() {
                                 console.log('mua ha');
                             }}
                         />
-                    </Link>
+                    </View>
                 </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }

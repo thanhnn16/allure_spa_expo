@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { userSlice } from "./users/UserSlice";
+import { treatmentSlice } from "./treatment/TreatmentSlice";
 import languageReducer from "./language/LanguageSlice";
 import zaloReducer from "./zalo/ZaloSlice";
 

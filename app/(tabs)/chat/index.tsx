@@ -1,11 +1,12 @@
 import { Href, router } from 'expo-router';
 import { View, Text, TouchableOpacity, Image } from 'react-native-ui-lib';
-import { StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 
 import IconCskh from '@/assets/icons/cskh.svg'
 import IconAi from '@/assets/icons/ai.svg'
 import AppBar from '@/components/app_bar/app_bar';
 import i18n from '@/languages/i18n';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const chatData = [
   { id: '0', title: i18n.t('chat.customer_care'), message: 'Bạn đã đặt hàng thành công cho đơn hàng: Làm sạch bằng lamellar..', time: '1h' },

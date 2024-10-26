@@ -43,6 +43,7 @@ const LoginZaloForm: React.FC = () => {
         />
         <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
       </View>
+    </View>
   );
 };
 

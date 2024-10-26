@@ -15,12 +15,48 @@ const TabsLayout: React.FC = () => {
         }}
       />
       <Tabs.Screen
+        name="chat/index"
+        options={{
+          title: 'Chat',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat/ai_screen"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/ai_voice_screen"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/message_ai"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/message_screen"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="chat/data"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="store/index"
         options={{
-          title: 'Cửa hàng',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="storefront-outline" size={size} color={color} />
-          ),
+          href: null,
         }}
       />
       <Tabs.Screen
