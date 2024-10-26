@@ -3,9 +3,9 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { userSlice } from "./users/UserSlice";
-import { treatmentSlice } from "./treatment/TreatmentSlice";
 import languageReducer from "./language/LanguageSlice";
 import zaloReducer from "./zalo/ZaloSlice";
+import { serviceSlice } from './service/ServiceSlice';
 
 const persistConfig = {
     key: 'root',
@@ -15,14 +15,16 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
     user: userSlice.reducer,
-    treatment: treatmentSlice.reducer,
     language: languageReducer,
-    zalo: zaloReducer
+    zalo: zaloReducer,
+    service: serviceSlice.reducer
 })
 
-export type RootReducerType = ReturnType<typeof rootReducer>;
 
-const persistedReducer = persistReducer<RootReducerType>(persistConfig, rootReducer);
+export type RootState = ReturnType<typeof rootReducer>;
+
+
+const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
 
 export const reduxStore = configureStore({
     reducer: persistedReducer,

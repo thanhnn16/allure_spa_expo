@@ -27,7 +27,7 @@ const TabsLayout: React.FC = () => {
       <Tabs.Screen
         name="chat/index"
         options={{
-          title: 'Chat',
+          tabBarLabel: () => null,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubble-outline" size={size} color={color} />
           ),

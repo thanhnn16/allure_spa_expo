@@ -1,12 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
-import { TreatmentCategoriesResponeParams } from '@/types/treatment.type'
+import { ServiceCategoriesResponeParams } from '@/types/service.type'
 
-export const getTreatmentCateThunk: any = createAsyncThunk(
-    'treatment/getCategories',
+export const getServiceCateThunk: any = createAsyncThunk(
+    'service/getCategories',
     async (_, { rejectWithValue }) => {
         try {
-            const res: TreatmentCategoriesResponeParams = await AxiosInstance().get('treatment-categories');
+            const res: ServiceCategoriesResponeParams = await AxiosInstance().get('services/categories');
             if (res.status_code === 200 && res.data) {
                 return res.data;
             }
