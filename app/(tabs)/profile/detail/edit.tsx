@@ -62,7 +62,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
         }
     };
     return (
-        <View flex marginH-20 marginT-20 useSafeArea>
+        <View flex marginH-20 marginT-40 useSafeArea>
             <View row centerV>
                 <TouchableOpacity
                     onPress={() => {
@@ -156,7 +156,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
                 <View marginT-20>
                     <View row centerV gap-10>
                         <Image width={24} height={24} source={GenderIcon}/>
-                        <Picker value={gender} onChange={(itemValue) => setGender(itemValue)}>
+                        <Picker value={gender} onChange={(itemValue) => setGender(itemValue as string)}>
                             <Picker.Item label="Nam" value="Nam"/>
                             <Picker.Item label="Nữ" value="Nữ"/>
                             <Picker.Item label="Khác" value="Khác"/>
