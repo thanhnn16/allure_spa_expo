@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, FlatList, TextInput, TouchableWithoutFeedback, Platform, Keyboard, KeyboardAvoidingView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
-import { Image, View, Text, TouchableOpacity, Button, Colors } from 'react-native-ui-lib';
+import { StyleSheet, FlatList, TextInput, TouchableWithoutFeedback, Platform, KeyboardAvoidingView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
+import { Image, View, Text, TouchableOpacity, Button, Colors,Keyboard  } from 'react-native-ui-lib';
 
 
 
@@ -18,6 +18,7 @@ const MessageScreen = () => {
   const [messageStatus, setMessageStatus] = useState('Đã gửi');
   const scrollRef = useRef<FlatList>(null);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
 
 
   const handleSend = () => {
@@ -31,7 +32,7 @@ const MessageScreen = () => {
     setTimeout(() => {
       setMessageStatus('Đã gửi');
     }, 4000);
-    
+
     setTimeout(() => {
       setMessageStatus('Đã đọc');
     }, 6000);
@@ -47,59 +48,62 @@ const MessageScreen = () => {
     );
   };
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      scrollRef.current?.scrollToEnd({ animated: true });
-    });
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+  //     scrollRef.current?.scrollToEnd({ animated: true });
+  //   });
 
-    return () => {
-      keyboardDidShowListener.remove();
-    };
-  }, []);
+  //   return () => {
+  //     keyboardDidShowListener.remove();
+  //   };
+  // }, []);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1, backgroundColor: '#ffffff' }}
+    <SafeAreaView style={{ flex: 1 }}>
+
+      <AppBar title={i18n.t('chat.customer_care')} />
+
+      <FlatList
+        data={messagesData}
+        renderItem={({ item }) => <MessageBubble item={item} />}
+        ref={scrollRef}
+        onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16 }}
+        ListFooterComponent={handleRead}
+      />
+
+
+
+      {selectedImages.length > 0 && (
+        <SelectImagesBar
+          selectedImages={selectedImages}
+          setSelectedImages={setSelectedImages}
+          isRating={false}
+        />
+      )}
+
+
+      <KeyboardTrackingView
+        useSafeArea
+        addBottomView
       >
-        <SafeAreaView style={{ flex: 1 }}>
 
-          <AppBar title={i18n.t('chat.customer_care')} />
+      <MessageTextInput
+        placeholder={i18n.t('chat.chat_with') + ' ' + i18n.t('chat.customer_care') + ".."}
+        message={message}
+        setMessage={setMessage}
+        handleSend={handleSend}
+        isCamera={true}
+        isAI={false}
+        selectedImages={selectedImages}
+        setSelectedImages={setSelectedImages}
+      />
+      </KeyboardTrackingView>
 
-          <FlatList
-            data={messagesData}
-            renderItem={({ item }) => <MessageBubble item={item} />}
-            ref={scrollRef}
-            onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
-            keyExtractor={item => item.id}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 16 }}
-            ListFooterComponent={handleRead}
-          />
+    </SafeAreaView>
 
-          {selectedImages.length > 0 && (
-            <SelectImagesBar
-              selectedImages={selectedImages}
-              setSelectedImages={setSelectedImages}
-              isRating={false}
-            />
-          )}
-
-          <MessageTextInput
-            placeholder={i18n.t('chat.chat_with') + ' ' + i18n.t('chat.customer_care') + ".."}
-            message={message}
-            setMessage={setMessage}
-            handleSend={handleSend}
-            isCamera={true}
-            isAI={false}
-            selectedImages={selectedImages}
-            setSelectedImages={setSelectedImages}
-          />
-
-        </SafeAreaView>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
   );
 };
 
@@ -109,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingHorizontal: 16,
   },
-  
+
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',

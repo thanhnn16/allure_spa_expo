@@ -23,7 +23,7 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
                 };
             case 'secondary':
                 return {
-                    backgroundColor: Colors.secondary,
+                    backgroundColor: Colors.gray,
                     labelStyle: { color: Colors.primary, fontSize: 16, fontWeight: 'bold', ...props.titleStyle },
                 };
             case 'outline':
