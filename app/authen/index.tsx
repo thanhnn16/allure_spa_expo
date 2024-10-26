@@ -13,15 +13,14 @@ import axios from 'axios';
 import { router } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '@/redux/language/LanguageSlice';
-import { RootState } from '@/redux/ReduxStore';
-
+import { RootReducerType } from '@/redux/ReduxStore';
 const { width, height } = Dimensions.get('window');
 
 const Onboarding: React.FC = () => {
   const dispatch = useDispatch();
 
-  const currentLanguage = useSelector((state: RootState) => state.language?.currentLanguage ?? 'en');
-  const [viewState, setViewState] = useState('default');
+  const currentLanguage = useSelector((state: RootReducerType) => state.language?.currentLanguage ?? 'en');
+  const [activeView, setActiveView] = useState<'default' | 'login' | 'register' | 'zalo' | 'otp'>('default');
 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -29,25 +28,40 @@ const Onboarding: React.FC = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [, forceUpdate] = useState({});
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const translateYAnim = useRef(new Animated.Value(10)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const translateYAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+  const animateViewChange = (newView: 'default' | 'login' | 'register' | 'zalo' | 'otp') => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateYAnim, {
+        toValue: 10,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setActiveView(newView);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateYAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
+  };
 
-    Animated.timing(translateYAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, [viewState]);
-
-  const handleButtonClick = (newState: string) => {
-    setViewState(newState);
+  const handleViewChange = (newView: 'default' | 'login' | 'register' | 'zalo' | 'otp') => {
+    animateViewChange(newView);
   };
 
   const updateLanguage = (nextLanguage: string) => {
@@ -72,7 +86,7 @@ const Onboarding: React.FC = () => {
 
       if (response.status === 200) {
         Alert.alert('Success', response.data.message);
-        handleButtonClick('login');
+        handleViewChange('login');
       }
     } catch (error) {
       const err = error as any;
@@ -107,40 +121,23 @@ const Onboarding: React.FC = () => {
   };
 
   const handlesendOtpPress = () => {
-    setViewState('otp');
+    handleViewChange('otp');
   };
 
   const handleBackPress = () => {
-    setViewState('default');
+    handleViewChange('default');
   };
 
   const renderForm = () => {
-    switch (viewState) {
+    switch (activeView) {
       case 'login':
-        return (
-          <LoginForm
-          />
-        );
+        return <LoginForm onBackPress={() => handleViewChange('default')} />;
       case 'register':
-        return (
-          <RegisterForm
-            phoneNumber={phoneNumber}
-            fullName={fullName}
-            password={password}
-            setPhoneNumber={setPhoneNumber}
-            setFullName={setFullName}
-            setPassword={setPassword}
-            onBackPress={handleBackPress}
-          />
-        );
+        return <RegisterForm onBackPress={() => handleViewChange('default')} />;
       case 'zalo':
-        return (
-          <LoginZaloForm />
-        );
+        return <LoginZaloForm onBackPress={() => handleViewChange('default')} />;
       case 'otp':
-        return (
-          <OTP />
-        );
+        return <OTP onBackPress={() => handleViewChange('default')} />;
       default:
         return null;
     }
@@ -201,12 +198,12 @@ const Onboarding: React.FC = () => {
               borderTopRightRadius: 30,
             }}
           >
-            {viewState === 'default' ? (
+            {activeView === 'default' ? (
               <View>
-                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleButtonClick('register')} />
-                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleButtonClick('login')} />
-                <AppButton title={i18n.t('auth.login.zalo')} type="secondary" onPress={() => handleButtonClick('zalo')} />
-                <AppButton title={i18n.t('change_language')} type="secondary" onPress={toggleLanguage} />
+                <AppButton title={i18n.t('auth.register.title')} type="primary" onPress={() => handleViewChange('register')} />
+                <AppButton title={i18n.t('auth.login.title')} type="primary" onPress={() => handleViewChange('login')} />
+                <AppButton title={i18n.t('auth.login.zalo')} type="outline" onPress={() => handleViewChange('zalo')} />
+                <AppButton title={i18n.t('change_language')} type="outline" onPress={toggleLanguage} />
                 <Link href="/(tabs)/home" asChild>
                   <AppButton title={i18n.t('auth.login.skip')} type="text" />
                 </Link>

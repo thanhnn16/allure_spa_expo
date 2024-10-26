@@ -10,24 +10,13 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { Alert, ActivityIndicator } from 'react-native';
 
 interface RegisterFormProps {
-  phoneNumber: string;
-  fullName: string;
-  password: string;
-  setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
-  setFullName: React.Dispatch<React.SetStateAction<string>>;
-  setPassword: React.Dispatch<React.SetStateAction<string>>;
   onBackPress: () => void;
 }
 
-const RegisterForm: React.FC<RegisterFormProps> = ({
-                                                     phoneNumber,
-                                                     fullName,
-                                                     password,
-                                                     setPhoneNumber,
-                                                     setFullName,
-                                                     setPassword,
-                                                     onBackPress,
-                                                   }) => {
+const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [phoneError, setPhoneError] = useState('');
@@ -121,61 +110,61 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   };
 
   return (
-      <>
-        <TextInput
-            title={i18n.t('auth.register.phone_number')}
-            placeholder={i18n.t('auth.register.phone_number')}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            keyboardType="phone-pad"
-            onBlur={() => validatePhoneNumber(phoneNumber)}
-        />
-        {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
+    <>
+      <TextInput
+        title={i18n.t('auth.register.phone_number')}
+        placeholder={i18n.t('auth.register.phone_number')}
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
+        onBlur={() => validatePhoneNumber(phoneNumber)}
+      />
+      {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
 
-        <TextInput
-            title={i18n.t('auth.register.fullname')}
-            placeholder={i18n.t('auth.register.fullname')}
-            value={fullName}
-            onChangeText={setFullName}
-            onBlur={() => validateFullName(fullName)}
-        />
-        {fullNameError ? <Text style={{ color: 'red' }}>{fullNameError}</Text> : null}
+      <TextInput
+        title={i18n.t('auth.register.fullname')}
+        placeholder={i18n.t('auth.register.fullname')}
+        value={fullName}
+        onChangeText={setFullName}
+        onBlur={() => validateFullName(fullName)}
+      />
+      {fullNameError ? <Text style={{ color: 'red' }}>{fullNameError}</Text> : null}
 
-        <TextInput
-            title={i18n.t('auth.register.password')}
-            placeholder={i18n.t('auth.register.password')}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            onBlur={() => validatePassword(password)}
-        />
-        {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
+      <TextInput
+        title={i18n.t('auth.register.password')}
+        placeholder={i18n.t('auth.register.password')}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        onBlur={() => validatePassword(password)}
+      />
+      {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
 
-        <TextInput
-            title={i18n.t('auth.register.confirm_password')}
-            placeholder={i18n.t('auth.register.confirm_password')}
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            onBlur={() => validateConfirmPassword(password, confirmPassword)}
-        />
-        {confirmPasswordError ? <Text style={{ color: 'red' }}>{confirmPasswordError}</Text> : null}
+      <TextInput
+        title={i18n.t('auth.register.confirm_password')}
+        placeholder={i18n.t('auth.register.confirm_password')}
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        onBlur={() => validateConfirmPassword(password, confirmPassword)}
+      />
+      {confirmPasswordError ? <Text style={{ color: 'red' }}>{confirmPasswordError}</Text> : null}
 
-        <View marginT-20 marginB-20>
-          <AppButton
-              type="primary"
-              onPress={handleRegister}
-              disabled={loading}
-              buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
-              titleStyle={{ color: Colors.background }}
-          >
-            {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
-              {i18n.t('auth.register.title')}
-            </Text>}
-          </AppButton>
-          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
-        </View>
-      </>
+      <View marginT-20 marginB-20>
+        <AppButton
+          type="primary"
+          onPress={handleRegister}
+          disabled={loading}
+          buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
+          titleStyle={{ color: Colors.background }}
+        >
+          {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
+            {i18n.t('auth.register.title')}
+          </Text>}
+        </AppButton>
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+      </View>
+    </>
   );
 };
 

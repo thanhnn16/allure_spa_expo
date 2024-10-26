@@ -20,7 +20,9 @@ const rootReducer = combineReducers({
     zalo: zaloReducer
 })
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+export type RootReducerType = ReturnType<typeof rootReducer>;
+
+const persistedReducer = persistReducer<RootReducerType>(persistConfig, rootReducer);
 
 export const reduxStore = configureStore({
     reducer: persistedReducer,
@@ -33,5 +35,4 @@ export const reduxStore = configureStore({
 });
 
 export const persistor = persistStore(reduxStore);
-export type RootState = ReturnType<typeof reduxStore.getState>;
 export type AppDispatch = typeof reduxStore.dispatch;

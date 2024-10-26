@@ -10,7 +10,11 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { router } from 'expo-router';
 import { ActivityIndicator, Alert } from 'react-native';
 
-const LoginForm: React.FC = () => {
+interface LoginFormProps {
+  onBackPress: () => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -84,46 +88,46 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-      <>
-        <TextInput
-            title={i18n.t('auth.register.phone_number')}
-            placeholder={i18n.t('auth.register.phone_number')}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            keyboardType="phone-pad"
-            onBlur={() => validatePhoneNumber(phoneNumber)}
-        />
-        {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
+    <>
+      <TextInput
+        title={i18n.t('auth.register.phone_number')}
+        placeholder={i18n.t('auth.register.phone_number')}
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
+        onBlur={() => validatePhoneNumber(phoneNumber)}
+      />
+      {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
 
-        <TextInput
-            title={i18n.t('auth.login.password')}
-            placeholder={i18n.t('auth.login.password')}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            onBlur={() => validatePassword(password)}
-        />
-        {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
+      <TextInput
+        title={i18n.t('auth.login.password')}
+        placeholder={i18n.t('auth.login.password')}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        onBlur={() => validatePassword(password)}
+      />
+      {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
 
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
-          <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.forgot_password')}</Text>
-        </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
+        <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.forgot_password')}</Text>
+      </View>
 
-        <View marginT-20 marginB-20>
-          <AppButton
-              type="primary"
-              onPress={handleLogin}
-              disabled={loading}
-              buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
-              titleStyle={{ color: Colors.background }}
-          >
-            {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
-              {i18n.t('auth.login.title')}
-            </Text>}
-          </AppButton>
-          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
-        </View>
-      </>
+      <View marginT-20 marginB-20>
+        <AppButton
+          type="primary"
+          onPress={handleLogin}
+          disabled={loading}
+          buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
+          titleStyle={{ color: Colors.background }}
+        >
+          {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
+            {i18n.t('auth.login.title')}
+          </Text>}
+        </AppButton>
+        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+      </View>
+    </>
   );
 };
 
