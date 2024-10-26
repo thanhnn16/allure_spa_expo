@@ -2,6 +2,7 @@ import { AppStyles } from '@/constants/AppStyles';
 import { useEffect, useState } from 'react';
 import { FlatList, Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { View, Text, Image, TouchableOpacity, Carousel, PageControlPosition, AnimatedImage, Spacings } from 'react-native-ui-lib';
+import { LinearGradient } from 'expo-linear-gradient';
 import getLocation from '@/utils/location/locationHelper';
 import getWeather from '@/utils/weather/getWeatherData';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -18,6 +19,11 @@ import RenderSection from '../../../components/home/renderSection';
 import RenderCategory from '../../../components/home/renderCategory';
 import RenderProductItem from '../../../components/home/renderProductItem';
 import RenderCarousel from '@/components/home/renderCarousel';
+import HomeHeaderButton from '@/components/buttons/HomeHeaderButton';
+
+import NotificationIcon from '@/assets/icons/notification_bing.svg';
+import CartIcon from '@/assets/icons/shopping_bag.svg';
+import { BlurView } from 'expo-blur';
 
 
 interface CateItem {
@@ -48,7 +54,7 @@ const HomePage = () => {
     { uri: 'https://easysalon.vn/wp-content/uploads/2019/12/banner-spa.jpg' },
     { uri: 'https://i.pinimg.com/originals/4f/25/c1/4f25c16a936656f89e38796eda8898e2.jpg' },
   ]);
-  
+
   const [treatments, setTreatments] = useState([]);
 
   const scrollOffset = useSharedValue(0);
@@ -69,7 +75,7 @@ const HomePage = () => {
       try {
         const res = await fetch("https://66fa1d4eafc569e13a9a70d9.mockapi.io/api/v1/products");
         const data = await res.json();
-        console.log("Get products: ", data)
+        // console.log("Get products: ", data)
         if (data) setServices(data);
       } catch (error: any) {
         console.log("Get products error: ", error.message);
@@ -177,56 +183,84 @@ const HomePage = () => {
 
   return (
     <View bg-$backgroundDefault useSafeArea flex>
-      <View marginH-24 center style={{ marginTop: Platform.OS === 'ios' ? 15 : 25 }}>
+      <View center>
         {/* Header */}
-        <View row centerV width={'100%'} height={60} style={{ justifyContent: 'space-between' }}>
-          <View >
-            <Animated.View style={hideStyle(scrollOffset)}>
-              <View row>
-                <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
-                <View>
-                  <Link href={"/settings/index" as Href<string>}>
-                    <Text text60BO>Đức Lộc</Text>
-                  </Link>
-                  <Text marginT-2>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+        <LinearGradient
+          colors={['#ffffff', 'transparent']}
+          style={{ width: '100%', height: 180, position: 'absolute', top: 0, zIndex: 1 }}
+        >
+          <View row centerV width={'100%'} height={60} style={{ backgroundColor: 'transparent' }}>
+            <View marginH-20>
+              <Animated.View style={hideStyle(scrollOffset)}>
+                <View row centerV >
+                  <Image width={48} height={48} borderRadius={30} source={require('@/assets/images/logo/logo.png')} />
+                  <View centerV>
+                    <Link href={"/(tabs)/profile" as Href<string>}>
+                      <Text h2_bold>Đức Lộc</Text>
+                    </Link>
+                    <Text h3>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+                  </View>
                 </View>
-              </View>
-            </Animated.View>
-            <Animated.View style={showStyle(scrollOffset)}>
-              <Text text50BO color='#717658'>Khám phá</Text>
-            </Animated.View>
-          </View>
-          <View row gap-15>
-            <ButtonNotifyIcon onPress={() => {
-              router.push('notification' as Href<string>);
-            }} />
-            <ButtonMessageIcon onPress={() => {
-              router.push('/chat' as Href<string>);
-            }} />
-          </View>
-        </View>
+              </Animated.View>
+              <Animated.View style={[showStyle(scrollOffset), { justifyContent: 'center' }]}>
+                <Text h0_bold color='#717658'>Khám phá</Text>
+              </Animated.View>
+            </View>
 
-        {/* Weather */}
-        <Animated.View style={[hideStyle(scrollOffset), { width: '100%' }]}>
-          <View row height={60} centerV style={[AppStyles.shadowItem, { borderRadius: 10 }]} marginB-15 marginH-4 paddingH-5>
-            <View row centerV>
-              <Image source={{ uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png` }} width={40} height={40} />
-              <Text marginL-5 text60>{temperature.toFixed(0)}°C</Text>
-            </View>
-            <View height={30} width={2} backgroundColor="#717658" marginL-15 marginR-15 />
-            <View>
-              <Text text70BO>{currentDate}</Text>
-              <View row marginT-2 centerV>
-                <FontAwesome6 name="location-dot" size={16} color="black" />
-                <Text marginL-5 text80>{location?.name}</Text>
-              </View>
+            <View row gap-15 marginR-20>
+              <HomeHeaderButton
+                onPress={() => {
+                  router.push('notification' as Href<string>);
+                }}
+                source={NotificationIcon}
+              />
+              <HomeHeaderButton
+                onPress={() => {
+                  router.push('cart' as Href<string>);
+                }}
+                source={CartIcon}
+              />
             </View>
           </View>
-        </Animated.View>
-        {/* Search */}
-        <Animated.View style={showStyle(scrollOffset)}>
-          <AppSearch />
-        </Animated.View>
+
+          {/* Weather */}
+          <Animated.View style={[hideStyle(scrollOffset), { width: '100%', zIndex: 2 }]}>
+            <View row height={60} centerV style={{ borderRadius: 8, borderColor: '#C9C9C9', borderWidth: 1, overflow: 'hidden', marginHorizontal: 20 }} marginB-15 marginH-4>
+              <BlurView
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingHorizontal: 5,
+                }}
+              >
+                <View row centerV>
+                  <Image source={{ uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png` }} width={40} height={40} />
+                  <Text marginL-5 text60>{temperature.toFixed(0)}°C</Text>
+                </View>
+                <View height={30} width={2} backgroundColor="#717658" marginL-15 marginR-15 />
+                <View>
+                  <Text h3_bold>{currentDate}</Text>
+                  <View row centerV>
+                    <FontAwesome6 name="location-dot" size={16} color="black" />
+                    <Text marginL-5 h3_medium>{location?.name}</Text>
+                  </View>
+                </View>
+              </BlurView>
+            </View>
+          </Animated.View>
+
+          {/* Search */}
+          <Animated.View style={[showStyle(scrollOffset), { marginBottom: 15, marginHorizontal: 20, alignSelf: 'center', zIndex: 2 }]}>
+            <AppSearch
+              isHome
+              style={{ marginHorizontal: 20, marginBottom: 15 }}
+            />
+          </Animated.View>
+
+        </LinearGradient>
+
         <Animated.ScrollView
           style={{}}
           showsVerticalScrollIndicator={false}
@@ -234,7 +268,7 @@ const HomePage = () => {
           scrollEventThrottle={16}
           contentContainerStyle={{
             paddingBottom: Platform.OS === 'ios' ? 70 : 60,
-            paddingTop: 15
+            paddingTop: 140
           }}
         >
 
@@ -259,7 +293,7 @@ const HomePage = () => {
 
             }} />}
 
-         {services && <RenderSection
+          {services && <RenderSection
             title='Sản phẩm bán chạy'
             data={services}
             renderItem={RenderProductItem}

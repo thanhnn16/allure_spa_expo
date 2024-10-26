@@ -28,6 +28,7 @@ const RenderCategory: React.FC<RenderCategoryProps> = ({ cateData }) => {
                 keyExtractor={item => item.id.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ paddingHorizontal: 20 }}
             />
         </View>
     )
