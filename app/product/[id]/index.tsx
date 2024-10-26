@@ -80,10 +80,19 @@ export default function DetailsScreen() {
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
-            <View bg-$backgroundDefault flex>
-                <AppBar title='' />
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
+            <AppBar title='' />
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
+                <View
+                    style={{
+                        width: '90%',
+                        height: 200,
+                        borderRadius: 20,
+                        overflow: 'hidden',
+                        marginTop: 10,
+                        alignSelf: 'center',
+                    }}
                 >
                     <View
                         style={{
@@ -95,35 +104,51 @@ export default function DetailsScreen() {
                             alignSelf: 'center',
                         }}
                     >
-                        <Carousel
-                            loop
-                            autoplay
-                            autoplayInterval={3000}
-                            showCounter
-                            pageControlProps={{
-                                color: '#000',
-                            }}
-                            pageControlPosition={PageControlPosition.UNDER}
-                            style={{
-                                width: '100%',
-                                height: 250,
-                            }}
-                        >
-                            {images.map((item, index) => (
-                                <Pressable
-                                    onPress={() => handleOpenImage(index)}
+                        {images.map((item, index) => (
+                            <Pressable
+                                onPress={() => handleOpenImage(index)}
+                                key={index}
+                            >
+                                <AnimatedImage
+                                    animationDuration={1000}
+                                    source={{ uri: item.uri }}
+                                    aspectRatio={16 / 9}
+                                    cover
                                     key={index}
-                                >
-                                    <AnimatedImage
-                                        animationDuration={1000}
-                                        source={{ uri: item.uri }}
-                                        aspectRatio={16 / 9}
-                                        cover
-                                        key={index}
-                                    />
-                                </Pressable>
-                            ))}
-                        </Carousel>
+                                />
+                            </Pressable>
+                        ))}
+                    </Carousel>
+                </View>
+                <ImageView
+                    images={images}
+                    imageIndex={0}
+                    visible={visible}
+                    onRequestClose={() => setIsVisible(false)}
+                    onImageIndexChange={(index) => setImageViewIndex(index)}
+                    key={index}
+                    swipeToCloseEnabled={true}
+                    doubleTapToZoomEnabled={true}
+                    FooterComponent={FooterComponent}
+                />
+                <View padding-20 gap-10>
+                    <Text h1_bold marginB-10>Làm sạch bằng lamellar Lipocollage</Text>
+                    <View row marginB-10>
+                        <Image
+                            source={TicketIcon}
+                            size={24}
+                        />
+                        <Text h1_medium secondary marginL-5>100.000 VNĐ</Text>
+                        <View flex right>
+                            <TouchableOpacity
+                                onPress={() => console.log('mua ha')}
+                            >
+                                <Image
+                                    source={HeartIcon}
+                                    size={24}
+                                />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <ImageView
                         images={images}
@@ -167,8 +192,17 @@ export default function DetailsScreen() {
                                 {createBulletPoints(shortText)}
                             </View>
                         </View>
+                    </View>
+                    <View
+                        row marginV-20
+                        style={{
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Text h1_medium>{i18n.t('productDetail.quantity')}</Text>
                         <View
-                            row marginV-20
+                            row gap-10
                             style={{
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
@@ -183,68 +217,61 @@ export default function DetailsScreen() {
                                     borderRadius: 10,
                                 }}
                             >
-                                <TouchableOpacity
-                                    style={{
-                                        padding: 10
-                                    }}
-                                    onPress={() => {
-                                        if (quantity > 1) setQuantity(quantity - 1);
-                                    }}
-                                >
-                                    <Text>-</Text>
-                                </TouchableOpacity>
-                                <Text style={{ padding: 10 }}>{quantity}</Text>
-                                <TouchableOpacity
-                                    style={{
-                                        padding: 10
-                                    }}
-                                    onPress={() => setQuantity(quantity + 1)}
-                                >
-                                    <Text>+</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View marginT-10 paddingR-10>
-                            <Text h1_bold>{i18n.t('productDetail.product_description')}</Text>
-                            <View marginT-10>
-                                {createBulletPointsDescription(longText)}
-                            </View>
+                                <Text>-</Text>
+                            </TouchableOpacity>
+                            <Text style={{ padding: 10 }}>{quantity}</Text>
+                            <TouchableOpacity
+                                style={{
+                                    padding: 10
+                                }}
+                                onPress={() => setQuantity(quantity + 1)}
+                            >
+                                <Text>+</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-                </ScrollView>
-                <View
-                    row padding-20
-                    style={{
-                        borderTopStartRadius: 30,
-                        borderTopEndRadius: 30,
-                        borderWidth: 2,
-                        borderColor: '#E0E0E0',
-                    }}
-                >
-                    <View row gap-30>
-                        <Link href='/rating/1' asChild>
-                            <TouchableOpacity>
-                                <View center marginB-4>
-                                    <Image
-                                        source={CommentIcon}
-                                        size={24}
-                                    />
-                                </View>
-                                <Text h3_medium>{i18n.t('productDetail.reviews')}</Text>
-                            </TouchableOpacity>
-                        </Link>
-                        <Link href='/favorite' asChild>
-                            <TouchableOpacity>
-                                <View center marginB-4>
-                                    <Image
-                                        source={ShoppingCartIcon}
-                                        size={24}
-                                    />
-                                </View>
-                                <Text h3_medium>{i18n.t('productDetail.add_to_cart')}</Text>
-                            </TouchableOpacity>
-                        </Link>
+                    <View marginT-10 paddingR-10>
+                        <Text h1_medium>{i18n.t('productDetail.product_description')}</Text>
+                        <View marginT-10>
+                            {createBulletPointsDescription(longText)}
+                        </View>
                     </View>
+                </View>
+            </ScrollView>
+            <View
+                row padding-20
+                style={{
+                    borderTopStartRadius: 30,
+                    borderTopEndRadius: 30,
+                    borderWidth: 2,
+                    borderColor: '#E0E0E0',
+                }}
+            >
+                <View row gap-30>
+                    <Link href='/rating/1' asChild>
+                        <TouchableOpacity>
+                            <View center marginB-4>
+                                <Image
+                                    source={CommentIcon}
+                                    size={24}
+                                />
+                            </View>
+                            <Text h3_medium>{i18n.t('productDetail.reviews')}</Text>
+                        </TouchableOpacity>
+                    </Link>
+                    <Link href='/favorite' asChild>
+                        <TouchableOpacity>
+                            <View center marginB-4>
+                                <Image
+                                    source={ShoppingCartIcon}
+                                    size={24}
+                                />
+                            </View>
+                            <Text h3_medium>{i18n.t('productDetail.add_to_cart')}</Text>
+                        </TouchableOpacity>
+                    </Link>
+                </View>
+                <Link href='/(tabs)/home' asChild>
                     <View flex right>
                         <Button
                             label={i18n.t('productDetail.buy_now').toString()}
@@ -255,7 +282,7 @@ export default function DetailsScreen() {
                             }}
                         />
                     </View>
-                </View>
+                </Link>
             </View>
         </SafeAreaView>
     );

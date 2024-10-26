@@ -11,7 +11,7 @@ export const hideStyle = (scrollOffset: any) => useAnimatedStyle(() => {
 
     const headerOpacityAnimated = interpolate(
         scrollOffset.value,
-        [0, 50],
+        [0, 30],
         [1, 0],
         Extrapolation.CLAMP
     );

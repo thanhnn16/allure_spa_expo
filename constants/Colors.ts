@@ -8,7 +8,7 @@ const colorScheme = {
   tabIconDefault: '#687076',
   tabIconSelected: '#717658',
   primary: '#717658',
-  secondary: '#71765833',
+  secondary: '#A85A29',
   gray: '#AAAAAA',
   
 };

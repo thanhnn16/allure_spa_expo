@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
       overflow: 'hidden',
       height: 160,
       marginTop: 10,
+      marginHorizontal: 20,
     },
     carousel: {
       height: 200,

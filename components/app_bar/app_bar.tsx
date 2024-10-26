@@ -22,7 +22,7 @@ const AppBar = ({ title, rightComponent }: AppBarProps) => {
                     <Image source={BackIcon} />
                 </View>
             </Pressable>
-            <Text h0_bold>{title}</Text>
+            <Text h1_bold primary>{title}</Text>
             <View width={50} height={50} centerV>
                 {rightComponent}
             </View>

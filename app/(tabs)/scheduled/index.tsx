@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native'
+import { StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native'
+import { Text, View, } from 'react-native-ui-lib'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -37,24 +38,26 @@ const ScheduledPage = () => {
     return (
       <View style={styles.bannerContainer}>
         <Image source={require('@/assets/images/banner.png')} style={styles.banner} />
-        <Text style={[styles.bannerText, styles.blackText]}>{item.name}</Text>
-        <View style={styles.infoContainer}>
+        <View marginT-10>
+          <Text h2_bold>{item.name}</Text>
+        </View>
+        <View centerV style={styles.infoContainer}>
           <Image source={require('@/assets/images/home/icons/ticket.png')} style={styles.icon} />
-          <View style={styles.priceSpace}>
-            <Text style={[styles.infoText, styles.priceText]}>{item.price}</Text>
-            <Text style={[styles.infoText, statusStyle]}>{item.status}</Text>
+          <View centerV style={styles.priceSpace}>
+            <Text h3_semibold secondary>{item.price}</Text>
+            <Text h3 gray>{item.status}</Text>
           </View>
         </View>
-        <View style={styles.infoContainer}>
+        <View centerV style={styles.infoContainer}>
           <Image source={require('@/assets/images/home/icons/note.png')} style={styles.icon} />
-          <Text style={[styles.infoText, styles.blackText]}>{item.times}</Text>
+          <Text h3_semibold>{item.times}</Text>
         </View>
-        <View style={styles.infoContainer}>
+        <View centerV style={styles.infoContainer}>
           <Image source={require('@/assets/images/home/icons/clock.png')} style={styles.icon} />
           <View style={styles.priceSpace}>
-            <Text style={[styles.infoText, styles.blackText]}>{item.time}</Text>
-            <View style={styles.infoContainer}>
-              <Text style={[styles.infoText, styles.underlineText]}>Nhấn xem chi tiết</Text>
+            <Text h3_semibold>{item.time}</Text>
+            <View centerV style={styles.infoContainer}>
+              <Text h3_bold primary>Nhấn xem chi tiết</Text>
               <View style={styles.circleIcon}>
                 <Text style={styles.circleIconText}>!</Text>
               </View>
@@ -68,19 +71,16 @@ const ScheduledPage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.text}>Lịch đã đặt</Text>
+        <Text h1_bold primary>Lịch đã đặt</Text>
       </View>
       <ScrollView horizontal style={styles.scrollView} showsHorizontalScrollIndicator={false}>
         {items.map((item, index) => renderItem(item, index))}
       </ScrollView>
-
-      <View style={styles.flatListContainer}>
-        <FlatList
-          data={flatListItems}
-          renderItem={renderFlatListItem}
-          keyExtractor={(item) => item.id.toString()}
-        />
-      </View>
+      <FlatList
+        data={flatListItems}
+        renderItem={renderFlatListItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </SafeAreaView>
   )
 }
@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     marginTop: 10,
+    marginBottom: 5,
   },
   itemContainer: {
     height: 40,
@@ -169,6 +170,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 10,
     borderWidth: 1,
+    marginBottom: 7
   },
   selectedItem: {
     backgroundColor: '#717658',
@@ -188,13 +190,7 @@ const styles = StyleSheet.create({
   unselectedItemText: {
     color: '#717658',
   },
-  flatListContainer: {
-    position: 'absolute',
-    top: 180, // Adjust this value as needed
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
+
   flatListItem: {
     padding: 20,
     borderBottomWidth: 1,

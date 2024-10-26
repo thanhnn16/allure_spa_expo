@@ -99,6 +99,37 @@
         "send": "送信",
         "chat_with": "チャット"
     },
+    "pageTitle": {
+        "chat": "チャット",
+        "favorite": "お気に入り",
+        "cart": "カート",
+        "order": "注文",
+        "notification": "通知",
+        "profile": "プロフィール"
+    },
+    "productDetail": {
+        "quantity": "数量",
+        "product_description": "商品説明",
+        "reviews": "レビュー",
+        "add_to_cart": "カートに追加",
+        "buy_now": "今すぐ購入"
+    },
+    "rating": {
+        "add_review": "レビューを追加",
+        "base_on": "ベース",
+        "reviews": "レビュー",
+        "how_do_you_feel": "どのように感じますか",
+        "feel_about_product": "商品についての感想",
+        "type_content": "コンテンツを入力",
+        "images": "画像",
+        "send_review": "レビューを送信"
+    },
+    "chat": {
+        "customer_care": "カスタマーケア",
+        "chat_with_ai": "AIとチャット",
+        "send": "送信",
+        "chat_with": "チャット"
+    },
     "profile": {
         "my_account": "マイアカウント",
         "edit_personal_info": "個人情報を編集",
