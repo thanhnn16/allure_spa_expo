@@ -80,7 +80,7 @@ components/
 
 redux/
   auth/
-    AuthSlice.ts
+    authSlice.ts
   language/
     LanguageSlice.ts
   zalo/

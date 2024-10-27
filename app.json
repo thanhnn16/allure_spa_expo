@@ -16,13 +16,18 @@
       "bundleIdentifier": "com.faithnippon.allurespa",
       "supportsTablet": true,
       "infoPlist": {
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        }
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
+        "NSMicrophoneUsageDescription": "This app needs access to the microphone.",
+        "NSCameraUsageDescription": "This app needs access to the camera."
+      },
+      "entitlements": {
+        // production cho notification
+        "aps-environment": "development"
       }
     },
     "android": {
       "package": "com.faithnippon.allurespa",
+      "googleServicesFile": "./android/app/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -39,6 +44,8 @@
       "output": "static"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
       "expo-router",
       [
         "expo-font",
@@ -51,6 +58,13 @@
             "./assets/fonts/SFProText-Regular.otf",
             "./assets/fonts/KaiseiTokumin-Regular.ttf"
           ]
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "isAccessMediaLocationEnabled": false
         }
       ],
       "expo-localization",

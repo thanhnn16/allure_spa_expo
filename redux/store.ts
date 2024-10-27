@@ -6,8 +6,7 @@ import { userSlice } from "./users/UserSlice";
 import languageReducer from "./language/LanguageSlice";
 import zaloReducer from "./zalo/ZaloSlice";
 import { serviceSlice } from './service/ServiceSlice';
-import authReducer from './auth/AuthSlice';
-
+import authReducer from './auth/authSlice';
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
