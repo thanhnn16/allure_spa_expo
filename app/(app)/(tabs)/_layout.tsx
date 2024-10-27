@@ -7,7 +7,7 @@ import { useNavigationState } from "@react-navigation/native";
 
 const TabLayout: React.FC = () => {
   const screenWidth = Dimensions.get("window").width;
-  const navigationState = useNavigationState(state => state);
+  const navigationState = useNavigationState((state) => state);
 
   const hideTabBarRoutes = [
     "message_screen",
@@ -19,11 +19,12 @@ const TabLayout: React.FC = () => {
   const shouldHideTabBar = () => {
     if (!navigationState || !navigationState.routes) return false;
     const currentRoute = navigationState.routes[navigationState.index];
-    return hideTabBarRoutes.some(route => currentRoute.name.includes(route));
+    return hideTabBarRoutes.some((route) => currentRoute.name.includes(route));
   };
 
   return (
     <Tabs
+      backBehavior="history"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
