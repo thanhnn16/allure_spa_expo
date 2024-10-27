@@ -5,8 +5,10 @@
     "language": "Language",
     "settings": "Settings",
     "change_language": "Change Language",
+    "continue": "Continue",
     "back": "Back",
     "sendOTP": "Send OTP",
+    "close": "Close",
     "auth": {
         "login": {
             "title": "Login",
@@ -32,7 +34,8 @@
             "empty_password": "You have not entered a password",
             "invalid_password_special_char": "Password must not contain special characters",
             "invalid_password_length": "Password must be at least 8 characters long",
-            "server_error": "Server error, please try again later"
+            "server_error": "Server error, please try again later",
+            "zalo_login_description": "Login with Zalo to save time and easily manage your information"
         },
         "art": {
             "title": "The Art of Skincare",

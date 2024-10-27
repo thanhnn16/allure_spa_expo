@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
-import { UserLoginResponseParams } from "@/app/authen/models/Models";
+import { UserLoginResponseParams } from "@/types/Models";
 
 interface LoginRequest {
   phoneNumber: string;

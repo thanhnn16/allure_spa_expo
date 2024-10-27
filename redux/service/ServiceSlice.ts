@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getServiceCateThunk } from "@/redux/service/getServiceCateThunk";
 import { getServicesThunk } from './getServicesThunk';
 import { ServiceCategoriesResponeParams, ServicesResponeParams } from "@/types/service.type";
-import { RootState } from "../ReduxStore";
+import { RootState } from "../store";
 
 interface initialStateType {
     serviceCategories: ServiceCategoriesResponeParams | null;

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
-import { UserRegisterResponseParams } from "@/app/authen/models/Models";
+import { UserRegisterResponseParams } from "@/types/Models";
 
 interface RegisterRequest {
   fullName: string;

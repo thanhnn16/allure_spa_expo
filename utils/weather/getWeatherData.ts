@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Double } from 'react-native/Libraries/Types/CodegenTypes';
 
-let KEY = process.env.EXPO_PUBLIC_WEATHER_API_KEY;
+let KEY = process.env.OPEN_WEATHER_API_KEY;
 
 const getWeather = async (lat: Double, lon: Double) => {
   try {
@@ -13,7 +13,6 @@ const getWeather = async (lat: Double, lon: Double) => {
     );
     return response.data;
   } catch (error) {
-    console.error('Error fetching weather data:', error);
     throw new Error('Error fetching weather data');
   }
 };

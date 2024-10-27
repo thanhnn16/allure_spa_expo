@@ -1,2 +1,2 @@
-export { reduxStore } from './ReduxStore';
+export { store } from './store';
 export * from './users';

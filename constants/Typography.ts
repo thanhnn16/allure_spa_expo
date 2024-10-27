@@ -3,6 +3,7 @@ import Colors from './Colors';
 
 Typography.loadTypographies({
   onboarding_title: { fontSize: 32, lineHeight: 48, fontWeight: '400', fontFamily: 'AlexBrush-Regular', color: Colors.primary },
+  onboarding_title_ja: { fontSize: 32, lineHeight: 48, fontWeight: '400', fontFamily: 'KaiseiTokumin-Regular', color: Colors.primary },
   h1_italic: { fontSize: 46, fontWeight: '300', lineHeight: 80, fontFamily: 'AlexBrush-Regular'},
   h2_italic: { fontSize: 32, fontWeight: '300', lineHeight: 64, fontFamily: 'AlexBrush-Regular' },
   body: { fontSize: 16, fontWeight: '400', lineHeight: 24 },

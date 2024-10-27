@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
-import { User, UserLoginResponseParams, UserRegisterResponseParams } from "@/app/authen/models/Models";
+import { User, UserLoginResponseParams, UserRegisterResponseParams } from "@/types/Models";
 import { loginThunk } from "./LoginThunk";
 import { registerThunk } from "./RegisterThunk";
 

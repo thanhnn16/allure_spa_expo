@@ -4,9 +4,11 @@
     "logout": "Đăng xuất",
     "language": "Ngôn ngữ",
     "settings": "Cài đặt",
-    "change_language": "Thay đổi ngôn ngữ",
+    "change_language": "Change Language",
+    "continue": "Tiếp tục",
     "back": "Quay lại",
     "sendOTP": "Gửi OTP",
+    "close": "Đóng",
     "auth": {
         "login": {
             "title": "Đăng nhập",
@@ -32,7 +34,8 @@
             "empty_password": "Bạn chưa nhập mật khẩu",
             "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
             "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự",
-            "server_error": "Lỗi từ máy chủ, vui lòng thử lại sau"
+            "server_error": "Lỗi từ máy chủ, vui lòng thử lại sau",
+            "zalo_login_description": "Đăng nhập bằng Zalo để tiết kiệm thời gian và dễ dàng quản lý thông tin của bạn"
         },
         "art": {
             "title": "Nghệ thuật chăm sóc da",
