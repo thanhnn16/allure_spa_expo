@@ -3,9 +3,24 @@ import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
 import Color from "@/constants/Colors";
+import { useNavigationState } from "@react-navigation/native";
 
 const TabLayout: React.FC = () => {
   const screenWidth = Dimensions.get("window").width;
+  const navigationState = useNavigationState(state => state);
+
+  const hideTabBarRoutes = [
+    "message_screen",
+    "message_ai",
+    "ai_screen",
+    "ai_voice_screen",
+  ];
+
+  const shouldHideTabBar = () => {
+    if (!navigationState || !navigationState.routes) return false;
+    const currentRoute = navigationState.routes[navigationState.index];
+    return hideTabBarRoutes.some(route => currentRoute.name.includes(route));
+  };
 
   return (
     <Tabs
@@ -15,7 +30,9 @@ const TabLayout: React.FC = () => {
           height: 76,
           width: screenWidth,
           paddingHorizontal: 24,
+          display: shouldHideTabBar() ? "none" : "flex",
         },
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen

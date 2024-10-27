@@ -2,8 +2,8 @@ import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { Linking, Platform } from 'react-native';
 
-const clientId = process.env.ZALO_CLIENT_ID;
-const clientSecret = process.env.ZALO_CLIENT_SECRET;
+const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
+const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
 const redirectUri = Platform.OS === 'ios' 
   ? 'allurespa://' 
   : 'allurespa://oauth';

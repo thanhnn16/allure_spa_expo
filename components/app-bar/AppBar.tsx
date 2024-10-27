@@ -1,45 +1,43 @@
-import { Pressable, StyleSheet } from 'react-native'
-import { Text, View, Image } from 'react-native-ui-lib'
-import { BlurView } from 'expo-blur'
-import React from 'react'
+import { Pressable, StyleSheet } from "react-native";
+import { Text, View, Image } from "react-native-ui-lib";
+import { BlurView } from "expo-blur";
+import React from "react";
 
-import BackIcon from '@/assets/icons/arrow_left.svg'
-import { router } from 'expo-router'
+import BackIcon from "@/assets/icons/arrow_left.svg";
+import { router } from "expo-router";
 
 interface AppBarProps {
-    title: string;
-    rightComponent?: React.ReactNode;
+  back?: boolean;
+  title: string;
+  rightComponent?: React.ReactNode;
 }
 
-const AppBar = ({ title, rightComponent }: AppBarProps) => {
+const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
   return (
-    <BlurView 
-        intensity={200}    
-    >
-        <View style={styles.container}>
-            <Pressable onPress={() => router.back()}>
-                <View width={50} height={50} centerV>
-                    <Image source={BackIcon} />
-                </View>
-            </Pressable>
-            <Text h1_bold primary>{title}</Text>
-            <View width={50} height={50} centerV>
-                {rightComponent}
+    <BlurView intensity={200}>
+      <View height={60} paddingH-16 row centerV spread>
+        {back ? (
+          <Pressable onPress={router.back}>
+            <View width={48} height={48} centerV>
+              <Image source={BackIcon} />
             </View>
-        </View>
+          </Pressable>
+        ) : (
+          <View width={48} height={48} />
+        )}
+        <Text h1_bold primary flex center>
+          {title}
+        </Text>
+        {rightComponent ? (
+          <View width={48} height={48} centerV>
+            {rightComponent}
+          </View>
+        ) : (
+          <View width={48} height={48} />
+        )}
+      </View>
     </BlurView>
-  )
-}
+  );
+};
 
-export default AppBar
-
-const styles = StyleSheet.create({
-    container: {
-        height: 60, 
-        paddingVertical: 10, 
-        paddingHorizontal: 16, 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        flexDirection: 'row',
-    }
-})
+export default AppBar;
