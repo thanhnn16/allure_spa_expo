@@ -7,7 +7,7 @@ import getWeather from '@/utils/weather/getWeatherData';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import ButtonNotifyIcon from '@/components/buttons/ButtonNotifyIcon';
 import ButtonMessageIcon from '@/components/buttons/ButtonMessageIcon';
-import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedScrollHandler, SharedValue } from 'react-native-reanimated';
 import AppSearch from '@/components/inputs/AppSearch';
 import { Href, Link, router } from "expo-router";
 import { hideStyle, showStyle } from './animated';
@@ -18,7 +18,6 @@ import RenderSection from '../../../components/home/renderSection';
 import RenderCategory from '../../../components/home/renderCategory';
 import RenderProductItem from '../../../components/home/renderProductItem';
 import RenderCarousel from '@/components/home/renderCarousel';
-
 
 interface CateItem {
   id: string;
@@ -160,22 +159,6 @@ const HomePage = () => {
     );
   };
 
-    return (
-      <TouchableOpacity marginR-15 style={[AppStyles.shadowItem, { borderRadius: 16, width: 230, height: 'auto' }]} >
-        <Image source={require('@/assets/images/home/service1.png')} width={'100%'} height={210} style={{ resizeMode: 'stretch' }} />
-        <View flex paddingH-10 paddingV-5 gap-2 >
-          <Text text70H>{rItem.name}</Text>
-          <View flex-1>
-            <Text style={{ color: '#8C8585' }}>{truncateText(rItem.description, 50)}</Text>
-          </View>
-          <View bottom>
-            <Text text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View bg-$backgroundDefault useSafeArea flex>
       <View marginH-24 center style={{ marginTop: Platform.OS === 'ios' ? 15 : 25 }}>
@@ -275,8 +258,6 @@ const HomePage = () => {
 
 export default HomePage;
 
-
-
 const cateArr = [
   {
     id: '1',
@@ -309,3 +290,11 @@ const cateArr = [
     icon: require('@/assets/images/home/icons/News.png')
   }
 ];
+
+function setBannerViewIndex(index: number) {
+  throw new Error('Function not implemented.');
+}
+function setBannerVisible(arg0: boolean) {
+  throw new Error('Function not implemented.');
+}
+
