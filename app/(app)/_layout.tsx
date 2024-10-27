@@ -24,6 +24,11 @@ const AppLayout: React.FC = () => {
       <Stack.Screen name="settings/index" />
       <Stack.Screen name="(chat)/message_ai" />
       <Stack.Screen name="(chat)/message_screen" />
+      <Stack.Screen name="(chat)/ai_screen" />
+      <Stack.Screen
+        name="(chat)/ai_voice_screen"
+        options={{ presentation: "modal" }}
+      />
     </Stack>
   );
 };

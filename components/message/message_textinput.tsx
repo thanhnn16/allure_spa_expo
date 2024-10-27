@@ -39,7 +39,7 @@ const MessageTextInput = ({
     };
 
     const handleAI = () => {
-        router.push('/chat/ai_voice_screen' as Href<string>)
+        router.push('/ai_voice_screen' as Href<string>)
     };
 
     return (
