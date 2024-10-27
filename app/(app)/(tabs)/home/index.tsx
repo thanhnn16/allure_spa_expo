@@ -144,22 +144,11 @@ const HomePage = () => {
     },
   });
 
-  const renderCateItem = (item: any) => {
-    const rItem = item.item;
-    return (
-      <TouchableOpacity center marginR-20>
-        <View
-          width={44}
-          height={44}
-          backgroundColor="#F3F4F6"
-          center
-          style={{ borderRadius: 30 }}
-        >
-          <Image source={rItem.icon} width={24} height={24} />
-        </View>
-        <Text marginT-5>{rItem.name}</Text>
-      </TouchableOpacity>
-    );
+  const handleOpenWebView = (url: string) => {
+    router.push({
+      pathname: "/webview",
+      params: { url },
+    });
   };
 
   const renderServicesItem = ({ item }: { item: any }) => {
@@ -203,7 +192,6 @@ const HomePage = () => {
       </TouchableOpacity>
     );
   };
-
 
   const renderSkeletonContent = () => (
     <View>
@@ -401,30 +389,36 @@ const cateArr = [
     id: "1",
     name: "Giới thiệu",
     icon: require("@/assets/images/home/icons/Introduce.png"),
+    url: "https://allurespa.com.vn/gioi-thieu/",
   },
   {
     id: "2",
     name: "Voucher",
     icon: require("@/assets/images/home/icons/Voucher.png"),
+    url: "https://allurespa.com.vn/voucher/",
   },
   {
     id: "3",
     name: "Dịch vụ",
     icon: require("@/assets/images/home/icons/Service.png"),
+    url: "https://allurespa.com.vn/dich-vu/",
   },
   {
     id: "4",
     name: "Sản phẩm",
     icon: require("@/assets/images/home/icons/Product.png"),
+    url: "https://allurespa.com.vn/san-pham/",
   },
   {
     id: "5",
     name: "Khoá học",
     icon: require("@/assets/images/home/icons/Course.png"),
+    url: "https://allurespa.com.vn/khoa-hoc/",
   },
   {
     id: "6",
-    name: "Tin tức",
+    name: "Tin tức",
     icon: require("@/assets/images/home/icons/News.png"),
+    url: "https://allurespa.com.vn/category/tin-tuc/",
   },
 ];
