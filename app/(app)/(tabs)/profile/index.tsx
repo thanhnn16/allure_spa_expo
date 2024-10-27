@@ -148,7 +148,7 @@ const ProfilePage = () => {
               title: "Cài đặt",
               icon: require("@/assets/images/setting.png"),
               onPress: () => {
-                console.log("Cài đặt");
+                router.push("/settings");
               },
             },
           ].map((item, index) => (
