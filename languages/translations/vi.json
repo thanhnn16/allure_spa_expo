@@ -67,5 +67,83 @@
     "otp": {
         "otp_input": "Nhập OTP",
         "resend_otp": "Gửi lại mã"
+    },
+    "pageTitle": {
+        "chat": "Tin nhắn",
+        "favorite": "Yêu thích",
+        "cart": "Giỏ hàng",
+        "order": "Đơn hàng",
+        "notification": "Thông báo",
+        "profile": "Hồ sơ"
+    },
+    "productDetail": {
+        "quantity": "SỐ LƯỢNG",
+        "product_description": "MÔ TẢ SẢN PHẨM",
+        "reviews": "Đánh giá",
+        "add_to_cart": "Thêm giỏ hàng",
+        "buy_now": "Mua ngay"
+    },
+    "rating": {
+        "add_review": "Thêm đánh giá",
+        "base_on": "Dựa trên",
+        "reviews": "đánh giá",
+        "how_do_you_feel": "Bạn cảm thấy thế nào",
+        "feel_about_product": "Cảm nghĩ về sản phẩm",
+        "type_content": "Nhập nội dung",
+        "images": "Hình ảnh",
+        "send_review": "Gửi đánh giá"
+    },
+    "chat": {
+        "customer_care": "Chăm sóc khách hàng",
+        "chat_with_ai": "Chat với AI",
+        "send": "Gửi",
+        "chat_with": "Chat với"
+    },
+    "profile": {
+        "my_account": "Tài khoản của tôi",
+        "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
+        "purchase_policy": "Chính sách mua hàng và đổi trả",
+        "policy_description": "Chính sách áp dụng cho Allure Spa",
+        "order_address": "Địa chỉ đặt hàng",
+        "address_list": "Danh sách địa chỉ",
+        "logout": "Đăng xuất",
+        "help_support": "Trợ giúp & Hỗ trợ",
+        "about_app": "Về ứng dụng",
+        "settings": "Cài đặt",
+        "more": "Thêm",
+        "edit_profile": "Chỉnh sửa hồ sơ",
+        "change_password": "Đổi mật khẩu",
+        "history_login": "Lịch sử đăng nhập",
+        "dowload_information": "Tải thông tin xuống",
+        "delete_account": "Xóa tài khoản",
+        "change_info": "Đổi thông tin"
+    },
+    "voucher": {
+        "title": "Giảm giá",
+        "all" : "Tất cả",
+        "birrthday" : "Sinh nhật",
+        "event" : "Sự kiện",
+        "prominent" : "Nổi bật",
+        "gift" : "Quà tặng",
+        "many_offers_comingsoon" : "Nhiều ưu đãi sắp tới"
+
+    },
+    "reward":{
+        "title": "Phần thưởng",
+       "cosmetic" : "Mỹ phẩm",
+       "spa": "Spa",
+       "changed": "475 đã đổi",
+       "change_now": "Đổi ngay",
+       "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
+       "title_spa":"Liệu trình Photo Facial"
+    },
+    "aboutapp": {
+        "title": "Giới thiệu về ứng dụng",
+        "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
+        "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
+        "name_app":"Tên ứng dụng: Allure Spa",
+        "developer":"Nhà phát triển: Allure Spa",
+        "version":"Phiên bản: 1.0.0",
+        "date_release":"Ngày phát hành: 01/01/2021"
     }
 }

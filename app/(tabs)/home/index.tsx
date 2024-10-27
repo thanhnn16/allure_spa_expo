@@ -32,10 +32,6 @@ interface LocationsType {
   name: string;
 }
 
-interface HeaderStyleParams {
-  offset: SharedValue<number>;
-  height: number;
-}
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -123,11 +119,6 @@ const HomePage = () => {
     },
   });
 
-  const handleOpenImage = (index: number) => {
-    setBannerViewIndex(index);
-    setBannerVisible(true);
-  };
-
   const renderCateItem = (item: any) => {
     const rItem = item.item;
     return (
@@ -156,13 +147,39 @@ const HomePage = () => {
           <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
         </View>
       </TouchableOpacity>
-    );
-  };
+    )
+  }
 
+<<<<<<< HEAD
+=======
+  const renderProductItem = (item: any) => {
+    const rItem = item.item;
+    return (
+
+
+      <TouchableOpacity onPress={() => {
+        router.push({ pathname: '/product/[id]', params: { id: rItem.id } }) // Updated to use a single object
+      }} marginR-15 marginB-15 style={[AppStyles.shadowItem, { borderRadius: 8 }]}>
+        <Image source={require('@/assets/images/home/product1.png')} width={150} height={180} />
+        <View paddingH-8 marginT-5>
+          <Text text70H>{rItem.name}</Text>
+          <View row>
+            <View row>
+              <Image source={require('@/assets/images/home/icons/yellowStar.png')} width={15} height={15} />
+              <Text style={{ color: '#8C8585' }}>5.0</Text>
+            </View>
+            <Text> | 475 Đã bán</Text>
+          </View>
+          <Text marginT-10 text70H style={{ color: '#A85A29' }}>{rItem.price + ' VNĐ'}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
+>>>>>>> d6a9b3d3354426611902cae50f539a13288a150e
   return (
     <View bg-$backgroundDefault useSafeArea flex>
       <View marginH-24 center style={{ marginTop: Platform.OS === 'ios' ? 15 : 25 }}>
-
         {/* Header */}
         <View row centerV width={'100%'} height={60} style={{ justifyContent: 'space-between' }}>
           <View >
@@ -185,7 +202,9 @@ const HomePage = () => {
             <ButtonNotifyIcon onPress={() => {
               router.push('notification' as Href<string>);
             }} />
-            <ButtonMessageIcon onPress={() => { alert('Add navigate in line 135') }} />
+            <ButtonMessageIcon onPress={() => {
+              router.push('/chat' as Href<string>);
+            }} />
           </View>
         </View>
 
@@ -290,6 +309,7 @@ const cateArr = [
     icon: require('@/assets/images/home/icons/News.png')
   }
 ];
+<<<<<<< HEAD
 
 function setBannerViewIndex(index: number) {
   throw new Error('Function not implemented.');
@@ -298,3 +318,5 @@ function setBannerVisible(arg0: boolean) {
   throw new Error('Function not implemented.');
 }
 
+=======
+>>>>>>> d6a9b3d3354426611902cae50f539a13288a150e

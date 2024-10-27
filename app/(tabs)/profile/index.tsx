@@ -1,4 +1,5 @@
 import ArrowRight from "@/assets/icons/arrow.svg";
+import React from "react";
 import { View, Text, Card, Image, TouchableOpacity } from "react-native-ui-lib";
 import { Href, Link } from "expo-router";
 import colors from "@/constants/Colors";
@@ -19,6 +20,7 @@ const ProfilePage = () => {
           borderRadius={16}
           backgroundColor={colors.secondary}
           paddingH-12
+          marginT-60
           
         >
           <View row gap-10 centerV>
@@ -57,7 +59,7 @@ const ProfilePage = () => {
             </TouchableOpacity>
           </View>
         </Card>
-        <Card width={"100%"} marginV-16 paddingV-8 paddingH-12 borderRadius={16}>
+        <Card width={"100%"} marginV-16 paddingV-8 marginT-30 paddingH-12 borderRadius={16}>
           {[
             {
               title: "Tài khoản của tôi",

@@ -166,6 +166,13 @@ android {
     }
 }
 
+repositories {
+    maven {
+        // Add ZaloSDK repository
+        url "https://gitlab.com/api/v4/projects/50747855/packages/maven"
+    }
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
@@ -193,6 +200,11 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Add ZaloSDK dependencies
+    implementation "me.zalo:sdk-core:+"
+    implementation "me.zalo:sdk-auth:+"
+    implementation "me.zalo:sdk-openapi:+"
 }
 
 if (rnVersion < versionToNumber(0, 75, 0)) {

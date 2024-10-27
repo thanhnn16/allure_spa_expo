@@ -4,10 +4,11 @@ import ProfilePage from './Profile';
 import ProfileDetail from './Profile/profile_detail';
 import ProfileEdit from './Profile/profile_edit';
 import{ useEffect } from 'react';
-import ChangePassword from './authen/changePassword';
+// import ChangePassword from './authen/changePassword';
 // import { Login } from './authen/login';
 import Voucher from './voucher';
 import Rewward from './reward';
+import AboutApp from './(tabs)/profile/aboutapp/index';
 
 
 
@@ -31,4 +32,5 @@ export default function Index() {
   }
 
   return <Redirect href="/authen" />
+  // return <AboutApp />;
 }

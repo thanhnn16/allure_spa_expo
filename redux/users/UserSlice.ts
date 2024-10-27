@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import { User, UserLoginResponseParams, UserRegisterResponseParams } from "@/app/authen/models/Models";
 import { loginThunk } from "./LoginThunk";
 import { registerThunk } from "./RegisterThunk";
@@ -23,18 +23,18 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout(state) {
+    logout(state: UserState) {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder: ActionReducerMapBuilder<UserState>) => {
     builder
-      .addCase(loginThunk.pending, (state) => {
+      .addCase(loginThunk.pending, (state: UserState) => {
         state.isLoading = true;
       })
-      .addCase(loginThunk.fulfilled, (state, action: PayloadAction<UserLoginResponseParams>) => {
+      .addCase(loginThunk.fulfilled, (state: UserState, action: PayloadAction<UserLoginResponseParams>) => {
         state.isLoading = false;
         if (action.payload) {
           state.user = action.payload.user;
@@ -42,14 +42,14 @@ export const userSlice = createSlice({
           state.isAuthenticated = true;
         }
       })
-      .addCase(loginThunk.rejected, (state, action) => {
+      .addCase(loginThunk.rejected, (state: UserState, action: PayloadAction<string | undefined>) => {
         state.isLoading = false;
-        state.error = action.error.message || "Login failed";
+        state.error = action.payload || "Login failed";
       })
-      .addCase(registerThunk.pending, (state) => {
+      .addCase(registerThunk.pending, (state: UserState) => {
         state.isLoading = true;
       })
-      .addCase(registerThunk.fulfilled, (state, action: PayloadAction<UserRegisterResponseParams>) => {
+      .addCase(registerThunk.fulfilled, (state: UserState, action: PayloadAction<UserRegisterResponseParams>) => {
         state.isLoading = false;
         if (action.payload) {
           state.user = action.payload.user;
@@ -57,9 +57,9 @@ export const userSlice = createSlice({
           state.isAuthenticated = true;
         }
       })
-      .addCase(registerThunk.rejected, (state, action) => {
+      .addCase(registerThunk.rejected, (state: UserState, action: PayloadAction<string | undefined>) => {
         state.isLoading = false;
-        state.error = action.error.message || "Registration failed";
+        state.error = action.payload || "Registration failed";
       });
   },
 });

@@ -7,28 +7,32 @@ interface LoginRequest {
   password: string;
 }
 
-export const loginThunk = createAsyncThunk<UserLoginResponseParams, LoginRequest>(
+export const loginThunk = createAsyncThunk(
   'user/login',
-  async (body: LoginRequest, { rejectWithValue }) => {
+  async (body: LoginRequest, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
     try {
-      console.log('Login request body:', body); // Log the request body
+      console.log('Login request body:', body);
 
       const res = await AxiosInstance().post<UserLoginResponseParams>('auth/login', {
         phone_number: body.phoneNumber,
         password: body.password
       });
-      console.log('Login response:', res); // Log the response
+      console.log('Login response:', res);
 
       if (res.data.success) {
-        console.log('Login successful:', res.data); // Log success
+        console.log('Login successful:', res.data);
         return res.data;
       }
 
-      console.log('Login failed:', res.data.message); // Log failure message
+      console.log('Login failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Login failed');
     } catch (error: any) {
-      console.error('Login error:', error); // Log error
-      return rejectWithValue(error.data.message || 'An error occurred during login');
+      console.error('Login error:', error);
+      return rejectWithValue(error.response?.data?.message || "Login failed");
     }
   }
 );
+
+
+
+
