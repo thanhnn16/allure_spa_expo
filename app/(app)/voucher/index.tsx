@@ -7,6 +7,7 @@ import {
   Card,
   SortableList,
 } from "react-native-ui-lib";
+import i18n from "@/languages/i18n";
 import { Href, Link } from "expo-router";
 import colors from "@/constants/Colors";
 import { useNavigation } from "expo-router";
@@ -19,10 +20,10 @@ const Voucher = (props: VoucherProps) => {
   const navigation = useNavigation();
   const [selected, setSelected] = useState("all");
   const data = [
-    { id: "1", label: "Tất cả", value: "all" },
-    { id: "2", label: "Sinh nhật", value: "birthday" },
-    { id: "3", label: "Nổi bật", value: "featured" },
-    { id: "4", label: "Quà tặng", value: "gift" },
+    { id: "1", label: i18n.t("voucher.all"), value: "all" },
+    { id: "2", label: i18n.t("voucher.birthday"), value: "birthday" },
+    { id: "3", label: i18n.t("voucher.event"), value: "featured" },
+    { id: "4", label: i18n.t("voucher.gift"), value: "gift" },
   ];
   return (
     <View flex marginH-20 marginT-40>
@@ -37,7 +38,7 @@ const Voucher = (props: VoucherProps) => {
         </TouchableOpacity>
         <View flex center>
           <Text text60 bold marginR-30 style={{ color: "#717658" }}>
-            Ưu đãi
+            {i18n.t("voucher.title")}
           </Text>
         </View>
         <Image

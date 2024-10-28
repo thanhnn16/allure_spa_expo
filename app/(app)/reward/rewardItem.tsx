@@ -9,6 +9,7 @@ import {
   Colors,
   TouchableOpacity,
 } from "react-native-ui-lib";
+import i18n from "@/languages/i18n";
 
 import HeartIcon from "@/assets/icons/heart.svg";
 import StarIcon from "@/assets/icons/star.svg";
@@ -32,7 +33,7 @@ const RewardItemProps = ({ item }: { item: RewardItemProps }) => {
         />
         <View padding-8>
           <View paddingV-5>
-            <Text h2_bold>{item.name}</Text>
+            <Text h2_bold>{item.name}</Text> // phần này nó dính với db nên em chưa xử lý được , có gì giúp e phần này nha
           </View>
           <View row centerV gap-8>
             <View row centerV gap-2>
@@ -40,7 +41,7 @@ const RewardItemProps = ({ item }: { item: RewardItemProps }) => {
             </View>
             <Text h3>5.0</Text>
             <Text h3>|</Text>
-            <Text h3>475 đã bán</Text>
+            <Text h3>{i18n.t("reward.changed")}</Text>
           </View>
           <View row paddingV-5>
             <View flex center marginT-10>
@@ -61,7 +62,7 @@ const RewardItemProps = ({ item }: { item: RewardItemProps }) => {
                 }}
               >
                 <Text white text80BO>
-                  Đổi ngay
+                  {i18n.t("reward.change_now")}
                 </Text>
               </TouchableOpacity>
             </View>

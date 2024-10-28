@@ -129,7 +129,7 @@
     "voucher": {
         "title": "Voucher",
         "all" : "All",
-        "birrthday" : "Birthday",
+        "birthday" : "Birthday",
         "event" : "Event",
         "prominent" : "Prominent",
         "gift" : "Gift",
@@ -153,5 +153,15 @@
         "developer":"Developer: Allure Spa",
         "version":"Version: 1.0.0",
         "date_release":"Release Date: 01/01/2021"
+    },
+    "deleteaccount":{
+        "title": "Delete Account",
+        "description": "Can you please share with us what is not working? We will fix errors as soon as we discover them. If anything unusual gets out of hand, we would be grateful if it were noticed and reported to us.",
+        "placeholder": "Enter content",
+        "next": "Next ",
+        "description2": "You should ask us to send the data to your email.",
+        "verify_yes":"Yes, send my data to email",
+        "verify_no":"No, thanks!"
+
     }
 }

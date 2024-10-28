@@ -225,7 +225,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
           }}
         >
           <Text center white text70BO>
-            Lưu thông tin
+           {i18n.t("profile.change_info")}
           </Text>
         </TouchableOpacity>
       </View>
