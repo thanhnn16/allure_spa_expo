@@ -23,7 +23,7 @@ const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ onBackPress }) => {
     try {
       setLoading(true);
       const codeVerifier = generateCodeVerifier();
-      const codeChallenge = generateCodeChallenge(codeVerifier);
+      const codeChallenge = await generateCodeChallenge(codeVerifier);
 
       // Save code verifier for later use
       await AsyncStorage.setItem("zalo_code_verifier", codeVerifier);

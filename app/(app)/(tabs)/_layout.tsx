@@ -96,6 +96,8 @@ const TabLayout: React.FC = () => {
       <Tabs.Screen name="profile/edit" options={{ href: null }} />
       <Tabs.Screen name="profile/address/index" options={{ href: null }} />
       <Tabs.Screen name="profile/about-app" options={{ href: null }} />
+      <Tabs.Screen name="profile/delete-account" options={{ href: null }} />
+      <Tabs.Screen name="profile/delete-account-verify" options={{ href: null }} />
     </Tabs>
   );
 };

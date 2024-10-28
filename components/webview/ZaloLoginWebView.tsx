@@ -9,24 +9,25 @@ interface ZaloLoginWebViewProps {
 
 const ZaloLoginWebView: React.FC<ZaloLoginWebViewProps> = ({ url }) => {
   useEffect(() => {
-    // Handle deep linking
     const handleDeepLink = (event: { url: string }) => {
-      if (event.url.startsWith('allurespa://')) {
-        const code = event.url.split('code=')[1]?.split('&')[0];
+      // Kiểm tra cả 2 scheme
+      if (event.url.startsWith('allurespa://oauth') || 
+          event.url.startsWith('com.faithnippon.allurespa://oauth')) {
+        const urlObj = new URL(event.url);
+        const code = urlObj.searchParams.get('code');
+        const state = urlObj.searchParams.get('state');
+        
         if (code) {
           router.replace({
             pathname: '/(auth)/zalo-oauth',
-            params: { code }
+            params: { code, state }
           });
         }
       }
     };
 
-    // Add event listener for deep linking
     Linking.addEventListener('url', handleDeepLink);
-
     return () => {
-      // Clean up
       Linking.removeAllListeners('url');
     };
   }, []);
