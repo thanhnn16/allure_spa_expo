@@ -1,12 +1,7 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-import { Linking, Platform } from 'react-native';
+import * as Linking from 'expo-linking';
 
-const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
-const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
-const redirectUri = Platform.OS === 'ios' 
-  ? 'allurespa://' 
-  : 'allurespa://oauth';
 
 export interface AccessTokenResponse {
   access_token: string;
@@ -30,6 +25,10 @@ interface UserProfile {
   name: string;
 }
 
+
+const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
+const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
+
 // Function to generate code_verifier
 export const generateCodeVerifier = (): string => {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -48,6 +47,13 @@ export const generateCodeChallenge = (codeVerifier: string): string => {
   return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 export const getZaloOauthUrl = (codeChallenge: string): string => {
+  const scheme = __DEV__
+    ? "exp+allurespa" // Development scheme
+    : "allurespa"; // Production scheme
+  const redirectUri = `${scheme}://oauth`
+
+
+
   return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&state=test&code_challenge_method=S256`;
 };
 
@@ -108,7 +114,7 @@ export const refreshAccessToken = async (refreshToken: string): Promise<RefreshT
     console.log('New Access Token:', access_token);
     console.log('New Refresh Token:', refresh_token);
     console.log('Expires In:', expires_in);
-    
+
     return { access_token, refresh_token, expires_in };
   } catch (error) {
     console.error('Error refreshing AccessToken:', error);

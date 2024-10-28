@@ -2,6 +2,7 @@ import ArrowRight from "@/assets/icons/arrow.svg";
 import { View, Text, Card, Image, TouchableOpacity } from "react-native-ui-lib";
 import { useAuth } from "@/hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
+import i18n from "@/languages/i18n";
 import { router } from "expo-router";
 
 const ProfilePage = () => {
@@ -37,7 +38,7 @@ const ProfilePage = () => {
             source={require("@/assets/images/avt.png")}
           />
           <View>
-            <Text text60>Nguyễn Văn Tèo</Text>
+            <Text text60>{i18n.t("profile.username")}</Text>
             <Text>+84 346 542 636</Text>
           </View>
 
@@ -70,31 +71,31 @@ const ProfilePage = () => {
         <Card width={"100%"} marginT-20>
           {[
             {
-              title: "Tài khoản của tôi",
-              description: "Chỉnh sửa thông tin cá nhân",
+              title:i18n.t("profile.my_account"), 
+              description: i18n.t("profile.edit_personal_info"),
               icon: require("@/assets/images/people.png"),
               onPress: () => {
                 router.push("/profile/detail");
               },
             },
             {
-              title: "Chính sách mua hàng, đổi trả",
-              description: "Chính sách áp dụng cho Allure Spa",
+              title:i18n.t("profile.purchase_policy"),
+              description: i18n.t("profile.policy_description"),
               icon: require("@/assets/images/chamhoi.png"),
               onPress: () => {
                 console.log("Chính sách mua hàng, đổi trả");
               },
             },
             {
-              title: "Địa chỉ đặt hàng",
-              description: "Danh sách địa chỉ",
+              title:i18n.t("profile.order_address"),
+              description: i18n.t("profile.address_list"),
               icon: require("@/assets/images/location.png"),
               onPress: () => {
                 router.push("/profile/address");
               },
             },
             {
-              title: "Đăng xuất",
+              title: i18n.t("profile.logout"),
               description: "",
               icon: require("@/assets/images/logout.png"),
               onPress: handleSignOut,
@@ -126,29 +127,29 @@ const ProfilePage = () => {
           ))}
         </Card>
         <Text text80BO gray style={{ letterSpacing: 1 }} marginT-10>
-          More
+          {i18n.t("profile.more")}
         </Text>
         <Card width={"100%"} marginT-20>
           {[
             {
-              title: "Trợ giúp & Hỗ trợ",
+              title:i18n.t("profile.help_support"),
               icon: require("@/assets/images/ring.png"),
               onPress: () => {
                 console.log("Trợ giúp & Hỗ trợ");
               },
             },
             {
-              title: "Giới thiệu về ứng dụng",
+              title:i18n.t("profile.about_app"),
               icon: require("@/assets/images/heart.png"),
               onPress: () => {
                 router.push("/profile/about-app");
               },
             },
             {
-              title: "Cài đặt",
+              title:i18n.t("profile.settings"),
               icon: require("@/assets/images/setting.png"),
               onPress: () => {
-                console.log("Cài đặt");
+                router.push("/settings");
               },
             },
           ].map((item, index) => (

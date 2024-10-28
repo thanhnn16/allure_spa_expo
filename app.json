@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Allure Spa",
-    "slug": "allure_spa_expo",
+    "slug": "allurespa",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -16,18 +16,28 @@
       "bundleIdentifier": "com.faithnippon.allurespa",
       "supportsTablet": true,
       "infoPlist": {
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        }
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
+        "NSMicrophoneUsageDescription": "This app needs access to the microphone.",
+        "NSCameraUsageDescription": "This app needs access to the camera."
+      },
+      "entitlements": {
+        "aps-environment": "development"
       }
     },
     "android": {
       "package": "com.faithnippon.allurespa",
+      "googleServicesFile": "./android/app/google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
     "web": {
@@ -35,6 +45,8 @@
       "output": "static"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
       "expo-router",
       [
         "expo-font",
@@ -49,6 +61,13 @@
           ]
         }
       ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
       "expo-localization",
       "expo-location",
       "expo-av"
@@ -58,8 +77,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "33c05c90-3876-4bf5-b86d-9b112d505205"
+        "projectId": "15c18159-da17-4fbf-9538-0c41023b9fef"
       }
-    }
+    },
+    "owner": "thanhnn16"
   }
 }

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Image, ScrollView, Modal, ViewStyle } from 'react-native';
 import { View, Text, Button, Colors, Incubator, Card, TouchableOpacity } from 'react-native-ui-lib';
 import { Link, router } from 'expo-router';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useState } from 'react';
 
 interface Product {
   id: number;
@@ -378,12 +378,12 @@ export default function Payment() {
           <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
           <Card>
             <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
-              <TouchableOpacity
+              <TouchableOpacity 
                 onPress={() => setModalVisible(true)}
                 style={styles.paymentSelector}
               >
                 <Text style={styles.placeholderStyle}>{selectedPayment}</Text>
-                <Icon name="angle-down" size={20} color="#BCBABA" style={styles.icon} />
+                <Ionicons name="chevron-down" size={20} color="#BCBABA" style={styles.icon} />
               </TouchableOpacity>
             </View>
           </Card>
@@ -397,7 +397,6 @@ export default function Payment() {
           onRequestClose={() => setModalVisible(false)}
         >
           <TouchableOpacity
-            style={styles.modalOverlay}
             activeOpacity={1}
             onPress={() => setModalVisible(false)}
           >
@@ -424,7 +423,7 @@ export default function Payment() {
                   </View>
                   {selectedPayment === method.name && (
                     <View style={styles.checkIconContainer}>
-                      <Icon name="check" size={14} style={styles.checkIcon} />
+                      <Ionicons name="checkmark" size={14} style={styles.checkIcon} />
                     </View>
                   )}
                 </TouchableOpacity>
@@ -490,7 +489,6 @@ export default function Payment() {
             <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>2.385.000 VNĐ</Text>
           </View>
         </View>
-        <Link href="/Transaction" asChild>
           <Button
             label='Tiếp Tục'
             labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
@@ -498,9 +496,8 @@ export default function Payment() {
             padding-20
             borderRadius={10}
             style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            onPress={() => router.push('/transaction')}
           />
-        </Link>
-        <Link href="/detail_transaction" asChild>
           <Button
             label='Detail Transaction'
             labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
@@ -508,8 +505,8 @@ export default function Payment() {
             padding-20
             borderRadius={10}
             style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            onPress={() => router.push('/transaction/detail')}
           />
-        </Link>
       </ScrollView>
     </SafeAreaView>
   );

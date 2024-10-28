@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { setUser, clearUser, setGuestUser, clearGuestUser } from '@/redux/auth/AuthSlice';
+import { setUser, clearUser, setGuestUser, clearGuestUser } from '@/redux/auth/authSlice';
 
 export const useAuth = () => {
   const dispatch = useDispatch();

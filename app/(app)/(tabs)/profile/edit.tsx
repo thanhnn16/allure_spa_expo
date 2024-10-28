@@ -7,6 +7,7 @@ import {
   Picker,
 } from "react-native-ui-lib";
 import { useNavigation } from "expo-router";
+import i18n from "@/languages/i18n";
 import BackButton from "@/assets/icons/back.svg";
 import { TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -87,7 +88,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
             marginR-30
             style={{ color: "#717658", letterSpacing: 0.75 }}
           >
-            Chỉnh Sửa Hồ Sơ
+            {i18n.t("profile.edit_profile")}
           </Text>
         </View>
       </View>
@@ -224,7 +225,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
           }}
         >
           <Text center white text70BO>
-            Lưu thông tin
+           {i18n.t("profile.change_info")}
           </Text>
         </TouchableOpacity>
       </View>
