@@ -104,6 +104,8 @@
         "chat_with": "Chat with"
     },
     "profile": {
+        "title": "Profile",
+        "username": "Nguyen Van Teo",
         "my_account": "My Account",
         "edit_personal_info": "Edit personal information",
         "purchase_policy": "Purchase and return policy",
@@ -121,6 +123,7 @@
         "dowload_information": "Download Information",
         "delete_account": "Delete Account",
         "change_info": "Change Information"
+       
     },
 
     "voucher": {

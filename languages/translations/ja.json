@@ -103,6 +103,8 @@
         "chat_with": "チャット"
     },
     "profile": {
+        "title": "プロフィール",
+        "username": "Nguyen Van Teo",
         "my_account": "マイアカウント",
         "edit_personal_info": "個人情報を編集",
         "purchase_policy": "購入と返品ポリシー",
