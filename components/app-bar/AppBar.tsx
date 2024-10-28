@@ -25,7 +25,7 @@ const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
         ) : (
           <View width={48} height={48} />
         )}
-        <Text h1_bold primary flex center>
+        <Text h2_bold primary flex center>
           {title}
         </Text>
         {rightComponent ? (

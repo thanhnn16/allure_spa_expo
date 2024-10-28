@@ -1,14 +1,10 @@
-import AppBar from "@/components/app-bar/AppBar";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Audio } from "expo-av";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Image, View, Text } from "react-native-ui-lib";
 import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Button,
-  Pressable,
 } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 
