@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import { Product } from "@/types/product.type";
-import { ProductThunk } from "./ProductThunk";
+import { getProductThunk } from "./productThunk";
 
 interface ProductState {
   product: Product | null;
@@ -26,14 +26,14 @@ export const productSlice = createSlice({
   },
   extraReducers: (builder: ActionReducerMapBuilder<ProductState>) => {
     builder
-      .addCase(ProductThunk.pending, (state: ProductState) => {
+      .addCase(getProductThunk.pending, (state: ProductState) => {
         state.isLoading = true;
       })
-      .addCase(ProductThunk.fulfilled, (state: ProductState, action: PayloadAction<Product>) => {
+      .addCase(getProductThunk.fulfilled, (state: ProductState, action: PayloadAction<Product>) => {
         state.isLoading = false;
         state.product = action.payload;
       })
-      .addCase(ProductThunk.rejected, (state: ProductState, action: PayloadAction<string | undefined>) => {
+      .addCase(getProductThunk.rejected, (state: ProductState, action: PayloadAction<string | undefined>) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to fetch product";
       });

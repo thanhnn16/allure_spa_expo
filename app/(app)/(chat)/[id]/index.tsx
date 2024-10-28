@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, SafeAreaView, ActivityIndicator } from 'react-nat
 import { Image, View, Text, Colors, Keyboard } from 'react-native-ui-lib';
 
 import MessageBubble from '@/components/message/message_bubble';
-import messagesData from '../../../data/chat/ChatDefaultData';
+import messagesData from '../../../../data/chat/ChatDefaultData';
 import MessageTextInput from '@/components/message/message_textinput';
 import AppBar from '@/components/app-bar/AppBar';
 import SelectImagesBar from '@/components/images/SelectImagesBar';

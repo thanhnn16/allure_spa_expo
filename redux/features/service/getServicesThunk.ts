@@ -6,7 +6,6 @@ export const getServicesThunk: any = createAsyncThunk(
     'service',
     async (page: number, { rejectWithValue }: any) => {
         try {
-            console.log(`Đang gọi API: ${AxiosInstance().defaults.baseURL}services?page=${page}`);
             const response = await AxiosInstance().get(`services?page=${page}`);
             const res: ServicesResponeParams = response.data;
             if (res.status_code === 200 && res.data) {

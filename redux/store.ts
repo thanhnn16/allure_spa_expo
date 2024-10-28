@@ -2,11 +2,13 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { userSlice } from "./users/UserSlice";
-import languageReducer from "./language/LanguageSlice";
-import zaloReducer from "./zalo/ZaloSlice";
-import { serviceSlice } from './service/ServiceSlice';
-import authReducer from './auth/authSlice';
+import { userSlice } from "./features/users/userSlice";
+import { languageSlice } from "./features/language/languageSlice";
+import { zaloSlice } from "./features/zalo/zaloSlice";
+import { serviceSlice } from './features/service/serviceSlice';
+import { authSlice } from './features/auth/authSlice';
+
+
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
@@ -15,10 +17,10 @@ const persistConfig = {
 
 const rootReducer: any = combineReducers({
     user: userSlice.reducer,
-    language: languageReducer,
-    zalo: zaloReducer,
+    language: languageSlice.reducer,
+    zalo: zaloSlice.reducer,
     service: serviceSlice.reducer,
-    auth: authReducer
+    auth: authSlice.reducer
 })
 
 

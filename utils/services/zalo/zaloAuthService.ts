@@ -1,8 +1,8 @@
+import { ZALO_CONSTANTS } from '@/utils/constants/zalo';
 import axios from 'axios';
-import CryptoJS from 'crypto-js';
+import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import { Platform } from 'react-native';
-import Constants from 'expo-constants';
 
 export interface AccessTokenResponse {
   access_token: string;
@@ -25,33 +25,42 @@ export interface UserProfile {
   };
   birthday?: string;
   gender?: string;
-  // Add other fields as needed based on Zalo API response
 }
 
 const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
 const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+const appUrl = process.env.EXPO_PUBLIC_SERVER_URL;
 
 // Tạo redirect URI dựa trên platform
 export const getRedirectUri = () => {
-  if (Platform.OS === 'web') {
-    return `${apiUrl}/zalo-login-progress`;
-  }
-  const scheme = Constants.expoConfig?.scheme || 'allurespa';
-  return `${scheme}://oauth`;
+  // if (Platform.OS === 'web') {
+  console.log('appUrl', appUrl);
+  console.log('full url', `${appUrl}zalo-login-progress`);
+  return `${appUrl}zalo-login-progress`;
+
+  // }
+  // const scheme = Constants.expoConfig?.scheme || 'allurespa';
+  // return `${scheme}://oauth`;
 };
 
 // Tạo state để bảo mật
 export const generateState = (): string => {
-  return CryptoJS.lib.WordArray.random(16).toString();
+  return Crypto.getRandomBytes(16).toString();
 };
 
 // Cập nhật lại hàm getZaloOauthUrl
 export const getZaloOauthUrl = (codeChallenge: string, state: string): string => {
   const redirectUri = encodeURIComponent(getRedirectUri());
-
-  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${redirectUri}&code_challenge=${codeChallenge}&state=${state}&code_challenge_method=S256`;
+  return `${ZALO_CONSTANTS.OAUTH_URL}/permission?app_id=${clientId}&redirect_uri=${redirectUri}&code_challenge=${codeChallenge}&state=${state}&code_challenge_method=S256`;
 };
+
+// Thêm custom error class
+export class ZaloAuthError extends Error {
+  constructor(public code: string, message: string) {
+    super(message);
+    this.name = 'ZaloAuthError';
+  }
+}
 
 // Thêm hàm mới để xử lý login
 export const handleZaloLogin = async (
@@ -95,9 +104,19 @@ export const generateCodeVerifier = (): string => {
 };
 
 // Function to generate code_challenge
-export const generateCodeChallenge = (codeVerifier: string): string => {
-  const hashed = CryptoJS.SHA256(codeVerifier);
-  const base64Encoded = CryptoJS.enc.Base64.stringify(hashed);
+export const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
+  const digest = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    codeVerifier
+  );
+
+  // Convert digest to Uint8Array
+  const digestArray = new Uint8Array(digest.match(/[\da-f]{2}/gi)!.map(h => parseInt(h, 16)));
+
+  // Convert to base64 using btoa and Uint8Array
+  const base64Encoded = btoa(String.fromCharCode.apply(null, [...digestArray]));
+
+  // Make the string URL safe
   return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 
@@ -108,24 +127,33 @@ export const openZaloLogin = (codeChallenge: string, state: string): void => {
 };
 
 // Fetch AccessToken using OAuth code
-export const getAccessToken = async (oauthCode: string, codeVerifier: string): Promise<AccessTokenResponse | undefined> => {
+export const getAccessToken = async (oauthCode: string, codeVerifier: string): Promise<AccessTokenResponse> => {
   try {
-    const response = await axios.post<AccessTokenResponse>('https://oauth.zaloapp.com/v4/access_token', null, {
-      params: {
-        code: oauthCode,
-        app_id: clientId,
-        grant_type: 'authorization_code',
-        code_verifier: codeVerifier,
-      },
-      headers: {
-        'secret_key': clientSecret,
-      },
-    });
+    const response = await axios.post<AccessTokenResponse>(
+      `${ZALO_CONSTANTS.OAUTH_URL}/access_token`,
+      null,
+      {
+        params: {
+          code: oauthCode,
+          app_id: clientId,
+          grant_type: 'authorization_code',
+          code_verifier: codeVerifier,
+        },
+        headers: {
+          'secret_key': clientSecret,
+        },
+      }
+    );
 
     return response.data;
   } catch (error) {
-    console.error('Error fetching AccessToken:', error);
-    return undefined;
+    if (axios.isAxiosError(error)) {
+      throw new ZaloAuthError(
+        'ACCESS_TOKEN_ERROR',
+        error.response?.data?.message || 'Failed to get access token'
+      );
+    }
+    throw error;
   }
 };
 
@@ -184,7 +212,7 @@ export const validateRefreshToken = async (refreshToken: string): Promise<boolea
 // Fetch user profile using AccessToken
 export const getZaloUserProfile = async (accessToken: string): Promise<UserProfile | undefined> => {
   try {
-    const response = await axios.get<UserProfile>(`https://graph.zalo.me/v4.0/me?access_token=${accessToken}`);
+    const response = await axios.get<UserProfile>(`${ZALO_CONSTANTS.GRAPH_URL}/me?access_token=${accessToken}`);
     const userProfile = response.data;
     console.log('User Profile:', userProfile);
     return userProfile;

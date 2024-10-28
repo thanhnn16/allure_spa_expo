@@ -1,6 +1,5 @@
-import i18n from "@/languages/i18n";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { REHYDRATE } from 'redux-persist';;
+import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { REHYDRATE } from 'redux-persist';
 
 interface LanguageState {
     currentLanguage: string;
@@ -14,13 +13,12 @@ export const languageSlice = createSlice({
     name: 'language',
     initialState: initialState,
     reducers: {
-        setLanguage: (state, action: PayloadAction<string>) => {
+        setLanguage: (state: LanguageState, action: PayloadAction<string>) => {
             state.currentLanguage = action.payload
         }
     },
-    extraReducers: (builder) => {
-        builder.addCase(REHYDRATE, (state, action: any) => {
-            // Nếu có state đã lưu, sử dụng nó; nếu không, giữ nguyên state hiện tại
+    extraReducers: (builder: ActionReducerMapBuilder<LanguageState>) => {
+        builder.addCase(REHYDRATE, (state: LanguageState, action: any) => {
             return action.payload?.language || state;
         })
     }

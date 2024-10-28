@@ -3,7 +3,7 @@ import { View, Text } from "react-native-ui-lib";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getAccessToken } from "@/utils/services/zalo/zaloAuthService";
 import { useDispatch } from "react-redux";
-import { setZaloTokens, setZaloError } from "@/redux/zalo/ZaloSlice";
+import { setZaloTokens, setZaloError } from "@/redux/features/zalo/zaloSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OAuthCallback() {

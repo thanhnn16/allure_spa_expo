@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getServiceCateThunk } from "@/redux/service/getServiceCateThunk";
+import { getServiceCateThunk } from "@/redux/features/service/getServiceCateThunk";
 import { getServicesThunk } from './getServicesThunk';
 import { ServiceCategoriesResponeParams, ServicesResponeParams } from "@/types/service.type";
-import { RootState } from "../store";
+import { RootState } from "../../store";
 
 interface initialStateType {
     serviceCategories: ServiceCategoriesResponeParams | null;

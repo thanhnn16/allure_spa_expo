@@ -4,7 +4,7 @@ import { ServiceCategoriesResponeParams } from '@/types/service.type'
 
 export const getServiceCateThunk: any = createAsyncThunk(
     'service/getCategories',
-    async (_, { rejectWithValue }) => {
+    async (_: any, { rejectWithValue }: any) => {
         try {
             const res: ServiceCategoriesResponeParams = await AxiosInstance().get('services/categories');
             if (res.status_code === 200 && res.data) {

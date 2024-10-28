@@ -5,7 +5,7 @@ import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/redux/store';
-import { loginThunk } from '@/redux/users/LoginThunk';
+import { loginThunk } from '@/redux/features/auth/loginThunk';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { router } from 'expo-router';
 import { ActivityIndicator, Alert } from 'react-native';

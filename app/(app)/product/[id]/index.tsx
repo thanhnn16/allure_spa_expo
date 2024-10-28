@@ -26,7 +26,7 @@ import i18n from "@/languages/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { ProductThunk } from "@/redux/products";
+import { getProductThunk } from "@/redux/features/products/productThunk";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Product } from "@/types/product.type";
 import ProductDescription from "@/components/product/ProductDescription";
@@ -45,7 +45,7 @@ export default function DetailsScreen() {
 
   const getProduct = async (id: string) => {
     try {
-      const resultAction = await dispatch(ProductThunk({ id }));
+      const resultAction = await dispatch(getProductThunk({ id }));
       const result = unwrapResult(resultAction);
       if (result && result.success) {
         console.log("Product detail:", result.data);

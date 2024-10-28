@@ -1,34 +1,34 @@
+import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
+import RenderCarousel from "@/components/home/CarouselBanner";
+import RenderCategory from "@/components/home/CategoryItem";
+import RenderProductItem from "@/components/home/ProductItem";
+import RenderSection from "@/components/home/RenderSection";
+import AppSearch from "@/components/inputs/AppSearch";
 import { AppStyles } from "@/constants/AppStyles";
-import { useEffect, useState } from "react";
-import { Platform } from "react-native";
-import { View, Text, Image, TouchableOpacity } from "react-native-ui-lib";
+import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
+import {
+  hideStyle,
+  showStyle,
+  useHeaderDimensions,
+} from "@/utils/animated/home/header";
 import getLocation from "@/utils/location/locationHelper";
 import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Animated, {
-  useSharedValue,
-  useAnimatedScrollHandler,
-} from "react-native-reanimated";
-import AppSearch from "@/components/inputs/AppSearch";
 import { Href, Link, router } from "expo-router";
-import {
-  useHeaderDimensions,
-  hideStyle,
-  showStyle,
-} from "@/utils/animated/home/header";
+import { useEffect, useState } from "react";
+import { Platform } from "react-native";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
+import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
-import { getServicesThunk } from "@/redux/service";
-import RenderSection from "@/components/home/RenderSection";
-import RenderCategory from "@/components/home/CategoryItem";
-import RenderProductItem from "@/components/home/ProductItem";
-import RenderCarousel from "@/components/home/CarouselBanner";
-import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 
 import NotificationIcon from "@/assets/icons/notification_bing.svg";
 import CartIcon from "@/assets/icons/shopping_bag.svg";
+import { RootState } from "@/redux/store";
 import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RootState } from "@/redux/store";
 import { SkeletonView, Spacings } from "react-native-ui-lib";
 
 interface LocationsType {
@@ -143,13 +143,6 @@ const HomePage = () => {
       scrollOffset.value = event.contentOffset.y;
     },
   });
-
-  const handleOpenWebView = (url: string) => {
-    router.push({
-      pathname: "/webview",
-      params: { url },
-    });
-  };
 
   const renderServicesItem = ({ item }: { item: any }) => {
     if (!item || !item.service_name) {

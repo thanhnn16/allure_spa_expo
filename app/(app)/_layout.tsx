@@ -1,13 +1,15 @@
-import React from "react";
-import { Redirect, Stack } from "expo-router";
+import React, { useEffect } from "react";
+import { Redirect, Stack, router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 
 const AppLayout: React.FC = () => {
   const { isAuthenticated, isGuest } = useAuth();
 
-  if (!isAuthenticated && !isGuest) {
-    return <Redirect href="/(auth)" />;
-  }
+  useEffect(() => {
+    if (!isAuthenticated && !isGuest) {
+      router.replace('/(auth)');
+    }
+  }, [isAuthenticated, isGuest]);
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -22,11 +24,10 @@ const AppLayout: React.FC = () => {
       <Stack.Screen name="payment/index" />
       <Stack.Screen name="reward/index" />
       <Stack.Screen name="settings/index" />
-      <Stack.Screen name="(chat)/message_ai" />
-      <Stack.Screen name="(chat)/message_screen" />
-      <Stack.Screen name="(chat)/ai_screen" />
+      <Stack.Screen name="(chat)/ai-chat" />
+      <Stack.Screen name="(chat)/[id]/index" />
       <Stack.Screen
-        name="(chat)/ai_voice_screen"
+        name="(chat)/ai-voice"
         options={{ presentation: "modal" }}
       />
     </Stack>
