@@ -10,9 +10,7 @@ interface ZaloLoginWebViewProps {
 const ZaloLoginWebView: React.FC<ZaloLoginWebViewProps> = ({ url }) => {
   useEffect(() => {
     const handleDeepLink = (event: { url: string }) => {
-      // Kiểm tra cả 2 scheme
-      if (event.url.startsWith('allurespa://oauth') || 
-          event.url.startsWith('com.faithnippon.allurespa://oauth')) {
+      if (event.url.startsWith('allurespa://oauth')) {
         const urlObj = new URL(event.url);
         const code = urlObj.searchParams.get('code');
         const state = urlObj.searchParams.get('state');

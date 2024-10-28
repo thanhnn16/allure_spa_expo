@@ -7,36 +7,59 @@ import { setZaloTokens, setZaloError } from "@/redux/zalo/ZaloSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OAuthCallback() {
-  const { code } = useLocalSearchParams();
+  const { code, state } = useLocalSearchParams();
   const router = useRouter();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      if (code) {
-        try {
-          const codeVerifier = await AsyncStorage.getItem("zalo_code_verifier");
+      if (!code || !state) {
+        dispatch(setZaloError("Thiếu thông tin xác thực"));
+        router.replace("/(auth)");
+        return;
+      }
 
-          if (codeVerifier) {
-            const accessTokenResponse = await getAccessToken(
-              code as string,
-              codeVerifier
-            );
-            if (accessTokenResponse) {
-              dispatch(setZaloTokens(accessTokenResponse));
-              router.replace("/(tabs)");
-            }
-          }
-        } catch (error) {
-          console.error("Error handling OAuth callback:", error);
-          dispatch(setZaloError("Đăng nhập thất bại"));
-          router.replace("/(auth)");
+      try {
+        const [storedCodeVerifier, storedState] = await Promise.all([
+          AsyncStorage.getItem("zalo_code_verifier"),
+          AsyncStorage.getItem("zalo_state")
+        ]);
+
+        if (!storedCodeVerifier || !storedState) {
+          throw new Error("Phiên đăng nhập không hợp lệ");
         }
+
+        if (state !== storedState) {
+          throw new Error("Thông tin xác thực không khớp");
+        }
+
+        const accessTokenResponse = await getAccessToken(
+          code as string,
+          storedCodeVerifier
+        );
+
+        if (accessTokenResponse) {
+          dispatch(setZaloTokens(accessTokenResponse));
+          
+          // Xóa thông tin xác thực tạm thời
+          await Promise.all([
+            AsyncStorage.removeItem("zalo_code_verifier"),
+            AsyncStorage.removeItem("zalo_state")
+          ]);
+          
+          router.replace("/(tabs)");
+        } else {
+          throw new Error("Không thể lấy access token");
+        }
+      } catch (error: any) {
+        console.error("Error handling OAuth callback:", error);
+        dispatch(setZaloError(error.message));
+        router.replace("/(auth)");
       }
     };
 
     handleOAuthCallback();
-  }, [code, router, dispatch]);
+  }, [code, state, router, dispatch]);
 
   return (
     <View flex center>

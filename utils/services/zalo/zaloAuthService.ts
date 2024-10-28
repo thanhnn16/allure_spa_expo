@@ -1,7 +1,8 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import * as Linking from 'expo-linking';
-
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
 
 export interface AccessTokenResponse {
   access_token: string;
@@ -9,25 +10,78 @@ export interface AccessTokenResponse {
   expires_in: number;
 }
 
-interface RefreshTokenResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-}
-
-interface ValidateRefreshTokenResponse {
+export interface ValidateRefreshTokenResponse {
   errorCode: number;
-  errorMessage: string;
+  message?: string;
 }
 
-interface UserProfile {
+export interface UserProfile {
   id: string;
   name: string;
+  picture?: {
+    data: {
+      url: string;
+    };
+  };
+  birthday?: string;
+  gender?: string;
+  // Add other fields as needed based on Zalo API response
 }
-
 
 const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
 const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
+const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+// Tạo redirect URI dựa trên platform
+export const getRedirectUri = () => {
+  if (Platform.OS === 'web') {
+    return `${apiUrl}/zalo-login-progress`;
+  }
+  const scheme = Constants.expoConfig?.scheme || 'allurespa';
+  return `${scheme}://oauth`;
+};
+
+// Tạo state để bảo mật
+export const generateState = (): string => {
+  return CryptoJS.lib.WordArray.random(16).toString();
+};
+
+// Cập nhật lại hàm getZaloOauthUrl
+export const getZaloOauthUrl = (codeChallenge: string, state: string): string => {
+  const redirectUri = encodeURIComponent(getRedirectUri());
+
+  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${redirectUri}&code_challenge=${codeChallenge}&state=${state}&code_challenge_method=S256`;
+};
+
+// Thêm hàm mới để xử lý login
+export const handleZaloLogin = async (
+  codeChallenge: string,
+  state: string
+): Promise<void> => {
+  const zaloUrl = getZaloOauthUrl(codeChallenge, state);
+
+  if (Platform.OS === 'web') {
+    window.location.href = zaloUrl;
+    return;
+  }
+
+  try {
+    const canOpenZalo = await Linking.canOpenURL('zalo://');
+    if (canOpenZalo) {
+      await Linking.openURL(`zalo://oauth?${new URLSearchParams({
+        app_id: clientId!,
+        code_challenge: codeChallenge,
+        redirect_uri: getRedirectUri(),
+        state
+      }).toString()}`);
+    } else {
+      throw new Error('no_zalo_app');
+    }
+  } catch (error) {
+    // Nếu không mở được Zalo app, trả về URL để mở WebView
+    throw { type: 'webview_required', url: zaloUrl };
+  }
+};
 
 // Function to generate code_verifier
 export const generateCodeVerifier = (): string => {
@@ -46,26 +100,15 @@ export const generateCodeChallenge = (codeVerifier: string): string => {
   const base64Encoded = CryptoJS.enc.Base64.stringify(hashed);
   return base64Encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
-export const getZaloOauthUrl = (codeChallenge: string): string => {
-  const scheme = __DEV__
-    ? "exp+allurespa" // Development scheme
-    : "allurespa"; // Production scheme
-  const redirectUri = `${scheme}://oauth`
-
-
-
-  return `https://oauth.zaloapp.com/v4/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&code_challenge=${codeChallenge}&state=test&code_challenge_method=S256`;
-};
 
 // Open Zalo login URL
-export const openZaloLogin = (codeChallenge: string): void => {
-  const url = getZaloOauthUrl(codeChallenge);
+export const openZaloLogin = (codeChallenge: string, state: string): void => {
+  const url = getZaloOauthUrl(codeChallenge, state);
   Linking.openURL(url);
 };
 
 // Fetch AccessToken using OAuth code
 export const getAccessToken = async (oauthCode: string, codeVerifier: string): Promise<AccessTokenResponse | undefined> => {
-  console.log('Fetching access token with oauthCode:', oauthCode);
   try {
     const response = await axios.post<AccessTokenResponse>('https://oauth.zaloapp.com/v4/access_token', null, {
       params: {
@@ -79,27 +122,17 @@ export const getAccessToken = async (oauthCode: string, codeVerifier: string): P
       },
     });
 
-    // Log the received tokens
-    const { access_token, refresh_token, expires_in } = response.data;
-    console.log('Access Token:', access_token);
-    console.log('Refresh Token:', refresh_token);
-    console.log('Expires In:', expires_in);
-
-    return { access_token, refresh_token, expires_in };
+    return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('Error fetching AccessToken:', error.response?.data || error.message);
-    } else {
-      console.error('Error fetching AccessToken:', error);
-    }
+    console.error('Error fetching AccessToken:', error);
     return undefined;
   }
 };
 
 // Refresh AccessToken using RefreshToken
-export const refreshAccessToken = async (refreshToken: string): Promise<RefreshTokenResponse | undefined> => {
+export const refreshAccessToken = async (refreshToken: string): Promise<AccessTokenResponse | undefined> => {
   try {
-    const response = await axios.post<RefreshTokenResponse>('https://oauth.zaloapp.com/v4/access_token', null, {
+    const response = await axios.post<AccessTokenResponse>('https://oauth.zaloapp.com/v4/access_token', null, {
       params: {
         refresh_token: refreshToken,
         app_id: clientId,
