@@ -1,6 +1,7 @@
 import react from "react";
 import { Redirect } from "expo-router";
 import { useFonts } from "expo-font";
+import i18n from "@/languages/i18n";
 
 import {
   View,
@@ -34,7 +35,7 @@ const AboutApp = () => {
             marginR-30
             style={{ color: "#717658", letterSpacing: 0.75 }}
           >
-            About App
+           {i18n.t("aboutapp.title")}
           </Text>
         </View>
       </View>
@@ -49,30 +50,25 @@ const AboutApp = () => {
 
       <View width={"100%"} height={"100%"}>
         <Text text80BL>
-          Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích
-          làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao
-          đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure
-          Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà
-          còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc
-          đẹp đẳng cấp.
+         {i18n.t("aboutapp.title1")}
         </Text>
         <Text marginT-20 text70BL>
-          Các thông tin cơ bản của ứng dụng Allure Spa:
+          {i18n.t("aboutapp.title2")}
         </Text>
         <Text marginT-20 text70BL>
-          - Tên ứng dụng: Allure Spa
+          - {i18n.t("aboutapp.name_app")}
         </Text>
         <Text marginT-20 text70BL>
-          - Phiên bản 1.0.0
+          - {i18n.t("aboutapp.version")}
         </Text>
         <Text marginT-20 text70BL>
-          - Nhà phát triển: Ong lười
+          - {i18n.t("aboutapp.developer")}
         </Text>
         <Text marginT-20 text70BL>
-          - Ngày phát hành: 01/01/2022
+          - {i18n.t("aboutapp.date_release")}
         </Text>
       </View>
-    </View>
+    </View>           
   );
 };
 
