@@ -84,7 +84,17 @@
         "product_description": "商品説明",
         "reviews": "レビュー",
         "add_to_cart": "カートに追加",
-        "buy_now": "今すぐ購入"
+        "buy_now": "今すぐ購入",
+        "purchases": "購入済み",
+        "description": {
+            "brand": "ブランド",
+            "usage": "使用法",
+            "benefit": "利点",
+            "ingredient": "成分",
+            "directions": "使用方法",
+            "storage": "保管方法",
+            "product_notes": "商品の注意事項"
+        }
     },
     "rating": {
         "add_review": "レビューを追加",

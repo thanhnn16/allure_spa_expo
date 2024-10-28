@@ -1,10 +1,9 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { Alert, Pressable, ScrollView } from "react-native";
 import {
   Text,
   AnimatedImage,
-  Button,
   Image,
   TouchableOpacity,
   View,
@@ -15,36 +14,74 @@ import {
   Carousel,
   PageControlPosition,
 } from "react-native-ui-lib/src/components/carousel";
-
-import CommentIcon from "@/assets/icons/comment.svg";
 import HeartIcon from "@/assets/icons/heart.svg";
-import TicketIcon from "@/assets/icons/ticket.svg";
-import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
+import HeartFullIcon from "@/assets/icons/heart_full.svg";
+import TagIcon from "@/assets/icons/tag.svg";
+import LinkIcon from "@/assets/icons/link.svg";
+import StarIcon from "@/assets/icons/star.svg";
+
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { ProductThunk } from "@/redux/products";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Product } from "@/types/product.type";
+import ProductDescription from "@/components/product/ProductDescription";
+import ProductBottomComponent from "@/components/product/ProductBottomComponent";
+import ProductQuantity from "@/components/product/ProductQuantity";
 
 export default function DetailsScreen() {
-  useLocalSearchParams();
+  const { id } = useLocalSearchParams();
+  const [product, setProduct] = useState<Product | null>(null);
   const [images, setImages] = useState<{ uri: string }[]>([]);
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
   const [visible, setIsVisible] = useState(false);
+  const [isFavorite, setFavorite] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const getProduct = async (id: string) => {
+    try {
+      const resultAction = await dispatch(ProductThunk({ id }));
+      const result = unwrapResult(resultAction);
+      if (result && result.success) {
+        console.log("Product detail:", result.data);
+        setProduct(result.data);
+      }
+    } catch (error: any) {
+      Alert.alert(
+        i18n.t('auth.login.error'),
+        error.message || i18n.t('auth.login.unknown_error'),
+        [
+          {
+            text: 'OK',
+            onPress: () => router.back(),
+          },
+        ]
+      );
+    }
+  };
   useEffect(() => {
-    setImages([
-      { uri: "https://picsum.photos/1600/900" },
-      { uri: "https://picsum.photos/1920/1080" },
-    ]);
-  }, []);
+    if (typeof id === 'string') {
+      getProduct(id);
+    } else if (Array.isArray(id) && id.length > 0) {
+      getProduct(id[0]);
+    }
+  }, [id]);
 
   const handleOpenImage = (index: number) => {
     setImageViewIndex(index);
     setIsVisible(true);
   };
 
-  const FooterComponent = () => {
+  const handleFavorite = () => {
+    setFavorite(!isFavorite);
+  };
+
+  const ImageViewFooterComponent = () => {
     return (
       <View marginB-20 padding-20>
         <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
@@ -61,30 +98,11 @@ export default function DetailsScreen() {
     ));
   };
 
-  const createBulletPointsDescription = (lines: string[]) => {
-    return lines.map((line, index) => (
-      <View key={index} row>
-        <Text h2>• </Text>
-        <Text h3>{line}</Text>
-      </View>
-    ));
-  };
-
   const shortText = [
-    "100% collagen tươi giúp phục hồi cấu trúc dạng lamellar và bổ sung collagen ngay tức thì.",
-    "Công thức phục hồi mọi tổn thương và chức năng trong 7 ngày.",
-    "Duy trì làn sóng da trẻ đẹp, căng mọng, không tuổi.",
-    "Không có hoạt động tổng hợp hóa học.",
+    product?.benefits,
+    product?.product_notes,
   ];
-
-  const longText = [
-    "Đây là một đoạn văn dài mô tả sản phẩm. Nó cung cấp thông tin chi tiết về các tính năng và lợi ích của sản phẩm này.",
-    "Sản phẩm được làm từ chất liệu cao cấp, đảm bảo độ bền và tính năng sử dụng lâu dài.",
-    "Thiết kế hiện đại và tinh tế, phù hợp với nhiều không gian khác nhau.",
-    "Sản phẩm này cũng rất dễ sử dụng và bảo trì, giúp tiết kiệm thời gian cho người dùng.",
-    "Ngoài ra, sản phẩm còn đi kèm với chế độ bảo hành dài hạn, mang lại sự yên tâm cho khách hàng.",
-    "Hãy trải nghiệm sản phẩm ngay hôm nay để cảm nhận sự khác biệt mà nó mang lại!",
-  ];
+  const filteredShortText = shortText.filter((text): text is string => text !== undefined);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -115,7 +133,7 @@ export default function DetailsScreen() {
                   <Pressable onPress={() => handleOpenImage(index)} key={index}>
                     <AnimatedImage
                       animationDuration={1000}
-                      source={{ uri: item.uri }}
+                      source={{ uri: product?.media[index].full_url }}
                       aspectRatio={16 / 9}
                       cover
                       key={index}
@@ -133,113 +151,63 @@ export default function DetailsScreen() {
               key={index}
               swipeToCloseEnabled={true}
               doubleTapToZoomEnabled={true}
-              FooterComponent={FooterComponent}
+              FooterComponent={ImageViewFooterComponent}
             />
             <View padding-20 gap-10>
-              <Text h1_bold marginB-10>
-                Làm sạch bằng lamellar Lipocollage
+              <Text h2_bold marginB-10>
+                {product?.name}
               </Text>
               <View row marginB-10>
-                <Image source={TicketIcon} size={24} />
-                <Text h1_medium secondary marginL-5>
-                  100.000 VNĐ
+                <Image source={TagIcon} size={24} />
+                <Text h2_medium secondary marginL-5>
+                  {product?.price ? Number(product.price).toLocaleString("vi-VN") : "0"} VNĐ
                 </Text>
-                <View flex right>
-                  <TouchableOpacity onPress={() => console.log("mua ha")}>
-                    <Image source={HeartIcon} size={24} />
+
+                <View flex centerV row gap-15 right>
+                  <TouchableOpacity onPress={() => console.log("se cho anh i")}>
+                    <Image source={LinkIcon} size={24} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleFavorite()}>
+                    {isFavorite ? (
+                      <Image source={HeartFullIcon} size={24} />
+                    ) : (
+                      <Image source={HeartIcon} size={24} />
+                    )}
                   </TouchableOpacity>
                 </View>
               </View>
+
+              <View row>
+                <View row centerV gap-5>
+                  <Image source={StarIcon} size={24} />
+                  <Text h3_medium>5.0</Text>
+                </View>
+                <View flex row right>
+                  <Text h3_medium> +99 {i18n.t("productDetail.purchases")}</Text>
+                </View>
+              </View>
+
               <View row paddingR-20>
                 <View>
                   <Image source={SunIcon} size={24} />
                 </View>
-                <View>{createBulletPoints(shortText)}</View>
+                <View>{createBulletPoints(filteredShortText)}</View>
               </View>
             </View>
-            <View
-              row
-              marginV-20
-              style={{
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text h1_medium>{i18n.t("productDetail.quantity")}</Text>
-              <View
-                row
-                gap-10
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#E0E0E0",
-                  borderRadius: 10,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    padding: 10,
-                  }}
-                  onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                >
-                  <Text>-</Text>
-                </TouchableOpacity>
-                <Text style={{ padding: 10 }}>{quantity}</Text>
-                <TouchableOpacity
-                  style={{
-                    padding: 10,
-                  }}
-                  onPress={() => setQuantity(quantity + 1)}
-                >
-                  <Text>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View marginT-10 paddingR-10>
-              <Text h1_medium>
+
+            {/* <ProductQuantity/> */}
+
+            <View marginT-10 marginH-20 paddingR-10>
+              <Text h2_medium>
                 {i18n.t("productDetail.product_description")}
               </Text>
-              <View marginT-10>{createBulletPointsDescription(longText)}</View>
+              <ProductDescription product={product} />
             </View>
           </ScrollView>
+
+          <ProductBottomComponent />
         </View>
-        <View
-          row
-          centerV
-          padding-24
-          style={{
-            borderTopStartRadius: 30,
-            borderTopEndRadius: 30,
-            borderWidth: 2,
-            borderColor: "#E0E0E0",
-          }}
-        >
-          <View row gap-30>
-            <Link href="/rating/1" asChild>
-              <TouchableOpacity>
-                <View center marginB-4>
-                  <Image source={CommentIcon} size={24} />
-                </View>
-                <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
-              </TouchableOpacity>
-            </Link>
-            <TouchableOpacity onPress={() => router.push("/cart")}>
-              <View center marginB-4>
-                <Image source={ShoppingCartIcon} size={24} />
-              </View>
-              <Text h3_medium>{i18n.t("productDetail.add_to_cart")}</Text>
-            </TouchableOpacity>
-          </View>
-          <View flex right>
-            <Button
-              label={i18n.t("productDetail.buy_now").toString()}
-              backgroundColor="$primary"
-              br40
-              onPress={() => {
-                router.push("/payment");
-              }}
-            />
-          </View>
-        </View>
+
       </View>
     </SafeAreaView>
   );
