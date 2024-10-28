@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, FlatList, SafeAreaView, Image } from 'react-native';
+import { StyleSheet, FlatList, SafeAreaView, Image, Linking } from 'react-native';
 import { View, Text, Colors, Button } from 'react-native-ui-lib';
 import { router } from 'expo-router';
+import axios from 'axios';
 
 interface Transaction {
   orderNumber: string;
@@ -156,6 +157,22 @@ const Transaction = () => {
     }
   };
 
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/test`);
+      
+      if (response.data.success && response.data.checkoutUrl) {
+        // Mở URL thanh toán trong trình duyệt
+        await Linking.openURL(response.data.checkoutUrl);
+      } else {
+        // Xử lý lỗi
+        console.error('Payment creation failed');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -198,6 +215,21 @@ const Transaction = () => {
           </View>
         )}
         keyExtractor={item => item.orderNumber}
+      />
+
+      <Button
+        label="Thanh toán test"
+        labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+        backgroundColor={Colors.primary}
+        padding-20
+        borderRadius={10}
+        style={{
+          width: 338,
+          height: 47,
+          alignSelf: "center",
+          marginVertical: 10,
+        }}
+        onPress={handlePayment}
       />
     </SafeAreaView>
   );

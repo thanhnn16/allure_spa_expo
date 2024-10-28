@@ -150,3 +150,15 @@ languages/
 ## Một số lưu ý khi dùng Git
 
 Xem thêm tại: [Git Handbook](https://guides.github.com/introduction/git-handbook/)
+
+
+## Test deeplink Expo
+
+```bash
+npx uri-scheme open exp+allurespaexpo://expo-development-client/127.0.0.1:8081/--/payment --android
+```
+
+```bash
+npx uri-scheme open exp+allurespaexpo://expo-development-client/127.0.0.1:8081/--/payment --ios
+```
+

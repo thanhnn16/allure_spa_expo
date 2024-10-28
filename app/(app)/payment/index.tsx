@@ -489,7 +489,6 @@ export default function Payment() {
             <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>2.385.000 VNĐ</Text>
           </View>
         </View>
-        <Link href="/Transaction" asChild>
           <Button
             label='Tiếp Tục'
             labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
@@ -497,9 +496,8 @@ export default function Payment() {
             padding-20
             borderRadius={10}
             style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            onPress={() => router.push('/transaction')}
           />
-        </Link>
-        <Link href="/detail_transaction" asChild>
           <Button
             label='Detail Transaction'
             labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
@@ -507,8 +505,8 @@ export default function Payment() {
             padding-20
             borderRadius={10}
             style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            onPress={() => router.push('/transaction/detail')}
           />
-        </Link>
       </ScrollView>
     </SafeAreaView>
   );

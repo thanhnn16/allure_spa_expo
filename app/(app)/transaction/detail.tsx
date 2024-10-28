@@ -635,7 +635,7 @@ export default function DetailTransaction() {
             marginVertical: 10,
           }}
         />
-        <Link href="/detail_transaction/success" asChild>
+        <Link href="/transaction/success" asChild>
           <Button
             label="Transaction Details Success"
             labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
