@@ -18,7 +18,7 @@ import {
 } from "@/utils/animated/home/header";
 import { useDispatch, useSelector } from "react-redux";
 import { getServicesThunk } from "@/redux/service";
-import RenderSection from "@/components/home/RenderSection";
+import RenderSection from "@/components/home/renderSection"
 import RenderCategory from "@/components/home/CategoryItem";
 import RenderProductItem from "@/components/home/ProductItem";
 import RenderCarousel from "@/components/home/CarouselBanner";
@@ -30,6 +30,7 @@ import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { RootState } from "@/redux/store";
 import { SkeletonView, Spacings } from "react-native-ui-lib";
+import { getServiceDetailThunk } from "@/redux/service/getServiceDetailThunk";
 
 interface LocationsType {
   distance: number;
@@ -169,6 +170,10 @@ const HomePage = () => {
           AppStyles.shadowItem,
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
+        onPress={() => {
+          dispatch(getServiceDetailThunk(item.id));
+          router.push({ pathname: '/service/[id]', params: { id: item.id} })
+        }}
       >
         <Image
           source={

@@ -10,17 +10,18 @@ const AppLayout: React.FC = () => {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="transaction/index" options={{ headerShown: false }} />
-      <Stack.Screen name="product/[id]/index" options={{ headerShown: false }} />
-      <Stack.Screen name="search/index" options={{ headerShown: false }} />
-      <Stack.Screen name="favorite/index" options={{ headerShown: false }} />
-      <Stack.Screen name="cart/index" options={{ headerShown: false }} />
-      <Stack.Screen name="notification/index" options={{ headerShown: false }} />
-      <Stack.Screen name="voucher/index" options={{ headerShown: false }} />
-      <Stack.Screen name="payment/index" options={{ headerShown: false }} />
-      <Stack.Screen name="reward/index" options={{ headerShown: false }} />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)"/>
+      <Stack.Screen name="transaction/index"/>
+      <Stack.Screen name="product/[id]/index"/>
+      <Stack.Screen name="search/index"/>
+      <Stack.Screen name="favorite/index"/>
+      <Stack.Screen name="cart/index"/>
+      <Stack.Screen name="notification/index"/>
+      <Stack.Screen name="voucher/index"/>
+      <Stack.Screen name="payment/index"/>
+      <Stack.Screen name="reward/index"/>
+      <Stack.Screen name="service/[id]/index"/>
     </Stack>
   );
 };
