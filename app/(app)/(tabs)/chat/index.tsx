@@ -26,9 +26,9 @@ const chatData = [
 
 const handleChatScreen = (id: string) => {
   if (id === "0") {
-    return router.push("/message_screen" as Href<string>);
+    return router.push("/(app)/(chat)/ChatScreen" as Href<string>);
   } else {
-    return router.push("/message_ai" as Href<string>);
+    return router.push("/(app)/(chat)/AIChatScreen" as Href<string>);
   }
 };
 

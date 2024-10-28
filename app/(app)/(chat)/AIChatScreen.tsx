@@ -2,35 +2,28 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   FlatList,
-  TextInput,
   TouchableWithoutFeedback,
   Platform,
   Keyboard,
   KeyboardAvoidingView,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import {
   Image,
   View,
   Text,
-  TouchableOpacity,
-  Button,
   Colors,
 } from "react-native-ui-lib";
-import * as ImagePicker from "expo-image-picker";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import SunIcon from "@/assets/icons/sun.svg";
-import { Href, router } from "expo-router";
-import { BlurView } from "expo-blur";
 import MessageBubble from "@/components/message/message_bubble";
-import messagesData from "./data";
+import messagesData from "../../../data/chat/ChatDefaultData";
 import MessageTextInput from "@/components/message/message_textinput";
 import AppBar from "@/components/app-bar/AppBar";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import i18n from "@/languages/i18n";
-import { SafeAreaView } from "react-native-safe-area-context";
-const MessageAI = () => {
+
+const AIChatScreen = () => {
   const [message, setMessage] = useState("");
   const [messageStatus, setMessageStatus] = useState("Đã gửi");
   const scrollRef = useRef<FlatList>(null);
@@ -152,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessageAI;
+export default AIChatScreen;
