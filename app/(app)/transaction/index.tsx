@@ -1,54 +1,55 @@
-import React from 'react';
-import { StyleSheet, FlatList, SafeAreaView, Image, Linking } from 'react-native';
-import { View, Text, Colors, Button } from 'react-native-ui-lib';
-import { router } from 'expo-router';
-import axios from 'axios';
+import React from "react";
+import { StyleSheet, FlatList, SafeAreaView, Image } from "react-native";
+import { View, Text, Colors, Button } from "react-native-ui-lib";
+import { router } from "expo-router";
+import axios from "axios";
+import { Alert, Platform } from "react-native";
 
 interface Transaction {
   orderNumber: string;
-  status: 'cancelled' | 'delivered' | 'pending';  // Thêm trạng thái
-  totalAmount?: number;  // Thêm tổng tiền
-  date?: string;        // Thêm ngày tháng
+  status: "cancelled" | "delivered" | "pending"; // Thêm trạng thái
+  totalAmount?: number; // Thêm tổng tiền
+  date?: string; // Thêm ngày tháng
 }
 
 const transactions: Transaction[] = [
   {
-    orderNumber: '#acb122',
-    status: 'cancelled',
+    orderNumber: "#acb122",
+    status: "cancelled",
     totalAmount: 1170000,
-    date: '26-08-2024'
+    date: "26-08-2024",
   },
   {
-    orderNumber: '#acb123',
-    status: 'delivered',
+    orderNumber: "#acb123",
+    status: "delivered",
     totalAmount: 2170000,
-    date: '27-08-2024'
+    date: "27-08-2024",
   },
   {
-    orderNumber: '#acb124',
-    status: 'pending',
+    orderNumber: "#acb124",
+    status: "pending",
     totalAmount: 3170000,
-    date: '28-08-2024'
-  }
+    date: "28-08-2024",
+  },
 ];
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center', 
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     marginTop: 15,
   },
   headerTitle: {
     flex: 1,
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginRight: 24
+    fontWeight: "bold",
+    textAlign: "center",
+    marginRight: 24,
   },
   transactionItem: {
     height: 91.03,
@@ -57,87 +58,87 @@ const styles = StyleSheet.create({
   },
   orderNumber: {
     fontSize: 16,
-    color: '#717658',
+    color: "#717658",
     marginBottom: 8,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   status: {
     fontSize: 15,
     letterSpacing: 0.5,
     flexShrink: 1,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   normalText: {
-    color: '#000000',
-    fontWeight: 'bold',
+    color: "#000000",
+    fontWeight: "bold",
   },
   orderCode: {
-    color: 'black',
+    color: "black",
   },
   cancelText: {
     color: Colors.red30,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   deliveredText: {
-    color: '#198745', // Màu xanh cho trạng thái thành công
-    fontWeight: 'bold',
+    color: "#198745", // Màu xanh cho trạng thái thành công
+    fontWeight: "bold",
   },
   pendingText: {
-    color: '#BD7A3F', // Màu cam cho trạng thái tiếp nhận
-    fontWeight: 'bold',
+    color: "#BD7A3F", // Màu cam cho trạng thái tiếp nhận
+    fontWeight: "bold",
   },
   amount: {
     fontSize: 15,
-    fontWeight: '500',
-    color: '#000000'
+    fontWeight: "500",
+    color: "#000000",
   },
   date: {
     fontSize: 14,
-    color: '#666666'
+    color: "#666666",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'absolute', // Đặt vị trí tuyệt đối
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "absolute", // Đặt vị trí tuyệt đối
     bottom: 0, // Đặt ở dưới cùng của container
     left: 10,
-    right: 0
+    right: 0,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: '100%' // Để row chiếm hết chiều cao của item
+    flexDirection: "row",
+    alignItems: "center",
+    height: "100%", // Để row chiếm hết chiều cao của item
   },
   productImage: {
     width: 90,
     height: 86,
     borderRadius: 8,
-    marginRight: 12
+    marginRight: 12,
   },
   contentContainer: {
     flex: 1,
-    height: '100%',
-    justifyContent: 'space-between',
+    height: "100%",
+    justifyContent: "space-between",
     paddingRight: 16,
     flexShrink: 1,
   },
   statusContainer: {
-    width: '100%',
+    width: "100%",
     minHeight: 35,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  }
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
 });
 
 const Transaction = () => {
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'cancelled':
+      case "cancelled":
         return <Text style={styles.cancelText}>huỷ bỏ</Text>;
-      case 'delivered':
+      case "delivered":
         return <Text style={styles.deliveredText}>thành công</Text>;
-      case 'pending':
+      case "pending":
         return <Text style={styles.pendingText}>tiếp nhận</Text>;
       default:
         return null;
@@ -146,30 +147,75 @@ const Transaction = () => {
 
   const getStatusPrefix = (status: string) => {
     switch (status) {
-      case 'cancelled':
-        return ' đã bị ';
-      case 'delivered':
-        return ' đã được giao ';
-      case 'pending':
-        return ' đã được ';
+      case "cancelled":
+        return " đã bị ";
+      case "delivered":
+        return " đã được giao ";
+      case "pending":
+        return " đã được ";
       default:
-        return '';
+        return "";
     }
   };
 
   const handlePayment = async () => {
     try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/test`);
-      
+      // Lấy scheme dựa vào môi trường development/production
+      const scheme = __DEV__
+        ? "exp+allurespa" // Development scheme
+        : "allurespa"; // Production scheme
+
+      const returnUrl = `${scheme}://transaction?status=success`;
+      const cancelUrl = `${scheme}://transaction?status=cancel`;
+
+      const payload = {
+        amount: 2000,
+        description: "Test payment",
+        returnUrl,
+        cancelUrl,
+      };
+
+      // Đảm bảo URL không có dấu / kép
+      const apiUrl =
+        `${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/test`.replace(
+          /\/+/g,
+          "/"
+        );
+
+      console.log("Payment Request:", {
+        url: apiUrl,
+        payload,
+      });
+
+      const response = await axios.post(apiUrl, payload);
+
+      console.log("Payment Response:", response.data);
+
       if (response.data.success && response.data.checkoutUrl) {
-        // Mở URL thanh toán trong trình duyệt
-        await Linking.openURL(response.data.checkoutUrl);
+        router.push({
+          pathname: "/webview",
+          params: { url: response.data.checkoutUrl },
+        });
       } else {
-        // Xử lý lỗi
-        console.error('Payment creation failed');
+        Alert.alert("Lỗi", "Không thể tạo thanh toán");
       }
-    } catch (error) {
-      console.error('Payment error:', error);
+    } catch (error: any) {
+      console.error("Payment Error:", {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          data: error.config?.data,
+        },
+      });
+
+      Alert.alert(
+        "Lỗi",
+        `Đã có lỗi xảy ra khi tạo thanh toán: ${error.message}`
+      );
     }
   };
 
@@ -177,10 +223,10 @@ const Transaction = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Button
-          iconSource={require('@/assets/images/home/arrow_ios.png')}
+          iconSource={require("@/assets/images/home/arrow_ios.png")}
           onPress={() => router.back()}
           link
-          iconStyle={{ tintColor: 'black' }}
+          iconStyle={{ tintColor: "black" }}
         />
         <Text style={styles.headerTitle}>Giao dịch</Text>
       </View>
@@ -190,8 +236,8 @@ const Transaction = () => {
         renderItem={({ item }) => (
           <View style={styles.transactionItem}>
             <View style={styles.row}>
-              <Image 
-                source={require('@/assets/images/sp2.png')}
+              <Image
+                source={require("@/assets/images/sp2.png")}
                 style={styles.productImage}
               />
               <View style={styles.contentContainer}>
@@ -199,11 +245,13 @@ const Transaction = () => {
                   <Text style={styles.status} numberOfLines={2}>
                     <Text style={styles.normalText}>Đơn hàng số </Text>
                     <Text style={styles.orderNumber}>{item.orderNumber}</Text>
-                    <Text style={styles.normalText}>{getStatusPrefix(item.status)}</Text>
+                    <Text style={styles.normalText}>
+                      {getStatusPrefix(item.status)}
+                    </Text>
                     {getStatusText(item.status)}
                   </Text>
                 </View>
-                
+
                 <View style={styles.footer}>
                   <Text style={styles.amount}>
                     Tổng: {item.totalAmount?.toLocaleString()} VNĐ
@@ -214,7 +262,7 @@ const Transaction = () => {
             </View>
           </View>
         )}
-        keyExtractor={item => item.orderNumber}
+        keyExtractor={(item) => item.orderNumber}
       />
 
       <Button

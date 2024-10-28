@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'allure_spa_expo'
+rootProject.name = 'Allure Spa'
 
 dependencyResolutionManagement {
   versionCatalogs {

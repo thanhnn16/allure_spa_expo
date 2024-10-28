@@ -117,7 +117,7 @@ languages/
 
 - Commit message phải mô tả rõ công việc bạn đã thực hiện.
 - Commit message phải bắt đầu bằng một trong các từ khóa sau: `Add`, `Fix`, `Update`, `Refactor`, `Style`, `Test`, `Doc`.
-   
+
 ### Cú pháp:
 
 [Loại-công-việc]: Mô tả công việc
@@ -151,14 +151,12 @@ languages/
 
 Xem thêm tại: [Git Handbook](https://guides.github.com/introduction/git-handbook/)
 
-
-## Test deeplink Expo
+## Test deeplink Expo Go
 
 ```bash
-npx uri-scheme open exp+allurespaexpo://expo-development-client/127.0.0.1:8081/--/payment --android
+npx uri-scheme open exp://127.0.0.1:8081/--/payment --ios
 ```
 
 ```bash
-npx uri-scheme open exp+allurespaexpo://expo-development-client/127.0.0.1:8081/--/payment --ios
+npx uri-scheme open exp+allurespa://expo-development-client/?url=http%3A%2F%2F192.168.6.167%3A8081/--/transaction --android
 ```
-
