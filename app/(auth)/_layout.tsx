@@ -7,15 +7,16 @@ export default function AuthLayout() {
 
   useEffect(() => {
     if (isAuthenticated || isGuest) {
-      router.replace("/(app)");
+      router.replace("/(app)/(tabs)/home");
     }
   }, [isAuthenticated, isGuest]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="zalo-oauth" />
-      <Stack.Screen name="change-password" />
-      <Stack.Screen name="otp" />
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="zalo-oauth" options={{ headerShown: false }} />
+      <Stack.Screen name="change-password" options={{ headerShown: false }} />
+      <Stack.Screen name="otp" options={{ headerShown: false }} />
     </Stack>
   );
 }

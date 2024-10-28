@@ -18,6 +18,7 @@ interface MessageTextInputProps {
     isCamera: boolean;
     selectedImages: string[];
     setSelectedImages: (images: string[]) => void;
+    onVoicePress?: () => void;
 }
 
 const MessageTextInput = ({
