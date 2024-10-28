@@ -6,6 +6,7 @@ import {
   Image,
   GridList,
 } from "react-native-ui-lib";
+import i18n from "@/languages/i18n";
 import { router } from "expo-router";
 import colors from "@/constants/Colors";
 import BackButton from "@/assets/icons/back.svg";
@@ -39,7 +40,7 @@ const Reward: React.FC<RewardProps> = () => {
         </TouchableOpacity>
         <View flex center>
           <Text text60 bold style={{ color: "#717658" }}>
-            Đổi quà
+            {i18n.t("reward.title")}
           </Text>
         </View>
         <View row centerV gap-2>
@@ -69,7 +70,7 @@ const Reward: React.FC<RewardProps> = () => {
               textAlign: "center",
             }}
           >
-            Mỹ phẩm
+            {i18n.t("reward.cosmetic")}
           </Text>
           <View
             style={{
@@ -97,7 +98,7 @@ const Reward: React.FC<RewardProps> = () => {
               textAlign: "center",
             }}
           >
-            Spa
+            {i18n.t("reward.spa")}
           </Text>
           <View
             style={{

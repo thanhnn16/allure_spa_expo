@@ -103,6 +103,8 @@
         "chat_with": "Chat với"
     },
     "profile": {
+        "title": "Hồ sơ",
+        "username":"Nguyễn Văn Tèo",
         "my_account": "Tài khoản của tôi",
         "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
         "purchase_policy": "Chính sách mua hàng và đổi trả",
@@ -124,7 +126,7 @@
     "voucher": {
         "title": "Giảm giá",
         "all" : "Tất cả",
-        "birrthday" : "Sinh nhật",
+        "birthday" : "Sinh nhật",
         "event" : "Sự kiện",
         "prominent" : "Nổi bật",
         "gift" : "Quà tặng",
@@ -148,5 +150,14 @@
         "developer":"Nhà phát triển: Allure Spa",
         "version":"Phiên bản: 1.0.0",
         "date_release":"Ngày phát hành: 01/01/2021"
+    },
+    "deleteaccount":{
+        "title": "Xóa tài khoản",
+        "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
+        "placeholder": "Nhập nội dung",
+        "next": "Tiếp theo", 
+        "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
+        "verify_yes":"Có , gửi dữ liệu của tôi tới email",
+        "verify_no":"Không, cảm ơn !"
     }
 }
