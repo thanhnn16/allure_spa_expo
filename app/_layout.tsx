@@ -1,16 +1,14 @@
-import { store } from "@/redux";
-import { persistor } from "@/redux/store";
-import { Stack } from "expo-router";
-import { View } from "react-native-ui-lib";
-import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import LanguageManager from "@/languages/LanguageManager";
-import { useEffect } from "react";
-import { useFonts } from "expo-font";
-import { SplashScreen } from "expo-router";
 import "@/constants/Colors";
 import "@/constants/Typography";
+import LanguageManager from "@/languages/LanguageManager";
+import { store } from "@/redux";
+import { persistor } from "@/redux/store";
+import { useFonts } from "expo-font";
+import { Slot, SplashScreen, Stack } from "expo-router";
+import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -39,7 +37,6 @@ export default function RootLayout() {
           <LanguageManager>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(app)" options={{ headerShown: false }} />
             </Stack>
           </LanguageManager>
         </SafeAreaProvider>

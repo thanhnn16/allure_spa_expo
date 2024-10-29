@@ -1,42 +1,65 @@
 import { useEffect } from "react";
 import { View, Text } from "react-native-ui-lib";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import { getAccessToken } from "@/utils/services/zalo/zaloAuthService";
 import { useDispatch } from "react-redux";
-import { setZaloTokens, setZaloError } from "@/redux/zalo/ZaloSlice";
+import { setZaloTokens, setZaloError } from "@/redux/features/zalo/zaloSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OAuthCallback() {
-  const { code } = useLocalSearchParams();
-  const router = useRouter();
+  const params = useLocalSearchParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      if (code) {
-        try {
-          const codeVerifier = await AsyncStorage.getItem("zalo_code_verifier");
+      const code = params.code as string;
+      const state = params.state as string;
 
-          if (codeVerifier) {
-            const accessTokenResponse = await getAccessToken(
-              code as string,
-              codeVerifier
-            );
-            if (accessTokenResponse) {
-              dispatch(setZaloTokens(accessTokenResponse));
-              router.replace("/(tabs)");
-            }
-          }
-        } catch (error) {
-          console.error("Error handling OAuth callback:", error);
-          dispatch(setZaloError("Đăng nhập thất bại"));
-          router.replace("/(auth)");
+      if (!code || !state) {
+        dispatch(setZaloError("Thiếu thông tin xác thực"));
+        router.replace("/(auth)");
+        return;
+      }
+
+      try {
+        const [storedCodeVerifier, storedState] = await Promise.all([
+          AsyncStorage.getItem("zalo_code_verifier"),
+          AsyncStorage.getItem("zalo_state")
+        ]);
+
+        if (!storedCodeVerifier || !storedState) {
+          throw new Error("Phiên đăng nhập không hợp lệ");
         }
+
+        if (state !== storedState) {
+          throw new Error("Thông tin xác thực không khớp");
+        }
+
+        const accessTokenResponse = await getAccessToken(code, storedCodeVerifier);
+
+        if (accessTokenResponse) {
+          dispatch(setZaloTokens(accessTokenResponse));
+          
+          await Promise.all([
+            AsyncStorage.removeItem("zalo_code_verifier"),
+            AsyncStorage.removeItem("zalo_state")
+          ]);
+          
+          router.replace("/(app)/(tabs)/home");
+        } else {
+          throw new Error("Không thể lấy access token");
+        }
+      } catch (error: any) {
+        console.error("Error handling OAuth callback:", error);
+        dispatch(setZaloError(error.message));
+        router.replace("/(auth)");
       }
     };
 
-    handleOAuthCallback();
-  }, [code, router, dispatch]);
+    if (params.code && params.state) {
+      handleOAuthCallback();
+    }
+  }, [params.code, params.state]);
 
   return (
     <View flex center>

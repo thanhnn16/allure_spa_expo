@@ -6,7 +6,6 @@ import { Href, router } from 'expo-router';
 
 import MicIcon from '@/assets/icons/mic.svg';
 import CameraIcon from '@/assets/icons/camera.svg';
-import { useState } from 'react';
 import i18n from '@/languages/i18n';
 
 
@@ -19,6 +18,7 @@ interface MessageTextInputProps {
     isCamera: boolean;
     selectedImages: string[];
     setSelectedImages: (images: string[]) => void;
+    onVoicePress?: () => void;
 }
 
 const MessageTextInput = ({
@@ -39,7 +39,7 @@ const MessageTextInput = ({
     };
 
     const handleAI = () => {
-        router.push('/ai_voice_screen' as Href<string>)
+        router.push('/(app)/(chat)/AIVoiceScreen' as Href<string>)
     };
 
     return (
@@ -69,7 +69,7 @@ const MessageTextInput = ({
                     style={isAI ? styles.inputAI : styles.input}
                 />
                 {isAI && (
-                    <View flex right centerV>
+                    <View flex right centerV marginR-5>
                         <TouchableOpacity onPress={handleAI}>
                             <Image source={MicIcon} />
                         </TouchableOpacity>

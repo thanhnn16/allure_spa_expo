@@ -1,36 +1,45 @@
 import AppBar from "@/components/app-bar/AppBar"
-import { getServiceDetailThunk } from "@/redux/service/getServiceDetailThunk";
-import { RootState } from "@/redux/store";
 import { Link, router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView } from "react-native";
-import { AnimatedImage, Carousel, PageControlPosition, View, Text, Image, TouchableOpacity, ActionSheet, TextField, Button } from "react-native-ui-lib"
-import { useDispatch, useSelector } from "react-redux";
+import { AnimatedImage, Carousel, PageControlPosition, View, Text, Image, TouchableOpacity, ActionSheet } from "react-native-ui-lib"
 import Feather from '@expo/vector-icons/Feather';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import i18n from "@/languages/i18n";
-
+import ImageView from "react-native-image-viewing";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 import CommentIcon from "@/assets/icons/comment.svg";
-import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
-import HeartIcon from "@/assets/icons/heart.svg";
 import TicketIcon from "@/assets/icons/ticket.svg";
 import SunIcon from "@/assets/icons/sun.svg";
-import { ServiceDetailResponeModel } from "@/types/service.type";
+import { ServiceDetailResponeModel, ServiceDetailResponeParams } from "@/types/service.type";
+import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AppButton from "@/components/buttons/AppButton";
 
 const ServiceDetailPage = () => {
   const { id } = useLocalSearchParams();
-  const dispatch = useDispatch();
-  const selectService = useSelector((state: RootState) => state.service?.serviceDetail);
-  const [service, setService] = useState<ServiceDetailResponeModel>(selectService?.data);
-  const [images, setImages] = useState<{ uri: string }[]>([]);
-  const [index, setIndex] = useState(0);
-  const [imageViewIndex, setImageViewIndex] = useState(0);
-  const [visible, setIsVisible] = useState(false);
+  const [service, setService] = useState<ServiceDetailResponeModel>();
+  const [visible, setIsVisible] = useState<boolean>(false);
   const [showActionSheet, setShowActionSheet] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [imageViewIndex, setImageViewIndex] = useState<number>(0);
+  const [index, setIndex] = useState<number>(0);
+  const [price, setPrice] = useState<number>();
+  const [combo, setCombo] = useState<number>(0);
+  const [images, setImages] = useState<{ uri: string }[]>([]);
+  const [comboName, setComboName] = useState<string>("");
 
-  console.log('Selected service', service);
   useEffect(() => {
-    dispatch(getServiceDetailThunk(id))
+    const getServiceDetail = async () => {
+      const res: ServiceDetailResponeParams = (await AxiosInstance().get(`services/${id}`)).data;
+      if (res.status_code === 200 && res.data) {
+        setService(res.data);
+        setPrice(res.data.single_price)
+      }
+      setIsLoading(false);
+    }
+    getServiceDetail();
   }, [id]);
 
   useEffect(() => {
@@ -44,11 +53,34 @@ const ServiceDetailPage = () => {
     setImageViewIndex(index);
     setIsVisible(true);
   };
+  const ImageViewFooterComponent = () => {
+    return (
+      <View marginB-20 padding-20>
+        <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
+      </View>
+    );
+  };
+  useMemo(() => {
+    switch (combo) {
+      case 1:
+        setPrice(service?.combo_5_price);
+        setComboName("Gói combo 5")
+        break;
+      case 2:
+        setPrice(service?.combo_10_price);
+        setComboName("Gói combo 10")
+        break;
+      default:
+        setPrice(service?.single_price);
+        setComboName("Gói đơn")
+        break;
+    }
+  }, [combo]);
 
   return (
     <View useSafeArea flex bg-$white>
       <AppBar back title="Chi tiết dịch vụ" />
-     {service && <View flex>
+      {service && <View flex>
         <View flex>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View
@@ -62,6 +94,8 @@ const ServiceDetailPage = () => {
               }}
             >
               <Carousel
+                autoplay
+                loop
                 onChangePage={(index: number) => setIndex(index)}
                 pageControlPosition={PageControlPosition.OVER}
                 pageControlProps={{
@@ -84,17 +118,17 @@ const ServiceDetailPage = () => {
               </Carousel>
             </View>
 
-            {/* <ImageView
-            images={images}
-            imageIndex={0}
-            visible={visible}
-            onRequestClose={() => setIsVisible(false)}
-            onImageIndexChange={(index) => setImageViewIndex(index)}
-            key={index}
-            swipeToCloseEnabled={true}
-            doubleTapToZoomEnabled={true}
-            FooterComponent={FooterComponent}
-          /> */}
+            <ImageView
+              images={images}
+              imageIndex={0}
+              visible={visible}
+              onRequestClose={() => setIsVisible(false)}
+              onImageIndexChange={(index) => setImageViewIndex(index)}
+              key={index}
+              swipeToCloseEnabled={true}
+              doubleTapToZoomEnabled={true}
+              FooterComponent={ImageViewFooterComponent}
+            />
 
             <View padding-20 gap-10>
               <Text h1_bold marginB-10>
@@ -103,11 +137,13 @@ const ServiceDetailPage = () => {
               <View row marginB-10>
                 <Image source={TicketIcon} size={24} />
                 <Text h1_medium secondary marginL-5>
-                  {service?.single_price}
+                  {price?.toLocaleString("vi-VN")} VNĐ
                 </Text>
                 <View flex right>
-                  <TouchableOpacity onPress={() => console.log("mua ha")}>
-                    <Image source={HeartIcon} size={24} />
+                  <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)}>
+                    {isFavorite 
+                    ? <AntDesign name="heart" size={24} color="black" /> 
+                    : <AntDesign name="hearto" size={24} color="black" />}
                   </TouchableOpacity>
                 </View>
               </View>
@@ -124,35 +160,42 @@ const ServiceDetailPage = () => {
               </View>
             </View>
 
+            <View padding-20 gap-20>
+              <Text h2_bold>Liệu trình</Text>
 
+              <TouchableOpacity onPress={() => setShowActionSheet(true)}>
+                <View center row paddingH-20 height={50} style={{ borderWidth: 1, borderRadius: 10, borderColor: "#E0E0E0" }}>
+                  <Text flex h3>{comboName}</Text>
+                  <SimpleLineIcons name="arrow-down" size={18} color="#BCBABA" />
+                </View>
+              </TouchableOpacity>
+            </View>
 
             <ActionSheet
-              title={'Chọn gói combo'}
-              message={'Message goes here'}
-              cancelButtonIndex={3}
+              renderTitle={() => <Text center h2>Chọn gói combo</Text>}
+              cancelButtonIndex={4}
               destructiveButtonIndex={0}
-              visible={true}
+              visible={showActionSheet}
+              containerStyle={{ padding: 10, gap: 10 }}
+              onDismiss={() => setShowActionSheet(false)}
               options={[
-                { label: 'Gói đơn', onPress: () => { } },
-                { label: 'Gói combo 5', onPress: () => { } },
-                { label: 'Gói combo 10', onPress: () => { } },
+                { label: 'Gói đơn', onPress: () => { setCombo(0) } },
+                { label: 'Gói combo 5', onPress: () => { setCombo(1) } },
+                { label: 'Gói combo 10', onPress: () => { setCombo(2) } },
                 { label: 'Cancel', onPress: () => setShowActionSheet(false) },
               ]}
             />
-            {/* <View marginT-10 paddingR-10>
-            <Text h1_medium>
-              {i18n.t("productDetail.product_description")}
-            </Text>
-            <View marginT-10>{createBulletPointsDescription(longText)}</View>
-          </View> */}
+
 
           </ScrollView>
         </View>
+
         <View
           row
-          centerV
+          center
           paddingH-24
           paddingT-15
+          gap-30
           style={{
             borderTopStartRadius: 30,
             borderTopEndRadius: 30,
@@ -160,6 +203,7 @@ const ServiceDetailPage = () => {
             borderLeftWidth: 2,
             borderRightWidth: 2,
             borderColor: "#E0E0E0",
+            justifyContent: "space-between",
           }}
         >
           <View row gap-30>
@@ -169,23 +213,18 @@ const ServiceDetailPage = () => {
               </View>
               <Text h3_medium>Liên hệ</Text>
             </TouchableOpacity>
-            <Link href="/rating/1" asChild>
-              <TouchableOpacity center>
+              <TouchableOpacity center onPress={() => router.push("/rating/1")}>
                 <View center marginB-4>
                   <Image source={CommentIcon} size={24} />
                 </View>
                 <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
               </TouchableOpacity>
-            </Link>
           </View>
-          <View flex right>
-            <Button
-              label={i18n.t("productDetail.buy_now").toString()}
-              backgroundColor="$primary"
-              br40
-              onPress={() => {
-                router.push("/payment");
-              }}
+          <View flex >
+            <AppButton
+              title={"Đặt lịch ngay"}
+              type="primary"
+              onPress={() => { }}
             />
           </View>
         </View>

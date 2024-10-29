@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { setUser, clearUser, setGuestUser, clearGuestUser } from '@/redux/auth/authSlice';
+import { setUser, clearUser, setGuestUser, clearGuestUser } from '@/redux/features/auth/authSlice';
+import { router } from 'expo-router';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ export const useAuth = () => {
 
   const signOut = () => {
     dispatch(clearUser());
+    router.replace('/(auth)');
   };
 
   const signInAsGuest = () => {
@@ -21,6 +23,7 @@ export const useAuth = () => {
 
   const signOutGuest = () => {
     dispatch(clearGuestUser());
+    router.replace('/(auth)');
   };
 
   return { isAuthenticated, user, signIn, signOut, signInAsGuest, signOutGuest, isGuest: useSelector((state: RootState) => state.auth.isGuest) };

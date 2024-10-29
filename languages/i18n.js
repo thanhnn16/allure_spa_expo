@@ -14,7 +14,6 @@ const i18n = new I18n(translations);
 i18n.enableFallback = true;
 
 i18n.locale = getLocales()[0].languageCode ?? 'en';
- 
-console.log('i18n.locale', i18n.locale); 
+
 
 export default i18n;

@@ -1,19 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, FlatList, TextInput, TouchableWithoutFeedback, Platform, KeyboardAvoidingView, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
-import { Image, View, Text, TouchableOpacity, Button, Colors,Keyboard  } from 'react-native-ui-lib';
+import { useRef, useState } from 'react';
+import { StyleSheet, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
+import { Image, View, Text, Colors, Keyboard } from 'react-native-ui-lib';
 
-
-
-import SunIcon from '@/assets/icons/sun.svg';
-import { Href, router } from 'expo-router';
-import { BlurView } from 'expo-blur';
 import MessageBubble from '@/components/message/message_bubble';
-import messagesData from './data';
+import messagesData from '../../../../data/chat/ChatDefaultData';
 import MessageTextInput from '@/components/message/message_textinput';
 import AppBar from '@/components/app-bar/AppBar';
 import SelectImagesBar from '@/components/images/SelectImagesBar';
 import i18n from '@/languages/i18n';
-const MessageScreen = () => {
+const ChatScreen = () => {
   const [message, setMessage] = useState('');
   const [messageStatus, setMessageStatus] = useState('Đã gửi');
   const scrollRef = useRef<FlatList>(null);
@@ -48,16 +43,6 @@ const MessageScreen = () => {
     );
   };
 
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-  //     scrollRef.current?.scrollToEnd({ animated: true });
-  //   });
-
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //   };
-  // }, []);
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
 
@@ -74,8 +59,6 @@ const MessageScreen = () => {
         ListFooterComponent={handleRead}
       />
 
-
-
       {selectedImages.length > 0 && (
         <SelectImagesBar
           selectedImages={selectedImages}
@@ -84,21 +67,20 @@ const MessageScreen = () => {
         />
       )}
 
-
       <KeyboardTrackingView
         useSafeArea
         addBottomView
       >
-      <MessageTextInput
-        placeholder={i18n.t('chat.chat_with') + ' ' + i18n.t('chat.customer_care') + ".."}
-        message={message}
-        setMessage={setMessage}
-        handleSend={handleSend}
-        isCamera={true}
-        isAI={false}
-        selectedImages={selectedImages}
-        setSelectedImages={setSelectedImages}
-      />
+        <MessageTextInput
+          placeholder={i18n.t('chat.chat_with') + ' ' + i18n.t('chat.customer_care') + ".."}
+          message={message}
+          setMessage={setMessage}
+          handleSend={handleSend}
+          isCamera={true}
+          isAI={false}
+          selectedImages={selectedImages}
+          setSelectedImages={setSelectedImages}
+        />
       </KeyboardTrackingView>
 
     </SafeAreaView>
@@ -120,4 +102,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MessageScreen;
+export default ChatScreen;

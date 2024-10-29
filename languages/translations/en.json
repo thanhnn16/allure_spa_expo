@@ -85,7 +85,17 @@
         "product_description": "PRODUCT DESCRIPTION",
         "reviews": "Reviews",
         "add_to_cart": "Add to cart",
-        "buy_now": "Buy now"
+        "buy_now": "Buy now",
+        "purchases": "purchases",
+        "description": {
+            "brand": "Brand",
+            "usage": "Usage",
+            "benefit": "Benefit",
+            "ingredient": "Ingredient",
+            "directions": "Directions",
+            "storage": "Storage instructions",
+            "product_notes": "Product notes"
+        }
     },
     "rating": {
         "add_review": "Add review",
