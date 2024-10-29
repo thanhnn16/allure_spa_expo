@@ -2,7 +2,7 @@ import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 import RenderCarousel from "@/components/home/CarouselBanner";
 import RenderCategory from "@/components/home/CategoryItem";
 import RenderProductItem from "@/components/home/ProductItem";
-import RenderSection from "@/components/home/RenderSection";
+import RenderSection from "@/components/home/renderSection";
 import AppSearch from "@/components/inputs/AppSearch";
 import { AppStyles } from "@/constants/AppStyles";
 import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
@@ -164,6 +164,9 @@ const HomePage = () => {
           AppStyles.shadowItem,
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
+        onPress={() => {
+          router.push({ pathname: '/service/[id]', params: { id: item.id} })
+        }}
       >
         <Image
           source={
