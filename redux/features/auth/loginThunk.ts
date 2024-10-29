@@ -20,23 +20,30 @@ export const loginThunk = createAsyncThunk(
         password: body.password
       });
 
-      if (res.data.success) {
+      if (res.data.success && res.data) {
+        const { token, data } = res.data;
+
+        if (!token) {
+          return rejectWithValue('No token received from server');
+        }
+
         // Save token to AsyncStorage
-        await AsyncStorage.setItem('userToken', res.data.token);
+        await AsyncStorage.setItem('userToken', token);
 
         // Register FCM token after successful login
         await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(res.data.user.id);
+        await FirebaseService.registerTokenWithServer(data.id);
 
         console.log('Login successful:', res.data);
-        return res.data;
+        return res.data.data;
       }
 
       console.log('Login failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Login failed');
     } catch (error: any) {
       console.error('Login error:', error);
-      return rejectWithValue(error.response?.data?.message || "Login failed");
+      const errorMessage = error.response?.data?.message || error.message || 'An error occurred during login';
+      return rejectWithValue(errorMessage);
     }
   }
 );

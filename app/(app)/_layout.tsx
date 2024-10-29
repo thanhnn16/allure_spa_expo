@@ -14,13 +14,9 @@ const AppLayout = () => {
     checkAuth();
   }, [isAuthenticated, isGuest]);
 
-  if (!isAuthenticated && !isGuest) {
-    return <Redirect href="/(auth)" />;
-  }
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" />
       <Stack.Screen name="transaction/index" />
       <Stack.Screen name="product/[id]/index" />
       <Stack.Screen name="search/index" />
@@ -33,7 +29,7 @@ const AppLayout = () => {
       <Stack.Screen name="settings/index" />
       <Stack.Screen name="(chat)/ai-chat" />
       <Stack.Screen name="(chat)/[id]/index" />
-      <Stack.Screen name="service/[id]/index"/>
+      <Stack.Screen name="service/[id]/index" />
     </Stack>
   );
 };

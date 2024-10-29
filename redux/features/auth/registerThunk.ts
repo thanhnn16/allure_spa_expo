@@ -24,23 +24,31 @@ export const registerThunk = createAsyncThunk(
         password_confirmation: body.confirmPassword
       });
 
-      if (res.data.success) {
+      // Check if response is successful and contains data
+      if (res.data.success && res.data.data) {
+        const { token, data } = res.data;
+
+        if (!token) {
+          return rejectWithValue('No token received from server');
+        }
+
         // Save token to AsyncStorage
-        await AsyncStorage.setItem('userToken', res.data.token);
+        await AsyncStorage.setItem('userToken', token);
 
         // Register FCM token after successful registration
         await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(res.data.user.id);
+        await FirebaseService.registerTokenWithServer(data.id);
 
         console.log('Registration successful:', res.data);
-        return res.data;
+        return res.data.data;
       }
 
       console.log('Registration failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Registration failed');
     } catch (error: any) {
       console.error('Registration error:', error);
-      return rejectWithValue(error.data.message || 'An error occurred during registration');
+      const errorMessage = error.response?.data?.message || error.message || 'An error occurred during registration';
+      return rejectWithValue(errorMessage);
     }
   }
 );

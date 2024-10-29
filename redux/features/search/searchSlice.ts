@@ -29,13 +29,13 @@ export const searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    clearSearch: (state) => {
+    clearSearch: (state: SearchState) => {
       state.results = initialState.results;
     },
-    setRecentSearches: (state, action: PayloadAction<string[]>) => {
+    setRecentSearches: (state: SearchState, action: any) => {
       state.recentSearches = action.payload;
     },
-    addRecentSearch: (state, action: PayloadAction<string>) => {
+    addRecentSearch: (state: SearchState, action: any) => {
       const search = action.payload.trim();
       if (!search) return;
       
@@ -48,7 +48,7 @@ export const searchSlice = createSlice({
       // Save to AsyncStorage
       AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(state.recentSearches));
     },
-    removeRecentSearch: (state, action: PayloadAction<string>) => {
+    removeRecentSearch: (state: SearchState, action: any) => {
       state.recentSearches = state.recentSearches.filter(
         item => item !== action.payload
       );
@@ -56,22 +56,22 @@ export const searchSlice = createSlice({
       // Save to AsyncStorage
       AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(state.recentSearches));
     },
-    clearRecentSearches: (state) => {
+    clearRecentSearches: (state: SearchState) => {
       state.recentSearches = [];
       AsyncStorage.removeItem(RECENT_SEARCHES_KEY);
     }
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder: any) => {
     builder
-      .addCase(searchItems.pending, (state) => {
+      .addCase(searchItems.pending, (state: SearchState) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchItems.fulfilled, (state, action) => {
+      .addCase(searchItems.fulfilled, (state: SearchState, action: any) => {
         state.loading = false;
         state.results = action.payload;
       })
-      .addCase(searchItems.rejected, (state, action) => {
+      .addCase(searchItems.rejected, (state: SearchState, action: any) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       });
