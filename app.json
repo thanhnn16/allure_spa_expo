@@ -7,6 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "allurespa",
     "userInterfaceStyle": "automatic",
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff"
+    },
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",

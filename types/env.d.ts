@@ -16,5 +16,7 @@ declare namespace NodeJS {
     EXPO_PUBLIC_PAYOS_CHECKSUM_KEY: string;
     EXPO_PUBLIC_SERVER_URL: string;
     EXPO_PUBLIC_API_URL: string;
+    EXPO_PUBLIC_PUSHER_APP_KEY: string;
+    EXPO_PUBLIC_PUSHER_APP_CLUSTER: string;
   }
 }

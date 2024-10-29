@@ -16,7 +16,7 @@ import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Href, Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, Dimensions, ScrollView } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -62,6 +62,8 @@ const HomePage = () => {
 
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
+
+  const { width: WINDOW_WIDTH } = Dimensions.get("window");
 
   useEffect(() => {
     dispatch(getServicesThunk(1));
@@ -186,17 +188,8 @@ const HomePage = () => {
     );
   };
 
-  const renderSkeletonContent = () => (
-    <View>
-      <SkeletonView height={200} style={{ marginBottom: Spacings.s4 }} />
-      <SkeletonView template={SkeletonView.templates.LIST_ITEM} times={3} />
-      <SkeletonView height={200} style={{ marginVertical: Spacings.s4 }} />
-      <SkeletonView template={SkeletonView.templates.LIST_ITEM} times={2} />
-    </View>
-  );
-
   const renderContent = () => (
-    <>
+    <View flex>
       <RenderCarousel banner={banner} />
       <RenderCategory cateData={cateArr} />
       {servicesList && servicesList.data && servicesList.data.length > 0 && (
@@ -204,9 +197,7 @@ const HomePage = () => {
           title="Dịch vụ nổi bật"
           data={servicesList.data}
           renderItem={renderServicesItem}
-          onPressMore={() => {
-            // Xử lý khi nhấn "Xem thêm"
-          }}
+          onPressMore={() => {}}
         />
       )}
       {servicesList && servicesList.data && servicesList.data.length > 0 && (
@@ -217,7 +208,76 @@ const HomePage = () => {
           onPressMore={() => {}}
         />
       )}
-    </>
+    </View>
+  );
+
+  const renderSkeletonContent = () => (
+    <View flex paddingH-20>
+      {/* Banner skeleton */}
+      <View marginT-10 marginB-20>
+        <SkeletonView
+          height={160}
+          width={WINDOW_WIDTH - 40}
+          style={{ borderRadius: 12 }}
+        />
+      </View>
+
+      {/* Category skeleton */}
+      <View row centerH marginB-20>
+        {Array(6)
+          .fill(0)
+          .map((_, index) => (
+            <View key={index} center marginH-12>
+              <SkeletonView
+                height={48}
+                width={48}
+                style={{ borderRadius: 24 }}
+              />
+              <SkeletonView height={15} width={40} style={{ marginTop: 5 }} />
+            </View>
+          ))}
+      </View>
+
+      {/* Services section skeleton */}
+      <View marginB-20>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <SkeletonView
+                key={index}
+                height={280}
+                width={230}
+                style={{ marginRight: 15, borderRadius: 16 }}
+              />
+            ))}
+        </ScrollView>
+      </View>
+
+      {/* Products section skeleton */}
+      <View>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <SkeletonView
+                key={index}
+                height={270}
+                width={150}
+                style={{ marginRight: 15, borderRadius: 8 }}
+              />
+            ))}
+        </ScrollView>
+      </View>
+    </View>
   );
 
   return (
@@ -366,9 +426,7 @@ const HomePage = () => {
             paddingBottom: Platform.OS === "ios" ? 70 : 60,
           }}
         >
-          <SkeletonView showContent={!isLoading} renderContent={renderContent}>
-            {renderSkeletonContent()}
-          </SkeletonView>
+          {isLoading ? renderSkeletonContent() : renderContent()}
         </Animated.ScrollView>
       </View>
     </SafeAreaView>
