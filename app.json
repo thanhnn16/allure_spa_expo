@@ -17,6 +17,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.faithnippon.allurespa",
+      "googleServicesFile": "./ios/GoogleService-Info.plist",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
