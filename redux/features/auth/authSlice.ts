@@ -1,5 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import FirebaseService from '@/utils/services/firebase/firebaseService';
+import { logoutThunk } from "./logoutThunk";
+import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { loginThunk } from "./loginThunk";
 
 interface AuthState {
   user: any | null;
@@ -20,7 +24,6 @@ export const authSlice = createSlice({
     setUser: (state: AuthState, action: PayloadAction<any>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
-      AsyncStorage.setItem("user", JSON.stringify(action.payload));
     },
     clearUser: (state: AuthState) => {
       state.user = null;
@@ -30,12 +33,33 @@ export const authSlice = createSlice({
     setGuestUser: (state: AuthState) => {
       state.isGuest = true;
       state.isAuthenticated = true;
+      AsyncStorage.setItem('isGuest', 'true');
     },
     clearGuestUser: (state: AuthState) => {
       state.isGuest = false;
       state.isAuthenticated = false;
+      AsyncStorage.removeItem('isGuest');
     },
   },
+  extraReducers: (builder: ActionReducerMapBuilder<AuthState>) => {
+    builder.addCase(loginThunk.fulfilled, (state: AuthState, action: any) => {
+      state.user = action.payload;
+      state.isAuthenticated = true;
+    });
+    builder.addCase(logoutThunk.fulfilled, (state: AuthState) => {
+      state.user = null;
+      state.isAuthenticated = false;
+    });
+  }
 });
 
-export const { setUser, clearUser, setGuestUser, clearGuestUser } = authSlice.actions;
+export const {
+  login,
+  register,
+  logout,
+  zaloLogin,
+  setUser,
+  clearUser,
+  setGuestUser,
+  clearGuestUser
+} = authSlice.actions;

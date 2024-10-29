@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
 import { UserLoginResponseParams } from "@/types/user.type";
+import FirebaseService from "@/utils/services/firebase/firebaseService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface LoginRequest {
   phoneNumber: string;
@@ -17,9 +19,15 @@ export const loginThunk = createAsyncThunk(
         phone_number: body.phoneNumber,
         password: body.password
       });
-      console.log('Login response:', res);
 
       if (res.data.success) {
+        // Save token to AsyncStorage
+        await AsyncStorage.setItem('userToken', res.data.token);
+
+        // Register FCM token after successful login
+        await FirebaseService.requestUserPermission();
+        await FirebaseService.registerTokenWithServer(res.data.user.id);
+
         console.log('Login successful:', res.data);
         return res.data;
       }

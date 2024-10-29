@@ -20,9 +20,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { LinearTransition } from "react-native-reanimated";
 
-import MessageBubble from "@/components/message/message_bubble";
+import MessageBubble from "@/components/message/MessageBubble";
 import messagesData from "../../../data/chat/ChatDefaultData";
-import MessageTextInput from "@/components/message/message_textinput";
+import MessageTextInput from "@/components/message/MessageTextInput";
 import AppBar from "@/components/app-bar/AppBar";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import i18n from "@/languages/i18n";

@@ -4,147 +4,130 @@ import {
   FlatList,
   SafeAreaView,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { Image, View, Text, Colors, Keyboard } from "react-native-ui-lib";
+import { View, Text, Colors } from "react-native-ui-lib";
 import messaging from "@react-native-firebase/messaging";
-
-import MessageBubble from "@/components/message/message_bubble";
-import messagesData from "../../../../data/chat/ChatDefaultData";
-import MessageTextInput from "@/components/message/message_textinput";
-import AppBar from "@/components/app-bar/AppBar";
-import SelectImagesBar from "@/components/images/SelectImagesBar";
-import i18n from "@/languages/i18n";
+import { useLocalSearchParams } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
+import MessageTextInput from "@/components/message/MessageTextInput";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AppBar from "@/components/app-bar/AppBar";
+import i18n from "@/languages/i18n";
+import MessageBubble from "@/components/message/MessageBubble";
+
+interface Message {
+  id: string;
+  message: string;
+  sender_id: string;
+  created_at: string;
+}
+
 const ChatScreen = () => {
+  const { id } = useLocalSearchParams();
+  const { user } = useAuth();
   const [message, setMessage] = useState("");
-  const [messageStatus, setMessageStatus] = useState("Đã gửi");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<FlatList>(null);
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
-  const [fcmToken, setFcmToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Request permission and get FCM token
-    const setupFCM = async () => {
-      const authStatus = await messaging().requestPermission();
-      const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    const setupChat = async () => {
+      try {
+        setLoading(true);
+        const response = await AxiosInstance().get(`/chats/${id}/messages`);
+        setMessages(response.data);
 
-      if (enabled) {
-        const token = await messaging().getToken();
-        setFcmToken(token);
-
-        // Register token with backend
-        await AxiosInstance().post("/users/fcm-token", {
-          user_id: userId,
-          fcm_token: token,
-          device_type: "expo",
+        // Đăng ký FCM listener
+        const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+          if (remoteMessage.data?.chat_id === id) {
+            const newMessage: Message = {
+              id: remoteMessage.messageId || Date.now().toString(),
+              message: String(remoteMessage.data?.message || ""),
+              sender_id: String(remoteMessage.data?.sender_id || ""),
+              created_at: new Date().toISOString(),
+            };
+            setMessages((prev) => [...prev, newMessage]);
+            scrollRef.current?.scrollToEnd({ animated: true });
+          }
         });
+
+        return () => unsubscribe();
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    setupFCM();
-
-    // Listen to FCM messages
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      if (remoteMessage.data?.type === "chat_message") {
-        const newMessage = {
-          id: remoteMessage.messageId,
-          text: remoteMessage.data.message,
-          sender: remoteMessage.data.sender_id,
-          time: new Date().toLocaleTimeString(),
-        };
-        messagesData.push(newMessage);
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }
-    });
-
-    return unsubscribe;
-  }, []);
+    setupChat();
+  }, [id]);
 
   const handleSend = async () => {
     if (message.trim() === "") return;
 
-    // Send message to backend
     try {
-      const response = await fetch("your-api-url/api/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Add your auth headers here
-        },
-        body: JSON.stringify({
-          chat_id: id, // from route params
-          message: message,
-          fcm_token: fcmToken,
-        }),
-      });
+      const newMessage = {
+        message: message.trim(),
+        chat_id: id,
+      };
 
-      if (response.ok) {
-        setMessage("");
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
+      await AxiosInstance().post("/messages", newMessage);
+      setMessage("");
+      scrollRef.current?.scrollToEnd({ animated: true });
+    } catch (err) {
+      setError((err as Error).message);
     }
   };
 
-  const handleRead = () => {
-    return (
-      <View style={styles.statusContainer}>
-        <Text>{messageStatus}</Text>
-        {messageStatus === "Đã đọc"}
-        {messageStatus === "Đang gửi" && (
-          <ActivityIndicator
-            size="small"
-            color={Colors.primary}
-            style={{ marginLeft: 5 }}
-          />
-        )}
-      </View>
-    );
-  };
-
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <AppBar title={i18n.t("chat.customer_care")} />
+    <SafeAreaView style={styles.container}>
+      <AppBar title={i18n.t("chat.customer_care")} back />
 
-      <FlatList
-        data={messagesData}
-        renderItem={({ item }) => <MessageBubble item={item} />}
-        ref={scrollRef}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
-        ListFooterComponent={handleRead}
-      />
+      {loading ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      ) : error ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardView}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+        >
+          <FlatList
+            ref={scrollRef}
+            data={messages}
+            renderItem={({ item }) => (
+              <MessageBubble
+                message={item}
+                isOwn={item.sender_id === user?.id}
+              />
+            )}
+            onContentSizeChange={() => scrollRef.current?.scrollToEnd()}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.messageList}
+            inverted={false}
+            showsVerticalScrollIndicator={false}
+          />
 
-      {selectedImages.length > 0 && (
-        <SelectImagesBar
-          selectedImages={selectedImages}
-          setSelectedImages={setSelectedImages}
-          isRating={false}
-        />
+          <MessageTextInput
+            message={message}
+            setMessage={setMessage}
+            handleSend={handleSend}
+            placeholder={i18n.t("chat.type_message")}
+            isAI={false}
+            isCamera={true}
+            selectedImages={[]}
+            setSelectedImages={() => {}}
+          />
+        </KeyboardAvoidingView>
       )}
-
-      <KeyboardTrackingView useSafeArea addBottomView>
-        <MessageTextInput
-          placeholder={
-            i18n.t("chat.chat_with") + " " + i18n.t("chat.customer_care") + ".."
-          }
-          message={message}
-          setMessage={setMessage}
-          handleSend={handleSend}
-          isCamera={true}
-          isAI={false}
-          selectedImages={selectedImages}
-          setSelectedImages={setSelectedImages}
-        />
-      </KeyboardTrackingView>
     </SafeAreaView>
   );
 };
@@ -152,15 +135,24 @@ const ChatScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-    paddingHorizontal: 16,
+    backgroundColor: Colors.white,
   },
-
-  statusContainer: {
-    flexDirection: "row",
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "flex-end",
-    paddingHorizontal: 10,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  messageList: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  errorText: {
+    color: Colors.red30,
+    textAlign: "center",
+    margin: 16,
   },
 });
 

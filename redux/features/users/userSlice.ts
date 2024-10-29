@@ -2,6 +2,8 @@ import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/to
 import { User, UserLoginResponseParams, UserRegisterResponseParams } from "@/types/user.type";
 import { loginThunk } from "../auth/loginThunk";
 import { registerThunk } from "../auth/registerThunk";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AxiosInstance from "@/utils/services/helper/AxiosInstance";
 
 interface UserState {
   user: User | null;
@@ -23,7 +25,20 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout(state: UserState) {
+    logout: (state: UserState) => {
+      // Clear FCM token from server
+      if (state.user?.id) {
+        AxiosInstance().delete('/users/fcm-token', {
+          data: { user_id: state.user.id }
+        }).catch(error => {
+          console.error('Error removing FCM token:', error);
+        });
+      }
+
+      // Clear local storage
+      AsyncStorage.multiRemove(['userToken']);
+
+      // Reset state
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -63,6 +78,6 @@ export const userSlice = createSlice({
       });
   },
 });
-
 export const { logout } = userSlice.actions;
 export default userSlice.reducer;
+

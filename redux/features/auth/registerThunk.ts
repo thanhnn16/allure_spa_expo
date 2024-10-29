@@ -1,6 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
-import { UserRegisterResponseParams } from "@/types/Models";
+import { UserRegisterResponseParams } from "@/types/user.type";
+import FirebaseService from "@/utils/services/firebase/firebaseService";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface RegisterRequest {
   fullName: string;
@@ -9,11 +11,11 @@ interface RegisterRequest {
   confirmPassword: string;
 }
 
-export const registerThunk = createAsyncThunk<UserRegisterResponseParams, RegisterRequest>(
+export const registerThunk = createAsyncThunk(
   'user/register',
-  async (body: RegisterRequest, { rejectWithValue }) => {
+  async (body: RegisterRequest, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
     try {
-      console.log('Register request body:', body); // Log the request body
+      console.log('Register request body:', body);
 
       const res = await AxiosInstance().post<UserRegisterResponseParams>('auth/register', {
         full_name: body.fullName,
@@ -21,17 +23,23 @@ export const registerThunk = createAsyncThunk<UserRegisterResponseParams, Regist
         password: body.password,
         password_confirmation: body.confirmPassword
       });
-      console.log('Register response:', res.data); // Log the response
 
       if (res.data.success) {
-        console.log('Registration successful:', res.data); // Log success
+        // Save token to AsyncStorage
+        await AsyncStorage.setItem('userToken', res.data.token);
+
+        // Register FCM token after successful registration
+        await FirebaseService.requestUserPermission();
+        await FirebaseService.registerTokenWithServer(res.data.user.id);
+
+        console.log('Registration successful:', res.data);
         return res.data;
       }
 
-      console.log('Registration failed:', res.data.message); // Log failure message
+      console.log('Registration failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Registration failed');
     } catch (error: any) {
-      console.error('Registration error:', error); // Log error
+      console.error('Registration error:', error);
       return rejectWithValue(error.data.message || 'An error occurred during registration');
     }
   }

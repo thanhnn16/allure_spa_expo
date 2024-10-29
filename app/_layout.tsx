@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import FirebaseService from "@/utils/services/firebase/firebaseService";
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -25,6 +26,26 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    const initializeFirebase = async () => {
+      try {
+        // Request permission and get initial token
+        await FirebaseService.requestUserPermission();
+
+        // Setup message handlers
+        const unsubscribe = FirebaseService.setupMessageHandlers();
+
+        return () => {
+          unsubscribe();
+        };
+      } catch (error) {
+        console.error("Failed to initialize Firebase:", error);
+      }
+    };
+
+    initializeFirebase();
+  }, []);
 
   if (!fontsLoaded) {
     return null;
