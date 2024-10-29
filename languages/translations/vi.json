@@ -145,12 +145,12 @@
     },
     "reward":{
         "title": "Phần thưởng",
-       "cosmetic" : "Mỹ phẩm",
-       "spa": "Spa",
-       "changed": "475 đã đổi",
-       "change_now": "Đổi ngay",
-       "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
-       "title_spa":"Liệu trình Photo Facial"
+        "cosmetic" : "Mỹ phẩm",
+        "spa": "Spa",
+        "changed": "475 đã đổi",
+        "change_now": "Đổi ngay",
+        "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
+        "title_spa":"Liệu trình Photo Facial"
     },
     "aboutapp": {
         "title": "Giới thiệu về ứng dụng",
@@ -165,7 +165,7 @@
         "title": "Xóa tài khoản",
         "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
         "placeholder": "Nhập nội dung",
-        "next": "Tiếp theo", 
+        "next": "Tiếp theo",
         "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
         "verify_yes":"Có , gửi dữ liệu của tôi tới email",
         "verify_no":"Không, cảm ơn !"

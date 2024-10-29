@@ -133,7 +133,7 @@
         "dowload_information": "Download Information",
         "delete_account": "Delete Account",
         "change_info": "Change Information"
-       
+
     },
 
     "voucher": {
@@ -148,12 +148,12 @@
     },
     "reward":{
         "title": "Exchange reward",
-       "cosmetic" : "Cosmetic",
-       "spa": "Spa",
-       "changed": "475 changed",
-       "change_now": "Change now",
-       "title_cosmetic": "Lipocollage Lamellar Cleansing Copy",
-       "title_spa": "Treatment Photo Facial"
+        "cosmetic" : "Cosmetic",
+        "spa": "Spa",
+        "changed": "475 changed",
+        "change_now": "Change now",
+        "title_cosmetic": "Lipocollage Lamellar Cleansing Copy",
+        "title_spa": "Treatment Photo Facial"
     },
     "aboutapp": {
         "title": "About App",
