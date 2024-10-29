@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Stack, router, Redirect } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 
 const AppLayout = () => {
@@ -15,7 +15,7 @@ const AppLayout = () => {
   }, [isAuthenticated, isGuest]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack screenOptions={{ headerShown: false }} initialRouteName={'(tabs)'}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="transaction/index" />
       <Stack.Screen name="product/[id]/index" />

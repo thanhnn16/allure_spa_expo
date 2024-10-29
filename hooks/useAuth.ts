@@ -20,7 +20,7 @@ export const useAuth = () => {
     try {
       const result = await dispatch(loginThunk(credentials)).unwrap();
       if (result) {
-        router.replace('/(app)');
+        router.replace('/(app)/(tabs)/home');
         return result;
       }
     } catch (error: any) {
@@ -32,7 +32,7 @@ export const useAuth = () => {
     try {
       const result = await dispatch(registerThunk(credentials)).unwrap();
       if (result) {
-        router.replace('/(app)');
+        router.replace('/(app)/(tabs)/home');
         return result;
       }
     } catch (error: any) {
@@ -61,7 +61,7 @@ export const useAuth = () => {
     try {
       await AuthService.loginAsGuest();
       dispatch(setGuestUser());
-      router.replace('/(app)');
+      router.replace('/(app)/(tabs)/home');
     } catch (error: any) {
       throw error;
     }
