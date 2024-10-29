@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Button, Text, Image, Colors } from "react-native-ui-lib";
 import { StyleSheet } from "react-native";
 import { Link, router } from "expo-router";
+import i18n from "@/languages/i18n";
 
 const styles = StyleSheet.create({
     container: {
@@ -39,22 +40,21 @@ export default function CartEmpty() {
                     style={styles.backButton}
                     iconStyle={{ tintColor: 'black' }}
                 />
-                <Text style={styles.headerTitle}>Giỏ hàng</Text>
+                <Text style={styles.headerTitle}>{i18n.t('cart.title')}</Text>
             </View>
             <View flex center>
                 <Image source={require('@/assets/images/home/icons/cart.png')} />
                 <Text style={{ fontSize: 16, color: 'gray', textAlign: 'center', marginTop: 20 }}>
-                    Giỏ hàng của bạn hiện đang trống
+                    {i18n.t('cart.empty.message')}
                 </Text>
             </View>
             <Link href='/cart_shop/cart' asChild>
             <Button
-              label='Mua hàng ngay'
+              label={i18n.t('cart.empty.shop_now')}
               labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
               backgroundColor={Colors.primary}
-              padding-20
+              style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10, padding: 20 }}
               borderRadius={10}
-              style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
               onPress={() => {
                 router.back();
               }}

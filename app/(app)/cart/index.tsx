@@ -3,6 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Image, Button, ListItem, Colors } from "react-native-ui-lib";
 import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Link, router } from "expo-router";
+import i18n from "@/languages/i18n";
 
 interface Product {
     id: number;
@@ -25,8 +26,9 @@ const ProductItem = ({ product, onDelete }: { product: Product, onDelete: (id: n
                     </ListItem.Part>
                     <ListItem.Part>
                         <Text style={styles.productPrice}>
-                            <Text style={{ color: 'black', marginRight: 5 }}>$</Text>
-                            <Text style={{ color: 'red' }}>{product.price} VNĐ</Text>
+                            <Text style={{ color: 'red' }}>
+                                {product.price} {i18n.t('cart.product.currency')}
+                            </Text>
                         </Text>
                     </ListItem.Part>
                     <ListItem.Part>
@@ -88,12 +90,14 @@ const ProductList = () => {
                 keyExtractor={(item) => item.id.toString()}
             />
             <View style={styles.totalContainer}>
-                <Text style={styles.totalText}>Tổng cộng: </Text>
-                <Text style={styles.totalPrice}>{calculateTotalPrice().toLocaleString()} VNĐ</Text>
+                <Text style={styles.totalText}>{i18n.t('cart.product.total')}: </Text>
+                <Text style={styles.totalPrice}>
+                    {calculateTotalPrice().toLocaleString()} {i18n.t('cart.product.currency')}
+                </Text>
             </View>
             <Link href="/payment" asChild>
                 <Button
-                    label='Tiếp Tục'
+                    label={i18n.t('cart.product.continue') || 'Continue'}
                     labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
                     backgroundColor={Colors.primary}
                     padding-20
@@ -222,7 +226,7 @@ export default function Cart() {
                     style={styles.backButton}
                     iconStyle={{ tintColor: 'black' }}
                 />
-                <Text style={styles.headerTitle}>Giỏ hàng</Text>
+                <Text style={styles.headerTitle}>{i18n.t('cart.title')}</Text>
             </View>
             <ProductList />
         </SafeAreaView>
