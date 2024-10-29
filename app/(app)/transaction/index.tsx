@@ -3,7 +3,8 @@ import { StyleSheet, FlatList, SafeAreaView, Image } from "react-native";
 import { View, Text, Colors, Button } from "react-native-ui-lib";
 import { router } from "expo-router";
 import axios from "axios";
-import { Alert, Platform } from "react-native";
+import { Alert } from "react-native";
+import i18n from "@/languages/i18n";
 
 interface Transaction {
   orderNumber: string;
@@ -135,27 +136,18 @@ const Transaction = () => {
   const getStatusText = (status: string) => {
     switch (status) {
       case "cancelled":
-        return <Text style={styles.cancelText}>huỷ bỏ</Text>;
+        return <Text style={styles.cancelText}>{i18n.t('transaction.order.status.cancelled')}</Text>;
       case "delivered":
-        return <Text style={styles.deliveredText}>thành công</Text>;
+        return <Text style={styles.deliveredText}>{i18n.t('transaction.order.status.delivered')}</Text>;
       case "pending":
-        return <Text style={styles.pendingText}>tiếp nhận</Text>;
+        return <Text style={styles.pendingText}>{i18n.t('transaction.order.status.pending')}</Text>;
       default:
         return null;
     }
   };
 
   const getStatusPrefix = (status: string) => {
-    switch (status) {
-      case "cancelled":
-        return " đã bị ";
-      case "delivered":
-        return " đã được giao ";
-      case "pending":
-        return " đã được ";
-      default:
-        return "";
-    }
+    return i18n.t(`transaction.order.status.prefix.${status}`);
   };
 
   const handlePayment = async () => {
@@ -197,24 +189,15 @@ const Transaction = () => {
           params: { url: response.data.checkoutUrl },
         });
       } else {
-        Alert.alert("Lỗi", "Không thể tạo thanh toán");
+        Alert.alert(
+          i18n.t('transaction.payment.error.title'),
+          i18n.t('transaction.payment.error.create')
+        );
       }
     } catch (error: any) {
-      console.error("Payment Error:", {
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          data: error.config?.data,
-        },
-      });
-
       Alert.alert(
-        "Lỗi",
-        `Đã có lỗi xảy ra khi tạo thanh toán: ${error.message}`
+        i18n.t('transaction.payment.error.title'),
+        i18n.t('transaction.payment.error.generic', {message: error.message})
       );
     }
   };
@@ -228,7 +211,7 @@ const Transaction = () => {
           link
           iconStyle={{ tintColor: "black" }}
         />
-        <Text style={styles.headerTitle}>Giao dịch</Text>
+        <Text style={styles.headerTitle}>{i18n.t('transaction.title')}</Text>
       </View>
 
       <FlatList
@@ -243,7 +226,9 @@ const Transaction = () => {
               <View style={styles.contentContainer}>
                 <View style={styles.statusContainer}>
                   <Text style={styles.status} numberOfLines={2}>
-                    <Text style={styles.normalText}>Đơn hàng số </Text>
+                    <Text style={styles.normalText}>
+                      {i18n.t('transaction.order.number')} 
+                    </Text>
                     <Text style={styles.orderNumber}>{item.orderNumber}</Text>
                     <Text style={styles.normalText}>
                       {getStatusPrefix(item.status)}
@@ -254,7 +239,9 @@ const Transaction = () => {
 
                 <View style={styles.footer}>
                   <Text style={styles.amount}>
-                    Tổng: {item.totalAmount?.toLocaleString()} VNĐ
+                    {i18n.t('transaction.order.total', {
+                      amount: item.totalAmount?.toLocaleString()
+                    })}
                   </Text>
                   <Text style={styles.date}>{item.date}</Text>
                 </View>
@@ -266,7 +253,7 @@ const Transaction = () => {
       />
 
       <Button
-        label="Thanh toán test"
+        label={i18n.t('transaction.payment.test').toString()}
         labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
         backgroundColor={Colors.primary}
         padding-20

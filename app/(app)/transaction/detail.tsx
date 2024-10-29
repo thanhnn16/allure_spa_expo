@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native-ui-lib";
+import i18n from "@/languages/i18n";
 
 interface Product {
   id: number;
@@ -311,15 +312,15 @@ const updatedStylesWithDivider = StyleSheet.create({
 Object.assign(styles, updatedStylesWithDivider);
 
 enum OrderStatus {
-  DELIVERED = "Đã nhận hàng",
-  DELIVERING = "Đang giao",
-  DELAYED = "Khách hẹn giao lại sau",
+  DELIVERED = "transaction_detail.status.delivered",
+  DELIVERING = "transaction_detail.status.delivering",
+  DELAYED = "transaction_detail.status.delayed",
 }
 
 export default function DetailTransaction() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState(
-    "Thanh toán khi nhận hàng"
+    i18n.t('transaction_detail.payment_method.cod')
   );
   // Thêm state cho trạng thái đơn hàng
   const [orderStatus, setOrderStatus] = useState<OrderStatus>(
@@ -356,15 +357,8 @@ export default function DetailTransaction() {
           link
           iconStyle={{ tintColor: "black" }}
         />
-        <Text
-          style={{
-            flex: 1,
-            textAlign: "center",
-            fontSize: 18,
-            fontWeight: "bold",
-          }}
-        >
-          Thanh toán
+        <Text style={{flex: 1, textAlign: "center", fontSize: 18, fontWeight: "bold"}}>
+          {i18n.t('transaction_detail.title')}
         </Text>
       </View>
 
@@ -376,19 +370,25 @@ export default function DetailTransaction() {
         ]} // Từ red sang #FFFFFF
       >
         <View style={styles.sectionNoBorder}>
-          <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
+          <Text style={styles.sectionTitle}>
+            {i18n.t('transaction_detail.customer_info.title')}
+          </Text>
           <Card
             containerStyle={{ backgroundColor: "#f8f8f8", borderRadius: 8 }}
           >
             <TouchableOpacity
-              onPress={() => console.log("Cập nhật sau")}
+              onPress={() => console.log(i18n.t('transaction_detail.customer_info.update_later'))}
               style={styles.customerInfoCard}
             >
               <View style={styles.customerInfo}>
-                <Text style={{ fontSize: 14 }}>Lộc Nè Con</Text>
-                <Text style={{ fontSize: 14 }}>+84 123 456 789</Text>
                 <Text style={{ fontSize: 14 }}>
-                  123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM
+                  {i18n.t('payment.customer_info.name')}
+                </Text>
+                <Text style={{ fontSize: 14 }}>
+                  {i18n.t('payment.customer_info.phone')}
+                </Text>
+                <Text style={{ fontSize: 14 }}>
+                  {i18n.t('payment.customer_info.address')}
                 </Text>
               </View>
               <Image
@@ -400,7 +400,7 @@ export default function DetailTransaction() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Trạng thái</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('transaction_detail.status.title')}</Text>
           <Card borderRadius={8}>
             <TouchableOpacity
               style={[
@@ -410,13 +410,8 @@ export default function DetailTransaction() {
               onPress={() => setStatusModalVisible(true)}
             >
               <View style={styles.paymentSelector}>
-                <Text style={styles.placeholderStyle}>{orderStatus}</Text>
-                <Ionicons
-                  name="chevron-down"
-                  size={20}
-                  color="#BCBABA"
-                  style={styles.icon}
-                />
+                <Text style={styles.placeholderStyle}>{i18n.t(orderStatus)}</Text>
+                <Ionicons name="chevron-down" size={20} color="#BCBABA" style={styles.icon} />
               </View>
             </TouchableOpacity>
           </Card>
@@ -424,7 +419,9 @@ export default function DetailTransaction() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
+          <Text style={styles.sectionTitle}>
+            {i18n.t('transaction_detail.payment_method.title')}
+          </Text>
           <Card borderRadius={8}>
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
@@ -460,7 +457,7 @@ export default function DetailTransaction() {
             <View style={styles.modalContent}>
               <View style={styles.modalTitleContainer}>
                 <Text style={styles.modalTitle}>
-                  Chọn phương thức thanh toán
+                  {i18n.t('transaction_detail.payment_method.select')}
                 </Text>
               </View>
               <View
@@ -493,7 +490,7 @@ export default function DetailTransaction() {
               ))}
 
               <Button
-                label="Tiếp tục"
+                label={i18n.t('transaction_detail.payment_method.continue').toString()}
                 labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
                 backgroundColor={Colors.primary}
                 padding-20
@@ -522,7 +519,7 @@ export default function DetailTransaction() {
           >
             <View style={styles.modalContent}>
               <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>Chọn trạng thái đơn hàng</Text>
+                <Text style={styles.modalTitle}>{i18n.t('transaction_detail.select_status')}</Text>
               </View>
               <View style={styles.productDivider} />
               {Object.values(OrderStatus).map((status) => (
@@ -548,7 +545,9 @@ export default function DetailTransaction() {
         </Modal>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sản phẩm</Text>
+          <Text style={styles.sectionTitle}>
+            {i18n.t('transaction_detail.products.title')}
+          </Text>
           {products.map((product: Product) => (
             <Card
               key={product.id}
@@ -573,10 +572,10 @@ export default function DetailTransaction() {
 
                   <View style={styles.productRow}>
                     <Text style={{ fontSize: 12 }}>
-                      Số lượng: {product.quantity}
+                      {i18n.t('transaction_detail.products.quantity', { quantity: product.quantity })}
                     </Text>
                     <Text style={[styles.categoryText, { fontSize: 12 }]}>
-                      Dưỡng ẩm
+                      {i18n.t('transaction_detail.products.category')}
                     </Text>
                   </View>
                 </View>
@@ -585,55 +584,42 @@ export default function DetailTransaction() {
             </Card>
           ))}
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            console.log("Huỷ đơn hàng");
-          }}
-        >
-          <Text
-            style={{
-              color: Colors.red30,
-              fontSize: 16,
-              textDecorationLine: "underline",
-              textAlign: "center",
-              marginVertical: 10,
-            }}
-          >
-            Huỷ đơn hàng.
+        <TouchableOpacity onPress={() => console.log("Huỷ đơn hàng")}>
+          <Text style={{color: Colors.red30, fontSize: 16, textDecorationLine: "underline", textAlign: "center", marginVertical: 10}}>
+            {i18n.t('transaction_detail.cancel_order')}
           </Text>
         </TouchableOpacity>
         <View style={styles.totalSection}>
           <View style={styles.row}>
-            <Text style={{ fontWeight: "bold" }}>Voucher</Text>
-            <Text>Không có</Text>
+            <Text style={{ fontWeight: "bold" }}>
+              {i18n.t('transaction_detail.voucher.title')}
+            </Text>
+            <Text>{i18n.t('transaction_detail.voucher.none')}</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Tổng cộng</Text>
+            <Text style={{ fontWeight: "bold" }}>
+              {i18n.t('transaction_detail.total.title')}
+            </Text>
             <Text style={{ fontWeight: "bold", color: Colors.red30 }}>
-              2.385.000 VNĐ
+              {i18n.t('transaction_detail.total.amount', { amount: '2.385.000' })}
             </Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Ngày thanh toán</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('transaction_detail.payment_date')}</Text>
             <Text>15/03/2024</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Ngày nhận hàng</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('transaction_detail.delivery_date')}</Text>
             <Text>20/03/2024</Text>
           </View>
         </View>
         <Button
-          label="Cập nhật lại đơn hàng"
+          label={i18n.t('transaction_detail.update_order').toString()}
           labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
           backgroundColor={Colors.primary}
           padding-20
           borderRadius={10}
-          style={{
-            width: 338,
-            height: 47,
-            alignSelf: "center",
-            marginVertical: 10,
-          }}
+          style={{width: 338, height: 47, alignSelf: "center", marginVertical: 10}}
         />
         <Link href="/transaction/success" asChild>
           <Button

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, SafeAreaView, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-ui-lib";
 import { StackNavigationProp } from '@react-navigation/stack';
+import i18n from "@/languages/i18n";
 
 type NotNotificationPageProps = {
     navigation: StackNavigationProp<any, any>;
@@ -60,12 +61,19 @@ const NotNotificationPage: React.FC<NotNotificationPageProps> = ({ navigation })
                     onPress={() => navigation.goBack()}
                     link style={styles.backButton}
                 />
-                <Text style={styles.headerText}>Thông báo</Text>
+                <Text style={styles.headerText}>
+                    {i18n.t('notification.title')}
+                </Text>
             </View>
             <View style={styles.body}>
                 <View style={styles.imageContainer}>
-                    <Text style={styles.overlayText}>Hiện không có thông báo nào</Text>
-                    <Image source={require('@/assets/images/home/icons/notification.png')} style={styles.image} />
+                    <Text style={styles.overlayText}>
+                        {i18n.t('notification.empty')}
+                    </Text>
+                    <Image 
+                        source={require('@/assets/images/home/icons/notification.png')} 
+                        style={styles.image} 
+                    />
                 </View>
             </View>
         </SafeAreaView>

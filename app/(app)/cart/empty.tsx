@@ -48,9 +48,9 @@ export default function CartEmpty() {
                     {i18n.t('cart.empty.message')}
                 </Text>
             </View>
-            <Link href='/cart_shop/cart' asChild>
+            <Link href={"/cart_shop/cart"} asChild>
             <Button
-              label={i18n.t('cart.empty.shop_now')}
+              label={i18n.t('cart.empty.shop_now') as string}
               labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
               backgroundColor={Colors.primary}
               style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10, padding: 20 }}

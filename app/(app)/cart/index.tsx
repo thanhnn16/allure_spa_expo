@@ -97,7 +97,7 @@ const ProductList = () => {
             </View>
             <Link href="/payment" asChild>
                 <Button
-                    label={i18n.t('cart.product.continue') || 'Continue'}
+                    label={i18n.t('cart.product.continue') as string}
                     labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
                     backgroundColor={Colors.primary}
                     padding-20

@@ -3,6 +3,7 @@ import { View, Text, Button, Colors, Incubator, Card, TouchableOpacity } from 'r
 import { Link, router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from 'react';
+import i18n from "@/languages/i18n";
 
 interface Product {
   id: number;
@@ -302,17 +303,28 @@ Object.assign(styles, updatedStylesWithDivider);
 
 export default function Payment() {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState('Thanh toán khi nhận hàng');
+  const [selectedPayment, setSelectedPayment] = useState(i18n.t('payment.payment_method.cod'));
 
   const paymentMethods = [
-    { id: 2, name: 'VISA / MasterCard', icon: require('@/assets/images/visa.png') },
-    { id: 3, name: 'ZaloPay', icon: require('@/assets/images/zalopay.png') },
-    { id: 4, name: 'Apple Pay', icon: require('@/assets/images/apple.png') }
+    { id: 2, name: i18n.t('payment.payment_method.visa'), icon: require('@/assets/images/visa.png') },
+    { id: 3, name: i18n.t('payment.payment_method.zalopay'), icon: require('@/assets/images/zalopay.png') },
+    { id: 4, name: i18n.t('payment.payment_method.applepay'), icon: require('@/assets/images/apple.png') }
   ];
 
   const handlePaymentSelect = (payment: string) => {
     setSelectedPayment(payment);
     setModalVisible(false);
+  };
+
+  const formatCurrency = (amount: string) => {
+    switch (i18n.locale) {
+      case 'ja':
+        return `¥${amount}`;
+      case 'vi':
+        return `${amount} VNĐ`;
+      default:
+        return `$${amount}`;
+    }
   };
 
   return (
@@ -326,7 +338,7 @@ export default function Payment() {
           iconStyle={{ tintColor: 'black' }}
         />
         <Text style={{ flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
-          Thanh toán
+          {i18n.t('payment.title')}
         </Text>
       </View>
 
@@ -337,16 +349,16 @@ export default function Payment() {
       >
 
         <View style={styles.sectionNoBorder}>
-          <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('payment.customer_info.title')}</Text>
           <Card>
             <TouchableOpacity
               onPress={() => console.log('Cập nhật sau')}
               style={[styles.customerInfoCard, { backgroundColor: '#f8f8f8' }]}
             >
               <View style={styles.customerInfo}>
-                <Text style={{ fontSize: 14 }}>Lộc Nè Con</Text>
-                <Text style={{ fontSize: 14 }}>+84 123 456 789</Text>
-                <Text style={{ fontSize: 14 }}>123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM</Text>
+                <Text style={{ fontSize: 14 }}>{i18n.t('payment.customer_info.name')}</Text>
+                <Text style={{ fontSize: 14 }}>{i18n.t('payment.customer_info.phone')}</Text>
+                <Text style={{ fontSize: 14 }}>{i18n.t('payment.customer_info.address')}</Text>
               </View>
               <Image
                 source={require('@/assets/images/home/arrow_ios.png')}
@@ -358,11 +370,11 @@ export default function Payment() {
 
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Voucher</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('payment.voucher.title')}</Text>
           <Card>
             <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
               <Incubator.TextField
-                placeholder="Không có"
+                placeholder={i18n.t('payment.voucher.placeholder').toString()}
                 value=""
                 editable={false}
                 style={[styles.inputField, styles.placeholderStyle]}
@@ -375,10 +387,10 @@ export default function Payment() {
 
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('payment.payment_method.title')}</Text>
           <Card>
             <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => setModalVisible(true)}
                 style={styles.paymentSelector}
               >
@@ -402,7 +414,7 @@ export default function Payment() {
           >
             <View style={styles.modalContent}>
               <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>Chọn phương thức thanh toán</Text>
+                <Text style={styles.modalTitle}>{i18n.t('payment.payment_method.select_title')}</Text>
               </View>
               <View
                 style={[styles.productDivider, { height: 1, backgroundColor: '#E0E0E0' }]}
@@ -430,7 +442,7 @@ export default function Payment() {
               ))}
 
               <Button
-                label="Tiếp tục"
+                label={i18n.t('payment.continue').toString()}
                 labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
                 backgroundColor={Colors.primary}
                 padding-20
@@ -444,7 +456,7 @@ export default function Payment() {
 
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sản phẩm</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('payment.products.title')}</Text>
           {products.map((product: Product) => (
             <Card
               key={product.id}
@@ -467,8 +479,8 @@ export default function Payment() {
                   </View>
 
                   <View style={styles.productRow}>
-                    <Text style={{ fontSize: 12 }}>Số lượng: {product.quantity}</Text>
-                    <Text style={[styles.categoryText, { fontSize: 12 }]}>Dưỡng ẩm</Text>
+                    <Text style={{ fontSize: 12 }}>{i18n.t('payment.products.quantity', { quantity: product.quantity })}</Text>
+                    <Text style={[styles.categoryText, { fontSize: 12 }]}>{i18n.t('payment.products.category')}</Text>
                   </View>
                 </View>
               </View>
@@ -481,32 +493,31 @@ export default function Payment() {
 
         <View style={styles.totalSection}>
           <View style={styles.row}>
-            <Text style={{ fontWeight: 'bold' }}>Voucher</Text>
-            <Text>Không có</Text>
+            <Text style={{ fontWeight: 'bold' }}>{i18n.t('payment.voucher.title')}</Text>
+            <Text>{i18n.t('payment.voucher.none')}</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: 'bold' }}>Tổng thanh toán</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>2.385.000 VNĐ</Text>
+            <Text style={{ fontWeight: 'bold' }}>{i18n.t('payment.total.title')}</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>{i18n.t('payment.total.amount', { amount: '2.385.000' })}</Text>
           </View>
         </View>
-          <Button
-            label='Tiếp Tục'
-            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-            onPress={() => router.push('/transaction')}
-          />
-          <Button
-            label='Detail Transaction'
-            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-            onPress={() => router.push('/transaction/detail')}
-          />
+        <Button
+          label={i18n.t('payment.continue').toString()}
+          labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10, padding: 20 }}
+          borderRadius={10}
+          onPress={() => router.push('/transaction')}
+        />
+        <Button
+          label={i18n.t('payment.detail_transaction').toString()}
+          labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10, padding: 20 }}
+          borderRadius={10}
+          onPress={() => router.push('/transaction/detail')}
+        />
+
       </ScrollView>
     </SafeAreaView>
   );

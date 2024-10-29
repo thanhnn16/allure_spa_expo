@@ -18,6 +18,7 @@ import {
 } from "react-native-ui-lib";
 import { Link, router } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import i18n from "@/languages/i18n";
 
 interface Product {
   id: number;
@@ -388,9 +389,9 @@ const updatedStylesWithDivider = StyleSheet.create({
 Object.assign(styles, updatedStylesWithDivider);
 
 enum OrderStatus {
-  DELIVERED = "Đã nhận hàng",
-  DELIVERING = "Đang giao",
-  DELAYED = "Khách hẹn giao lại sau",
+  DELIVERED = "success.status.delivered",
+  DELIVERING = "success.status.delivering",
+  DELAYED = "success.status.delayed"
 }
 
 export default function Success() {
@@ -433,7 +434,7 @@ export default function Success() {
           style={styles.headerBackButton}
           iconStyle={{ tintColor: "black" }}
         />
-        <Text style={styles.headerTitle}>Chi tiết giao dịch</Text>
+        <Text style={styles.headerTitle}>{i18n.t('success.title')}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -441,13 +442,13 @@ export default function Success() {
         <View style={styles.containerMain}>
           <View style={styles.containerContent}>
             <View style={styles.containerText}>
-              <Text style={styles.textTitle}>Đánh giá sản phẩm</Text>
+              <Text style={styles.textTitle}>{i18n.t('success.rate.title')}</Text>
               <Text style={styles.textSubtitle}>
-                Đánh giá sản phẩm này để nhận thêm coin
+                {i18n.t('success.rate.subtitle')}
               </Text>
             </View>
             <TouchableOpacity style={styles.btnRate}>
-              <Text style={styles.btnRateText}>Đánh giá ngay</Text>
+              <Text style={styles.btnRateText}>{i18n.t('success.rate.button')}</Text>
             </TouchableOpacity>
           </View>
           <Image
@@ -457,7 +458,7 @@ export default function Success() {
         </View>
 
         <View style={styles.sectionNoBorder}>
-          <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('success.customer_info.title')}</Text>
           <Card
             containerStyle={{ backgroundColor: "#f8f8f8", borderRadius: 8 }}
           >
@@ -480,7 +481,7 @@ export default function Success() {
           </Card>
         </View>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Trạng thái</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('success.status.title')}</Text>
           <Card borderRadius={8}>
             <TouchableOpacity
               style={[
@@ -503,7 +504,7 @@ export default function Success() {
           <View style={styles.borderInset} />
         </View>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('success.payment.title')}</Text>
           <Card borderRadius={8}>
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
@@ -538,7 +539,7 @@ export default function Success() {
             <View style={styles.modalContent}>
               <View style={styles.modalTitleContainer}>
                 <Text style={styles.modalTitle}>
-                  Chọn phương thức thanh toán
+                  {i18n.t('success.payment.select')}
                 </Text>
               </View>
               <View
@@ -571,7 +572,7 @@ export default function Success() {
               ))}
 
               <Button
-                label="Tiếp tục"
+                label={i18n.t('success.payment.continue').toString()}
                 labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
                 backgroundColor={Colors.primary}
                 padding-20
@@ -600,7 +601,7 @@ export default function Success() {
           >
             <View style={styles.modalContent}>
               <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>Chọn trạng thái đơn hàng</Text>
+                <Text style={styles.modalTitle}>{i18n.t('success.status.select')}</Text>
               </View>
               <View style={styles.productDivider} />
               {Object.values(OrderStatus).map((status) => (
@@ -626,7 +627,7 @@ export default function Success() {
         </Modal>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sản phẩm</Text>
+          <Text style={styles.sectionTitle}>{i18n.t('success.products.title')}</Text>
           <FlatList
             data={products}
             keyExtractor={(item) => item.id.toString()}
@@ -650,10 +651,10 @@ export default function Success() {
 
                     <View style={styles.productRow}>
                       <Text style={{ fontSize: 12 }}>
-                        Số lượng: {item.quantity}
+                        {i18n.t('success.products.quantity', { quantity: item.quantity })}
                       </Text>
                       <Text style={[styles.categoryText, { fontSize: 12 }]}>
-                        Dưỡng ẩm
+                        {i18n.t('success.products.category')}
                       </Text>
                     </View>
                   </View>
@@ -665,32 +666,32 @@ export default function Success() {
         </View>
         <View style={styles.totalSection}>
           <View style={styles.row}>
-            <Text style={{ fontWeight: "bold" }}>Voucher</Text>
-            <Text>Không có</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('success.summary.voucher.title')}</Text>
+            <Text>{i18n.t('success.summary.voucher.none')}</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Tổng cộng</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('success.summary.total')}</Text>
             <Text style={{ fontWeight: "bold", color: Colors.red30 }}>
               2.385.000 VNĐ
             </Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Ngày thanh toán</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('success.summary.payment_date')}</Text>
             <Text>15/03/2024</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Ngày nhận hàng</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('success.summary.delivery_date')}</Text>
             <Text>20/03/2024</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: "bold" }}>Trạng thái</Text>
-            <Text style={{ color: Colors.green30 }}>Giao hàng thành công</Text>
+            <Text style={{ fontWeight: "bold" }}>{i18n.t('success.status.title')}</Text>
+            <Text style={{ color: Colors.green30 }}>{i18n.t('success.summary.status.success')}</Text>
           </View>
         </View>
 
         <Link href="/Transaction" asChild>
           <Button
-            label="Mua lại"
+            label={i18n.t('success.buy_again').toString()}
             labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
             backgroundColor={Colors.primary}
             padding-20

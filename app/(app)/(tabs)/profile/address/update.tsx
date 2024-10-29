@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Colors, TextField, Toast, Button } from "react-native-ui-lib";
+import i18n from "@/languages/i18n";
 
 const styles = StyleSheet.create({
     container: {
@@ -214,26 +215,29 @@ export const UpdateAddress = () => {
             <View style={styles.container_1}>
                 <View style={styles.fieldContainer_1}>
                     <TextField
-                        placeholder={'Chọn địa chỉ'}
+                        placeholder={i18n.t('address.form.select_address').toString()}
                         floatingPlaceholder
                         onChangeText={onChangeName}
                         enableErrors
                         value={name}
                         validate={['required']}
-                        validationMessage={['Field is required']}
+                        validationMessage={[i18n.t('address.form.validation.required')]}
                         showCharCounter
-                        containerStyle={styles.textFieldContainer_1} // Apply custom styles
+                        containerStyle={styles.textFieldContainer_1}
                     />
                     <TextField
-                        placeholder={'Toà nhà, số nhà (Không bắt buộc)'}
+                        placeholder={i18n.t('address.form.building').toString()}
                         floatingPlaceholder
                         onChangeText={onChangePhone}
                         enableErrors
                         validate={['required']}
-                        validationMessage={['Field is required', phoneError]}
+                        validationMessage={[
+                            i18n.t('address.form.validation.required'),
+                            phoneError
+                        ]}
                         showCharCounter
-                        containerStyle={styles.textFieldContainer_1} // Apply custom styles
-                        keyboardType="numeric" // Set keyboard type to numeric
+                        containerStyle={styles.textFieldContainer_1}
+                        keyboardType="numeric"
                         value={phone}
                     />
                 </View>
@@ -241,7 +245,7 @@ export const UpdateAddress = () => {
                     visible={showToast}
                     position="bottom"
                     backgroundColor="#FF0000"
-                    message={phoneError}
+                    message={i18n.t('address.form.validation.phone.invalid')}
                     onDismiss={() => setShowToast(false)}
                     autoDismiss={3000}
                 />
@@ -250,56 +254,56 @@ export const UpdateAddress = () => {
                 <View style={styles.fieldContainer_2}>
                     <View style={styles.buttonContainer}>
                         <Button
-                            label="Nhà"
+                            label={i18n.t('address.form.type.home').toString()}
                             style={[
                                 styles.button,
-                                selectedButton === 'Nhà' && styles.selectedButton
+                                selectedButton === i18n.t('address.form.type.home') && styles.selectedButton
                             ]}
-                            onPress={() => handleButtonPress('Nhà')}
-                            backgroundColor="#fff" // Set button background color to white
-                            labelStyle={styles.buttonText_3} // Apply text style
+                            onPress={() => handleButtonPress(i18n.t('address.form.type.home'))}
+                            backgroundColor="#fff"
+                            labelStyle={styles.buttonText_3}
                         />
                         <Button
-                            label="Công ty"
+                            label={i18n.t('address.form.type.company').toString()}
                             style={[
                                 styles.button,
-                                selectedButton === 'Công ty' && styles.selectedButton
+                                selectedButton === i18n.t('address.form.type.company') && styles.selectedButton
                             ]}
-                            onPress={() => handleButtonPress('Công ty')}
-                            backgroundColor="#fff" // Set button background color to white
-                            labelStyle={styles.buttonText_3} // Apply text style
+                            onPress={() => handleButtonPress(i18n.t('address.form.type.company'))}
+                            backgroundColor="#fff"
+                            labelStyle={styles.buttonText_3}
                         />
                         <Button
-                            label="Khác"
+                            label={i18n.t('address.form.type.other').toString()}
                             style={[
                                 styles.button,
-                                selectedButton === 'Khác' && styles.selectedButton
+                                selectedButton === i18n.t('address.form.type.other') && styles.selectedButton
                             ]}
-                            onPress={() => handleButtonPress('Khác')}
-                            backgroundColor="#fff" // Set button background color to white
-                            labelStyle={{ color: '#000' }} // Set text color to black
+                            onPress={() => handleButtonPress(i18n.t('address.form.type.other'))}
+                            backgroundColor="#fff"
+                            labelStyle={{ color: '#000' }}
                         />
                     </View>
                 </View>
                 <View style={styles.noteContainer}>
                     <TextField
-                        placeholder={'Ghi chú'}
+                        placeholder={i18n.t('address.form.note').toString()}
                         floatingPlaceholder
                         onChangeText={onChangeNote}
                         value={note}
                         multiline
-                        containerStyle={styles.noteTextField} // Apply custom styles
+                        containerStyle={styles.noteTextField}
                     />
                 </View>
             </View>
             <View style={styles.container_3}>
                 <View style={styles.fieldContainer_3}>
                     <Button
-                        label="Xoá địa chỉ"
+                        label={i18n.t('address.form.delete').toString()}
                         onPress={() => console.log('pressed')}
                         style={styles.shortButton_3}
                         labelStyle={styles.buttonText_3}
-                        backgroundColor="#fff" // Set button background color to white
+                        backgroundColor="#fff"
                     />
                 </View>
             </View>
@@ -307,12 +311,12 @@ export const UpdateAddress = () => {
                 <View style={styles.fieldContainer_4}>
                     <View style={styles.buttonContainer_4}>
                         <Button
-                            label={'Lưu'}
+                            label={i18n.t('address.form.save').toString()}
                             size={Button.sizes.large}
-                            backgroundColor="#717658" // Set button background color to white
+                            backgroundColor="#717658"
                             onPress={() => { /* Add your onPress handler here */ }}
                             style={styles.shortButton_4}
-                            labelStyle={styles.buttonText_1} // Apply text style
+                            labelStyle={styles.buttonText_1}
                         />
                     </View>
                 </View>
