@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
-import { UserRegisterResponseParams } from "@/types/user.type";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AuthResponse } from "@/types/auth.type";
 
 interface RegisterRequest {
   fullName: string;
@@ -17,7 +17,7 @@ export const registerThunk = createAsyncThunk(
     try {
       console.log('Register request body:', body);
 
-      const res = await AxiosInstance().post<UserRegisterResponseParams>('auth/register', {
+      const res = await AxiosInstance().post<AuthResponse>('auth/register', {
         full_name: body.fullName,
         phone_number: body.phoneNumber,
         password: body.password,
@@ -26,7 +26,7 @@ export const registerThunk = createAsyncThunk(
 
       // Check if response is successful and contains data
       if (res.data.success && res.data.data) {
-        const { token, data } = res.data;
+        const { token, user } = res.data.data;
 
         if (!token) {
           return rejectWithValue('No token received from server');
@@ -37,10 +37,13 @@ export const registerThunk = createAsyncThunk(
 
         // Register FCM token after successful registration
         await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(data.id);
+        await FirebaseService.registerTokenWithServer(user.id);
 
         console.log('Registration successful:', res.data);
-        return res.data.data;
+        return {
+          user: user,
+          token: token
+        };
       }
 
       console.log('Registration failed:', res.data.message);

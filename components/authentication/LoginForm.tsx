@@ -71,7 +71,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
     } catch (error: any) {
       Alert.alert(
         i18n.t("auth.login.error"),
-        error.message || i18n.t("common.error.unknown")
+        error.message || i18n.t("auth.login.unknown_error")
       );
     } finally {
       setLoading(false);

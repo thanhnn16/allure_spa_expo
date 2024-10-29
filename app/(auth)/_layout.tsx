@@ -8,7 +8,7 @@ export default function AuthLayout() {
   useEffect(() => {
     const redirect = async () => {
       if (isAuthenticated || isGuest) {
-        router.replace("/(app)/(tabs)");
+        router.replace("/(app)");
       }
     };
     redirect();

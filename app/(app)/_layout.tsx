@@ -27,8 +27,8 @@ const AppLayout = () => {
       <Stack.Screen name="payment/index" />
       <Stack.Screen name="reward/index" />
       <Stack.Screen name="settings/index" />
-      <Stack.Screen name="(chat)/ai-chat" />
-      <Stack.Screen name="(chat)/[id]/index" />
+      <Stack.Screen name="chat/ai-chat" />
+      <Stack.Screen name="chat/[id]/index" />
       <Stack.Screen name="service/[id]/index" />
     </Stack>
   );

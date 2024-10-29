@@ -58,7 +58,7 @@ export default function RootLayout() {
                     <LanguageManager>
                         <Stack screenOptions={{headerShown: false}}>
                             <Stack.Screen name="(auth)"/>
-                            <Stack.Screen name="(app)"/>
+                            {/*<Stack.Screen name="(app)"/>*/}
                         </Stack>
                     </LanguageManager>
                 </SafeAreaProvider>

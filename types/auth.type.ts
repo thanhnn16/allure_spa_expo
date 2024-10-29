@@ -22,8 +22,11 @@ export interface RegisterCredentials {
 }
 
 export interface AuthResponse {
-  success: boolean;
   message: string;
-  user: User;
-  token: string;
+  status_code: number;
+  success: boolean;
+  data: {
+    user: User;
+    token: string;
+  }
 } 

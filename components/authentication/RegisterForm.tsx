@@ -106,7 +106,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
     } catch (error: any) {
       Alert.alert(
         i18n.t("auth.register.error"),
-        error.message || i18n.t("common.error.unknown")
+        error.message || i18n.t("auth.login.unknown_error")
       );
     } finally {
       setLoading(false);
