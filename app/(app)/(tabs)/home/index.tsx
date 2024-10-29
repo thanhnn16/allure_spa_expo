@@ -30,6 +30,7 @@ import { RootState } from "@/redux/store";
 import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SkeletonView, Spacings } from "react-native-ui-lib";
+import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 
 interface LocationsType {
   distance: number;
@@ -64,6 +65,10 @@ const HomePage = () => {
     useHeaderDimensions();
 
   const { width: WINDOW_WIDTH } = Dimensions.get("window");
+
+  const { products, isLoading: productsLoading } = useSelector(
+    (state: RootState) => state.product
+  );
 
   useEffect(() => {
     dispatch(getServicesThunk(1));
@@ -140,6 +145,10 @@ const HomePage = () => {
     setCurrentDate(`${weekday}, ngày ${day}/${month}/${year}`);
   }, []);
 
+  useEffect(() => {
+    dispatch(getAllProductsThunk());
+  }, [dispatch]);
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       scrollOffset.value = event.contentOffset.y;
@@ -165,7 +174,7 @@ const HomePage = () => {
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
         onPress={() => {
-          router.push({ pathname: '/service/[id]', params: { id: item.id} })
+          router.push({ pathname: "/service/[id]", params: { id: item.id } });
         }}
       >
         <Image
@@ -203,12 +212,12 @@ const HomePage = () => {
           onPressMore={() => {}}
         />
       )}
-      {servicesList && servicesList.data && servicesList.data.length > 0 && (
+      {products && products.length > 0 && (
         <RenderSection
           title="Sản phẩm nổi bật"
-          data={servicesList.data}
+          data={products}
           renderItem={RenderProductItem}
-          onPressMore={() => {}}
+          onPressMore={() => router.push("/products")}
         />
       )}
     </View>

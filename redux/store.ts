@@ -7,6 +7,7 @@ import { languageSlice } from "./features/language/languageSlice";
 import { zaloSlice } from "./features/zalo/zaloSlice";
 import { serviceSlice } from './features/service/serviceSlice';
 import { authSlice } from './features/auth/authSlice';
+import productReducer from "./features/products/productSlice";
 
 
 const persistConfig = {
@@ -20,7 +21,8 @@ const rootReducer: any = combineReducers({
     language: languageSlice.reducer,
     zalo: zaloSlice.reducer,
     service: serviceSlice.reducer,
-    auth: authSlice.reducer
+    auth: authSlice.reducer,
+    product: productReducer
 })
 
 
