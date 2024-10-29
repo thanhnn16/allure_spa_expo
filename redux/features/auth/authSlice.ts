@@ -101,10 +101,29 @@ export const authSlice = createSlice({
       })
     // Logout
     builder
+      .addCase(logoutThunk.pending, (state: AuthState) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(logoutThunk.fulfilled, (state: AuthState) => {
+        // Reset to initial state
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.isGuest = false;
+        state.isLoading = false;
+        state.error = null;
+        state.zaloAccessToken = null;
+        state.zaloRefreshToken = null;
+        state.zaloExpiresIn = null;
+      })
+      .addCase(logoutThunk.rejected, (state: AuthState) => {
+        // Still reset state even if API call fails
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
+        state.isGuest = false;
+        state.isLoading = false;
         state.error = null;
         state.zaloAccessToken = null;
         state.zaloRefreshToken = null;
