@@ -1,8 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import FirebaseService from '@/utils/services/firebase/firebaseService';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { logoutThunk } from "./logoutThunk";
-import { ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import { loginThunk } from "./loginThunk";
 
 interface AuthState {
