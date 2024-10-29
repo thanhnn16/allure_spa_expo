@@ -1,14 +1,14 @@
+// components/authentication/LoginForm.tsx
 import React, { useState } from 'react';
-import { Colors, View, Text } from 'react-native-ui-lib';
-import { TextInput } from '@/components/inputs/TextInput';
-import i18n from '@/languages/i18n';
-import AppButton from '@/components/buttons/AppButton';
+import { View, TextInput, Text, ActivityIndicator } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/redux/store';
-import { loginThunk } from '@/redux/features/auth/loginThunk';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { router } from 'expo-router';
-import { ActivityIndicator, Alert } from 'react-native';
+import AppDialog from '../dialog/AppDialog';
+import AppButton from '../common/AppButton';
+import { loginThunk } from '../../store/authSlice';
+import i18n from '../../i18n';
+import Colors from '../../constants/Colors';
 
 interface LoginFormProps {
   onBackPress: () => void;
@@ -20,7 +20,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   const [loading, setLoading] = useState(false);
   const [phoneError, setPhoneError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const dispatch = useDispatch<AppDispatch>();
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogType, setDialogType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogDescription, setDialogDescription] = useState('');
+  const dispatch = useDispatch();
+
+  const showDialog = (type: 'success' | 'error' | 'info' | 'warning', title: string, description: string) => {
+    setDialogType(type);
+    setDialogTitle(title);
+    setDialogDescription(description);
+    setDialogVisible(true);
+  };
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
@@ -69,18 +80,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
       const result = unwrapResult(resultAction);
 
       if (result && result.success) {
-        Alert.alert(i18n.t('auth.login.success'), result.message);
+        showDialog('success', i18n.t('auth.login.success'), result.message);
         router.replace('/(tabs)/home');
       } else {
-        Alert.alert(i18n.t('auth.login.error'), result?.message ?? i18n.t('auth.login.unknown_error'));
+        showDialog('error', i18n.t('auth.login.error'), result?.message ?? i18n.t('auth.login.unknown_error'));
       }
     } catch (error: any) {
       if (error.response && error.response.status === 503) {
-        Alert.alert(i18n.t('auth.login.server_error'), i18n.t('auth.login.server_error'));
+        showDialog('error', i18n.t('auth.login.server_error'), i18n.t('auth.login.server_error'));
       } else if (error.status === 500) {
-        Alert.alert(i18n.t('auth.login.error'), i18n.t('auth.login.invalid_credentials'));
+        showDialog('error', i18n.t('auth.login.error'), i18n.t('auth.login.invalid_credentials'));
       } else {
-        Alert.alert(i18n.t('auth.login.error'), error.message || i18n.t('auth.login.unknown_error'));
+        showDialog('error', i18n.t('auth.login.error'), error.message || i18n.t('auth.login.unknown_error'));
       }
     } finally {
       setLoading(false);
@@ -88,46 +99,55 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   };
 
   return (
-    <>
-      <TextInput
-        title={i18n.t('auth.register.phone_number')}
-        placeholder={i18n.t('auth.register.phone_number')}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-        onBlur={() => validatePhoneNumber(phoneNumber)}
-      />
-      {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
+      <>
+        <TextInput
+            title={i18n.t('auth.register.phone_number')}
+            placeholder={i18n.t('auth.register.phone_number')}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            keyboardType="phone-pad"
+            onBlur={() => validatePhoneNumber(phoneNumber)}
+        />
+        {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
 
-      <TextInput
-        title={i18n.t('auth.login.password')}
-        placeholder={i18n.t('auth.login.password')}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        onBlur={() => validatePassword(password)}
-      />
-      {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
+        <TextInput
+            title={i18n.t('auth.login.password')}
+            placeholder={i18n.t('auth.login.password')}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            onBlur={() => validatePassword(password)}
+        />
+        {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
 
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
-        <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.forgot_password')}</Text>
-      </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
+          <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.forgot_password')}</Text>
+        </View>
 
-      <View marginT-20 marginB-20>
-        <AppButton
-          type="primary"
-          onPress={handleLogin}
-          disabled={loading}
-          buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
-          titleStyle={{ color: Colors.background }}
-        >
-          {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
-            {i18n.t('auth.login.title')}
-          </Text>}
-        </AppButton>
-        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
-      </View>
-    </>
+        <View marginT-20 marginB-20>
+          <AppButton
+              type="primary"
+              onPress={handleLogin}
+              disabled={loading}
+              buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
+              titleStyle={{ color: Colors.background }}
+          >
+            {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
+              {i18n.t('auth.login.title')}
+            </Text>}
+          </AppButton>
+          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
+        </View>
+
+        <AppDialog
+            visible={dialogVisible}
+            severity={dialogType}
+            title={dialogTitle}
+            description={dialogDescription}
+            closeButton={true}
+            onClose={() => setDialogVisible(false)}
+        />
+      </>
   );
 };
 
