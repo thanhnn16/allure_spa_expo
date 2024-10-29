@@ -1,4 +1,3 @@
-// components/authentication/LoginZaloForm.tsx
 import React, { useState } from 'react';
 import i18n from '@/languages/i18n';
 import AppButton from '@/components/buttons/AppButton';

@@ -1,13 +1,13 @@
-// components/authentication/RegisterForm.tsx
 import React, { useState } from 'react';
 import { View, TextInput, Text, ActivityIndicator } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import AppDialog from '../dialog/AppDialog';
-import AppButton from '../common/AppButton';
-import { registerThunk } from '../../store/authSlice';
-import i18n from '../../i18n';
+
 import Colors from '../../constants/Colors';
+import i18n from '@/languages/i18n';
+import { registerThunk } from '@/redux';
+import AppButton from '../buttons/AppButton';
 
 interface RegisterFormProps {
   onBackPress: () => void;

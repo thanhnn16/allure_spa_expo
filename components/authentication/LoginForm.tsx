@@ -1,14 +1,14 @@
-// components/authentication/LoginForm.tsx
 import React, { useState } from 'react';
 import { View, TextInput, Text, ActivityIndicator } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { router } from 'expo-router';
 import AppDialog from '../dialog/AppDialog';
-import AppButton from '../common/AppButton';
-import { loginThunk } from '../../store/authSlice';
-import i18n from '../../i18n';
+
 import Colors from '../../constants/Colors';
+import i18n from '@/languages/i18n';
+import AppButton from '../buttons/AppButton';
+import {loginThunk} from "@/redux";
 
 interface LoginFormProps {
   onBackPress: () => void;
