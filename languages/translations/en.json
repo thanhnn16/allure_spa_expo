@@ -173,5 +173,129 @@
         "verify_yes":"Yes, send my data to email",
         "verify_no":"No, thanks!"
 
+    },
+    "notification": {
+        "title": "Notifications",
+        "today": "Today",
+        "mark_all_read": "Mark all as read",
+        "order_success": "Order Successful",
+        "order_success_content": "You have successfully placed an order for: Lamellar Cleansing..",
+        "appointment_cancelled": "Appointment Cancelled",
+        "appointment_cancelled_content": "You have successfully cancelled your appointment for: Air Conditioner Check and Repair...",
+        "appointment_rescheduled": "Appointment Rescheduled",
+        "appointment_rescheduled_content": "You have successfully rescheduled your appointment for: Air Conditioner Check and Repair...", 
+        "time_ago": "{time} ago"
+    },
+    "payment": {
+        "title": "Payment",
+        "customer_info": {
+            "title": "Customer Information",
+            "name": "Loc Ne Con",
+            "phone": "+84 123 456 789", 
+            "address": "123 acb, Tan Thoi Hiep Ward, District 12, Ho Chi Minh City"
+        },
+        "voucher": {
+            "title": "Voucher",
+            "placeholder": "None",
+            "none": "None"
+        },
+        "payment_method": {
+            "title": "Payment Method",
+            "select_title": "Select Payment Method",
+            "cod": "Cash on Delivery",
+            "visa": "VISA / MasterCard",
+            "zalopay": "ZaloPay", 
+            "applepay": "Apple Pay"
+        },
+        "products": {
+            "title": "Products",
+            "quantity": "Quantity: {quantity}",
+            "category": "Moisturizer"
+        },
+        "total": {
+            "title": "Total Payment",
+            "amount": "${amount}"
+        },
+        "continue": "Continue",
+        "detail_transaction": "Transaction Detail"
+    },
+    "scheduled": {
+        "title": "Scheduled Appointments",
+        "filter": {
+            "all": "All",
+            "upcoming": "Upcoming",
+            "completed": "Completed",
+            "postponed": "Postponed"
+        },
+        "service": {
+            "facial_care": "Facial Care for Men and Women",
+            "times": "Times: {current}/{total}",
+            "status": {
+                "pending": "Pending",
+                "completed": "Completed"
+            },
+            "time": {
+                "today": "today",
+                "tomorrow": "tomorrow"
+            },
+            "view_details": "Tap to view details"
+        }
+    },
+    "cart": {
+        "title": "Cart",
+        "empty": {
+            "message": "Your cart is currently empty",
+            "shop_now": "Shop Now"
+        },
+        "product": {
+            "quantity": "Quantity",
+            "total": "Total",
+            "currency": "USD",
+            "continue": "Continue"
+        }
+    },
+    "transaction": {
+        "title": "Transactions",
+        "order": {
+            "number": "Order number",
+            "status": {
+                "cancelled": "cancelled",
+                "delivered": "delivered",
+                "pending": "pending",
+                "prefix": {
+                    "cancelled": " has been ",
+                    "delivered": " has been ",
+                    "pending": " has been "
+                }
+            },
+            "total": "Total: {amount} VND"
+        },
+        "payment": {
+            "test": "Test Payment",
+            "error": {
+                "title": "Error",
+                "create": "Unable to create payment",
+                "generic": "An error occurred while creating payment: {message}"
+            }
+        }
+    },
+    "success": {
+        "title": "Transaction Details",
+        "rate_product": "Rate Product",
+        "rate_product_subtitle": "Rate this product to earn more coins",
+        "rate_now": "Rate Now",
+        "customer_info": "Customer Information",
+        "status": "Status",
+        "select_status": "Select Order Status",
+        "payment_method": "Payment Method",
+        "select_payment_method": "Select Payment Method",
+        "products": "Products",
+        "voucher": "Voucher",
+        "no_voucher": "None",
+        "total": "Total",
+        "payment_date": "Payment Date",
+        "delivery_date": "Delivery Date",
+        "status_success": "Delivery Successful",
+        "buy_again": "Buy Again"
     }
 }

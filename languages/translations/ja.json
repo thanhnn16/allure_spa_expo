@@ -26,7 +26,7 @@
             "of_us": "当社の",
             "forgot_password": "パスワードを忘れましたか？",
             "success": "ログイン成功",
-            "error": "ログイン失敗",
+            "error": "ログイ失敗",
             "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください",
             "invalid_credentials": "無効な電話番号またはパスワード",
             "empty_phone_number": "電話番号が入力されていません",
@@ -155,7 +155,7 @@
         "title": "アプリについて",
         "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
         "title2": "Allure Spaアプリケーションの基本情報:",
-        "name_app": "アプリ名: Allure Spa",
+        "name_app": "プリ名: Allure Spa",
         "developer": "開発者: Allure Spa",
         "version": "バージョン: 1.0.0",
         "date_release": "発売日: 01/01/2021"
@@ -169,5 +169,129 @@
         "verify_yes":"はい、データを電子メールに送信します",
         "verify_no":"結構です！"
 
+    },
+    "notification": {
+        "title": "通知",
+        "today": "今日",
+        "mark_all_read": "すべて既読にする",
+        "order_success": "注文完了",
+        "order_success_content": "ラメラクレンジングの注文が完了しました。",
+        "appointment_cancelled": "予約キャンセル完了",
+        "appointment_cancelled_content": "エアコンの点検・修理サービスの予約をキャンセルしました。",
+        "appointment_rescheduled": "予約変更完了", 
+        "appointment_rescheduled_content": "エアコンの点検・修理サービスの予約を変更しました。",
+        "time_ago": "{time}前"
+    },
+    "payment": {
+        "title": "お支払い",
+        "customer_info": {
+            "title": "お客様情報",
+            "name": "ロック",
+            "phone": "+84 123 456 789",
+            "address": "123 acb, タンソイヒエップ区, 12区, ホーチミン市"
+        },
+        "voucher": {
+            "title": "クーポン",
+            "placeholder": "なし",
+            "none": "なし"
+        },
+        "payment_method": {
+            "title": "お支払い方法",
+            "select_title": "お支払い方法を選択",
+            "cod": "商品到着後に支払い",
+            "visa": "VISA / MasterCard",
+            "zalopay": "ZaloPay",
+            "applepay": "Apple Pay"
+        },
+        "products": {
+            "title": "商品",
+            "quantity": "数量: {quantity}",
+            "category": "保湿"
+        },
+        "total": {
+            "title": "合計金額",
+            "amount": "¥{amount}"
+        },
+        "continue": "次へ",
+        "detail_transaction": "取引詳細"
+    },
+    "scheduled": {
+        "title": "予約済み",
+        "filter": {
+            "all": "すべて",
+            "upcoming": "今後",
+            "completed": "完了",
+            "postponed": "延期"
+        },
+        "service": {
+            "facial_care": "男女向けフェイシャルケア",
+            "times": "回数: {current}/{total}",
+            "status": {
+                "pending": "未実施",
+                "completed": "実施済み"
+            },
+            "time": {
+                "today": "今日",
+                "tomorrow": "明日"
+            },
+            "view_details": "詳細を表示"
+        }
+    },
+    "cart": {
+        "title": "カート",
+        "empty": {
+            "message": "カートは空です",
+            "shop_now": "今すぐ購入"
+        },
+        "product": {
+            "quantity": "数量",
+            "total": "合計",
+            "currency": "円",
+            "continue": "次へ"
+        }
+    },
+    "transaction": {
+        "title": "取引",
+        "order": {
+            "number": "注文番号",
+            "status": {
+                "cancelled": "キャンセル",
+                "delivered": "配達完了",
+                "pending": "受付済み",
+                "prefix": {
+                    "cancelled": "は",
+                    "delivered": "は",
+                    "pending": "は"
+                }
+            },
+            "total": "合計: {amount}円"
+        },
+        "payment": {
+            "test": "テスト決済",
+            "error": {
+                "title": "エラー",
+                "create": "決済を作成できません",
+                "generic": "決済の作成中にエラーが発生しました: {message}"
+            }
+        }
+    },
+    "success": {
+        "title": "取引詳細",
+        "rate_product": "製品を評価する",
+        "rate_product_subtitle": "この製品を評価してコインを獲得",
+        "rate_now": "今すぐ評価",
+        "customer_info": "顧客情報",
+        "status": "ステータス",
+        "select_status": "注文ステータスを選択",
+        "payment_method": "支払い方法",
+        "select_payment_method": "支払い方法を選択",
+        "products": "製品",
+        "voucher": "クーポン",
+        "no_voucher": "なし",
+        "total": "合計",
+        "payment_date": "支払日",
+        "delivery_date": "配達予定日",
+        "status_success": "配達完了",
+        "buy_again": "再購入"
     }
 }

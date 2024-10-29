@@ -169,5 +169,130 @@
         "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
         "verify_yes":"Có , gửi dữ liệu của tôi tới email",
         "verify_no":"Không, cảm ơn !"
+    },
+    "notification": {
+        "title": "Thông báo",
+        "today": "Hôm nay", 
+        "mark_all_read": "Đánh dấu tất cả là đã đọc",
+        "order_success": "Đặt hàng thành công",
+        "order_success_content": "Bạn đã đặt hàng thành công cho đơn hàng: Làm sạch bằng lamellar..",
+        "appointment_cancelled": "Đã huỷ lịch hẹn",
+        "appointment_cancelled_content": "Bạn đã huỷ lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy l...",
+        "appointment_rescheduled": "Đã đổi lịch hẹn",
+        "appointment_rescheduled_content": "Bạn đã đổi lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy lạnh. V...",
+        "time_ago": "{time} trước"
+    },
+    "payment": {
+        "title": "Thanh toán",
+        "customer_info": {
+            "title": "Thông tin khách hàng",
+            "name": "Lộc Nè Con",
+            "phone": "+84 123 456 789",
+            "address": "123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM"
+        },
+        "voucher": {
+            "title": "Voucher",
+            "placeholder": "Không có",
+            "none": "Không có"
+        },
+        "payment_method": {
+            "title": "Hình thức thanh toán",
+            "select_title": "Chọn phương thức thanh toán",
+            "cod": "Thanh toán khi nhận hàng",
+            "visa": "VISA / MasterCard", 
+            "zalopay": "ZaloPay",
+            "applepay": "Apple Pay"
+        },
+        "products": {
+            "title": "Sản phẩm",
+            "quantity": "Số lượng: {quantity}",
+            "category": "Dưỡng ẩm"
+        },
+        "total": {
+            "title": "Tổng thanh toán",
+            "amount": "{amount} VNĐ"
+        },
+        "continue": "Tiếp tục",
+        "detail_transaction": "Chi tiết giao dịch"
+    },
+    "scheduled": {
+        "title": "Lịch đã đặt",
+        "filter": {
+            "all": "Tất cả",
+            "upcoming": "Sắp tới", 
+            "completed": "Đã hoàn thành",
+            "postponed": "Bị hoãn"
+        },
+        "service": {
+            "facial_care": "Chăm sóc da mặt dành cho nam và nữ",
+            "times": "Số lần: {current}/{total}",
+            "status": {
+                "pending": "Chưa tiến hành",
+                "completed": "Đã tiến hành"
+            },
+            "time": {
+                "today": "hôm nay",
+                "tomorrow": "ngày mai"
+            },
+            "view_details": "Nhấn xem chi tiết"
+        }
+    },
+    "cart": {
+        "title": "Giỏ hàng",
+        "empty": {
+            "message": "Giỏ hàng của bạn hiện đang trống",
+            "shop_now": "Mua hàng ngay"
+        },
+        "product": {
+            "quantity": "Số lượng",
+            "total": "Tổng cộng",
+            "currency": "VNĐ",
+            "continue": "Tiếp tục"
+        }
+    },
+    "transaction": {
+        "title": "Giao dịch",
+        "order": {
+            "number": "Đơn hàng số",
+            "status": {
+                "cancelled": "huỷ bỏ",
+                "delivered": "thành công", 
+                "pending": "tiếp nhận",
+                "prefix": {
+                    "cancelled": " đã bị ",
+                    "delivered": " đã được giao ",
+                    "pending": " đã được "
+                }
+            },
+            "total": "Tổng: {amount} VNĐ"
+        },
+        "payment": {
+            "test": "Thanh toán test",
+            "error": {
+                "title": "Lỗi",
+                "create": "Không thể tạo thanh toán",
+                "generic": "Đã có lỗi xảy ra khi tạo thanh toán: {message}"
+            }
+        }
+    },
+    "success": {
+        "title": "Chi tiết giao dịch",
+        "rate_product": "Đánh giá sản phẩm",
+        "rate_product_subtitle": "Đánh giá sản phẩm này để nhận thêm coin",
+        "rate_now": "Đánh giá ngay",
+        "customer_info": "Thông tin khách hàng",
+        "status": "Trạng thái",
+        "select_status": "Chọn trạng thái đơn hàng",
+        "payment_method": "Hình thức thanh toán",
+        "select_payment_method": "Chọn phương thức thanh toán",
+        "products": "Sản phẩm",
+        "voucher": "Voucher",
+        "no_voucher": "Không có",
+        "total": "Tổng cộng",
+        "payment_date": "Ngày thanh toán",
+        "delivery_date": "Ngày nhận hàng",
+        "status_success": "Giao hàng thành công",
+        "buy_again": "Mua lại"
     }
 }
+
