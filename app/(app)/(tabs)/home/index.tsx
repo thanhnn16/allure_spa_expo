@@ -126,7 +126,7 @@ const HomePage = () => {
           height={210}
           style={{ resizeMode: "cover" }}
         />
-        <View paddingH-12 marginT-6>
+        <View paddingH-12>
           <Text text70H>{item.service_name}</Text>
           <Text style={{ color: "#8C8585" }}>
             {truncateText(item.description, 50)}

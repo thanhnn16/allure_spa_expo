@@ -172,7 +172,6 @@
         "description2": "You should ask us to send the data to your email.",
         "verify_yes":"Yes, send my data to email",
         "verify_no":"No, thanks!"
-
     },
     "days": {
         "mon": "Mon",
@@ -214,5 +213,34 @@
     },
     "system": {
         "fud": "Feature under development!"
+    },
+    "address": {
+        "title": "Address",
+        "add_address": "Add Address",
+        "edit_address": "Edit Address",
+        "delete_address": "Delete Address",
+        "default_address": "Default Address",
+        "set_default": "Set as default",
+        "save_address": "Save Address",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "note": "Note",
+        "address": "Address",
+        "home": "Home",
+        "company": "Company",
+        "other": "Other",
+        "name": "Name",
+        "phone": "Phone",
+        "save": "Save",
+        "cancel": "Cancel",
+        "add_new_address": "Add new address",
+        "delete_address_confirm": "Are you sure you want to delete this address?",
+        "delete_address_success": "Delete address successfully",
+        "delete_address_fail": "Delete address failed",
+        "add_address_success": "Add address successfully",
+        "add_address_fail": "Add address failed",
+        "edit_address_success": "Edit address successfully",
+        "edit_address_fail": "Edit address failed"
     }
 }
