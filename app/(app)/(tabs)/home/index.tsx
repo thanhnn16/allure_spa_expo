@@ -2,7 +2,7 @@ import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 import RenderCarousel from "@/components/home/CarouselBanner";
 import RenderCategory from "@/components/home/CategoryItem";
 import RenderProductItem from "@/components/home/ProductItem";
-import RenderSection from "@/components/home/RenderSection";
+import RenderSection from "@/components/home/renderSection";
 import AppSearch from "@/components/inputs/AppSearch";
 import { AppStyles } from "@/constants/AppStyles";
 import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
@@ -31,6 +31,7 @@ import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SkeletonView, Spacings } from "react-native-ui-lib";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
+import i18n from "@/languages/i18n";
 
 interface LocationsType {
   distance: number;
@@ -130,19 +131,19 @@ const HomePage = () => {
   useEffect(() => {
     const date = new Date();
     const weekdays = [
-      "Chủ Nhật",
-      "Thứ Hai",
-      "Thứ Ba",
-      "Thứ Tư",
-      "Thứ Năm",
-      "Thứ Sáu",
-      "Thứ Bảy",
+      i18n.t("days.sun"),
+      i18n.t("days.mon"),
+      i18n.t("days.tue"),
+      i18n.t("days.wed"),
+      i18n.t("days.thu"),
+      i18n.t("days.fri"),
+      i18n.t("days.sat"),
     ];
     const weekday = weekdays[date.getDay()];
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
-    setCurrentDate(`${weekday}, ngày ${day}/${month}/${year}`);
+    setCurrentDate(`${weekday}, ${i18n.t("days.day")} ${day}/${month}/${year}`);
   }, []);
 
   useEffect(() => {
@@ -206,7 +207,7 @@ const HomePage = () => {
       <RenderCategory cateData={cateArr} />
       {servicesList && servicesList.data && servicesList.data.length > 0 && (
         <RenderSection
-          title="Dịch vụ nổi bật"
+          title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={renderServicesItem}
           onPressMore={() => {}}
@@ -214,7 +215,7 @@ const HomePage = () => {
       )}
       {products && products.length > 0 && (
         <RenderSection
-          title="Sản phẩm nổi bật"
+          title={i18n.t("home.featured_products")}
           data={products}
           renderItem={RenderProductItem}
           onPressMore={() => router.push("/products")}
@@ -331,7 +332,7 @@ const HomePage = () => {
                     <Link href={"/(tabs)/profile" as Href<string>}>
                       <Text h2_bold>Đức Lộc</Text>
                     </Link>
-                    <Text h3>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+                    <Text h3>{i18n.t("greeting.morning")}</Text>
                   </View>
                 </View>
                 <View row gap-15 marginL-auto>
@@ -421,7 +422,7 @@ const HomePage = () => {
               ]}
             >
               <Text h0_bold color="#717658" marginB-10>
-                Khám phá
+                {i18n.t("home.discover")}
               </Text>
               <AppSearch isHome style={{ marginBottom: 15 }} />
             </Animated.View>

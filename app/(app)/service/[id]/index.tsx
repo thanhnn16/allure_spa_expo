@@ -82,15 +82,15 @@ const ServiceDetailPage = () => {
     switch (combo) {
       case 1:
         setPrice(service?.combo_5_price);
-        setComboName("Gói combo 5");
+        setComboName(i18n.t("package.commbo5"));
         break;
       case 2:
         setPrice(service?.combo_10_price);
-        setComboName("Gói combo 10");
+        setComboName(i18n.t("package.combo10"));
         break;
       default:
         setPrice(service?.single_price);
-        setComboName("Gói đơn");
+        setComboName(i18n.t("package.single"));
         break;
     }
   }, [combo]);
@@ -98,7 +98,7 @@ const ServiceDetailPage = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View useSafeArea flex bg-$white>
-        <AppBar back title="Chi tiết dịch vụ" />
+        <AppBar back title={i18n.t("service.service_details")} />
         {isLoading ? (
           <View>
             <SkeletonView
@@ -233,7 +233,7 @@ const ServiceDetailPage = () => {
                   </View>
 
                   <View padding-20 gap-20>
-                    <Text h2_bold>Liệu trình</Text>
+                    <Text h2_bold>{i18n.t("service.treatment")}</Text>
 
                     <TouchableOpacity onPress={() => setShowActionSheet(true)}>
                       <View
@@ -260,7 +260,7 @@ const ServiceDetailPage = () => {
                   </View>
 
                   <ActionSheet
-                    title="Chọn gói combo"
+                    title={i18n.t("package.select_combo")}
                     cancelButtonIndex={4}
                     showCancelButton={true}
                     destructiveButtonIndex={0}
@@ -270,19 +270,19 @@ const ServiceDetailPage = () => {
                     useNativeIOS
                     options={[
                       {
-                        label: "Gói đơn",
+                        label: i18n.t("package.single"),
                         onPress: () => {
                           setCombo(0);
                         },
                       },
                       {
-                        label: "Gói combo 5",
+                        label: i18n.t("package.commbo5"),
                         onPress: () => {
                           setCombo(1);
                         },
                       },
                       {
-                        label: "Gói combo 10",
+                        label: i18n.t("package.combo10"),
                         onPress: () => {
                           setCombo(2);
                         },
@@ -313,7 +313,7 @@ const ServiceDetailPage = () => {
                     <View center marginB-4>
                       <Feather name="phone-call" size={24} color="#AFAFAF" />
                     </View>
-                    <Text h3_medium>Liên hệ</Text>
+                    <Text h3_medium>{i18n.t("service.contact")}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     center

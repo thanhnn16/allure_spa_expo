@@ -169,5 +169,38 @@
         "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
         "verify_yes":"Có , gửi dữ liệu của tôi tới email",
         "verify_no":"Không, cảm ơn !"
+    },
+    "days": {
+        "mon": "Thứ hai",
+        "tue": "Thứ ba",
+        "wed": "Thứ tư",
+        "thu": "Thứ năm",
+        "fri": "Thứ sáu",
+        "sat": "Thứ bảy",
+        "sun": "Chủ nhật",
+        "day": "Ngày"
+    },
+    "home": {
+        "featured_services": "Dịch vụ nổi bật",
+        "featured_products": "Sản phẩm nổi bật",
+        "discover": "Khám phá"
+    },
+    "gretting": {
+        "morning": "Allure Spa chúc bạn buổi sáng vui vẻ!",
+        "afternoon": "Allure Spa chúc bạn buổi trưa vui vẻ!",
+        "evening": "Allure Spa chúc bạn buổi tối vui vẻ!"
+    },
+    "package": {
+        "single": "Gói đơn",
+        "combo5": "Gói combo 5",
+        "combo10": "Gói combo 10",
+        "select_combo": "Chọn gói combo"
+
+    },
+    "service": {
+        "service_details": "Chi tiết dịch vụ",
+        "treatment": "Liệu trình",
+        "contact": "Liên hệ",
+        "book_now": "Đặt lịch ngay"
     }
 }
