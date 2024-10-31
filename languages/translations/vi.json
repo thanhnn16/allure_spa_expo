@@ -19,7 +19,7 @@
             "enter_full_name": "Nhập họ và tên",
             "invalid_full_name": "Họ và tên không được chứa số",
             "skip": "Đăng nhập sau",
-            "terms": "Điều khoản sử dụng",
+            "terms": "Điều kho���n sử dụng",
             "privacy": "Chính sách bảo mật",
             "by_continue": "Bằng cách đăng nhập, bạn sẽ đồng ý với",
             "and": "và",
@@ -114,8 +114,8 @@
     },
     "profile": {
         "title": "Hồ sơ",
-        "username":"Nguyễn Văn Tèo",
-        "my_account": "Tài khoản của tôi",
+        "username": "Nguyễn Văn Tèo",
+        "my_account": "T��i khoản của tôi",
         "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
         "purchase_policy": "Chính sách mua hàng và đổi trả",
         "policy_description": "Chính sách áp dụng cho Allure Spa",
@@ -135,39 +135,64 @@
     },
     "voucher": {
         "title": "Giảm giá",
-        "all" : "Tất cả",
-        "birthday" : "Sinh nhật",
-        "event" : "Sự kiện",
-        "prominent" : "Nổi bật",
-        "gift" : "Quà tặng",
-        "many_offers_comingsoon" : "Nhiều ưu đãi sắp tới"
-
+        "all": "Tất cả",
+        "birthday": "Sinh nhật",
+        "event": "Sự kiện",
+        "prominent": "Nổi bật",
+        "gift": "Quà tặng",
+        "many_offers_comingsoon": "Nhiều ưu đãi sắp tới"
     },
-    "reward":{
+    "reward": {
         "title": "Phần thưởng",
-        "cosmetic" : "Mỹ phẩm",
+        "cosmetic": "Mỹ phẩm",
         "spa": "Spa",
         "changed": "475 đã đổi",
         "change_now": "Đổi ngay",
         "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
-        "title_spa":"Liệu trình Photo Facial"
+        "title_spa": "Liệu trình Photo Facial"
     },
     "aboutapp": {
         "title": "Giới thiệu về ứng dụng",
         "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
         "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
-        "name_app":"Tên ứng dụng: Allure Spa",
-        "developer":"Nhà phát triển: Allure Spa",
-        "version":"Phiên bản: 1.0.0",
-        "date_release":"Ngày phát hành: 01/01/2021"
+        "name_app": "Tên ứng dụng: Allure Spa",
+        "developer": "Nhà phát triển: Allure Spa",
+        "version": "Phiên bản: 1.0.0",
+        "date_release": "Ngày phát hành: 01/01/2021"
     },
-    "deleteaccount":{
+    "deleteaccount": {
         "title": "Xóa tài khoản",
-        "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
+        "description": "Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
         "placeholder": "Nhập nội dung",
         "next": "Tiếp theo",
         "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
-        "verify_yes":"Có , gửi dữ liệu của tôi tới email",
-        "verify_no":"Không, cảm ơn !"
+        "verify_yes": "Có, gửi dữ liệu của tôi tới email",
+        "verify_no": "Không, cảm ơn!"
+    },
+    "address": {
+        "title": "Địa chỉ",
+        "add_address": "Thêm địa chỉ",
+        "edit_address": "Sửa địa chỉ",
+        "delete_address": "Xóa địa chỉ",
+        "default_address": "Địa chỉ mặc định",
+        "set_default": "Đặt làm mặc định",
+        "delete": "Xóa",
+        "edit": "Sửa",
+        "add": "Thêm",
+        "address": "Địa chỉ",
+        "phone": "Điện thoại",
+        "home": "Nhà",
+        "company": "Công Ty",
+        "other": "Khác",
+        "save": "Lưu",
+        "cancel": "Hủy",
+        "add_new_address": "Thêm địa chỉ mới",
+        "delete_address_confirm": "Bạn có chắc chắn muốn xóa địa chỉ này không?",
+        "delete_address_success": "Xóa địa chỉ thành công",
+        "delete_address_fail": "Xóa địa chỉ thất bại",
+        "add_address_success": "Thêm địa chỉ thành công",
+        "add_address_fail": "Thêm địa chỉ thất bại",
+        "edit_address_success": "Sửa địa chỉ thành công",
+        "edit_address_fail": "Sửa địa chỉ thất bại"
     }
 }
