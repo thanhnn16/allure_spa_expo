@@ -1,21 +1,22 @@
 #import "AppDelegate.h"
+#import <Firebase/Firebase.h>
+
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
-#import <ZaloSDK/ZaloSDK.h>
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+// @generated begin @react-native-firebase/app-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-ecd111c37e49fdd1ed6354203cd6b1e2a38cccda
+[FIRApp configure];
+// @generated end @react-native-firebase/app-didFinishLaunchingWithOptions
   self.moduleName = @"main";
 
-  // Bạn có thể thêm props khởi tạo tùy chỉnh trong từ điển bên dưới.
-  // Chúng sẽ được truyền đến ViewController được sử dụng bởi React Native.
+  // You can add your custom initial props in the dictionary below.
+  // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
-  // Khởi tạo Zalo SDK
-  [[ZaloSDK sharedInstance] initializeWithAppId:@"3131373079387573469" appSecret:@"M80CHS1ppVItBrm4GS29"];
-  
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
@@ -35,8 +36,7 @@
 
 // Linking API
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-  // Xử lý callback URL từ Zalo
-  return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options] || [[ZaloSDK sharedInstance] handleOpenURL:url];
+  return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options];
 }
 
 // Universal Links
