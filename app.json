@@ -7,13 +7,17 @@
     "icon": "./assets/images/icon.png",
     "scheme": "allurespa",
     "userInterfaceStyle": "automatic",
+    "androidStatusBar": {
+      "backgroundColor": "#ffffff"
+    },
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "bundleIdentifier": "com.faithnippon.allurespa",
+      "bundleIdentifier": "com.faith-nippon.allure-spa",
+      "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "supportsTablet": true,
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
@@ -26,7 +30,7 @@
     },
     "android": {
       "package": "com.faithnippon.allurespa",
-      "googleServicesFile": "./android/app/google-services.json",
+      "googleServicesFile": "./firebase/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

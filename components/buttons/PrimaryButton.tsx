@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Colors, Text, TouchableOpacity, View } from 'react-native-ui-lib';
-import colors from '@/rn/colors';
 import { StyleSheet } from 'react-native';
+import colors from '@/constants/Colors';
 
 export type SendButtonProps = {
     onPress?: () => void;

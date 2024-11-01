@@ -1,7 +1,6 @@
 import { Category } from "./category.type";
-import { Timestamps } from "./commons.type";
+import { ResponePagesParams, ResponeDefaultParams, Timestamps } from "./commons.type";
 import { Media } from "./media.type";
-
 export interface Product extends Timestamps {
     id: number;
     name: string;
@@ -22,9 +21,12 @@ export interface Product extends Timestamps {
     attributes: any[];
 }
 
-export interface ProductResponseParams {
-    message: string;
-    status_code: number;
-    success: boolean;
+export interface ProductResponseParams extends ResponeDefaultParams {
     data: Product;
+}
+
+export interface ProductsListResponseParams extends ResponeDefaultParams {
+    data: {
+        data: Product[];
+    } & ResponePagesParams;
 }

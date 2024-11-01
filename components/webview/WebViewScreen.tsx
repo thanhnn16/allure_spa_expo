@@ -4,7 +4,6 @@ import { View, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 import axios from "axios";
-import * as Linking from "expo-linking";
 import { LoaderScreen } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
 
@@ -14,9 +13,7 @@ interface WebViewScreenProps {
 }
 
 const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
-  // Handle Zalo login callback
   const handleZaloCallback = (navState: any) => {
-    // Kiểm tra URL có chứa code và state không
     const urlObj = new URL(navState.url);
     const code = urlObj.searchParams.get("code");
     const state = urlObj.searchParams.get("state");
@@ -29,7 +26,6 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
     }
   };
 
-  // Handle payment callback
   const handlePaymentCallback = async (navState: any) => {
     if (navState.url.startsWith("allurespa://")) {
       const params = new URL(navState.url).searchParams;
@@ -60,13 +56,16 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
 
   // Handle navigation state change
   const handleNavigationStateChange = (navState: any) => {
-    // Handle payment callback
-    if (type === WebViewType.PAYMENT) {
-      handlePaymentCallback(navState);
-    }
-    // Handle Zalo login progress page - sửa điều kiện kiểm tra
-    else if (type === WebViewType.ZALO_LOGIN) {
-      handleZaloCallback(navState);
+    switch (type) {
+      case WebViewType.PAYMENT:
+        handlePaymentCallback(navState);
+        break;
+      case WebViewType.ZALO_LOGIN:
+        handleZaloCallback(navState);
+        break;
+      case WebViewType.GENERAL:
+        // No special handling needed for general webview
+        break;
     }
   };
 
@@ -76,7 +75,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         source={{ uri: url }}
         style={styles.webview}
         onNavigationStateChange={handleNavigationStateChange}
-        incognito={true}
+        incognito={type === WebViewType.ZALO_LOGIN}
         javaScriptEnabled={true}
         renderLoading={() => <LoaderScreen />}
         pullToRefreshEnabled={true}

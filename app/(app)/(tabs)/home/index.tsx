@@ -16,7 +16,7 @@ import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Href, Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, Dimensions, ScrollView } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -29,7 +29,9 @@ import CartIcon from "@/assets/icons/shopping_bag.svg";
 import { RootState } from "@/redux/store";
 import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SkeletonView, Spacings } from "react-native-ui-lib";
+import { SkeletonView } from "react-native-ui-lib";
+import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
+import i18n from "@/languages/i18n";
 
 interface LocationsType {
   distance: number;
@@ -44,7 +46,7 @@ const HomePage = () => {
   const [services, setServices] = useState<any[]>([]);
   const [temperature, setTemperature] = useState<number>(0);
   const [location, setLocation] = useState<LocationsType | null>(null);
-  const [weatherIcon, setWeatherIcon] = useState<string>("");
+  const [weatherIcon, setWeatherIcon] = useState<string>("01d"); // Set default icon
   const [currentDate, setCurrentDate] = useState<string>("");
   const [banner, setBanner] = useState([
     { uri: "https://intphcm.com/data/upload/banner-spa-cta.jpg" },
@@ -62,6 +64,12 @@ const HomePage = () => {
 
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
+
+  const { width: WINDOW_WIDTH } = Dimensions.get("window");
+
+  const { products, isLoading: productsLoading } = useSelector(
+    (state: RootState) => state.product
+  );
 
   useEffect(() => {
     dispatch(getServicesThunk(1));
@@ -102,7 +110,7 @@ const HomePage = () => {
         }
 
         setLocation(nearestProvince);
-        setWeatherIcon(weatherData.weather[0].icon);
+        setWeatherIcon(weatherData.weather[0].icon || "01d"); // Fallback to default if null
         const temperatureData = weatherData["main"]["temp"];
         if (temperatureData > 50) {
           setTemperature(temperatureData - 273.15);
@@ -123,20 +131,24 @@ const HomePage = () => {
   useEffect(() => {
     const date = new Date();
     const weekdays = [
-      "Chủ Nhật",
-      "Thứ Hai",
-      "Thứ Ba",
-      "Thứ Tư",
-      "Thứ Năm",
-      "Thứ Sáu",
-      "Thứ Bảy",
+      i18n.t("days.sun"),
+      i18n.t("days.mon"),
+      i18n.t("days.tue"),
+      i18n.t("days.wed"),
+      i18n.t("days.thu"),
+      i18n.t("days.fri"),
+      i18n.t("days.sat"),
     ];
     const weekday = weekdays[date.getDay()];
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
-    setCurrentDate(`${weekday}, ngày ${day}/${month}/${year}`);
+    setCurrentDate(`${weekday}, ${i18n.t("days.day")} ${day}/${month}/${year}`);
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllProductsThunk());
+  }, [dispatch]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -162,10 +174,13 @@ const HomePage = () => {
           AppStyles.shadowItem,
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
+        onPress={() => {
+          router.push(`/(app)/service/${item.id}`);
+        }}
       >
         <Image
           source={
-            item.image_url
+            item.image_url && item.image_url !== "null"
               ? { uri: item.image_url }
               : require("@/assets/images/home/service1.png")
           }
@@ -186,38 +201,96 @@ const HomePage = () => {
     );
   };
 
-  const renderSkeletonContent = () => (
-    <View>
-      <SkeletonView height={200} style={{ marginBottom: Spacings.s4 }} />
-      <SkeletonView template={SkeletonView.templates.LIST_ITEM} times={3} />
-      <SkeletonView height={200} style={{ marginVertical: Spacings.s4 }} />
-      <SkeletonView template={SkeletonView.templates.LIST_ITEM} times={2} />
-    </View>
-  );
-
   const renderContent = () => (
-    <>
+    <View flex>
       <RenderCarousel banner={banner} />
       <RenderCategory cateData={cateArr} />
       {servicesList && servicesList.data && servicesList.data.length > 0 && (
         <RenderSection
-          title="Dịch vụ nổi bật"
+          title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={renderServicesItem}
-          onPressMore={() => {
-            // Xử lý khi nhấn "Xem thêm"
-          }}
-        />
-      )}
-      {servicesList && servicesList.data && servicesList.data.length > 0 && (
-        <RenderSection
-          title="Sản phẩm nổi bật"
-          data={servicesList.data}
-          renderItem={RenderProductItem}
           onPressMore={() => {}}
         />
       )}
-    </>
+      {products && products.length > 0 && (
+        <RenderSection
+          title={i18n.t("home.featured_products")}
+          data={products}
+          renderItem={RenderProductItem}
+          onPressMore={() => router.push("/(app)/(tabs)/home")}
+        />
+      )}
+    </View>
+  );
+
+  const renderSkeletonContent = () => (
+    <View flex paddingH-20>
+      {/* Banner skeleton */}
+      <View marginT-10 marginB-20>
+        <SkeletonView
+          height={160}
+          width={WINDOW_WIDTH - 40}
+          style={{ borderRadius: 12 }}
+        />
+      </View>
+
+      {/* Category skeleton */}
+      <View row centerH marginB-20>
+        {Array(6)
+          .fill(0)
+          .map((_, index) => (
+            <View key={index} center marginH-12>
+              <SkeletonView
+                height={48}
+                width={48}
+                style={{ borderRadius: 24 }}
+              />
+              <SkeletonView height={15} width={40} style={{ marginTop: 5 }} />
+            </View>
+          ))}
+      </View>
+
+      {/* Services section skeleton */}
+      <View marginB-20>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <SkeletonView
+                key={index}
+                height={280}
+                width={230}
+                style={{ marginRight: 15, borderRadius: 16 }}
+              />
+            ))}
+        </ScrollView>
+      </View>
+
+      {/* Products section skeleton */}
+      <View>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {Array(4)
+            .fill(0)
+            .map((_, index) => (
+              <SkeletonView
+                key={index}
+                height={270}
+                width={150}
+                style={{ marginRight: 15, borderRadius: 8 }}
+              />
+            ))}
+        </ScrollView>
+      </View>
+    </View>
   );
 
   return (
@@ -259,7 +332,7 @@ const HomePage = () => {
                     <Link href={"/(tabs)/profile" as Href<string>}>
                       <Text h2_bold>Đức Lộc</Text>
                     </Link>
-                    <Text h3>Allure Spa chúc bạn buổi sáng vui vẻ!</Text>
+                    <Text h3>{i18n.t("greeting.morning")}</Text>
                   </View>
                 </View>
                 <View row gap-15 marginL-auto>
@@ -305,6 +378,7 @@ const HomePage = () => {
                       }}
                       width={40}
                       height={40}
+                      defaultSource={require("@/assets/images/home/weather/01d.png")}
                     />
                     <Text marginL-5 text60>
                       {temperature.toFixed(0)}°C
@@ -349,7 +423,7 @@ const HomePage = () => {
               ]}
             >
               <Text h0_bold color="#717658" marginB-10>
-                Khám phá
+                {i18n.t("home.discover")}
               </Text>
               <AppSearch isHome style={{ marginBottom: 15 }} />
             </Animated.View>
@@ -366,9 +440,7 @@ const HomePage = () => {
             paddingBottom: Platform.OS === "ios" ? 70 : 60,
           }}
         >
-          <SkeletonView showContent={!isLoading} renderContent={renderContent}>
-            {renderSkeletonContent()}
-          </SkeletonView>
+          {isLoading ? renderSkeletonContent() : renderContent()}
         </Animated.ScrollView>
       </View>
     </SafeAreaView>
