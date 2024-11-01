@@ -23,6 +23,7 @@ import CommentIcon from "@/assets/icons/comment.svg";
 import TicketIcon from "@/assets/icons/ticket.svg";
 import SunIcon from "@/assets/icons/sun.svg";
 import {
+  MediaResponeModelParams,
   ServiceDetailResponeModel,
   ServiceDetailResponeParams,
 } from "@/types/service.type";
@@ -45,15 +46,21 @@ const ServiceDetailPage = () => {
   const [combo, setCombo] = useState<number>(0);
   const [images, setImages] = useState<{ uri: string }[]>([]);
   const [comboName, setComboName] = useState<string>("");
+  const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
+  const windowWidth = Dimensions.get("window").width;
+
 
   useEffect(() => {
     const getServiceDetail = async () => {
       const res: ServiceDetailResponeParams = (
         await AxiosInstance().get(`services/${id}`)
       ).data;
+      
       if (res.status_code === 200 && res.data) {
         setService(res.data);
         setPrice(res.data.single_price);
+        setMedia(res.data.media);
+        if(res.data.media.length === 0) alert("Không có media hình ảnh")
       }
       setIsLoading(false);
     };
@@ -95,54 +102,64 @@ const ServiceDetailPage = () => {
     }
   }, [combo]);
 
+<<<<<<< HEAD
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View useSafeArea flex bg-$white>
         <AppBar back title={i18n.t("service.service_details")} />
         {isLoading ? (
           <View>
+=======
+  const renderSkeletonView = () => {
+    return (
+      <View flex >
+>>>>>>> 5f04b86 (Add BookingPage)
             <SkeletonView
-              template="listItem"
+              height={200}
+              width={windowWidth * 0.9}
               style={{
-                width: screenWidth * 0.9,
-                height: 200,
-                marginTop: 10,
-                alignSelf: "center",
                 borderRadius: 20,
-                marginBottom: 20,
-              }}
-            />
-            <SkeletonView
-              template="listItem"
-              style={{
-                width: screenWidth * 0.9,
-                height: 30,
-                marginTop: 10,
                 alignSelf: "center",
-                marginBottom: 10,
-              }}
-            />
-            <SkeletonView
-              template="listItem"
-              style={{
-                width: screenWidth * 0.9,
-                height: 20,
                 marginTop: 10,
-                alignSelf: "center",
-                marginBottom: 10,
               }}
             />
-            <SkeletonView
-              template="listItem"
-              style={{
-                width: screenWidth * 0.9,
-                height: 50,
-                marginTop: 10,
-                alignSelf: "center",
-                marginBottom: 20,
-              }}
-            />
+            <View padding-20 gap-10 flex>
+                <SkeletonView height={24} width={windowWidth * 0.7} />
+                <SkeletonView
+                  height={20}
+                  width={windowWidth * 0.4}
+                  marginT-10
+                />
+                <SkeletonView
+                  height={20}
+                  width={windowWidth * 0.6}
+                  marginT-10
+                />
+                <SkeletonView
+                  height={30}
+                  width={windowWidth * 0.9}
+                  style={{
+                    alignSelf: "center",
+                    marginTop: 90,
+                  }}
+                />
+              </View>
+              <SkeletonView
+                  height={50}
+                  width={windowWidth * 0.9}
+                  style={{
+                    alignSelf: "center",
+                    marginBottom: 10,
+                  }}
+                />
           </View>
+    )
+  }
+  return (
+      <View useSafeArea flex bg-$white>
+        <AppBar back title={i18n.t("service.service_details")} />
+        {isLoading ? (
+          renderSkeletonView()
         ) : (
           service && (
             <View flex>
@@ -209,7 +226,9 @@ const ServiceDetailPage = () => {
                       </Text>
                       <View flex right>
                         <TouchableOpacity
-                          onPress={() => setIsFavorite(!isFavorite)}
+                          onPress={() => {
+                            alert('Chưa có api thêm vào favorite');
+                            setIsFavorite(!isFavorite)}}
                         >
                           {isFavorite ? (
                             <AntDesign name="heart" size={24} color="black" />
@@ -309,7 +328,7 @@ const ServiceDetailPage = () => {
                 }}
               >
                 <View row gap-30>
-                  <TouchableOpacity center onPress={() => router.push("/cart")}>
+                  <TouchableOpacity center onPress={() => alert(i18n.t("system.fud"))}>
                     <View center marginB-4>
                       <Feather name="phone-call" size={24} color="#AFAFAF" />
                     </View>
@@ -327,9 +346,11 @@ const ServiceDetailPage = () => {
                 </View>
                 <View flex>
                   <AppButton
-                    title={"Đặt lịch ngay"}
+                    title={i18n.t("service.book_now")}
                     type="primary"
-                    onPress={() => {}}
+                    onPress={() => {
+                      router.push({ pathname: "/booking/[id]", params: { id: service.id } });
+                    }}
                   />
                 </View>
               </View>
@@ -337,7 +358,6 @@ const ServiceDetailPage = () => {
           )
         )}
       </View>
-    </SafeAreaView>
   );
 };
 
