@@ -1,14 +1,16 @@
-import React, { useState } from "react";
-import { Colors, View, Text } from "react-native-ui-lib";
+import { ActivityIndicator } from 'react-native';
+import AppDialog from '../dialog/AppDialog';
+import Colors from '@/constants/Colors';
+import i18n from '@/languages/i18n';
+import { useState } from "react";
+import { View, Text } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
-import i18n from "@/languages/i18n";
 import AppButton from "@/components/buttons/AppButton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { loginThunk } from "@/redux/features/auth/loginThunk";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { router } from "expo-router";
-import { ActivityIndicator, Alert } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
@@ -21,8 +23,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   const [loading, setLoading] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogType, setDialogType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+  const [dialogTitle, setDialogTitle] = useState('');
+  const [dialogDescription, setDialogDescription] = useState('');
   const dispatch = useDispatch<AppDispatch>();
   const { signIn } = useAuth();
+
+  const showDialog = (type: 'success' | 'error' | 'info' | 'warning', title: string, description: string) => {
+    setDialogType(type);
+    setDialogTitle(title);
+    setDialogDescription(description);
+    setDialogVisible(true);
+  };
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
@@ -68,11 +81,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
 
     try {
       await signIn({ phoneNumber, password });
+      const resultAction = await dispatch(loginThunk({ phoneNumber, password }));
+      const result = unwrapResult(resultAction);
+
+      if (result && result.success) {
+        showDialog('success', i18n.t('auth.login.success'), result.message);
+        router.replace('/(tabs)/home');
+      } else {
+        showDialog('error', i18n.t('auth.login.error'), result?.message ?? i18n.t('auth.login.unknown_error'));
+      }
     } catch (error: any) {
-      Alert.alert(
-        i18n.t("auth.login.error"),
-        error.message || i18n.t("auth.login.unknown_error")
-      );
+      if (error.response && error.response.status === 503) {
+        showDialog('error', i18n.t('auth.login.server_error'), i18n.t('auth.login.server_error'));
+      } else if (error.status === 500) {
+        showDialog('error', i18n.t('auth.login.error'), i18n.t('auth.login.invalid_credentials'));
+      } else {
+        showDialog('error', i18n.t('auth.login.error'), error.message || i18n.t('auth.login.unknown_error'));
+      }
     } finally {
       setLoading(false);
     }
@@ -146,6 +171,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
           onPress={onBackPress}
         />
       </View>
+
+      <AppDialog
+        visible={dialogVisible}
+        severity={dialogType}
+        title={dialogTitle}
+        description={dialogDescription}
+        closeButton={true}
+        onClose={() => setDialogVisible(false)}
+      />
     </>
   );
 };

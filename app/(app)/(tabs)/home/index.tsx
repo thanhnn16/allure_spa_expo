@@ -29,7 +29,7 @@ import CartIcon from "@/assets/icons/shopping_bag.svg";
 import { RootState } from "@/redux/store";
 import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SkeletonView, Spacings } from "react-native-ui-lib";
+import { SkeletonView } from "react-native-ui-lib";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import i18n from "@/languages/i18n";
 
@@ -46,7 +46,7 @@ const HomePage = () => {
   const [services, setServices] = useState<any[]>([]);
   const [temperature, setTemperature] = useState<number>(0);
   const [location, setLocation] = useState<LocationsType | null>(null);
-  const [weatherIcon, setWeatherIcon] = useState<string>("");
+  const [weatherIcon, setWeatherIcon] = useState<string>("01d"); // Set default icon
   const [currentDate, setCurrentDate] = useState<string>("");
   const [banner, setBanner] = useState([
     { uri: "https://intphcm.com/data/upload/banner-spa-cta.jpg" },
@@ -110,7 +110,7 @@ const HomePage = () => {
         }
 
         setLocation(nearestProvince);
-        setWeatherIcon(weatherData.weather[0].icon);
+        setWeatherIcon(weatherData.weather[0].icon || "01d"); // Fallback to default if null
         const temperatureData = weatherData["main"]["temp"];
         if (temperatureData > 50) {
           setTemperature(temperatureData - 273.15);
@@ -175,12 +175,12 @@ const HomePage = () => {
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
         onPress={() => {
-          router.push({ pathname: "/service/[id]", params: { id: item.id } });
+          router.push(`/(app)/service/${item.id}`);
         }}
       >
         <Image
           source={
-            item.image_url
+            item.image_url && item.image_url !== "null"
               ? { uri: item.image_url }
               : require("@/assets/images/home/service1.png")
           }
@@ -218,7 +218,7 @@ const HomePage = () => {
           title={i18n.t("home.featured_products")}
           data={products}
           renderItem={RenderProductItem}
-          onPressMore={() => router.push("/products")}
+          onPressMore={() => router.push("/(app)/(tabs)/home")}
         />
       )}
     </View>
@@ -378,6 +378,7 @@ const HomePage = () => {
                       }}
                       width={40}
                       height={40}
+                      defaultSource={require("@/assets/images/home/weather/01d.png")}
                     />
                     <Text marginL-5 text60>
                       {temperature.toFixed(0)}°C

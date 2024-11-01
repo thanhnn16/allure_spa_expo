@@ -159,16 +159,46 @@
         "developer": "開発者: Allure Spa",
         "version": "バージョン: 1.0.0",
         "date_release": "発売日: 01/01/2021"
-    } ,
-    "deleteaccount":{
+    },
+    "deleteaccount": {
         "title": "アカウントを削除",
         "description": "アカウントを削除すると、すべてのデータが失われます。 この操作は取り消すことができません。 本当にアカウントを削除しますか？",
         "placeholder": "内容を入力してください",
-        "next": "次へ", 
+        "next": "次へ",
         "description2": "データをメールに送信するよう当社に依頼してください。",
-        "verify_yes":"はい、データを電子メールに送信します",
-        "verify_no":"結構です！"
-
+        "verify_yes": "はい、データを電子メールに送信します",
+        "verify_no": "結構です！"
+    },
+    "address": {
+        "title": "住所",
+        "add_address": "住所を追加",
+        "edit_address": "住所を編集",
+        "delete_address": "住所を削除",
+        "default_address": "デフォルトの住所",
+        "set_default": "デフォルトに設定",
+        "save_address": "住所を保存",
+        "delete": "削除",
+        "edit": "編集",
+        "add": "追加",
+        "note": "ノート",
+        "address": "住所",
+        "home": "家",
+        "company": "会社",
+        "other": "その他",
+        "name": "名前",
+        "phone": "電話",
+        "save": "保存",
+        "cancel": "キャンセル",
+        "add_new_address": "新しい住所を追加",
+        "delete_address_confirm": "この住所を削除してもよろしいですか？",
+        "delete_address_success": "住所の削除に成功しました",
+        "delete_address_fail": "住所の削除に失敗しました",
+        "add_address_success": "住所の追加に成功しました",
+        "add_address_fail": "住所の追加に失敗しました",
+        "edit_address_success": "住所の編集に成功しました",
+        "edit_address_fail": "住所の編集に失敗しました",
+        "verify_yes": "はい、データを電子メールに送信します",
+        "verify_no": "結構です！"
     },
     "days": {
         "mon": "月曜日",
@@ -184,8 +214,6 @@
         "featured_services": "優れたサービス",
         "featured_products": "優れた製品",
         "discover": "発見する"
-
-
     },
     "greeting": {
         "morning": "Allure Spa はあなたの幸せな朝を願っています。",
@@ -197,7 +225,6 @@
         "combo5": "コンボパック5",
         "combo10": "1コンボパック10",
         "select_combo": "コンボパッケージを選択してください"
-
     },
     "service": {
         "service_details": "サービス内容",

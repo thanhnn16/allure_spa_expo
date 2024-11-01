@@ -1,5 +1,5 @@
 import AppBar from "@/components/app-bar/AppBar";
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, Dimensions } from "react-native";
 import {
@@ -47,7 +47,6 @@ const ServiceDetailPage = () => {
   const [images, setImages] = useState<{ uri: string }[]>([]);
   const [comboName, setComboName] = useState<string>("");
   const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
-  const windowWidth = Dimensions.get("window").width;
 
 
   useEffect(() => {
@@ -104,10 +103,10 @@ const ServiceDetailPage = () => {
 
   const renderSkeletonView = () => {
     return (
-      <View flex >
+      <View flex>
             <SkeletonView
               height={200}
-              width={windowWidth * 0.9}
+              width={screenWidth * 0.9}
               style={{
                 borderRadius: 20,
                 alignSelf: "center",
@@ -115,20 +114,20 @@ const ServiceDetailPage = () => {
               }}
             />
             <View padding-20 gap-10 flex>
-                <SkeletonView height={24} width={windowWidth * 0.7} />
+                <SkeletonView height={24} width={screenWidth * 0.7} />
                 <SkeletonView
                   height={20}
-                  width={windowWidth * 0.4}
+                  width={screenWidth * 0.4}
                   marginT-10
                 />
                 <SkeletonView
                   height={20}
-                  width={windowWidth * 0.6}
+                  width={screenWidth * 0.6}
                   marginT-10
                 />
                 <SkeletonView
                   height={30}
-                  width={windowWidth * 0.9}
+                  width={screenWidth * 0.9}
                   style={{
                     alignSelf: "center",
                     marginTop: 90,
@@ -137,7 +136,7 @@ const ServiceDetailPage = () => {
               </View>
               <SkeletonView
                   height={50}
-                  width={windowWidth * 0.9}
+                  width={screenWidth * 0.9}
                   style={{
                     alignSelf: "center",
                     marginBottom: 10,
@@ -147,6 +146,7 @@ const ServiceDetailPage = () => {
     )
   }
   return (
+    <SafeAreaView style={{ flex: 1 }}>
       <View useSafeArea flex bg-$white>
         <AppBar back title={i18n.t("service.service_details")} />
         {isLoading ? (
@@ -340,7 +340,7 @@ const ServiceDetailPage = () => {
                     title={i18n.t("service.book_now")}
                     type="primary"
                     onPress={() => {
-                      router.push({ pathname: "/booking/[id]", params: { id: service.id } });
+                      router.push(`/booking/${service.id}`);
                     }}
                   />
                 </View>
@@ -349,6 +349,7 @@ const ServiceDetailPage = () => {
           )
         )}
       </View>
+    </SafeAreaView>
   );
 };
 

@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>allurespa</string>
-          <string>com.faithnippon.allurespa</string>
+          <string>com.faith-nippon.allure-spa</string>
         </array>
       </dict>
       <dict>

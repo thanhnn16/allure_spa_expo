@@ -133,7 +133,7 @@
         "dowload_information": "Download Information",
         "delete_account": "Delete Account",
         "change_info": "Change Information"
-       
+
     },
 
     "voucher": {
@@ -148,12 +148,12 @@
     },
     "reward":{
         "title": "Exchange reward",
-       "cosmetic" : "Cosmetic",
-       "spa": "Spa",
-       "changed": "475 changed",
-       "change_now": "Change now",
-       "title_cosmetic": "Lipocollage Lamellar Cleansing Copy",
-       "title_spa": "Treatment Photo Facial"
+        "cosmetic" : "Cosmetic",
+        "spa": "Spa",
+        "changed": "475 changed",
+        "change_now": "Change now",
+        "title_cosmetic": "Lipocollage Lamellar Cleansing Copy",
+        "title_spa": "Treatment Photo Facial"
     },
     "aboutapp": {
         "title": "About App",
@@ -172,11 +172,39 @@
         "description2": "You should ask us to send the data to your email.",
         "verify_yes":"Yes, send my data to email",
         "verify_no":"No, thanks!"
-
+    },
+    "address": {
+        "title": "Address",
+        "add_address": "Add Address", 
+        "edit_address": "Edit Address",
+        "delete_address": "Delete Address",
+        "default_address": "Default Address",
+        "set_default": "Set as default",
+        "save_address": "Save Address",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "note": "Note",
+        "address": "Address",
+        "home": "Home",
+        "company": "Company", 
+        "other": "Other",
+        "name": "Name",
+        "phone": "Phone",
+        "save": "Save",
+        "cancel": "Cancel",
+        "add_new_address": "Add new address",
+        "delete_address_confirm": "Are you sure you want to delete this address?",
+        "delete_address_success": "Delete address successfully",
+        "delete_address_fail": "Delete address failed",
+        "add_address_success": "Add address successfully",
+        "add_address_fail": "Add address failed",
+        "edit_address_success": "Edit address successfully",
+        "edit_address_fail": "Edit address failed"
     },
     "days": {
         "mon": "Mon",
-        "tue": "Tue",
+        "tue": "Tue", 
         "wed": "Wed",
         "thu": "Thu",
         "fri": "Fri",
@@ -199,11 +227,10 @@
         "combo5": "Combo package 5",
         "combo10": "Combo package 10",
         "select_combo": "Select combo package"
-
     },
     "service": {
         "service_details": "Service details",
-        "treatment": "Treatments",
+        "treatment": "Treatments", 
         "contact": "Contact",
         "book_now": "Book now",
         "make_appointment": "Make an appointment",
