@@ -1,4 +1,4 @@
-import {ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import AppDialog from '../dialog/AppDialog';
 import Colors from '@/constants/Colors';
 import i18n from '@/languages/i18n';
