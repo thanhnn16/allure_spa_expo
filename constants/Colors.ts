@@ -10,7 +10,7 @@ const colorScheme = {
   primary: '#717658',
   secondary: '#A85A29',
   gray: '#AAAAAA',
-  
+
 };
 
 Colors.loadColors(colorScheme);
