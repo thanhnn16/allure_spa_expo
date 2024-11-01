@@ -1,8 +1,8 @@
 import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
-import RenderCarousel from "@/components/home/CarouselBanner";
-import RenderCategory from "@/components/home/CategoryItem";
-import RenderProductItem from "@/components/home/ProductItem";
-import RenderSection from "@/components/home/renderSection";
+import CarouselBanner from "@/components/home/CarouselBanner";
+import CategoryItem from "@/components/home/CategoryItem";
+import ProductItem from "@/components/home/ProductItem";
+import SectionContainer from "@/components/home/SectionContainer";
 import AppSearch from "@/components/inputs/AppSearch";
 import { AppStyles } from "@/constants/AppStyles";
 import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
@@ -29,7 +29,7 @@ import CartIcon from "@/assets/icons/shopping_bag.svg";
 import { RootState } from "@/redux/store";
 import { BlurView } from "expo-blur";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { SkeletonView, Spacings } from "react-native-ui-lib";
+import { SkeletonView } from "react-native-ui-lib";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import i18n from "@/languages/i18n";
 
@@ -203,10 +203,10 @@ const HomePage = () => {
 
   const renderContent = () => (
     <View flex>
-      <RenderCarousel banner={banner} />
-      <RenderCategory cateData={cateArr} />
+      <CarouselBanner banner={banner} />
+      <CategoryItem cateData={cateArr} />
       {servicesList && servicesList.data && servicesList.data.length > 0 && (
-        <RenderSection
+        <SectionContainer
           title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={renderServicesItem}
@@ -214,11 +214,11 @@ const HomePage = () => {
         />
       )}
       {products && products.length > 0 && (
-        <RenderSection
+        <SectionContainer
           title={i18n.t("home.featured_products")}
           data={products}
-          renderItem={RenderProductItem}
-          onPressMore={() => router.push("/products")}
+          renderItem={ProductItem}
+          onPressMore={() => router.push("/(app)/products" as Href<string>)}
         />
       )}
     </View>

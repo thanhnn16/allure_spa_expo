@@ -1,5 +1,5 @@
 import AppBar from "@/components/app-bar/AppBar";
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, Dimensions } from "react-native";
 import {
@@ -60,7 +60,7 @@ const ServiceDetailPage = () => {
         setService(res.data);
         setPrice(res.data.single_price);
         setMedia(res.data.media);
-        if(res.data.media.length === 0) alert("Không có media hình ảnh")
+        if(res.data.media.length === 0) alert("Không có media hình ảnh")
       }
       setIsLoading(false);
     };
@@ -102,18 +102,9 @@ const ServiceDetailPage = () => {
     }
   }, [combo]);
 
-<<<<<<< HEAD
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View useSafeArea flex bg-$white>
-        <AppBar back title={i18n.t("service.service_details")} />
-        {isLoading ? (
-          <View>
-=======
   const renderSkeletonView = () => {
     return (
-      <View flex >
->>>>>>> 5f04b86 (Add BookingPage)
+      <View flex>
             <SkeletonView
               height={200}
               width={windowWidth * 0.9}
@@ -349,7 +340,7 @@ const ServiceDetailPage = () => {
                     title={i18n.t("service.book_now")}
                     type="primary"
                     onPress={() => {
-                      router.push({ pathname: "/booking/[id]", params: { id: service.id } });
+                      router.push(`/(app)/booking/${id}` as Href<string>)
                     }}
                   />
                 </View>
