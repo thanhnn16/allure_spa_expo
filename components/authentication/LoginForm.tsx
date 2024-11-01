@@ -1,30 +1,34 @@
-import React, { useState } from 'react';
-import { View, TextInput, Text, ActivityIndicator } from 'react-native';
-import { useDispatch } from 'react-redux';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { router } from 'expo-router';
+import {ActivityIndicator } from 'react-native';
 import AppDialog from '../dialog/AppDialog';
-
-import Colors from '../../constants/Colors';
+import Colors from '@/constants/Colors';
 import i18n from '@/languages/i18n';
-import AppButton from '../buttons/AppButton';
-import {loginThunk} from "@/redux";
+import { useState } from "react";
+import { View, Text } from "react-native-ui-lib";
+import { TextInput } from "@/components/inputs/TextInput";
+import AppButton from "@/components/buttons/AppButton";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { loginThunk } from "@/redux/features/auth/loginThunk";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { router } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormProps {
   onBackPress: () => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [phoneError, setPhoneError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogType, setDialogType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
   const [dialogTitle, setDialogTitle] = useState('');
   const [dialogDescription, setDialogDescription] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const { signIn } = useAuth();
 
   const showDialog = (type: 'success' | 'error' | 'info' | 'warning', title: string, description: string) => {
     setDialogType(type);
@@ -35,33 +39,33 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
-      setPhoneError(i18n.t('auth.login.empty_phone_number'));
+      setPhoneError(i18n.t("auth.login.empty_phone_number"));
       return false;
     }
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(phone)) {
-      setPhoneError(i18n.t('auth.login.invalid_phone_number'));
+      setPhoneError(i18n.t("auth.login.invalid_phone_number"));
       return false;
     }
-    setPhoneError('');
+    setPhoneError("");
     return true;
   };
 
   const validatePassword = (pass: string) => {
     if (!pass) {
-      setPasswordError(i18n.t('auth.login.empty_password'));
+      setPasswordError(i18n.t("auth.login.empty_password"));
       return false;
     }
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;
     if (specialCharRegex.test(pass)) {
-      setPasswordError(i18n.t('auth.login.invalid_password_special_char'));
+      setPasswordError(i18n.t("auth.login.invalid_password_special_char"));
       return false;
     }
     if (pass.length < 8) {
-      setPasswordError(i18n.t('auth.login.invalid_password_length'));
+      setPasswordError(i18n.t("auth.login.invalid_password_length"));
       return false;
     }
-    setPasswordError('');
+    setPasswordError("");
     return true;
   };
 
@@ -76,6 +80,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
     setLoading(true);
 
     try {
+      await signIn({ phoneNumber, password });
       const resultAction = await dispatch(loginThunk({ phoneNumber, password }));
       const result = unwrapResult(resultAction);
 
@@ -99,55 +104,83 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   };
 
   return (
-      <>
-        <TextInput
-            title={i18n.t('auth.register.phone_number')}
-            placeholder={i18n.t('auth.register.phone_number')}
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            keyboardType="phone-pad"
-            onBlur={() => validatePhoneNumber(phoneNumber)}
+    <>
+      <TextInput
+        title={i18n.t("auth.register.phone_number")}
+        placeholder={i18n.t("auth.register.phone_number")}
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
+        onBlur={() => validatePhoneNumber(phoneNumber)}
+      />
+      {phoneError ? <Text style={{ color: "red" }}>{phoneError}</Text> : null}
+
+      <TextInput
+        title={i18n.t("auth.login.password")}
+        placeholder={i18n.t("auth.login.password")}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+        onBlur={() => validatePassword(password)}
+      />
+      {passwordError ? (
+        <Text style={{ color: "red" }}>{passwordError}</Text>
+      ) : null}
+
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          marginTop: 20,
+        }}
+      >
+        <Text style={{ color: Colors.primary, fontSize: 16 }}>
+          {i18n.t("auth.login.forgot_password")}
+        </Text>
+      </View>
+
+      <View marginT-20 marginB-20>
+        <AppButton
+          type="primary"
+          onPress={handleLogin}
+          disabled={loading}
+          buttonStyle={{
+            backgroundColor: loading ? Colors.grey60 : Colors.primary,
+          }}
+          titleStyle={{ color: Colors.background }}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color={Colors.primary} />
+          ) : (
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: 20,
+                fontFamily: "OpenSans-Regular",
+                fontWeight: "bold",
+              }}
+            >
+              {i18n.t("auth.login.title")}
+            </Text>
+          )}
+        </AppButton>
+        <AppButton
+          title={i18n.t("back")}
+          type="outline"
+          marginT-12
+          onPress={onBackPress}
         />
-        {phoneError ? <Text style={{ color: 'red' }}>{phoneError}</Text> : null}
+      </View>
 
-        <TextInput
-            title={i18n.t('auth.login.password')}
-            placeholder={i18n.t('auth.login.password')}
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            onBlur={() => validatePassword(password)}
-        />
-        {passwordError ? <Text style={{ color: 'red' }}>{passwordError}</Text> : null}
-
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 20 }}>
-          <Text style={{ color: Colors.primary, fontSize: 16 }}>{i18n.t('auth.login.forgot_password')}</Text>
-        </View>
-
-        <View marginT-20 marginB-20>
-          <AppButton
-              type="primary"
-              onPress={handleLogin}
-              disabled={loading}
-              buttonStyle={{ backgroundColor: loading ? Colors.grey60 : Colors.primary }}
-              titleStyle={{ color: Colors.background }}
-          >
-            {loading ? <ActivityIndicator size="small" color={Colors.primary} /> : <Text style={{ color: '#FFFFFF', fontSize: 20, fontFamily: 'OpenSans-Regular', fontWeight: 'bold' }}>
-              {i18n.t('auth.login.title')}
-            </Text>}
-          </AppButton>
-          <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={onBackPress} />
-        </View>
-
-        <AppDialog
-            visible={dialogVisible}
-            severity={dialogType}
-            title={dialogTitle}
-            description={dialogDescription}
-            closeButton={true}
-            onClose={() => setDialogVisible(false)}
-        />
-      </>
+      <AppDialog
+        visible={dialogVisible}
+        severity={dialogType}
+        title={dialogTitle}
+        description={dialogDescription}
+        closeButton={true}
+        onClose={() => setDialogVisible(false)}
+      />
+    </>
   );
 };
 

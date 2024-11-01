@@ -1,14 +1,14 @@
 import "@/constants/Colors";
 import "@/constants/Typography";
 import LanguageManager from "@/languages/LanguageManager";
-import {store} from "@/redux";
-import {persistor} from "@/redux/store";
-import {useFonts} from "expo-font";
-import {Slot, SplashScreen, Stack} from "expo-router";
-import {useEffect} from "react";
-import {SafeAreaProvider} from "react-native-safe-area-context";
-import {Provider} from "react-redux";
-import {PersistGate} from "redux-persist/integration/react";
+import { store } from "@/redux";
+import { persistor } from "@/redux/store";
+import { useFonts } from "expo-font";
+import { Slot, SplashScreen, Stack } from "expo-router";
+import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 
 export default function RootLayout() {
@@ -52,17 +52,16 @@ export default function RootLayout() {
   }
 
   return (
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <SafeAreaProvider>
-            <LanguageManager>
-              <Stack screenOptions={{headerShown: false}}>
-                <Stack.Screen name="(auth)"/>
-                <Stack.Screen name="(app)"/>
-              </Stack>
-            </LanguageManager>
-          </SafeAreaProvider>
-        </PersistGate>
-      </Provider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          <LanguageManager>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(auth)" />
+            </Stack>
+          </LanguageManager>
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   );
 }

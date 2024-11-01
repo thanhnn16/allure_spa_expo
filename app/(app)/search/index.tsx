@@ -6,10 +6,9 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Text, View, SkeletonView } from "react-native-ui-lib";
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
-import SearchAppBar from "@/components/app-bar/SearchAppBar";
 import AppSearch from "@/components/inputs/AppSearch";
 import SearchListItem from "@/components/list/SearchListItem";
 import { searchItems } from "@/redux/features/search/searchThunk";

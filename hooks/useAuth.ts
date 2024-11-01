@@ -1,59 +1,58 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
-import { 
-  login, 
-  register, 
-  logout, 
-  zaloLogin,
-  setGuestUser, 
-  clearGuestUser 
-} from '@/redux/features/auth/authSlice';
+import { loginThunk } from '@/redux/features/auth/loginThunk';
+import { registerThunk } from '@/redux/features/auth/registerThunk';
+import { logoutThunk } from '@/redux/features/auth/logoutThunk';
+import { setGuestUser, clearGuestUser } from '@/redux/features/auth/authSlice';
 import { router } from 'expo-router';
 import { LoginCredentials, RegisterCredentials } from '@/types/auth.type';
 import AuthService from '@/utils/services/auth/authService';
+import { useZaloAuth } from './useZaloAuth';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, isAuthenticated, isGuest, isLoading, error } = useSelector(
+  const { user, token, isAuthenticated, isGuest, isLoading, error } = useSelector(
     (state: RootState) => state.auth
   );
+  const { login: zaloLogin } = useZaloAuth();
 
   const signIn = async (credentials: LoginCredentials) => {
     try {
-      await dispatch(login(credentials)).unwrap();
-      router.replace('/(app)');
-    } catch (error) {
-      console.error('Login failed:', error);
+      const result = await dispatch(loginThunk(credentials)).unwrap();
+      if (result) {
+        router.replace('/(app)/(tabs)/home');
+        return result;
+      }
+    } catch (error: any) {
       throw error;
     }
   };
 
   const signUp = async (credentials: RegisterCredentials) => {
     try {
-      await dispatch(register(credentials)).unwrap();
-      router.replace('/(app)');
-    } catch (error) {
-      console.error('Registration failed:', error);
+      const result = await dispatch(registerThunk(credentials)).unwrap();
+      if (result) {
+        router.replace('/(app)/(tabs)/home');
+        return result;
+      }
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
+  const signInWithZalo = async () => {
+    try {
+      await zaloLogin();
+    } catch (error: any) {
       throw error;
     }
   };
 
   const signOut = async () => {
     try {
-      await dispatch(logout()).unwrap();
+      await dispatch(logoutThunk()).unwrap();
       router.replace('/(auth)');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      throw error;
-    }
-  };
-
-  const signInWithZalo = async (accessToken: string) => {
-    try {
-      await dispatch(zaloLogin(accessToken)).unwrap();
-      router.replace('/(app)');
-    } catch (error) {
-      console.error('Zalo login failed:', error);
+    } catch (error: any) {
       throw error;
     }
   };
@@ -62,9 +61,8 @@ export const useAuth = () => {
     try {
       await AuthService.loginAsGuest();
       dispatch(setGuestUser());
-      router.replace('/(app)');
-    } catch (error) {
-      console.error('Guest login failed:', error);
+      router.replace('/(app)/(tabs)/home');
+    } catch (error: any) {
       throw error;
     }
   };
@@ -76,6 +74,7 @@ export const useAuth = () => {
 
   return {
     user,
+    token,
     isAuthenticated,
     isGuest,
     isLoading,
@@ -83,8 +82,8 @@ export const useAuth = () => {
     signIn,
     signUp,
     signOut,
-    signInWithZalo,
     signInAsGuest,
-    signOutGuest
+    signOutGuest,
+    signInWithZalo
   };
 };

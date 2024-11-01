@@ -39,6 +39,7 @@ class FirebaseService {
   async getFCMToken() {
     try {
       const fcmToken = await messaging().getToken();
+      console.log('FCM token:', fcmToken);
       return fcmToken;
     } catch (error) {
       console.error('Failed to get FCM token:', error);

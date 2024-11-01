@@ -201,5 +201,38 @@
         "add_address_fail": "Add address failed",
         "edit_address_success": "Edit address successfully",
         "edit_address_fail": "Edit address failed"
+    },
+    "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun",
+        "day": "Day"
+    },
+    "home": {
+        "featured_services": "Featured services",
+        "featured_products": "Featured Products",
+        "discover": "Discover"
+    },
+    "gretting": {
+        "morning": "Allure Spa wishes you a good morning!",
+        "afternoon": "Allure Spa wishes you a happy afternoon!",
+        "evening": "Allure Spa wishes you a good evening!"
+    },
+    "package": {
+        "single": "Single package",
+        "combo5": "Combo package 5",
+        "combo10": "Combo package 10",
+        "select_combo": "Select combo package"
+
+    },
+    "service": {
+        "service_details": "Service details",
+        "treatment": "Treatments",
+        "contact": "Contact",
+        "book_now": "Book now"
     }
 }

@@ -12,6 +12,9 @@ web-build/
 
 package-lock.json
 
+firebase/google-services.json
+firebase/GoogleService-Info.plist
+
 expo-env.d.ts
 # macOS
 .DS_Store

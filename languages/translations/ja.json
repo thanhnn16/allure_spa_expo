@@ -196,6 +196,42 @@
         "add_address_success": "住所の追加に成功しました",
         "add_address_fail": "住所の追加に失敗しました",
         "edit_address_success": "住所の編集に成功しました",
-        "edit_address_fail": "住所の編集に失敗しました"
+        "edit_address_fail": "住所の編集に失敗しました",
+        "verify_yes": "はい、データを電子メールに送信します",
+        "verify_no": "結構です！"
+    },
+    "days": {
+        "mon": "月曜日",
+        "tue": "火曜日",
+        "wed": "水曜日",
+        "thu": "木曜日",
+        "fri": "金曜日",
+        "sat": "土曜日",
+        "sun": "日曜日",
+        "day": "日"
+    },
+    "home": {
+        "featured_services": "優れたサービス",
+        "featured_products": "優れた製品",
+        "discover": "発見する"
+
+
+    },
+    "gretting": {
+        "morning": "Allure Spa はあなたの幸せな朝を願っています。",
+        "afternoon": "アリュール スパでは、楽しい午後のひとときをお過ごしいただけますよう願っております。",
+        "evening": "Allure Spa では素敵な夜をお過ごしいただけますようお願いいたします。"
+    },
+    "package": {
+        "single": "単一パッケージ",
+        "combo5": "コンボパック5",
+        "combo10": "1コンボパック10",
+        "select_combo": "コンボパッケージを選択してください"
+    },
+    "service": {
+        "service_details": "サービス内容",
+        "treatment": "処理",
+        "contact": "接触",
+        "book_now": "今すぐスケジュールを立てましょう"
     }
 }
