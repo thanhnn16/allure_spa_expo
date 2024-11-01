@@ -1,322 +1,138 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import { Colors, TextField, Toast, Button } from "react-native-ui-lib";
+import {Image, Text, TextField, TouchableOpacity, View} from "react-native-ui-lib";
+import i18n from "@/languages/i18n";
+import { useNavigation } from "expo-router";
+import BackButton from "@/assets/icons/back.svg";
+import React, {useState} from "react";
+import AppButton from "@/components/buttons/AppButton";
+import {Input} from "postcss";
+import {ScrollView} from "react-native";
 
-const styles = StyleSheet.create({
-    container: {
-        marginTop: 10,
-    },
-    buttonText: {
-        color: '#000',
-    },
-    fieldContainer: {
-        width: '100%', // Full width
-        height: 150,
-        borderWidth: 1,
-        borderColor: '#fff', // Border color
-        backgroundColor: '#fff', // Background color
-        shadowColor: '#fff', // Shadow color
-        shadowOffset: { width: 0, height: 2 }, // Shadow offset
-        elevation: 5, // Elevation for Android shadow
-    },
-    textFieldContainer: {
-        borderBottomColor: '#ccc', // Set underline color
-        borderBottomWidth: 0.5,
-    },
-    container_1: {
-        marginTop: 10,
-    },
-    fieldContainer_1: {
-        width: '100%', // Full width
-        height: 150,
-        borderWidth: 1,
-        borderColor: '#fff', // Border color
-        backgroundColor: '#fff', // Background color
-        shadowColor: '#fff', // Shadow color
-        shadowOffset: { width: 0, height: 2 }, // Shadow offset
-        elevation: 5, // Elevation for Android shadow
-    },
-    textFieldContainer_1: {
-        borderBottomColor: '#ccc', // Set underline color
-        borderBottomWidth: 0.5,
-    },
-    container_2: {
-        marginTop: 10,
-    },
-    fieldContainer_2: {
-        width: '100%', // Full width
-        height: 100,
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#fff', // Border color
-        backgroundColor: '#fff', // Background color
-        shadowColor: '#fff', // Shadow color
-        shadowOffset: { width: 0, height: 2 }, // Shadow offset
-        elevation: 5, // Elevation for Android shadow
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-    },
-    button: {
-        width: 100,
-        padding: 10,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#000',
+
+const Update = () => {
+    const navigation = useNavigation();
+    const [selectedItem, setSelectedItem] = useState<number | null>(null);
+
+
+    const items = [
+        { id: 1, name: i18n.t("address.home") },
+        { id: 2, name: i18n.t("address.company") },
+        { id: 3, name: i18n.t("address.other") },
+    ];
+
+
+
+    const renderItem = (item: { id: number; name: string }, index: number) => {
+        const isSelected = item.id === selectedItem;
+        return (
+            <TouchableOpacity key={item.id} onPress={() => setSelectedItem(item.id)}>
+                <View style={[styles.itemContainer, isSelected ? styles.selectedItem : styles.unselectedItem]}>
+                    <Text style={[styles.itemText, isSelected ? styles.selectedItemText : styles.unselectedItemText]}>
+                        {item.name}
+                    </Text>
+                </View>
+            </TouchableOpacity>
+        );
+    };
+    // @ts-ignore
+    return (
+        <View flex marginT-20>
+            <View row centerV  bg-white>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigation.goBack();
+                        console.log("Back");
+                    }}
+                >
+                    <Image width={30} height={30} source={BackButton} />
+                </TouchableOpacity>
+                <View flex center>
+                    <Text text60 bold marginR-30 style={{ color: "#717658" }}>
+                        {i18n.t("address.edit_address")}
+                    </Text>
+                </View>
+            </View>
+
+            <View flex marginT-10>
+                <View bg-white>
+                    <TextField
+                        value="Nguyen Van A"
+                        onChangeText={() => {}}
+                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
+                    />
+                </View>
+                <View  marginT-2 bg-white>
+                    <TextField
+                        value="0123456789"
+                        onChangeText={() => {}}
+                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
+                    />
+                </View>
+                <View marginT-30 bg-white>
+                    <TextField
+                        value="340 Nguyễn Văn Lượng, Phường 10, Gò Vấp, Hồ Chí Minh, Việt Nam"
+                        onChangeText={() => {}}
+                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
+                    />
+                </View>
+                <View  marginT-2 bg-white>
+                    <TextField
+                        value="House"
+                        onChangeText={() => {}}
+                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
+                    />
+                </View>
+
+                <View  marginT-2 bg-white>
+                    <ScrollView horizontal style={styles.scrollView} showsHorizontalScrollIndicator={false}>
+                        {items.map((item, index) => renderItem(item, index))}
+                    </ScrollView>
+                </View>
+
+                <View marginT-20 bg-white>
+                    <TextField
+                        placeholder={i18n.t("address.note") as string}
+                        onChangeText={() => {}}
+                        multiline
+                        style={{ fontSize: 14, color: "#555555", height: 100, width: "100%", paddingHorizontal: 20, backgroundColor: "#ffffff", textAlignVertical: 'top' }}
+                    />
+                </View>
+            </View>
+
+            <View flex padding-20 style={{ position: "absolute", bottom: 0, width: "100%" }}>
+                <AppButton title={i18n.t('address.save_address')} type="primary" marginT-12  />
+
+                <AppButton title={i18n.t('address.delete_address')} type="outline" marginT-12  />
+
+            </View>
+        </View>
+    );
+};
+
+export default Update;
+
+const styles = {
+    scrollView: {
         backgroundColor: '#fff',
-        marginHorizontal: 5,
-        alignItems: 'center',
+        padding: 20,
     },
-    selectedButton: {
-        backgroundColor: '#717658',
-    },
-    noteContainer: {
-        marginTop: 10,
+    itemContainer: {
         padding: 10,
-        borderWidth: 1,
-        borderColor: '#fff',
-        backgroundColor: '#fff',
-    },
-    noteTextField: {
-        height: 100,
-    },
-    container_3: {
-        marginTop: 10,
-        marginLeft: 10,
+        borderRadius: 10,
         marginRight: 10,
     },
-    fieldContainer_3: {
-        width: '100%', // Full width
-        height: 50,
-        justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: '#fff', // Border color
-        backgroundColor: '#fff', // Background color
-        shadowColor: '#fff', // Shadow color
-        shadowOffset: { width: 0, height: 2 }, // Shadow offset
-        elevation: 5, // Elevation for Android shadow
+    selectedItem: {
+        backgroundColor: '#717658',
     },
-    buttonContainer_3: {
-        flexDirection: 'row',
+    unselectedItem: {
+        backgroundColor: '#F4F4F4',
     },
-    buttonText_3: {
-        color: '#000',
-        textAlign: 'center',
+    itemText: {
+        color: '#717658',
     },
-    shortButton_3: {
-        width: '100%', // Adjust width as needed
-        height: 50,
-        borderRadius: 8,
+    selectedItemText: {
+        color: '#F4F4F4',
     },
-    container_4: {
-        marginTop: 29,
-        justifyContent: 'center',
-        alignItems: 'center',
+    unselectedItemText: {
+        color: '#717658',
     },
-    fieldContainer_4: {
-        width: '100%', // Full width
-        height: 200, // Adjust height as needed
-        borderWidth: 1,
-        borderColor: '#fff', // Border color
-        backgroundColor: '#fff', // Background color
-        shadowColor: '#fff', // Shadow color
-        shadowOffset: { width: 0, height: 2 }, // Shadow offset
-        elevation: 5, // Elevation for Android shadow
-    },
-    buttonContainer_4: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 100,
-        marginLeft: 24,
-        marginRight: 24,
-    },
-    shortButton_4: {
-        width: '100%', // Adjust width as needed
-        height: 55,
-        borderRadius: 8,
-        marginTop: 24, // Increased margin
-        backgroundColor: '#717658', // Set button background color to white
-    },
-    buttonText_1: {
-        color: '#fff',
-    },
-});
-
-export const UpdateAddress = () => {
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [phoneError, setPhoneError] = useState('');
-    const [showToast, setShowToast] = useState(false);
-    const [selectedButton, setSelectedButton] = useState<string | null>(null);
-    const [note, setNote] = useState('');
-
-    const onChangeNote = (value: string) => {
-        setNote(value);
-    };
-
-    const onChangeName = (value: string) => {
-        setName(value);
-    };
-
-    const onChangePhone = (value: string) => {
-        if (/^\d*$/.test(value)) {
-            setPhone(value);
-            setPhoneError('');
-            setShowToast(false);
-        } else {
-            setPhoneError('Phone number is invalid');
-            setShowToast(true);
-        }
-    };
-
-    const handleButtonPress = (button: string) => {
-        setSelectedButton(button);
-    };
-
-    return (
-        <>
-            <View style={styles.container}>
-                <View style={styles.fieldContainer}>
-                    <TextField
-                        placeholder={'Name'}
-                        floatingPlaceholder
-                        onChangeText={onChangeName}
-                        enableErrors
-                        value={name}
-                        validate={['required']}
-                        validationMessage={['Field is required']}
-                        showCharCounter
-                        containerStyle={styles.textFieldContainer} // Apply custom styles
-                    />
-                    <TextField
-                        placeholder={'Phone Number'}
-                        floatingPlaceholder
-                        onChangeText={onChangePhone}
-                        enableErrors
-                        validate={['required']}
-                        validationMessage={['Field is required', phoneError]}
-                        showCharCounter
-                        containerStyle={styles.textFieldContainer} // Apply custom styles
-                        keyboardType="numeric" // Set keyboard type to numeric
-                        value={phone}
-                    />
-                </View>
-                <Toast
-                    visible={showToast}
-                    position="bottom"
-                    backgroundColor="#FF0000"
-                    message={phoneError}
-                    onDismiss={() => setShowToast(false)}
-                    autoDismiss={3000}
-                />
-            </View>
-            <View style={styles.container_1}>
-                <View style={styles.fieldContainer_1}>
-                    <TextField
-                        placeholder={'Chọn địa chỉ'}
-                        floatingPlaceholder
-                        onChangeText={onChangeName}
-                        enableErrors
-                        value={name}
-                        validate={['required']}
-                        validationMessage={['Field is required']}
-                        showCharCounter
-                        containerStyle={styles.textFieldContainer_1} // Apply custom styles
-                    />
-                    <TextField
-                        placeholder={'Toà nhà, số nhà (Không bắt buộc)'}
-                        floatingPlaceholder
-                        onChangeText={onChangePhone}
-                        enableErrors
-                        validate={['required']}
-                        validationMessage={['Field is required', phoneError]}
-                        showCharCounter
-                        containerStyle={styles.textFieldContainer_1} // Apply custom styles
-                        keyboardType="numeric" // Set keyboard type to numeric
-                        value={phone}
-                    />
-                </View>
-                <Toast
-                    visible={showToast}
-                    position="bottom"
-                    backgroundColor="#FF0000"
-                    message={phoneError}
-                    onDismiss={() => setShowToast(false)}
-                    autoDismiss={3000}
-                />
-            </View>
-            <View style={styles.container_2}>
-                <View style={styles.fieldContainer_2}>
-                    <View style={styles.buttonContainer}>
-                        <Button
-                            label="Nhà"
-                            style={[
-                                styles.button,
-                                selectedButton === 'Nhà' && styles.selectedButton
-                            ]}
-                            onPress={() => handleButtonPress('Nhà')}
-                            backgroundColor="#fff" // Set button background color to white
-                            labelStyle={styles.buttonText_3} // Apply text style
-                        />
-                        <Button
-                            label="Công ty"
-                            style={[
-                                styles.button,
-                                selectedButton === 'Công ty' && styles.selectedButton
-                            ]}
-                            onPress={() => handleButtonPress('Công ty')}
-                            backgroundColor="#fff" // Set button background color to white
-                            labelStyle={styles.buttonText_3} // Apply text style
-                        />
-                        <Button
-                            label="Khác"
-                            style={[
-                                styles.button,
-                                selectedButton === 'Khác' && styles.selectedButton
-                            ]}
-                            onPress={() => handleButtonPress('Khác')}
-                            backgroundColor="#fff" // Set button background color to white
-                            labelStyle={{ color: '#000' }} // Set text color to black
-                        />
-                    </View>
-                </View>
-                <View style={styles.noteContainer}>
-                    <TextField
-                        placeholder={'Ghi chú'}
-                        floatingPlaceholder
-                        onChangeText={onChangeNote}
-                        value={note}
-                        multiline
-                        containerStyle={styles.noteTextField} // Apply custom styles
-                    />
-                </View>
-            </View>
-            <View style={styles.container_3}>
-                <View style={styles.fieldContainer_3}>
-                    <Button
-                        label="Xoá địa chỉ"
-                        onPress={() => console.log('pressed')}
-                        style={styles.shortButton_3}
-                        labelStyle={styles.buttonText_3}
-                        backgroundColor="#fff" // Set button background color to white
-                    />
-                </View>
-            </View>
-            <View style={styles.container_4}>
-                <View style={styles.fieldContainer_4}>
-                    <View style={styles.buttonContainer_4}>
-                        <Button
-                            label={'Lưu'}
-                            size={Button.sizes.large}
-                            backgroundColor="#717658" // Set button background color to white
-                            onPress={() => { /* Add your onPress handler here */ }}
-                            style={styles.shortButton_4}
-                            labelStyle={styles.buttonText_1} // Apply text style
-                        />
-                    </View>
-                </View>
-            </View>
-        </>
-    );
 };
