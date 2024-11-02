@@ -11,9 +11,6 @@ import {
   showStyle,
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
-import getLocation from "@/utils/location/locationHelper";
-import getWeather from "@/utils/weather/getWeatherData";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { Href, Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Platform, Dimensions, ScrollView } from "react-native";
@@ -32,22 +29,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { SkeletonView } from "react-native-ui-lib";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import i18n from "@/languages/i18n";
-
-interface LocationsType {
-  distance: number;
-  lat: number;
-  lon: number;
-  name: string;
-}
+import WeatherView from "@/components/home/WeatherView";
 
 const HomePage = () => {
   const dispatch = useDispatch();
 
   const [services, setServices] = useState<any[]>([]);
-  const [temperature, setTemperature] = useState<number>(0);
-  const [location, setLocation] = useState<LocationsType | null>(null);
-  const [weatherIcon, setWeatherIcon] = useState<string>("");
-  const [currentDate, setCurrentDate] = useState<string>("");
   const [banner, setBanner] = useState([
     { uri: "https://intphcm.com/data/upload/banner-spa-cta.jpg" },
     { uri: "https://easysalon.vn/wp-content/uploads/2019/12/banner-spa.jpg" },
@@ -94,56 +81,7 @@ const HomePage = () => {
       }
     };
 
-    (async () => {
-      try {
-        const nearestProvince = await getLocation();
-        if (!nearestProvince) {
-          throw new Error("Failed to get location");
-        }
-
-        const weatherData = await getWeather(
-          nearestProvince.lat,
-          nearestProvince.lon
-        );
-        if (!weatherData) {
-          throw new Error("Failed to fetch weather data");
-        }
-
-        setLocation(nearestProvince);
-        setWeatherIcon(weatherData.weather[0].icon);
-        const temperatureData = weatherData["main"]["temp"];
-        if (temperatureData > 50) {
-          setTemperature(temperatureData - 273.15);
-        } else {
-          setTemperature(weatherData["main"]["temp"]);
-        }
-      } catch (error: any) {
-        console.log("Get weather error: ", error.message);
-        // Add error handling here
-        setWeatherIcon("01d"); // Set a default weather icon
-        setTemperature(25); // Set a default temperature
-      }
-    })();
-
     getProducts();
-  }, []);
-
-  useEffect(() => {
-    const date = new Date();
-    const weekdays = [
-      i18n.t("days.sun"),
-      i18n.t("days.mon"),
-      i18n.t("days.tue"),
-      i18n.t("days.wed"),
-      i18n.t("days.thu"),
-      i18n.t("days.fri"),
-      i18n.t("days.sat"),
-    ];
-    const weekday = weekdays[date.getDay()];
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    setCurrentDate(`${weekday}, ${i18n.t("days.day")} ${day}/${month}/${year}`);
   }, []);
 
   useEffect(() => {
@@ -210,7 +148,7 @@ const HomePage = () => {
           title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={renderServicesItem}
-          onPressMore={() => {}}
+          onPressMore={() => { }}
         />
       )}
       {products && products.length > 0 && (
@@ -305,11 +243,11 @@ const HomePage = () => {
               right: 0,
               zIndex: 1,
               height: HEADER_HEIGHT,
-              backgroundColor: "$white",
+              backgroundColor: "transparent"
             },
           ]}
         >
-          <View paddingH-24 flex>
+          <BlurView style={{ paddingHorizontal: 20 }}>
             <Animated.View
               style={[
                 hideStyle(
@@ -332,80 +270,37 @@ const HomePage = () => {
                     <Link href={"/(tabs)/profile" as Href<string>}>
                       <Text h2_bold>Đức Lộc</Text>
                     </Link>
-                    <Text h3>{i18n.t("greeting.morning")}</Text>
+                    <Text h4>{i18n.t("gretting.morning")}</Text>
                   </View>
                 </View>
-                <View row gap-15 marginL-auto>
-                  <HomeHeaderButton
-                    onPress={() => {
-                      router.push("notification" as Href<string>);
-                    }}
-                    source={NotificationIcon}
-                  />
-                  <HomeHeaderButton
-                    onPress={() => {
-                      router.push("cart" as Href<string>);
-                    }}
-                    source={CartIcon}
-                  />
-                </View>
               </View>
-              <View
-                row
-                height={60}
-                centerV
-                style={{
-                  borderRadius: 8,
-                  borderColor: "#C9C9C9",
-                  borderWidth: 1,
-                  overflow: "hidden",
-                }}
-                marginB-15
-              >
-                <BlurView
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingHorizontal: 15,
-                  }}
-                >
-                  <View row centerV>
-                    <Image
-                      source={{
-                        uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
-                      }}
-                      width={40}
-                      height={40}
-                    />
-                    <Text marginL-5 text60>
-                      {temperature.toFixed(0)}°C
-                    </Text>
-                  </View>
-                  <View
-                    height={30}
-                    width={2}
-                    backgroundColor="#717658"
-                    marginL-15
-                    marginR-15
-                  />
-                  <View>
-                    <Text h3_bold>{currentDate}</Text>
-                    <View row centerV>
-                      <FontAwesome6
-                        name="location-dot"
-                        size={16}
-                        color="black"
-                      />
-                      <Text marginL-5 h3_medium>
-                        {location?.name}
-                      </Text>
-                    </View>
-                  </View>
-                </BlurView>
-              </View>
+              <WeatherView />
             </Animated.View>
+
+            <View 
+            row gap-15 
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              zIndex: 1,
+              paddingEnd: 20,
+              paddingVertical: 5,
+            }}
+            >
+              <HomeHeaderButton
+                onPress={() => {
+                  router.push("notification" as Href<string>);
+                }}
+                source={NotificationIcon}
+              />
+              <HomeHeaderButton
+                onPress={() => {
+                  router.push("cart" as Href<string>);
+                }}
+                source={CartIcon}
+              />
+            </View>
 
             <Animated.View
               style={[
@@ -415,7 +310,7 @@ const HomePage = () => {
                   bottom: 10,
                   left: 0,
                   right: 0,
-                  backgroundColor: "white",
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
                   paddingHorizontal: 24,
                   paddingVertical: 10,
                 },
@@ -426,7 +321,8 @@ const HomePage = () => {
               </Text>
               <AppSearch isHome style={{ marginBottom: 15 }} />
             </Animated.View>
-          </View>
+
+          </BlurView>
         </Animated.View>
 
         <Animated.ScrollView
