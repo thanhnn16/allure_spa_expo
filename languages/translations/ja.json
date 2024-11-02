@@ -187,7 +187,11 @@
 
 
     },
+<<<<<<< HEAD
     "gretting": {
+=======
+    "greeting": {
+>>>>>>> 5f04b86 (Add BookingPage)
         "morning": "Allure Spa はあなたの幸せな朝を願っています。",
         "afternoon": "アリュール スパでは、楽しい午後のひとときをお過ごしいただけますよう願っております。",
         "evening": "Allure Spa では素敵な夜をお過ごしいただけますようお願いいたします。"
@@ -203,6 +207,18 @@
         "service_details": "サービス内容",
         "treatment": "処理",
         "contact": "接触",
+<<<<<<< HEAD
         "book_now": "今すぐスケジュールを立てましょう"
+=======
+        "book_now": "今すぐスケジュールを立てましょう",
+        "make_appointment": "Make an appointment",
+        "select_time": "時間を選択してください",
+        "note": "注記",
+        "enter_content": "内容を入力してください",
+        "continue": "続く"
+    },
+    "system": {
+        "fud": "機能は開発中です!"
+>>>>>>> 5f04b86 (Add BookingPage)
     }
 }

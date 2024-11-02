@@ -30,6 +30,7 @@ const AppLayout = () => {
       <Stack.Screen name="chat/ai-chat" />
       <Stack.Screen name="chat/[id]/index" />
       <Stack.Screen name="service/[id]/index" />
+      <Stack.Screen name="booking/[id]/index" />
     </Stack>
   );
 };

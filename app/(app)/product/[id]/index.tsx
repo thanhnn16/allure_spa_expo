@@ -53,6 +53,7 @@ export default function DetailsScreen() {
 
   const windowWidth = Dimensions.get("window").width;
 
+  
   const getProduct = async (id: string) => {
     try {
       setIsLoading(true);
