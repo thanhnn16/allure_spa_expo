@@ -10,7 +10,7 @@ import {
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
-
+import { Share } from 'react-native';
 import {
   Carousel,
   PageControlPosition,
@@ -94,6 +94,22 @@ export default function DetailsScreen() {
     setFavorite(!isFavorite);
   };
 
+  const handleShare = async () => {
+    if (!product) return;
+    if (product.media && product.media.length > 0) {
+      const media = product.media[0];
+      if (media.full_url) {
+        try {
+          await Share.share({
+            message: media.full_url,
+          });
+        } catch (error) {
+          console.error('Error sharing the link:', error);
+        }
+      }
+    }
+  };
+  
   const ImageViewFooterComponent = () => {
     return (
       <View marginB-20 padding-20>
@@ -210,7 +226,7 @@ export default function DetailsScreen() {
 
                   <View flex centerV row gap-15 right>
                     <TouchableOpacity
-                      onPress={() => console.log("se cho anh i")}
+                      onPress={() => handleShare()}
                     >
                       <Image source={LinkIcon} size={24} />
                     </TouchableOpacity>
@@ -252,10 +268,9 @@ export default function DetailsScreen() {
               </Text>
               <ProductDescription product={product} isLoading={isLoading} />
             </View>
-
             <ProductQuantity isLoading={isLoading} />
           </ScrollView>
-          <ProductBottomComponent isLoading={isLoading} />
+          <ProductBottomComponent isLoading={isLoading} product={product} />
         </View>
       </View>
     </SafeAreaView>

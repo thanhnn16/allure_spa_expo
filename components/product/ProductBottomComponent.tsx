@@ -8,21 +8,34 @@ import {
 } from "react-native-ui-lib";
 import { Link, router } from "expo-router";
 import i18n from "@/languages/i18n";
-import { useState, useEffect } from "react";
 
 import CommentIcon from "@/assets/icons/comment.svg";
 import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
 import { Dimensions } from "react-native";
+import { useDispatch } from "react-redux";
+import { addItemToCart, CartItem } from "@/redux/features/cart/cartSlice";
 
 const windowWidth = Dimensions.get("window").width;
 
 interface ProductBottomComponentProps {
   isLoading?: boolean;
+  product?: CartItem | null;
 }
 
 const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   isLoading = false,
+  product,
 }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    const cartItem = {
+      ...product,
+      quantity: 1,
+    };
+    dispatch(addItemToCart({ product: cartItem }));
+  };
+
   if (isLoading) {
     return (
       <View padding-24>
@@ -52,7 +65,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
             <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
           </TouchableOpacity>
         </Link>
-        <TouchableOpacity onPress={() => router.push("/cart")}>
+        <TouchableOpacity onPress={() => handleAddToCart()}>
           <View center marginB-4>
             <Image source={ShoppingCartIcon} size={24} />
           </View>
@@ -62,7 +75,6 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       <View flex right>
         <Button
           label={i18n.t("productDetail.buy_now").toString()}
-          primary
           br40
           onPress={() => {
             router.push("/payment");

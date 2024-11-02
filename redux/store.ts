@@ -9,6 +9,7 @@ import { serviceSlice } from './features/service/serviceSlice';
 import { authSlice } from './features/auth/authSlice';
 import productReducer from "./features/products/productSlice";
 import searchReducer from "./features/search/searchSlice";
+import cartReducer from "./features/cart/cartSlice";
 
 
 const persistConfig = {
@@ -24,7 +25,8 @@ const rootReducer: any = combineReducers({
     service: serviceSlice.reducer,
     auth: authSlice.reducer,
     product: productReducer,
-    search: searchReducer
+    search: searchReducer,
+    cart: cartReducer
 })
 
 

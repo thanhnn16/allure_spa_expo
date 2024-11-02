@@ -1,95 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Image, Button, ListItem, Colors } from "react-native-ui-lib";
-import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { StyleSheet, FlatList, TouchableOpacity, Pressable } from "react-native";
 import { Link, router } from "expo-router";
+import AppBar from "@/components/app-bar/AppBar";
+import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    clearCart,
+    setCartItems
+} from "@/redux/features/cart/cartSlice";
+import CartProductItem from "@/components/cart/CartProductItem";
+import { RootState } from "@/redux/store";
+import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
 
-interface Product {
-    id: number;
-    name: string;
-    price: string;
-    image: any;
-}
-
-const ProductItem = ({ product, onDelete }: { product: Product, onDelete: (id: number) => void }) => {
-    const [quantity, setQuantity] = React.useState(1);
-    return (
-        <View style={styles.productItem}>
-            <ListItem>
-                <View style={styles.imageContainer}>
-                    <Image source={product.image} style={styles.productImage} />
-                </View>
-                <ListItem.Part middle column containerStyle={{ paddingLeft: 16 }}>
-                    <ListItem.Part containerStyle={{ marginBottom: 5 }}>
-                        <Text style={styles.productName}>{product.name}</Text>
-                    </ListItem.Part>
-                    <ListItem.Part>
-                        <Text style={styles.productPrice}>
-                            <Text style={{ color: 'black', marginRight: 5 }}>$</Text>
-                            <Text style={{ color: 'red' }}>{product.price} VNĐ</Text>
-                        </Text>
-                    </ListItem.Part>
-                    <ListItem.Part>
-                        <View style={styles.quantityContainer}>
-                            <View style={styles.quantityButtonContainer}>
-                                <TouchableOpacity
-                                    style={styles.quantityButton}
-                                    onPress={() => setQuantity(quantity + 1)}
-                                >
-                                    <Text style={styles.quantityButtonText}>+</Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Text style={styles.productQuantity}>{quantity}</Text>
-                            <View style={styles.quantityButtonContainer}>
-                                <TouchableOpacity
-                                    style={styles.quantityButton}
-                                    onPress={() => {
-                                        if (quantity > 1) setQuantity(quantity - 1);
-                                    }}
-                                >
-                                    <Text style={styles.quantityButtonText}>-</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </ListItem.Part>
-                </ListItem.Part>
-                <ListItem.Part right>
-                    <Button
-                        iconSource={require('@/assets/images/home/icons/delete.png')}
-                        onPress={() => onDelete(product.id)}
-                        link
-                        style={styles.deleteButton}
-                        iconStyle={{ tintColor: 'black' }}
-                    />
-                </ListItem.Part>
-            </ListItem>
-        </View>
+export default function Cart() {
+    const dispatch = useDispatch();
+    const { items, totalAmount } = useSelector(
+        (state: RootState) => state.cart
     );
-};
 
-const ProductList = () => {
-    const [products, setProducts] = React.useState<Product[]>([
-        { id: 1, name: 'Lamellar Lipocollage', price: '1,170,000', image: require('@/assets/images/268268.png') },
-    ]);
+    const CART_ITEMS_KEY = '@cart_items';
+    useEffect(() => {
+        const loadCart = async () => {
+            try {
+                const cartItems = await AsyncStorage.getItem(CART_ITEMS_KEY);
+                if (cartItems) {
+                    dispatch(setCartItems(JSON.parse(cartItems)));
+                }
+            } catch (error) {
+                console.error('Error loading cart items:', error);
+            }
+        }
+        loadCart();
+    }, []);
 
-    const handleDelete = (id: number) => {
-        setProducts(products.filter(product => product.id !== id));
+    const handleClearCart = () => {
+        dispatch(clearCart())
     };
 
-    const calculateTotalPrice = () => {
-        return products.reduce((total, product) => total + parseInt(product.price.replace(/,/g, '')), 0);
-    };
+    const formattedPrice = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+    }).format(parseFloat(totalAmount));
 
-    return (
-        <View style={styles.container}>
+    const CartHaveItems = () => {
+        return <View flex paddingH-20>
+            <View right paddingB-5>
+                <TouchableOpacity onPress={handleClearCart}>
+                    <Text h3_bold secondary>Xóa tất cả</Text>
+                </TouchableOpacity>
+            </View>
             <FlatList
-                data={products}
-                renderItem={({ item }) => <ProductItem product={item} onDelete={handleDelete} />}
+                data={items}
+                renderItem={({ item }) => <CartProductItem {...item} />}
                 keyExtractor={(item) => item.id.toString()}
             />
             <View style={styles.totalContainer}>
-                <Text style={styles.totalText}>Tổng cộng: </Text>
-                <Text style={styles.totalPrice}>{calculateTotalPrice().toLocaleString()} VNĐ</Text>
+                <Text h3_bold>Tổng cộng: </Text>
+                <Text h3_bold secondary>{formattedPrice}</Text>
             </View>
             <Link href="/payment" asChild>
                 <Button
@@ -102,100 +71,44 @@ const ProductList = () => {
                 />
             </Link>
         </View>
+    }
+
+    const CartEmpty = () => {
+        return <View flex center>
+            <Pressable
+                onPress={() => router.back()}
+                style={{ alignItems: 'center' }}
+            >
+                <Image
+                    source={CartEmptyIcon}
+                    style={{ width: 200, height: 200 }}
+                />
+                <Text h2_bold marginT-20>Giỏ hàng trống</Text>
+                <View marginT-10>
+                    <Text h3>Khám phá sản phẩm khác nhé</Text>
+                </View>
+            </Pressable>
+        </View>
+    }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <AppBar title="Giỏ Hàng" back />
+            {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
+        </SafeAreaView>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
         backgroundColor: '#fff',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-    },
-    backButton: {
-        marginRight: 16,
-    },
-    backIcon: {
-        width: 24,
-        height: 24,
-    },
-    headerTitle: {
-        flex: 1,
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginLeft: 95,
-    },
-    productItem: {
-        height: 100,
-        marginBottom: 19,
-        // backgroundColor: '#fff',
-    },
-    imageContainer: {
-        borderRadius: 10,
-        backgroundColor: '#fff',
-        width: 100,
-        height: 100,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    productImage: {
-        backgroundColor: '#E0E0E0',
-        width: 100,
-        height: 100,
-        borderRadius: 10,
-    },
-    productName: {
-        top: 8,
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    productPrice: {
-        top: 5,
-        fontSize: 14,
-        color: 'black',
-    },
-    productQuantity: {
-        fontSize: 14,
-        color: 'black',
-        marginHorizontal: 10,
-    },
-    quantityContainer: {
-        top: 28,
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    quantityButtonContainer: {
-        borderWidth: 1,
-        backgroundColor: '#E0E0E0',
-        borderColor: '#E0E0E0',
-        borderRadius: 10,
-        marginHorizontal: 5,
-        width: 30,
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    quantityButton: {
-        width: 30, 
-        height: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    quantityButtonText: {
-        fontSize: 20,
-    },
-    deleteButton: {
-        marginLeft: 10,
-        marginTop: -20,
     },
     totalContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
+        marginHorizontal: 10,
         backgroundColor: '#E0E0E0',
         borderRadius: 10,
         borderColor: '#E0E0E0',
@@ -210,21 +123,3 @@ const styles = StyleSheet.create({
         color: 'red',
     },
 });
-
-export default function Cart() {
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <Button
-                    iconSource={require('@/assets/images/home/arrow_ios.png')}
-                    onPress={() => router.back()}
-                    link
-                    style={styles.backButton}
-                    iconStyle={{ tintColor: 'black' }}
-                />
-                <Text style={styles.headerTitle}>Giỏ hàng</Text>
-            </View>
-            <ProductList />
-        </SafeAreaView>
-    );
-}
