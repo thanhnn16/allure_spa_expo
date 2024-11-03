@@ -13,7 +13,7 @@ const AppLayout = () => {
 
         // Nếu không có user, chuyển đến màn hình đăng nhập
         if (!user) {
-          await new Promise((resolve) => setTimeout(resolve, 500)); // Đợi animation
+          await new Promise((resolve) => setTimeout(resolve, 2500)); // Đợi animation
           router.replace("/(auth)");
         }
       } catch (err) {

@@ -4,15 +4,15 @@ import AppBar from '@/components/app-bar/AppBar';
 import i18n from '@/languages/i18n';
 import { router, useLocalSearchParams } from 'expo-router'
 import { View, Text, TouchableOpacity, GridList, Spacings, TextField } from 'react-native-ui-lib';
-import { Calendar } from 'react-native-calendars';
+// import { Calendar } from 'react-native-calendars';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import moment from 'moment';
+// import moment from 'moment';
 import AppButton from '@/components/buttons/AppButton';
 
 const BookingPage = () => {
   let numColumns = 3;
   const { id } = useLocalSearchParams();
-  const [today] = useState(moment().format('YYYY-MM-DD'));
+  // const [today] = useState(moment().format('YYYY-MM-DD'));
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState();
 
@@ -47,7 +47,7 @@ const BookingPage = () => {
       <ScrollView style={{ flex: 1 }}>
         <View paddingH-24 gap-20>
 
-          <Calendar
+          {/* <Calendar
             current={today}
             renderArrow={(direction: any) => {
               if (direction === 'left') {
@@ -96,7 +96,7 @@ const BookingPage = () => {
             enableSwipeMonths={true}
             firstDay={1}
             hideExtraDays={false}
-          />
+          /> */}
 
           <View >
             <Text h2_bold>{i18n.t("service.select_time")}</Text>

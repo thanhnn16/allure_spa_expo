@@ -6,13 +6,15 @@ import { persistor } from "@/redux/store";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import "expo-dev-client";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
+import { Stack } from "expo-router";
+import { useEffect, useCallback } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import * as SplashScreen from "expo-splash-screen";
+import "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync();
 interface ErrorFallbackProps {
@@ -29,7 +31,7 @@ function ErrorFallback({ error }: ErrorFallbackProps) {
 }
 
 export default function RootLayout() {
-  useFonts({
+  const [fontsLoaded] = useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
     "SFProText-Medium": require("@/assets/fonts/SFProText-Medium.otf"),
@@ -37,6 +39,16 @@ export default function RootLayout() {
     "AlexBrush-Regular": require("@/assets/fonts/AlexBrush-Regular.ttf"),
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -58,21 +70,17 @@ export default function RootLayout() {
     initializeFirebase().then(() => console.log("Firebase initialized"));
   }, []);
 
-  useEffect(() => {
-    SplashScreen.hideAsync().catch((error) => {
-      console.error("Failed to hide splash screen:", error);
-    });
-  }, []);
-
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaProvider>
             <LanguageManager>
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(auth)/" />
-                <Stack.Screen name="(app)/" />
+              <Stack
+                initialRouteName="index"
+                screenOptions={{ headerShown: false }}
+              >
+                <Stack.Screen name="index" />
                 <Stack.Screen name="error" />
                 <Stack.Screen name="loading" />
               </Stack>

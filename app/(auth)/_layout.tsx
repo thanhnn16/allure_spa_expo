@@ -12,7 +12,7 @@ export default function AuthLayout() {
       try {
         if (initializing) return;
         if (user) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, 2500));
           router.replace("/(app)");
         }
       } catch (err) {
@@ -24,7 +24,8 @@ export default function AuthLayout() {
   }, [initializing, user]);
 
   return (
-    <Stack>
+    <Stack initialRouteName="index" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="register" options={{ headerShown: false }} />
       <Stack.Screen name="forgot-password" options={{ headerShown: false }} />

@@ -33,7 +33,7 @@
     },
     "android": {
       "package": "com.faithnippon.allurespa",
-      "jsEngine": "hermes",
+      "jsEngine": "jsc",
       "googleServicesFile": "./firebase/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -49,8 +49,7 @@
         "android.permission.INTERNET",
         "android.permission.CAMERA"
       ],
-      "softwareKeyboardLayoutMode": "pan",
-      "allowBackup": true
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro",
@@ -87,10 +86,6 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0,
-      "enabled": true
     },
     "extra": {
       "eas": {
