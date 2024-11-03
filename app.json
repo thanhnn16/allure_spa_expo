@@ -5,6 +5,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "developmentClient": {
+      "silentLaunch": true
+    },
     "scheme": "allurespa",
     "userInterfaceStyle": "automatic",
     "androidStatusBar": {
@@ -30,6 +33,7 @@
     },
     "android": {
       "package": "com.faithnippon.allurespa",
+      "jsEngine": "hermes",
       "googleServicesFile": "./firebase/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -41,8 +45,12 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
-      ]
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.CAMERA"
+      ],
+      "softwareKeyboardLayoutMode": "pan",
+      "allowBackup": true
     },
     "web": {
       "bundler": "metro",
@@ -74,10 +82,15 @@
       ],
       "expo-localization",
       "expo-location",
-      "expo-av"
+      "expo-av",
+      "expo-dev-client"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "enabled": true
     },
     "extra": {
       "eas": {

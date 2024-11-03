@@ -3,19 +3,29 @@ import { Stack, router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 
 const AppLayout = () => {
-  const { isAuthenticated, isGuest } = useAuth();
+  const { initializing, user, error } = useAuth();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (!isAuthenticated && !isGuest) {
-        router.replace("/(auth)");
+    const checkAuthAndNavigate = async () => {
+      try {
+        // Đợi cho đến khi auth được khởi tạo
+        if (initializing) return;
+
+        // Nếu không có user, chuyển đến màn hình đăng nhập
+        if (!user) {
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Đợi animation
+          router.replace("/(auth)");
+        }
+      } catch (err) {
+        console.error("Navigation error:", err);
       }
     };
-    checkAuth();
-  }, [isAuthenticated, isGuest]);
+
+    checkAuthAndNavigate();
+  }, [initializing, user]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }} initialRouteName={'(tabs)'}>
+    <Stack screenOptions={{ headerShown: false }} initialRouteName={"(tabs)"}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="transaction/index" />
       <Stack.Screen name="product/[id]/index" />

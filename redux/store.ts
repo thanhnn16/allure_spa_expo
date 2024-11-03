@@ -15,7 +15,9 @@ import cartReducer from "./features/cart/cartSlice";
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['language', 'zalo', 'auth']
+    whitelist: ['language', 'zalo', 'auth'],
+    timeout: 10000,
+    debug: __DEV__
 }
 
 const rootReducer: any = combineReducers({
@@ -40,9 +42,26 @@ export const store = configureStore({
         getDefaultMiddleware({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+            thunk: {
+                extraArgument: undefined
             }
-        })
+        }),
+    devTools: __DEV__,
+    preloadedState: undefined
 });
 
 export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
+
+export const isStoreReady = () => {
+    return new Promise((resolve) => {
+        const unsubscribe = persistor.subscribe(() => {
+            const { bootstrapped } = persistor.getState();
+            if (bootstrapped) {
+                unsubscribe();
+                resolve(true);
+            }
+        });
+    });
+};
