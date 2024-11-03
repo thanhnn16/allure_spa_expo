@@ -33,7 +33,6 @@
     },
     "android": {
       "package": "com.faithnippon.allurespa",
-      "jsEngine": "jsc",
       "googleServicesFile": "./firebase/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
