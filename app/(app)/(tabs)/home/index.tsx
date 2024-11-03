@@ -13,7 +13,7 @@ import {
 } from "@/utils/animated/home/header";
 import { Href, Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Platform, Dimensions, ScrollView } from "react-native";
+import { Platform, Dimensions, ScrollView, StatusBar } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -113,7 +113,7 @@ const HomePage = () => {
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
         onPress={() => {
-          router.push({ pathname: "/service/[id]", params: { id: item.id } });
+          router.push(`/service/${item.id}`);
         }}
       >
         <Image
@@ -148,7 +148,7 @@ const HomePage = () => {
           title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={renderServicesItem}
-          onPressMore={() => { }}
+          onPressMore={() => {}}
         />
       )}
       {products && products.length > 0 && (
@@ -233,7 +233,8 @@ const HomePage = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View bg-$backgroundDefault flex>
+      <StatusBar backgroundColor="white" />
+      <View bg-$white flex>
         <Animated.View
           style={[
             {
@@ -243,7 +244,7 @@ const HomePage = () => {
               right: 0,
               zIndex: 1,
               height: HEADER_HEIGHT,
-              backgroundColor: "transparent"
+              backgroundColor: "white",
             },
           ]}
         >
@@ -267,26 +268,25 @@ const HomePage = () => {
                     source={require("@/assets/images/logo/logo.png")}
                   />
                   <View centerV marginL-10>
-                    <Link href={"/(tabs)/profile" as Href<string>}>
-                      <Text h2_bold>Đức Lộc</Text>
-                    </Link>
-                    <Text h4>{i18n.t("gretting.morning")}</Text>
+                    <Text h2_bold>Đức Lộc</Text>
+                    <Text h4>{i18n.t("greeting.morning")}</Text>
                   </View>
                 </View>
               </View>
               <WeatherView />
             </Animated.View>
 
-            <View 
-            row gap-15 
-            style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              zIndex: 1,
-              paddingEnd: 20,
-              paddingVertical: 5,
-            }}
+            <View
+              row
+              gap-15
+              style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                zIndex: 1,
+                paddingEnd: 20,
+                paddingVertical: 5,
+              }}
             >
               <HomeHeaderButton
                 onPress={() => {
@@ -310,9 +310,8 @@ const HomePage = () => {
                   bottom: 10,
                   left: 0,
                   right: 0,
-                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
                   paddingHorizontal: 24,
-                  paddingVertical: 10,
                 },
               ]}
             >
@@ -321,7 +320,6 @@ const HomePage = () => {
               </Text>
               <AppSearch isHome style={{ marginBottom: 15 }} />
             </Animated.View>
-
           </BlurView>
         </Animated.View>
 
