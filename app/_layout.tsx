@@ -6,7 +6,7 @@ import { persistor } from "@/redux/store";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import "expo-dev-client";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { useEffect, useCallback } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Text, View } from "react-native";
@@ -76,13 +76,7 @@ export default function RootLayout() {
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaProvider>
             <LanguageManager>
-              <Stack
-                initialRouteName="(auth)"
-                screenOptions={{ headerShown: false }}
-              >
-                <Stack.Screen name="(auth)" />
-                <Stack.Screen name="(app)" />
-              </Stack>
+              <Slot />
             </LanguageManager>
           </SafeAreaProvider>
         </PersistGate>

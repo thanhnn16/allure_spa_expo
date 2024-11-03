@@ -7,6 +7,10 @@ interface RenderProductItemProps {
   item: any;
 }
 
+const formatPrice = (price: number): string => {
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ₫";
+};
+
 const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
   // Get first image from media array
   const productImage =
@@ -14,11 +18,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
       ? { uri: item.media[0].full_url }
       : require("@/assets/images/home/product1.png");
 
-  // Format price to VND
-  const formattedPrice = new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  }).format(parseFloat(item.price));
+  const formattedPrice = formatPrice(parseFloat(item.price));
 
   return (
     <TouchableOpacity
