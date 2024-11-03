@@ -3,10 +3,6 @@ import { View, Text, Colors } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import i18n from "@/languages/i18n";
 import AppButton from "@/components/buttons/AppButton";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
-import { registerThunk } from "@/redux/features/auth/registerThunk";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { Alert, ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -160,7 +156,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
         <Text style={{ color: "red" }}>{confirmPasswordError}</Text>
       ) : null}
 
-      <View marginT-20 marginB-20>
+      <View marginV-20 gap-12>
         <AppButton
           type="primary"
           onPress={handleRegister}

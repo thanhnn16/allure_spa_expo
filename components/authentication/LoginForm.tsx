@@ -114,7 +114,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
         </Text>
       </View>
 
-      <View marginT-20 marginB-20>
+      <View marginV-20 gap-12>
         <AppButton
           type="primary"
           onPress={handleLogin}

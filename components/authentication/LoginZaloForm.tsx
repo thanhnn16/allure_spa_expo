@@ -14,7 +14,7 @@ const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ onBackPress }) => {
   return (
     <View>
       <Text text70H>{i18n.t("auth.login.zalo_login_description")}</Text>
-      <View marginT-10 marginB-20>
+      <View marginV-20 gap-12>
         <AppButton
           type="primary"
           title={i18n.t("continue")}
@@ -24,7 +24,6 @@ const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ onBackPress }) => {
         <AppButton
           title={i18n.t("back")}
           type="outline"
-          marginT-12
           onPress={onBackPress}
         />
       </View>

@@ -171,7 +171,7 @@ const Onboarding: React.FC = () => {
             }}
           >
             {activeView === "default" ? (
-              <View>
+              <View gap-12>
                 <AppButton
                   title={i18n.t("auth.register.title")}
                   type="primary"
