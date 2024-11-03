@@ -11,12 +11,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import {
-  Image,
-  View,
-  Text,
-  Colors,
-} from "react-native-ui-lib";
+import { Image, View, Text, Colors } from "react-native-ui-lib";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { LinearTransition } from "react-native-reanimated";
 
@@ -94,20 +89,68 @@ const AIChatScreen = () => {
   }, []);
 
   async function startRecording() {
-    // ... copy startRecording function from ai-voice.tsx ...
+    try {
+      if (!permissionResponse || permissionResponse.status !== "granted") {
+        console.log("Requesting permission..");
+        await requestPermission();
+      }
+      setRecordingUri(undefined);
+      setWaveCount(() => []);
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+      console.log("Starting recording..");
+      const { recording: audioRecording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+        (status) => {
+          let loudness =
+            status.metering !== undefined && !isNaN(status.metering + 160)
+              ? Math.max(status.metering + 160, 10)
+              : 10;
+          setWaveCount((waves) => [loudness, ...waves]);
+        }
+      );
+
+      setRecording(() => audioRecording);
+
+      console.log("Recording Started");
+    } catch (err) {
+      console.log("Failed to start recording");
+    }
   }
 
   async function stopRecording() {
-    // ... copy stopRecording function from ai-voice.tsx ...
+    console.log("Stopping recording..");
+
+    setRecording(() => undefined);
+
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+    }
+
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      staysActiveInBackground: true,
+    });
+    const uri: string | undefined = recording
+      ? recording.getURI() || undefined
+      : undefined;
+    console.log("Recording Saved", uri);
+    setRecordingUri(uri);
   }
 
   const renderChatUI = () => (
     <>
       <FlatList
         data={messagesData}
-        renderItem={({ item }) => <MessageBubble item={item} />}
+        renderItem={({ item }) => (
+          <MessageBubble message={item} isOwn={false} />
+        )}
         ref={scrollRef}
-        onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
+        onContentSizeChange={() =>
+          scrollRef.current?.scrollToEnd({ animated: true })
+        }
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 16 }}
@@ -122,7 +165,9 @@ const AIChatScreen = () => {
       )}
 
       <MessageTextInput
-        placeholder={i18n.t("chat.chat_with") + " " + i18n.t("chat.chat_with_ai") + ".."}
+        placeholder={
+          i18n.t("chat.chat_with") + " " + i18n.t("chat.chat_with_ai") + ".."
+        }
         message={message}
         setMessage={setMessage}
         handleSend={handleSend}
@@ -141,7 +186,7 @@ const AIChatScreen = () => {
       <Text style={styles.startText}>
         {recording ? "Nói đã chưa?" : "Nhấn núi r nói i"}
       </Text>
-      
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
@@ -162,7 +207,7 @@ const AIChatScreen = () => {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => recording ? stopRecording() : startRecording()}
+          onPress={() => (recording ? stopRecording() : startRecording())}
         >
           <Image source={recording ? StopIcon : MicIcon} />
         </TouchableOpacity>
