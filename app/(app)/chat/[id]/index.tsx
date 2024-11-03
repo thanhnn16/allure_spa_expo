@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import {
   StyleSheet,
   FlatList,
-  SafeAreaView,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -21,6 +20,7 @@ import { fetchMessagesThunk } from "@/redux/features/chat/fetchMessagesThunk";
 import { sendMessageThunk } from "@/redux/features/chat/sendMessageThunk";
 import { markAsReadThunk } from "@/redux/features/chat/markAsReadThunk";
 import { addMessage, addTempMessage } from "@/redux/features/chat/chatSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatScreen = () => {
   const { id } = useLocalSearchParams();
@@ -51,8 +51,10 @@ const ChatScreen = () => {
 
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
           if (remoteMessage.data?.chat_id === id && remoteMessage.messageId) {
-            const messageExists = messages.some(msg => msg.id === remoteMessage.messageId);
-            
+            const messageExists = messages.some(
+              (msg: any) => msg.id === remoteMessage.messageId
+            );
+
             if (!messageExists) {
               const newMessage = {
                 id: remoteMessage.messageId,
@@ -61,7 +63,7 @@ const ChatScreen = () => {
                 sender_id: String(remoteMessage.data?.sender_id || ""),
                 created_at: new Date().toISOString(),
               };
-              
+
               dispatch(addMessage(newMessage));
               scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
             }
@@ -133,7 +135,6 @@ const ChatScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <AppBar title={i18n.t("chat.customer_care")} back />
-
       {isLoading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
