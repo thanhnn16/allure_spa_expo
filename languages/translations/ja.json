@@ -109,8 +109,11 @@
   "chat": {
     "customer_care": "カスタマーケア",
     "chat_with_ai": "AIとチャット",
+    "ai_description": "AIとチャットして、アドバイスとサポートを受ける",
     "send": "送信",
-    "chat_with": "チャット"
+    "chat_with": "チャット",
+    "no_message": "メッセージがありません",
+    "type_message": "メッセージを入力"
   },
   "profile": {
     "title": "プロフィール",

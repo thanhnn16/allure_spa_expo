@@ -11,7 +11,7 @@ export const sendMessageThunk = createAsyncThunk(
   async (params: SendMessageParams, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance().post('/messages', params);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }

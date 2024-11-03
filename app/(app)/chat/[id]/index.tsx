@@ -20,22 +20,30 @@ import MessageBubble from "@/components/message/MessageBubble";
 import { fetchMessagesThunk } from "@/redux/features/chat/fetchMessagesThunk";
 import { sendMessageThunk } from "@/redux/features/chat/sendMessageThunk";
 import { markAsReadThunk } from "@/redux/features/chat/markAsReadThunk";
-import { addMessage } from "@/redux/features/chat/chatSlice";
+import { addMessage, addTempMessage } from "@/redux/features/chat/chatSlice";
 
 const ChatScreen = () => {
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useAuth();
-  const { messages, isLoading, error } = useSelector(
+  const { messages, isLoading, isSending, error } = useSelector(
     (state: RootState) => state.chat
   );
   const [message, setMessage] = useState("");
   const scrollRef = useRef<FlatList>(null);
+  const [sendingMessageId, setSendingMessageId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   useEffect(() => {
     const setupChat = async () => {
       try {
-        await dispatch(fetchMessagesThunk(id as string)).unwrap();
+        const result = await dispatch(fetchMessagesThunk({ 
+          chatId: id as string,
+          page: 1
+        })).unwrap();
+        setHasMore(result.has_more);
         dispatch(markAsReadThunk(id as string));
 
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
@@ -48,7 +56,7 @@ const ChatScreen = () => {
               created_at: new Date().toISOString(),
             };
             dispatch(addMessage(newMessage));
-            scrollRef.current?.scrollToEnd({ animated: true });
+            scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
           }
         });
 
@@ -61,18 +69,50 @@ const ChatScreen = () => {
     setupChat();
   }, [id, dispatch]);
 
+  const loadMoreMessages = async () => {
+    if (!hasMore || isLoadingMore) return;
+
+    try {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      const result = await dispatch(fetchMessagesThunk({ 
+        chatId: id as string,
+        page: nextPage 
+      })).unwrap();
+      
+      setPage(nextPage);
+      setHasMore(result.has_more);
+    } catch (error) {
+      console.error('Error loading more messages:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
+
   const handleSend = async () => {
     if (message.trim() === "") return;
 
+    const tempMessageId = Date.now().toString();
+    const tempMessage = {
+      id: tempMessageId,
+      chat_id: id as string,
+      message: message.trim(),
+      sender_id: user?.id || '',
+      created_at: new Date().toISOString(),
+    };
+
     try {
+      dispatch(addTempMessage(tempMessage));
+      setMessage("");
+      scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+
       await dispatch(
         sendMessageThunk({
           chat_id: id as string,
-          message: message.trim(),
+          message: tempMessage.message,
+          tempId: tempMessageId,
         })
       ).unwrap();
-      setMessage("");
-      scrollRef.current?.scrollToEnd({ animated: true });
     } catch (err) {
       console.error("Error sending message:", err);
     }
@@ -105,10 +145,14 @@ const ChatScreen = () => {
                 isOwn={item.sender_id === user?.id}
               />
             )}
-            onContentSizeChange={() => scrollRef.current?.scrollToEnd()}
+            onEndReached={loadMoreMessages}
+            onEndReachedThreshold={0.3}
+            ListFooterComponent={isLoadingMore ? (
+              <ActivityIndicator size="small" color={Colors.primary} />
+            ) : null}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.messageList}
-            inverted={false}
+            inverted={true}
             showsVerticalScrollIndicator={false}
           />
 

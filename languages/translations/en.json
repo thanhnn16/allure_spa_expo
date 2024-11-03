@@ -109,8 +109,11 @@
   "chat": {
     "customer_care": "Customer care",
     "chat_with_ai": "Chat with AI",
+    "ai_description": "Chat with AI to get advice and support",
     "send": "Send",
-    "chat_with": "Chat with"
+    "chat_with": "Chat with",
+    "no_message": "No message",
+    "type_message": "Type message"
   },
   "profile": {
     "title": "Profile",

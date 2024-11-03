@@ -78,7 +78,7 @@ const ChatListScreen = () => {
         >
           <Image source={IconCskh} style={styles.avatar} />
           <View style={styles.messageContainer}>
-            <Text h2_bold>{i18n.t("chat.chat_with_ai")}</Text>
+            <Text h3_bold>{i18n.t("chat.chat_with_ai")}</Text>
             <Text h3 numberOfLines={1}>
               {i18n.t("chat.ai_description")}
             </Text>
@@ -99,7 +99,7 @@ const ChatListScreen = () => {
       >
         <Image source={IconCskh} style={styles.avatar} />
         <View style={styles.messageContainer}>
-          <Text h2_bold>{i18n.t("chat.customer_care")}</Text>
+          <Text h3_bold>{i18n.t("chat.customer_care")}</Text>
           <Text h3 numberOfLines={1}>
             {lastMessage}
           </Text>
@@ -108,7 +108,6 @@ const ChatListScreen = () => {
           <Text h3>
             {formatDistanceToNow(new Date(lastMessageTime), {
               locale: vi,
-              addSuffix: true,
             })}
           </Text>
         )}

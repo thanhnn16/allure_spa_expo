@@ -47,8 +47,7 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.INTERNET",
         "android.permission.CAMERA"
-      ],
-      "softwareKeyboardLayoutMode": "pan"
+      ]
     },
     "web": {
       "bundler": "metro",

@@ -10,6 +10,7 @@ interface ChatMessage {
     sender_id: string;
     message: string;
     created_at: string;
+    sending?: boolean;
     sender?: {
         id: string;
         name: string;
@@ -40,6 +41,7 @@ interface ChatState {
     messages: ChatMessage[];
     isLoading: boolean;
     error: string | null;
+    isSending: boolean;
 }
 
 const initialState: ChatState = {
@@ -48,6 +50,7 @@ const initialState: ChatState = {
     messages: [],
     isLoading: false,
     error: null,
+    isSending: false,
 };
 
 export const chatSlice = createSlice({
@@ -55,7 +58,7 @@ export const chatSlice = createSlice({
     initialState,
     reducers: {
         addMessage: (state, action) => {
-            state.messages.push(action.payload);
+            state.messages.unshift(action.payload);
         },
         updateChatLastMessage: (state, action: PayloadAction<{ chatId: string; message: ChatMessage }>) => {
             const { chatId, message } = action.payload;
@@ -75,6 +78,12 @@ export const chatSlice = createSlice({
                     state.chats[chatIndex].messages = state.chats[chatIndex].messages.slice(0, 1);
                 }
             }
+        },
+        addTempMessage: (state, action: PayloadAction<ChatMessage>) => {
+            state.messages.unshift({
+                ...action.payload,
+                sending: true
+            });
         },
     },
     extraReducers: (builder) => {
@@ -104,7 +113,13 @@ export const chatSlice = createSlice({
             })
             .addCase(fetchMessagesThunk.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.messages = action.payload;
+                if (action.meta.arg.page === 1) {
+                    // First page - replace all messages
+                    state.messages = action.payload.messages;
+                } else {
+                    // Subsequent pages - add older messages to the end
+                    state.messages = [...state.messages, ...action.payload.messages];
+                }
                 state.error = null;
             })
             .addCase(fetchMessagesThunk.rejected, (state, action) => {
@@ -115,15 +130,31 @@ export const chatSlice = createSlice({
         // Send Message
         builder
             .addCase(sendMessageThunk.pending, (state) => {
-                state.isLoading = true;
+                state.isSending = true;
             })
             .addCase(sendMessageThunk.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.messages.push(action.payload);
+                state.isSending = false;
+                // Replace temp message with actual message
+                const messageIndex = state.messages.findIndex(
+                    msg => msg.id === action.meta.arg.tempId
+                );
+                if (messageIndex !== -1) {
+                    state.messages[messageIndex] = {
+                        ...action.payload,
+                        sending: false
+                    };
+                }
                 state.error = null;
             })
             .addCase(sendMessageThunk.rejected, (state, action) => {
-                state.isLoading = false;
+                state.isSending = false;
+                // Update message status on error
+                const messageIndex = state.messages.findIndex(
+                    msg => msg.id === action.meta?.arg.tempId
+                );
+                if (messageIndex !== -1) {
+                    state.messages[messageIndex].sending = false;
+                }
                 state.error = action.payload as string;
             });
 
@@ -138,5 +169,5 @@ export const chatSlice = createSlice({
     },
 });
 
-export const { addMessage, updateChatLastMessage } = chatSlice.actions;
+export const { addMessage, updateChatLastMessage, addTempMessage } = chatSlice.actions;
 export default chatSlice.reducer; 

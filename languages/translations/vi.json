@@ -109,8 +109,11 @@
   "chat": {
     "customer_care": "Chăm sóc khách hàng",
     "chat_with_ai": "Chat với AI",
+    "ai_description": "Chat với AI để được tư vấn và hỗ trợ",
     "send": "Gửi",
-    "chat_with": "Chat với"
+    "chat_with": "Chat với",
+    "no_message": "Không có tin nhắn",
+    "type_message": "Nhập tin nhắn"
   },
   "profile": {
     "title": "Hồ sơ",
