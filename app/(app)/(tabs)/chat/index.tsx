@@ -26,14 +26,11 @@ const ChatListScreen = () => {
     dispatch(fetchChatsThunk());
 
     const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-      console.log("Received foreground message:", remoteMessage);
-
-      if (remoteMessage.data?.type === "chat_message") {
-        // Hiển thị notification
+      if (remoteMessage.data?.type === "chat_message" && remoteMessage.messageId) {
         await FirebaseService.showChatNotification(remoteMessage);
 
         const newMessage = {
-          id: remoteMessage.messageId || Date.now().toString(),
+          id: remoteMessage.messageId,
           chat_id: remoteMessage.data.chat_id,
           message: String(remoteMessage.data?.message || ""),
           sender_id: String(remoteMessage.data?.sender_id || ""),

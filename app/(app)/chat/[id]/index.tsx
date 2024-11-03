@@ -35,32 +35,42 @@ const ChatScreen = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const processedMessages = useRef(new Set());
 
   useEffect(() => {
     const setupChat = async () => {
       try {
-        const result = await dispatch(fetchMessagesThunk({ 
-          chatId: id as string,
-          page: 1
-        })).unwrap();
+        const result = await dispatch(
+          fetchMessagesThunk({
+            chatId: id as string,
+            page: 1,
+          })
+        ).unwrap();
         setHasMore(result.has_more);
         dispatch(markAsReadThunk(id as string));
 
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-          if (remoteMessage.data?.chat_id === id) {
-            const newMessage = {
-              id: remoteMessage.messageId || Date.now().toString(),
-              chat_id: remoteMessage.data.chat_id,
-              message: String(remoteMessage.data?.message || ""),
-              sender_id: String(remoteMessage.data?.sender_id || ""),
-              created_at: new Date().toISOString(),
-            };
-            dispatch(addMessage(newMessage));
-            scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+          if (remoteMessage.data?.chat_id === id && remoteMessage.messageId) {
+            const messageExists = messages.some(msg => msg.id === remoteMessage.messageId);
+            
+            if (!messageExists) {
+              const newMessage = {
+                id: remoteMessage.messageId,
+                chat_id: remoteMessage.data.chat_id,
+                message: String(remoteMessage.data?.message || ""),
+                sender_id: String(remoteMessage.data?.sender_id || ""),
+                created_at: new Date().toISOString(),
+              };
+              
+              dispatch(addMessage(newMessage));
+              scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+            }
           }
         });
 
-        return () => unsubscribe();
+        return () => {
+          unsubscribe();
+        };
       } catch (err) {
         console.error("Error setting up chat:", err);
       }
@@ -75,15 +85,17 @@ const ChatScreen = () => {
     try {
       setIsLoadingMore(true);
       const nextPage = page + 1;
-      const result = await dispatch(fetchMessagesThunk({ 
-        chatId: id as string,
-        page: nextPage 
-      })).unwrap();
-      
+      const result = await dispatch(
+        fetchMessagesThunk({
+          chatId: id as string,
+          page: nextPage,
+        })
+      ).unwrap();
+
       setPage(nextPage);
       setHasMore(result.has_more);
     } catch (error) {
-      console.error('Error loading more messages:', error);
+      console.error("Error loading more messages:", error);
     } finally {
       setIsLoadingMore(false);
     }
@@ -97,7 +109,7 @@ const ChatScreen = () => {
       id: tempMessageId,
       chat_id: id as string,
       message: message.trim(),
-      sender_id: user?.id || '',
+      sender_id: user?.id || "",
       created_at: new Date().toISOString(),
     };
 
@@ -147,9 +159,11 @@ const ChatScreen = () => {
             )}
             onEndReached={loadMoreMessages}
             onEndReachedThreshold={0.3}
-            ListFooterComponent={isLoadingMore ? (
-              <ActivityIndicator size="small" color={Colors.primary} />
-            ) : null}
+            ListFooterComponent={
+              isLoadingMore ? (
+                <ActivityIndicator size="small" color={Colors.primary} />
+              ) : null
+            }
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.messageList}
             inverted={true}

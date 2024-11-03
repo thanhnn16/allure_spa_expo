@@ -96,11 +96,16 @@ class FirebaseService {
 
   async showChatNotification(remoteMessage: any) {
     try {
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
       await Notifications.scheduleNotificationAsync({
         content: {
           title: remoteMessage.notification?.title || "Tin nhắn mới",
           body: remoteMessage.notification?.body || remoteMessage.data?.message,
-          data: remoteMessage.data,
+          data: {
+            ...remoteMessage.data,
+            uniqueId,
+          },
         },
         trigger: null,
       });

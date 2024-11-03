@@ -57,8 +57,14 @@ export const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        addMessage: (state, action) => {
-            state.messages.unshift(action.payload);
+        addMessage: (state, action: PayloadAction<ChatMessage>) => {
+            // Kiểm tra tin nhắn trùng lặp trước khi thêm vào
+            const isDuplicate = state.messages.some(
+                msg => msg.id === action.payload.id
+            );
+            if (!isDuplicate) {
+                state.messages.unshift(action.payload);
+            }
         },
         updateChatLastMessage: (state, action: PayloadAction<{ chatId: string; message: ChatMessage }>) => {
             const { chatId, message } = action.payload;
