@@ -49,40 +49,64 @@ class FirebaseService {
 
   async registerTokenWithServer(userId: string) {
     try {
-      const token = await this.getFCMToken();
-      if (token) {
-        await AxiosInstance().post('/users/fcm-token', {
-          user_id: userId,
-          token: token,
+      const fcmToken = await this.getFCMToken();
+      if (fcmToken) {
+        const response = await AxiosInstance().post('/auth/fcm-token', {
+          token: fcmToken,
           device_type: Platform.OS
         });
+        console.log('FCM token registered successfully:', response.data);
+        return response.data;
       }
     } catch (error) {
       console.error('Failed to register token with server:', error);
+      throw error;
     }
   }
 
+  async setupNotifications() {
+    // Cấu hình thông báo cho ứng dụng
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+  }
+
   setupMessageHandlers() {
+    // Xử lý tin nhắn khi ứng dụng ở background
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background:', remoteMessage);
-      
       if (remoteMessage.data?.type === 'chat_message') {
-        this.showChatNotification(remoteMessage);
+        await this.showChatNotification(remoteMessage);
       }
     });
 
+    // Xử lý tin nhắn khi ứng dụng đang mở
     return messaging().onMessage(async remoteMessage => {
       console.log('Received foreground message:', remoteMessage);
-      
       if (remoteMessage.data?.type === 'chat_message') {
+        await this.showChatNotification(remoteMessage);
         return remoteMessage;
       }
     });
   }
 
-  private showChatNotification(remoteMessage: any) {
-    // Show local notification when app is in background
-    // You may want to use a notification library like notifee here
+  async showChatNotification(remoteMessage: any) {
+    try {
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: remoteMessage.notification?.title || "Tin nhắn mới",
+          body: remoteMessage.notification?.body || remoteMessage.data?.message,
+          data: remoteMessage.data,
+        },
+        trigger: null,
+      });
+    } catch (error) {
+      console.error('Error showing notification:', error);
+    }
   }
 }
 

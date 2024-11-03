@@ -15,8 +15,6 @@ export const registerThunk = createAsyncThunk(
   'user/register',
   async (body: RegisterRequest, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
     try {
-      console.log('Register request body:', body);
-
       const res = await AxiosInstance().post<AuthResponse>('auth/register', {
         full_name: body.fullName,
         phone_number: body.phoneNumber,
@@ -24,7 +22,6 @@ export const registerThunk = createAsyncThunk(
         password_confirmation: body.confirmPassword
       });
 
-      // Check if response is successful and contains data
       if (res.data.success && res.data.data) {
         const { token, user } = res.data.data;
 
@@ -32,26 +29,25 @@ export const registerThunk = createAsyncThunk(
           return rejectWithValue('No token received from server');
         }
 
-        // Save token to AsyncStorage
+        // Save token first
         await AsyncStorage.setItem('userToken', token);
 
-        // Register FCM token after successful registration
-        await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(user.id);
+        // Then handle FCM registration
+        try {
+          await FirebaseService.requestUserPermission();
+          await FirebaseService.registerTokenWithServer(user.id);
+        } catch (fcmError) {
+          console.warn('FCM registration failed but registration successful:', fcmError);
+          // Continue with registration even if FCM fails
+        }
 
-        console.log('Registration successful:', res.data);
-        return {
-          user: user,
-          token: token
-        };
+        return { user, token };
       }
 
-      console.log('Registration failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Registration failed');
     } catch (error: any) {
       console.error('Registration error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'An error occurred during registration';
-      return rejectWithValue(errorMessage);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
