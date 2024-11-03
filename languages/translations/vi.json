@@ -9,6 +9,13 @@
   "back": "Quay lại",
   "sendOTP": "Gửi OTP",
   "close": "Đóng",
+  "common": {
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "ok": "OK",
+    "error": "Lỗi",
+    "success": "Thành công"
+  },
   "auth": {
     "login": {
       "title": "Đăng nhập",
@@ -19,7 +26,7 @@
       "enter_full_name": "Nhập họ và tên",
       "invalid_full_name": "Họ và tên không được chứa số",
       "skip": "Đăng nhập sau",
-      "terms": "Điều kho���n sử dụng",
+      "terms": "Điều khoản sử dụng",
       "privacy": "Chính sách bảo mật",
       "by_continue": "Bằng cách đăng nhập, bạn sẽ đồng ý với",
       "and": "và",
@@ -35,7 +42,20 @@
       "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
       "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự",
       "server_error": "Lỗi từ máy chủ, vui lòng thử lại sau",
-      "zalo_login_description": "Đăng nhập bằng Zalo để tiết kiệm thời gian và dễ dàng quản lý thông tin của bạn"
+      "zalo_login_description": "Đăng nhập bằng Zalo để tiết kiệm thời gian và dễ dàng quản lý thông tin của bạn",
+      "login_required": "Cần đăng nhập",
+      "login_buy_product": "Bạn cần đăng nhập để mua sắm sản phẩm tại Allure Spa",
+      "login_chat_ai": "Bạn cần đăng nhập để chat với AI",
+      "login_chat_customer_care": "Bạn cần đăng nhập để chat với chăm sóc khách hàng",
+      "login_appointment": "Bạn cần đăng nhập để đặt lịch hẹn",
+      "login_profile": "Bạn cần đăng nhập để truy cập vào hồ sơ",
+      "login_voucher": "Bạn cần đăng nhập để truy cập vào voucher",
+      "login_reward": "Bạn cần đăng nhập để truy cập vào phần thưởng",
+      "login_order": "Bạn cần đăng nhập để truy cập vào đơn hàng",
+      "login_address": "Bạn cần đăng nhập để truy cập vào địa chỉ",
+      "login_favorite": "Bạn cần đăng nhập để truy cập vào yêu thích",
+      "login_notification": "Bạn cần đăng nhập để truy cập vào thông báo",
+      "login_now": "Đăng nhập ngay"
     },
     "art": {
       "title": "Nghệ thuật chăm sóc da",

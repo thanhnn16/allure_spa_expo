@@ -9,6 +9,13 @@
   "back": "Back",
   "sendOTP": "Send OTP",
   "close": "Close",
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "ok": "OK",
+    "error": "Error",
+    "success": "Success"
+  },
   "auth": {
     "login": {
       "title": "Login",
@@ -35,7 +42,20 @@
       "invalid_password_special_char": "Password must not contain special characters",
       "invalid_password_length": "Password must be at least 8 characters long",
       "server_error": "Server error, please try again later",
-      "zalo_login_description": "Login with Zalo to save time and easily manage your information"
+      "zalo_login_description": "Login with Zalo to save time and easily manage your information",
+      "login_required": "Login required",
+      "login_buy_product": "You need to login to buy this product",
+      "login_chat_ai": "You need to login to chat with AI",
+      "login_chat_customer_care": "You need to login to chat with customer care",
+      "login_appointment": "You need to login to make an appointment",
+      "login_profile": "You need to login to access your profile",
+      "login_voucher": "You need to login to access your voucher",
+      "login_reward": "You need to login to access your reward",
+      "login_order": "You need to login to access your order",
+      "login_address": "You need to login to access your address",
+      "login_favorite": "You need to login to access your favorite",
+      "login_notification": "You need to login to access your notification",
+      "login_now": "Login now"
     },
     "art": {
       "title": "The Art of Skincare",

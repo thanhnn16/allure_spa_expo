@@ -10,7 +10,7 @@ import {
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
-import { Share } from 'react-native';
+import { Share } from "react-native";
 import {
   Carousel,
   PageControlPosition,
@@ -33,6 +33,8 @@ import { Product } from "@/types/product.type";
 import ProductDescription from "@/components/product/ProductDescription";
 import ProductBottomComponent from "@/components/product/ProductBottomComponent";
 import ProductQuantity from "@/components/product/ProductQuantity";
+import AppDialog from "@/components/dialog/AppDialog";
+import { useAuth } from "@/hooks/useAuth";
 
 // Add interface for media item
 interface MediaItem {
@@ -50,10 +52,12 @@ export default function DetailsScreen() {
   const [isFavorite, setFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
+  const { isGuest } = useAuth();
+  const [buyProductDialog, setBuyProductDialog] = useState(false);
+  const [favoriteDialog, setFavoriteDialog] = useState(false);
 
   const windowWidth = Dimensions.get("window").width;
 
-  
   const getProduct = async (id: string) => {
     try {
       setIsLoading(true);
@@ -92,7 +96,9 @@ export default function DetailsScreen() {
   };
 
   const handleFavorite = () => {
-    setFavorite(!isFavorite);
+    if (isGuest) {
+      setFavoriteDialog(true);
+    }
   };
 
   const handleShare = async () => {
@@ -105,12 +111,12 @@ export default function DetailsScreen() {
             message: media.full_url,
           });
         } catch (error) {
-          console.error('Error sharing the link:', error);
+          console.error("Error sharing the link:", error);
         }
       }
     }
   };
-  
+
   const ImageViewFooterComponent = () => {
     return (
       <View marginB-20 padding-20>
@@ -132,6 +138,17 @@ export default function DetailsScreen() {
   const filteredShortText = shortText.filter(
     (text): text is string => text !== undefined
   );
+
+  const handleGuestPurchase = () => {
+    if (isGuest) {
+      setBuyProductDialog(true);
+    }
+  };
+
+  const handleLoginConfirm = () => {
+    setBuyProductDialog(false);
+    router.replace("/(auth)");
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -226,9 +243,7 @@ export default function DetailsScreen() {
                   </Text>
 
                   <View flex centerV row gap-15 right>
-                    <TouchableOpacity
-                      onPress={() => handleShare()}
-                    >
+                    <TouchableOpacity onPress={() => handleShare()}>
                       <Image source={LinkIcon} size={24} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => handleFavorite()}>
@@ -271,7 +286,32 @@ export default function DetailsScreen() {
             </View>
             <ProductQuantity isLoading={isLoading} />
           </ScrollView>
-          <ProductBottomComponent isLoading={isLoading} product={product} />
+          <ProductBottomComponent
+            isLoading={isLoading}
+            product={product}
+            onPurchase={isGuest ? handleGuestPurchase : undefined}
+          />
+
+          <AppDialog
+            visible={buyProductDialog}
+            title={i18n.t("auth.login.login_required")}
+            description={i18n.t("auth.login.login_buy_product")}
+            closeButtonLabel={i18n.t("common.cancel")}
+            confirmButtonLabel={i18n.t("auth.login.login_now")}
+            severity="info"
+            onClose={() => setBuyProductDialog(false)}
+            onConfirm={handleLoginConfirm}
+          />
+          <AppDialog
+            visible={favoriteDialog}
+            title={i18n.t("auth.login.login_required")}
+            description={i18n.t("auth.login.login_favorite")}
+            closeButtonLabel={i18n.t("common.cancel")}
+            confirmButtonLabel={i18n.t("auth.login.login_now")}
+            severity="info"
+            onClose={() => setFavoriteDialog(false)}
+            onConfirm={handleLoginConfirm}
+          />
         </View>
       </View>
     </SafeAreaView>

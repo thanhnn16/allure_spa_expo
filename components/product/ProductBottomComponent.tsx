@@ -14,17 +14,20 @@ import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
 import { Dimensions } from "react-native";
 import { useDispatch } from "react-redux";
 import { addItemToCart, CartItem } from "@/redux/features/cart/cartSlice";
+import { Product } from "@/types/product.type";
 
 const windowWidth = Dimensions.get("window").width;
 
 interface ProductBottomComponentProps {
-  isLoading?: boolean;
-  product?: CartItem | null;
+  isLoading: boolean;
+  product: Product | null;
+  onPurchase?: () => void;
 }
 
 const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   isLoading = false,
   product,
+  onPurchase,
 }) => {
   const dispatch = useDispatch();
 
@@ -34,6 +37,14 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       quantity: 1,
     };
     dispatch(addItemToCart({ product: cartItem }));
+  };
+
+  const handlePurchase = () => {
+    if (onPurchase) {
+      onPurchase();
+    } else {
+      // Xử lý logic mua hàng bình thường
+    }
   };
 
   if (isLoading) {
@@ -76,9 +87,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         <Button
           label={i18n.t("productDetail.buy_now").toString()}
           br40
-          onPress={() => {
-            router.push("/payment");
-          }}
+          onPress={handlePurchase}
         />
       </View>
     </View>
