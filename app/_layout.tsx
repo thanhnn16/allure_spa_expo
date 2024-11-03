@@ -77,12 +77,11 @@ export default function RootLayout() {
           <SafeAreaProvider>
             <LanguageManager>
               <Stack
-                initialRouteName="index"
+                initialRouteName="(auth)"
                 screenOptions={{ headerShown: false }}
               >
-                <Stack.Screen name="index" />
-                <Stack.Screen name="error" />
-                <Stack.Screen name="loading" />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(app)" />
               </Stack>
             </LanguageManager>
           </SafeAreaProvider>

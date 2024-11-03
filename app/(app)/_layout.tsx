@@ -1,19 +1,16 @@
 import React, { useEffect } from "react";
 import { Stack, router } from "expo-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const AppLayout = () => {
-  const { initializing, user, error } = useAuth();
+  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const checkAuthAndNavigate = async () => {
       try {
-        // Đợi cho đến khi auth được khởi tạo
-        if (initializing) return;
-
-        // Nếu không có user, chuyển đến màn hình đăng nhập
-        if (!user) {
-          await new Promise((resolve) => setTimeout(resolve, 2500)); // Đợi animation
+        if (!isAuthenticated && !isGuest) {
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Đợi animation
           router.replace("/(auth)");
         }
       } catch (err) {
@@ -22,7 +19,7 @@ const AppLayout = () => {
     };
 
     checkAuthAndNavigate();
-  }, [initializing, user]);
+  }, [isAuthenticated, isGuest]);
 
   return (
     <Stack screenOptions={{ headerShown: false }} initialRouteName={"(tabs)"}>
