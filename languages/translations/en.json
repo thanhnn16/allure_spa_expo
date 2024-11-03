@@ -189,11 +189,7 @@
         "featured_products": "Featured Products",
         "discover": "Discover"
     },
-<<<<<<< HEAD
-    "gretting": {
-=======
     "greeting": {
->>>>>>> 5f04b86 (Add BookingPage)
         "morning": "Allure Spa wishes you a good morning!",
         "afternoon": "Allure Spa wishes you a happy afternoon!",
         "evening": "Allure Spa wishes you a good evening!"
@@ -209,9 +205,6 @@
         "service_details": "Service details",
         "treatment": "Treatments",
         "contact": "Contact",
-<<<<<<< HEAD
-        "book_now": "Book now"
-=======
         "book_now": "Book now",
         "make_appointment": "Make an appointment",
         "select_time": "Select time",
@@ -221,6 +214,5 @@
     },
     "system": {
         "fud": "Feature under development!"
->>>>>>> 5f04b86 (Add BookingPage)
     }
 }

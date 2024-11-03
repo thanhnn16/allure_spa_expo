@@ -185,11 +185,7 @@
         "featured_products": "Sản phẩm nổi bật",
         "discover": "Khám phá"
     },
-<<<<<<< HEAD
-    "gretting": {
-=======
     "greeting": {
->>>>>>> 5f04b86 (Add BookingPage)
         "morning": "Allure Spa chúc bạn buổi sáng vui vẻ!",
         "afternoon": "Allure Spa chúc bạn buổi trưa vui vẻ!",
         "evening": "Allure Spa chúc bạn buổi tối vui vẻ!"
@@ -205,9 +201,6 @@
         "service_details": "Chi tiết dịch vụ",
         "treatment": "Liệu trình",
         "contact": "Liên hệ",
-<<<<<<< HEAD
-        "book_now": "Đặt lịch ngay"
-=======
         "book_now": "Đặt lịch ngay",
         "make_appointment": "Đặt lịch hẹn",
         "select_time": "Chọn giờ",
@@ -217,6 +210,5 @@
     },
     "system": {
         "fud": "Tính năng đang được phát triển!"
->>>>>>> 5f04b86 (Add BookingPage)
     }
 }
