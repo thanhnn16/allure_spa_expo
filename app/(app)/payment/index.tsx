@@ -5,10 +5,12 @@ import { Link, router } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Picker, PickerProps } from '@react-native-picker/picker';
 
+// Update the Product interface to include numeric price
 interface Product {
   id: number;
   name: string;
   price: string;
+  priceValue: number; // Add this field
   quantity: number;
   image: any;
 }
@@ -20,20 +22,23 @@ interface Voucher {
   discountPercentage: number;
 }
 
+// Update the products array with numeric price values
 const products: Product[] = [
   {
     id: 1,
     name: 'Lamellar Lipocollage',
     price: '1.170.000 VNĐ',
+    priceValue: 1170000,
     quantity: 1,
-    image: require('@/assets/images/sp2.png')
+    image: require('@/assets/images/sp2.png'),
   },
   {
     id: 2,
     name: 'Lamellar Lipocollage',
     price: '1.170.000 VNĐ',
+    priceValue: 1170000,
     quantity: 1,
-    image: require('@/assets/images/sp2.png')
+    image: require('@/assets/images/sp2.png'),
   },
 ];
 
@@ -47,12 +52,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
+    marginRight: 30,
   },
   section: {
     backgroundColor: '#FFFFFF',
     padding: 10,
     paddingHorizontal: 15,
-    marginTop: -15,
+    marginTop: 5,
+
   },
   sectionTitle: {
     fontSize: 16,
@@ -90,21 +97,34 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   customerInfoCard: {
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#f8f8f8',
     borderRadius: 8,
-    justifyContent: 'space-between',
+    height: 'auto', // Reduced height
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
   },
   customerInfo: {
     flex: 1,
+    marginRight: 16,
+    maxWidth: '65%',
+  },
+  customerInfoText: {
+    fontSize: 14,
+    marginBottom: 2, // Reduced from 4
+    fontWeight: '500',
+    color: '#666666',
+  },
+  arrowIconContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 8,
   },
   arrowIcon: {
-    width: 24,
-    height: 24,
+    width: 20, // Slightly smaller
+    height: 20, // Slightly smaller
     transform: [{ rotate: '180deg' }],
-    tintColor: 'black',
+    tintColor: '#000000',
   },
   inputField: {
     width: 335,
@@ -218,6 +238,9 @@ const styles = StyleSheet.create({
   selectedOption: {
     backgroundColor: Colors.grey70,
   },
+  selectedItem: {
+    backgroundColor: '#f0f0f0',
+  },
   checkIconContainer: {
     width: 24,
     height: 24,
@@ -281,7 +304,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    
+
   },
   dropDownContainer: {
     borderColor: '#E0E0E0',
@@ -290,7 +313,7 @@ const styles = StyleSheet.create({
   dropDownItem: {
     paddingVertical: 10,
     paddingHorizontal: 15,
-    
+
   },
   modalOverlay: {
     flex: 1,
@@ -336,6 +359,19 @@ const styles = StyleSheet.create({
   optionLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  dropdownHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+  },
+  discountText: {
+    fontSize: 12,
+    color: Colors.primary,
+    fontWeight: '500',
   }
 });
 
@@ -347,7 +383,7 @@ const dropdownStyles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     alignItems: 'center',
     padding: 12,
   },
@@ -357,7 +393,7 @@ const dropdownStyles = StyleSheet.create({
     fontWeight: '500',
   },
   iconContainer: {
-    transform: [{rotate: '0deg'}]
+    transform: [{ rotate: '0deg' }]
   },
   content: {
     maxHeight: 200,
@@ -382,6 +418,7 @@ const dropdownStyles = StyleSheet.create({
   }
 });
 
+// Update VoucherDropdown component
 const VoucherDropdown = ({
   value,
   items,
@@ -392,72 +429,39 @@ const VoucherDropdown = ({
   onSelect: (voucher: Voucher) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const animation = useRef(new Animated.Value(0)).current;
-
-  const toggleDropdown = () => {
-    const toValue = isOpen ? 0 : 1;
-    setIsOpen(!isOpen);
-    
-    Animated.timing(animation, {
-      toValue,
-      duration: 300,
-      useNativeDriver: false
-    }).start();
-  };
-
-  const rotateIcon = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg']
-  });
 
   return (
-    <View style={dropdownStyles.container}>
-      <TouchableOpacity 
-        onPress={toggleDropdown}
-        style={dropdownStyles.header}
-      >
-        <Text style={dropdownStyles.headerText}>
-          {value || 'Không có'}
-        </Text>
-        <Animated.View style={[
-          dropdownStyles.iconContainer,
-          {transform: [{rotate: rotateIcon}]}
-        ]}>
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => setIsOpen(!isOpen)}>
+        <View style={styles.dropdownHeader}>
+          <Text style={styles.placeholderStyle}>
+            {value || 'Không có'}
+          </Text>
           <Ionicons name="chevron-down" size={20} color="#BCBABA" />
-        </Animated.View>
+        </View>
       </TouchableOpacity>
 
       {isOpen && (
-        <Animated.View 
-          style={[
-            dropdownStyles.content,
-            {
-              maxHeight: animation.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 200]
-              })
-            }
-          ]}
-        >
+        <View style={styles.dropDownContainer}>
           {items.map((item) => (
             <TouchableOpacity
               key={item.value}
               style={[
-                dropdownStyles.item,
-                value === item.value && dropdownStyles.selectedItem
+                styles.dropdownItem,
+                value === item.value && styles.selectedItem
               ]}
               onPress={() => {
                 onSelect(item);
-                toggleDropdown();
+                setIsOpen(false);
               }}
             >
-              <Text style={dropdownStyles.itemText}>{item.label}</Text>
-              <Text style={dropdownStyles.discountText}>
+              <Text style={styles.dropdownItemText}>{item.label}</Text>
+              <Text style={styles.discountText}>
                 Giảm {item.discountPercentage}%
               </Text>
             </TouchableOpacity>
           ))}
-        </Animated.View>
+        </View>
       )}
     </View>
   );
@@ -485,7 +489,7 @@ const PaymentPicker = ({
   const toggleDropdown = () => {
     const toValue = isOpen ? 0 : 1;
     setIsOpen(!isOpen);
-    
+
     Animated.timing(animation, {
       toValue,
       duration: 300,
@@ -500,7 +504,7 @@ const PaymentPicker = ({
 
   return (
     <View style={dropdownStyles.container}>
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={toggleDropdown}
         style={dropdownStyles.header}
       >
@@ -509,14 +513,14 @@ const PaymentPicker = ({
         </Text>
         <Animated.View style={[
           dropdownStyles.iconContainer,
-          {transform: [{rotate: rotateIcon}]}
+          { transform: [{ rotate: rotateIcon }] }
         ]}>
           <Ionicons name="chevron-down" size={20} color="#BCBABA" />
         </Animated.View>
       </TouchableOpacity>
 
       {isOpen && (
-        <Animated.View 
+        <Animated.View
           style={[
             dropdownStyles.content,
             {
@@ -558,38 +562,44 @@ const PaymentPicker = ({
   );
 };
 
-// Add price calculation utilities
-const calculateDiscountedPrice = (originalPrice: number, discountPercentage: number) => {
-  const discount = originalPrice * (discountPercentage / 100);
-  return originalPrice - discount;
-};
 
+// In your Payment component
 export default function Payment() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('Thanh toán khi nhận hàng');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState('Không có');
+  const [discountAmount, setDiscountAmount] = useState(0);
   // Update vouchers state
   const [vouchers] = useState<Voucher[]>([
-    { 
-      label: 'Giảm 10%', 
+    {
+      label: 'Giảm 10%',
       value: 'voucher1',
       discountPercentage: 10
     },
-    { 
-      label: 'Giảm 20%', 
+    {
+      label: 'Giảm 20%',
       value: 'voucher2',
       discountPercentage: 20
     },
-    { 
-      label: 'Giảm 30%', 
+    {
+      label: 'Giảm 30%',
       value: 'voucher3',
       discountPercentage: 30
     }
   ]);
 
-  // Add total price state
-  const [totalPrice, setTotalPrice] = useState(2385000); // Original price
+  // Calculate total price based on products
+  const calculateTotalPrice = () => {
+    let total = 0;
+    products.forEach((product) => {
+      total += product.priceValue * product.quantity;
+    });
+    return total;
+  };
+
+  // State for total price
+  const [totalPrice, setTotalPrice] = useState(calculateTotalPrice());
   const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
 
   const paymentMethods = [
@@ -633,20 +643,59 @@ export default function Payment() {
         <View style={styles.sectionNoBorder}>
           <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
           <Card>
-            <TouchableOpacity
-              onPress={() => console.log('Cập nhật sau')}
-              style={[styles.customerInfoCard, { backgroundColor: '#f8f8f8' }]}
-            >
-              <View style={styles.customerInfo}>
-                <Text style={{ fontSize: 14 }}>Lộc Nè Con</Text>
-                <Text style={{ fontSize: 14 }}>+84 123 456 789</Text>
-                <Text style={{ fontSize: 14 }}>123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM</Text>
-              </View>
-              <Image
-                source={require('@/assets/images/home/arrow_ios.png')}
-                style={styles.arrowIcon}
-              />
-            </TouchableOpacity>
+            <Link href="/profile/address" asChild>
+              <TouchableOpacity
+                style={[
+                  styles.customerInfoCard
+                ]}
+              >
+                <View style={{
+                  maxWidth: '65%',
+                  padding: 12,
+                  top: '10%',
+                }}>
+                  <Text style={{
+                    fontSize: 14,
+                    fontWeight: '500'
+                  }}>Lộc Nè Con</Text>
+                  <Text style={{
+                    fontSize: 14,
+                    marginBottom: 2, // Reduced from 4
+                    color: '#666666'
+                  }}>+84 123 456 789</Text>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      flexWrap: 'wrap',
+                      color: '#666666',
+                      lineHeight: 18 // Added for better text flow
+                    }}
+                    numberOfLines={2}
+                  >
+                    123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM
+                  </Text>
+                </View>
+
+                {/* Right side - Arrow Icon */}
+                <View style={{
+                  justifyContent: 'center',
+                  alignItems: 'flex-end',
+                  top: 'auto',
+                  bottom: '40%',
+                }}>
+                  <Image
+                    source={require('@/assets/images/home/arrow_ios.png')}
+                    style={{
+                      width: 20, // Slightly smaller
+                      height: 20, // Slightly smaller
+                      transform: [{ rotate: '180deg' }],
+                      tintColor: '#000000'
+                    }}
+                  />
+                </View>
+              </TouchableOpacity>
+            </Link>
+
           </Card>
         </View>
 
@@ -757,22 +806,27 @@ export default function Payment() {
           ))}
         </View>
 
-        // Update total section display
+        {/* Total section display */}
         <View style={styles.totalSection}>
+          <View style={styles.row}>
+            <Text style={{ fontWeight: 'bold' }}>Tạm tính</Text>
+            <Text style={{ fontWeight: 'bold' }}>
+              {totalPrice.toLocaleString('vi-VN')} VNĐ
+            </Text>
+          </View>
           <View style={styles.row}>
             <Text style={{ fontWeight: 'bold' }}>Voucher</Text>
             <Text>{selectedVoucher}</Text>
           </View>
           <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: 'bold' }}>Tổng thanh toán</Text>
+            <Text style={{ fontWeight: 'bold', marginTop: 10 }}>Tổng thanh toán</Text>
             <View>
               {discountedPrice !== totalPrice && (
-                <Text style={{ 
-                  textDecorationLine: 'line-through', 
+                <Text style={{
+                  textDecorationLine: 'line-through',
                   color: Colors.grey30,
-                  fontSize: 12 
+                  fontSize: 12
                 }}>
-                  {totalPrice.toLocaleString('vi-VN')} VNĐ
                 </Text>
               )}
               <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>
@@ -781,8 +835,10 @@ export default function Payment() {
             </View>
           </View>
         </View>
+
         <Button
-          children={<Text style={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}>Tiếp Tục</Text>}
+          label="Tiếp Tục"
+          labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
           backgroundColor={Colors.primary}
           padding-20
           borderRadius={10}
@@ -790,7 +846,7 @@ export default function Payment() {
           onPress={() => router.push('/transaction')}
         />
         <Button
-          children={<Text style={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}>Detail Transaction</Text>}
+          label="Detail Transaction"
           backgroundColor={Colors.primary}
           padding-20
           borderRadius={10}
@@ -801,3 +857,9 @@ export default function Payment() {
     </SafeAreaView>
   );
 }
+
+// Update calculateDiscountedPrice function to handle numbers
+const calculateDiscountedPrice = (originalPrice: number, discountPercentage: number) => {
+  const discount = originalPrice * (discountPercentage / 100);
+  return originalPrice - discount;
+};

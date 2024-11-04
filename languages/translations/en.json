@@ -261,6 +261,8 @@
     "add_address_success": "Add address successfully",
     "add_address_fail": "Add address failed",
     "edit_address_success": "Edit address successfully",
-    "edit_address_fail": "Edit address failed"
+    "edit_address_fail": "Edit address failed",
+    "province": "Province",
+    "district": "District"
   }
 }

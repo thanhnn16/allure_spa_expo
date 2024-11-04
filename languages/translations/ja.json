@@ -210,7 +210,7 @@
   },
   "greeting": {
     "morning": "Allure Spa はあなたの幸せな朝を願っています。",
-    "afternoon": "アリュール スパでは、楽しい午後のひとときをお過ごしいただけますよう願っております。",
+    "afternoon": "アリュール スパでは、楽しい午後のひとときをお過ごしい��だけますよう願っております。",
     "evening": "Allure Spa では素敵な夜をお過ごしいただけますようお願いいたします。"
   },
   "package": {
@@ -262,6 +262,8 @@
     "add_address_success": "住所の追加に成功しました",
     "add_address_fail": "住所の追加に失敗しました",
     "edit_address_success": "住所の編集に成功しました",
-    "edit_address_fail": "住所の編集に失敗しました"
+    "edit_address_fail": "住所の編集に失敗しました",
+    "province": "都道府県",
+    "district": "区市町村"
   }
 }

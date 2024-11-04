@@ -3,9 +3,10 @@ import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
 import { useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
-import { ScrollView } from "react-native";
+import { SafeAreaView, ScrollView } from "react-native";
 import React from "react";
 import AppButton from "@/components/buttons/AppButton";
+import { Link, useRouter } from "expo-router";
 
 // @ts-ignore
 const AddressItem = ({ item }) => (
@@ -60,6 +61,7 @@ const AddressItem = ({ item }) => (
 
 const Address = () => {
     const navigation = useNavigation();
+    const router = useRouter();
 
     const addressItems = [
         {
@@ -95,6 +97,7 @@ const Address = () => {
     ];
 
     return (
+        <SafeAreaView style={{ flex: 1 }}>
         <View flex marginH-20 marginT-20>
             <View row centerV>
                 <TouchableOpacity
@@ -132,13 +135,17 @@ const Address = () => {
                 ))}
             </ScrollView>
             <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
-                <AppButton type="primary">
+                <AppButton 
+                    type="primary"
+                    onPress={() => router.push("/profile/address/add")}
+                >
                     <Text style={{ color: "#fff" }}>
                         {i18n.t("address.add_new_address")}
                     </Text>
                 </AppButton>
             </View>
         </View>
+        </SafeAreaView>
     );
 };
 
