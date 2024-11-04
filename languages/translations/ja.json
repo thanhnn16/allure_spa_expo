@@ -46,6 +46,7 @@
       "login_required": "ログインが必要です",
       "login_buy_product": "この商品を購入するにはログインが必要です",
       "login_chat_ai": "この商品を購入するにはログインが必要です",
+        "login_chat": "この商品を購入するにはログインが必要です",
       "login_chat_customer_care": "この商品を購入するにはログインが必要です",
       "login_appointment": "この商品を購入するにはログインが必要です",
       "login_profile": "この商品を購入するにはログインが必要です",

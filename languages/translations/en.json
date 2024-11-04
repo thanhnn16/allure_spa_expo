@@ -46,6 +46,7 @@
       "login_required": "Login required",
       "login_buy_product": "You need to login to buy this product",
       "login_chat_ai": "You need to login to chat with AI",
+        "login_chat": "You need to login to chat",
       "login_chat_customer_care": "You need to login to chat with customer care",
       "login_appointment": "You need to login to make an appointment",
       "login_profile": "You need to login to access your profile",
