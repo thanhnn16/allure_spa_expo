@@ -1,19 +1,118 @@
-// firebaseService.ts
-import { initializeApp, getApps, FirebaseOptions } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import messaging from '@react-native-firebase/messaging';
+import AxiosInstance from '../helper/AxiosInstance';
+import * as Device from 'expo-device';
+import { Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
 
-const firebaseConfig: FirebaseOptions = {
-  apiKey: "AIzaSyDLAR58XAtHaXKhHJ_J15Kg_TOklESPBiw",
-  authDomain: "allure-spa-app.firebaseapp.com",
-  projectId: "allure-spa-app",
-  storageBucket: "allure-spa-app.appspot.com",
-  messagingSenderId: "150739207719",
-  appId: "1:150739207719:web:xxxxxxxxxxxxxxxx",
-  measurementId: "G-xxxxxxxxxx"
-};
+class FirebaseService {
+  private static instance: FirebaseService;
 
-if (!getApps().length) {
-  initializeApp(firebaseConfig);
+  private constructor() { }
+
+  public static getInstance(): FirebaseService {
+    if (!FirebaseService.instance) {
+      FirebaseService.instance = new FirebaseService();
+    }
+    return FirebaseService.instance;
+  }
+
+  async requestUserPermission() {
+    if (!Device.isDevice) return null;
+
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') return null;
+    }
+
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      return this.getFCMToken();
+    }
+
+    return null;
+  }
+
+  async getFCMToken() {
+    try {
+      const fcmToken = await messaging().getToken();
+      console.log('FCM token:', fcmToken);
+      return fcmToken;
+    } catch (error) {
+      console.error('Failed to get FCM token:', error);
+      return null;
+    }
+  }
+
+  async registerTokenWithServer(userId: string) {
+    try {
+      const fcmToken = await this.getFCMToken();
+      if (fcmToken) {
+        const response = await AxiosInstance().post('/auth/fcm-token', {
+          token: fcmToken,
+          device_type: Platform.OS
+        });
+        console.log('FCM token registered successfully:', response.data);
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Failed to register token with server:', error);
+      throw error;
+    }
+  }
+
+  async setupNotifications() {
+    // Cấu hình thông báo cho ứng dụng
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+      }),
+    });
+  }
+
+  setupMessageHandlers() {
+    // Xử lý tin nhắn khi ứng dụng ở background
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      console.log('Message handled in the background:', remoteMessage);
+      if (remoteMessage.data?.type === 'chat_message') {
+        await this.showChatNotification(remoteMessage);
+      }
+    });
+
+    // Xử lý tin nhắn khi ứng dụng đang mở
+    return messaging().onMessage(async remoteMessage => {
+      console.log('Received foreground message:', remoteMessage);
+      if (remoteMessage.data?.type === 'chat_message') {
+        await this.showChatNotification(remoteMessage);
+        return remoteMessage;
+      }
+    });
+  }
+
+  async showChatNotification(remoteMessage: any) {
+    try {
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: remoteMessage.notification?.title || "Tin nhắn mới",
+          body: remoteMessage.notification?.body || remoteMessage.data?.message,
+          data: {
+            ...remoteMessage.data,
+            uniqueId,
+          },
+        },
+        trigger: null,
+      });
+    } catch (error) {
+      console.error('Error showing notification:', error);
+    }
+  }
 }
 
-export const auth = getAuth();
+export default FirebaseService.getInstance();

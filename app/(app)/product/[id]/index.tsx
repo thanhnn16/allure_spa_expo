@@ -1,50 +1,123 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
 import {
   Text,
   AnimatedImage,
-  Button,
   Image,
   TouchableOpacity,
   View,
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
-
+import { SkeletonView } from "react-native-ui-lib";
+import { Share } from "react-native";
 import {
   Carousel,
   PageControlPosition,
 } from "react-native-ui-lib/src/components/carousel";
-
-import CommentIcon from "@/assets/icons/comment.svg";
 import HeartIcon from "@/assets/icons/heart.svg";
-import TicketIcon from "@/assets/icons/ticket.svg";
-import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
+import HeartFullIcon from "@/assets/icons/heart_full.svg";
+import TagIcon from "@/assets/icons/tag.svg";
+import LinkIcon from "@/assets/icons/link.svg";
+import StarIcon from "@/assets/icons/star.svg";
+
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { getProductThunk } from "@/redux/features/products/productThunk";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { Product } from "@/types/product.type";
+import ProductDescription from "@/components/product/ProductDescription";
+import ProductBottomComponent from "@/components/product/ProductBottomComponent";
+import ProductQuantity from "@/components/product/ProductQuantity";
+import AppDialog from "@/components/dialog/AppDialog";
+import { useAuth } from "@/hooks/useAuth";
+
+// Add interface for media item
+interface MediaItem {
+  full_url: string;
+  // Add other properties if needed
+}
 
 export default function DetailsScreen() {
-  useLocalSearchParams();
+  const { id } = useLocalSearchParams();
+  const [product, setProduct] = useState<Product | null>(null);
   const [images, setImages] = useState<{ uri: string }[]>([]);
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
   const [visible, setIsVisible] = useState(false);
+  const [isFavorite, setFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
+  const { isGuest } = useAuth();
+  const [buyProductDialog, setBuyProductDialog] = useState(false);
+  const [favoriteDialog, setFavoriteDialog] = useState(false);
+
+  const windowWidth = Dimensions.get("window").width;
+
+  const getProduct = async (id: string) => {
+    try {
+      setIsLoading(true);
+      const resultAction = await dispatch(getProductThunk({ id }));
+      const result = unwrapResult(resultAction);
+      if (result && result.success) {
+        setProduct(result.data);
+        if (result.data.media && result.data.media.length > 0) {
+          const transformedImages = result.data.media.map((img: MediaItem) => ({
+            uri: img.full_url,
+          }));
+          setImages(transformedImages);
+        }
+      }
+    } catch (error: any) {
+      Alert.alert(
+        i18n.t("auth.login.error"),
+        error.message || i18n.t("auth.login.unknown_error"),
+        [{ text: "OK", onPress: () => router.back() }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    setImages([
-      { uri: "https://picsum.photos/1600/900" },
-      { uri: "https://picsum.photos/1920/1080" },
-    ]);
-  }, []);
+    if (typeof id === "string") {
+      getProduct(id);
+    } else if (Array.isArray(id) && id.length > 0) {
+      getProduct(id[0]);
+    }
+  }, [id]);
 
   const handleOpenImage = (index: number) => {
     setImageViewIndex(index);
     setIsVisible(true);
   };
 
-  const FooterComponent = () => {
+  const handleFavorite = () => {
+    if (isGuest) {
+      setFavoriteDialog(true);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!product) return;
+    if (product.media && product.media.length > 0) {
+      const media = product.media[0];
+      if (media.full_url) {
+        try {
+          await Share.share({
+            message: media.full_url,
+          });
+        } catch (error) {
+          console.error("Error sharing the link:", error);
+        }
+      }
+    }
+  };
+
+  const ImageViewFooterComponent = () => {
     return (
       <View marginB-20 padding-20>
         <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
@@ -61,30 +134,21 @@ export default function DetailsScreen() {
     ));
   };
 
-  const createBulletPointsDescription = (lines: string[]) => {
-    return lines.map((line, index) => (
-      <View key={index} row>
-        <Text h2>• </Text>
-        <Text h3>{line}</Text>
-      </View>
-    ));
+  const shortText = [product?.benefits, product?.product_notes];
+  const filteredShortText = shortText.filter(
+    (text): text is string => text !== undefined
+  );
+
+  const handleGuestPurchase = () => {
+    if (isGuest) {
+      setBuyProductDialog(true);
+    }
   };
 
-  const shortText = [
-    "100% collagen tươi giúp phục hồi cấu trúc dạng lamellar và bổ sung collagen ngay tức thì.",
-    "Công thức phục hồi mọi tổn thương và chức năng trong 7 ngày.",
-    "Duy trì làn sóng da trẻ đẹp, căng mọng, không tuổi.",
-    "Không có hoạt động tổng hợp hóa học.",
-  ];
-
-  const longText = [
-    "Đây là một đoạn văn dài mô tả sản phẩm. Nó cung cấp thông tin chi tiết về các tính năng và lợi ích của sản phẩm này.",
-    "Sản phẩm được làm từ chất liệu cao cấp, đảm bảo độ bền và tính năng sử dụng lâu dài.",
-    "Thiết kế hiện đại và tinh tế, phù hợp với nhiều không gian khác nhau.",
-    "Sản phẩm này cũng rất dễ sử dụng và bảo trì, giúp tiết kiệm thời gian cho người dùng.",
-    "Ngoài ra, sản phẩm còn đi kèm với chế độ bảo hành dài hạn, mang lại sự yên tâm cho khách hàng.",
-    "Hãy trải nghiệm sản phẩm ngay hôm nay để cảm nhận sự khác biệt mà nó mang lại!",
-  ];
+  const handleLoginConfirm = () => {
+    setBuyProductDialog(false);
+    router.replace("/(auth)");
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -92,38 +156,53 @@ export default function DetailsScreen() {
         <AppBar back title="Chi tiết sản phẩm" />
         <View flex>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View
-              style={{
-                width: "90%",
-                height: 200,
-                borderRadius: 20,
-                overflow: "hidden",
-                marginTop: 10,
-                alignSelf: "center",
-              }}
-            >
-              <Carousel
-                onChangePage={(index: number) => setIndex(index)}
-                pageControlPosition={PageControlPosition.OVER}
-                pageControlProps={{
-                  size: 10,
-                  color: "#ffffff",
-                  inactiveColor: "#c4c4c4",
+            {isLoading ? (
+              <SkeletonView
+                height={200}
+                width={windowWidth * 0.9}
+                style={{
+                  borderRadius: 20,
+                  alignSelf: "center",
+                  marginTop: 10,
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: "90%",
+                  height: 200,
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  marginTop: 10,
+                  alignSelf: "center",
                 }}
               >
-                {images.map((item, index) => (
-                  <Pressable onPress={() => handleOpenImage(index)} key={index}>
-                    <AnimatedImage
-                      animationDuration={1000}
-                      source={{ uri: item.uri }}
-                      aspectRatio={16 / 9}
-                      cover
+                <Carousel
+                  onChangePage={(index: number) => setIndex(index)}
+                  pageControlPosition={PageControlPosition.OVER}
+                  pageControlProps={{
+                    size: 10,
+                    color: "#ffffff",
+                    inactiveColor: "#c4c4c4",
+                  }}
+                >
+                  {images.map((item, index) => (
+                    <Pressable
+                      onPress={() => handleOpenImage(index)}
                       key={index}
-                    />
-                  </Pressable>
-                ))}
-              </Carousel>
-            </View>
+                    >
+                      <AnimatedImage
+                        animationDuration={1000}
+                        source={{ uri: item.uri }}
+                        aspectRatio={16 / 9}
+                        cover
+                        key={index}
+                      />
+                    </Pressable>
+                  ))}
+                </Carousel>
+              </View>
+            )}
             <ImageView
               images={images}
               imageIndex={0}
@@ -133,112 +212,106 @@ export default function DetailsScreen() {
               key={index}
               swipeToCloseEnabled={true}
               doubleTapToZoomEnabled={true}
-              FooterComponent={FooterComponent}
+              FooterComponent={ImageViewFooterComponent}
             />
-            <View padding-20 gap-10>
-              <Text h1_bold marginB-10>
-                Làm sạch bằng lamellar Lipocollage
-              </Text>
-              <View row marginB-10>
-                <Image source={TicketIcon} size={24} />
-                <Text h1_medium secondary marginL-5>
-                  100.000 VNĐ
+            {isLoading ? (
+              <View padding-20 gap-10>
+                <SkeletonView height={24} width={windowWidth * 0.7} />
+                <SkeletonView
+                  height={20}
+                  width={windowWidth * 0.4}
+                  marginT-10
+                />
+                <SkeletonView
+                  height={20}
+                  width={windowWidth * 0.6}
+                  marginT-10
+                />
+              </View>
+            ) : (
+              <View padding-20 gap-10>
+                <Text h2_bold marginB-10>
+                  {product?.name}
                 </Text>
-                <View flex right>
-                  <TouchableOpacity onPress={() => console.log("mua ha")}>
-                    <Image source={HeartIcon} size={24} />
-                  </TouchableOpacity>
+                <View row marginB-10>
+                  <Image source={TagIcon} size={24} />
+                  <Text h2_medium secondary marginL-5>
+                    {product?.price
+                      ? Number(product.price).toLocaleString("vi-VN")
+                      : "0"}{" "}
+                    VNĐ
+                  </Text>
+
+                  <View flex centerV row gap-15 right>
+                    <TouchableOpacity onPress={() => handleShare()}>
+                      <Image source={LinkIcon} size={24} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleFavorite()}>
+                      {isFavorite ? (
+                        <Image source={HeartFullIcon} size={24} />
+                      ) : (
+                        <Image source={HeartIcon} size={24} />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View row>
+                  <View row centerV gap-5>
+                    <Image source={StarIcon} size={24} />
+                    <Text h3_medium>5.0</Text>
+                  </View>
+                  <View flex row right>
+                    <Text h3_medium>
+                      {" "}
+                      +99 {i18n.t("productDetail.purchases")}
+                    </Text>
+                  </View>
+                </View>
+
+                <View row paddingR-20>
+                  <View>
+                    <Image source={SunIcon} size={24} />
+                  </View>
+                  <View>{createBulletPoints(filteredShortText)}</View>
                 </View>
               </View>
-              <View row paddingR-20>
-                <View>
-                  <Image source={SunIcon} size={24} />
-                </View>
-                <View>{createBulletPoints(shortText)}</View>
-              </View>
-            </View>
-            <View
-              row
-              marginV-20
-              style={{
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text h1_medium>{i18n.t("productDetail.quantity")}</Text>
-              <View
-                row
-                gap-10
-                style={{
-                  borderWidth: 1,
-                  borderColor: "#E0E0E0",
-                  borderRadius: 10,
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    padding: 10,
-                  }}
-                  onPress={() => setQuantity(Math.max(1, quantity - 1))}
-                >
-                  <Text>-</Text>
-                </TouchableOpacity>
-                <Text style={{ padding: 10 }}>{quantity}</Text>
-                <TouchableOpacity
-                  style={{
-                    padding: 10,
-                  }}
-                  onPress={() => setQuantity(quantity + 1)}
-                >
-                  <Text>+</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View marginT-10 paddingR-10>
-              <Text h1_medium>
+            )}
+
+            <View marginT-10 marginH-20 paddingR-10>
+              <Text h2_medium>
                 {i18n.t("productDetail.product_description")}
               </Text>
-              <View marginT-10>{createBulletPointsDescription(longText)}</View>
+              <ProductDescription product={product} isLoading={isLoading} />
             </View>
+            <ProductQuantity isLoading={isLoading} />
           </ScrollView>
-        </View>
-        <View
-          row
-          centerV
-          padding-24
-          style={{
-            borderTopStartRadius: 30,
-            borderTopEndRadius: 30,
-            borderWidth: 2,
-            borderColor: "#E0E0E0",
-          }}
-        >
-          <View row gap-30>
-            <Link href="/rating/1" asChild>
-              <TouchableOpacity>
-                <View center marginB-4>
-                  <Image source={CommentIcon} size={24} />
-                </View>
-                <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
-              </TouchableOpacity>
-            </Link>
-            <TouchableOpacity onPress={() => router.push("/cart")}>
-              <View center marginB-4>
-                <Image source={ShoppingCartIcon} size={24} />
-              </View>
-              <Text h3_medium>{i18n.t("productDetail.add_to_cart")}</Text>
-            </TouchableOpacity>
-          </View>
-          <View flex right>
-            <Button
-              label={i18n.t("productDetail.buy_now").toString()}
-              backgroundColor="$primary"
-              br40
-              onPress={() => {
-                router.push("/payment");
-              }}
-            />
-          </View>
+          <ProductBottomComponent
+            isLoading={isLoading}
+            product={product}
+            onPurchase={isGuest ? handleGuestPurchase : undefined}
+          />
+
+          <AppDialog
+            visible={buyProductDialog}
+            title={i18n.t("auth.login.login_required")}
+            description={i18n.t("auth.login.login_buy_product")}
+            closeButtonLabel={i18n.t("common.cancel")}
+            confirmButtonLabel={i18n.t("auth.login.login_now")}
+            severity="info"
+            onClose={() => setBuyProductDialog(false)}
+            onConfirm={handleLoginConfirm}
+          />
+          <AppDialog
+            visible={favoriteDialog}
+            title={i18n.t("auth.login.login_required")}
+            description={i18n.t("auth.login.login_favorite")}
+            closeButtonLabel={i18n.t("common.cancel")}
+            confirmButtonLabel={i18n.t("auth.login.login_now")}
+            severity="info"
+            onClose={() => setFavoriteDialog(false)}
+            onConfirm={handleLoginConfirm}
+          />
         </View>
       </View>
     </SafeAreaView>

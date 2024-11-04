@@ -40,7 +40,7 @@ const RenderCategory: React.FC<RenderCategoryProps> = ({ cateData }) => {
           center
           style={{ borderRadius: 30 }}
         >
-          <Image source={item.icon} width={32} height={32} />
+          {item.icon && <Image source={item.icon} width={32} height={32} />}
         </View>
         <Text marginT-5>{item.name}</Text>
       </TouchableOpacity>

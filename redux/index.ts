@@ -1,2 +1,2 @@
 export { store } from './store';
-export * from './users';
+export * from './features';

@@ -21,7 +21,7 @@ import AppButton from "@/components/buttons/AppButton";
 import Brand from "@/assets/images/common/logo-brand.svg";
 import { router } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
-import { setLanguage } from "@/redux/language/LanguageSlice";
+import { setLanguage } from "@/redux/features/language/languageSlice";
 import { RootState } from "@/redux/store";
 import LanguageModal from "@/components/modals/LanguageModal";
 import { useAuth } from '@/hooks/useAuth';
@@ -171,7 +171,7 @@ const Onboarding: React.FC = () => {
             }}
           >
             {activeView === "default" ? (
-              <View>
+              <View gap-12>
                 <AppButton
                   title={i18n.t("auth.register.title")}
                   type="primary"

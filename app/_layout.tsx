@@ -1,16 +1,34 @@
-import { store } from "@/redux";
-import { persistor } from "@/redux/store";
-import { Stack } from "expo-router";
-import { View } from "react-native-ui-lib";
-import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import LanguageManager from "@/languages/LanguageManager";
-import { useEffect } from "react";
-import { useFonts } from "expo-font";
-import { SplashScreen } from "expo-router";
 import "@/constants/Colors";
 import "@/constants/Typography";
+import LanguageManager from "@/languages/LanguageManager";
+import { store } from "@/redux";
+import { persistor } from "@/redux/store";
+import FirebaseService from "@/utils/services/firebase/firebaseService";
+import "expo-dev-client";
+import { useFonts } from "expo-font";
+import { Slot, Stack } from "expo-router";
+import { useEffect, useCallback } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import { Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import * as SplashScreen from "expo-splash-screen";
+import "react-native-reanimated";
+
+SplashScreen.preventAutoHideAsync();
+interface ErrorFallbackProps {
+  error: Error;
+}
+
+function ErrorFallback({ error }: ErrorFallbackProps) {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Something went wrong:</Text>
+      <Text>{error.message}</Text>
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -22,9 +40,9 @@ export default function RootLayout() {
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
 
-  useEffect(() => {
+  const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
-      SplashScreen.hideAsync();
+      await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
@@ -32,18 +50,37 @@ export default function RootLayout() {
     return null;
   }
 
+  useEffect(() => {
+    const initializeFirebase = async () => {
+      try {
+        // Request permission and get initial token
+        await FirebaseService.requestUserPermission();
+
+        // Setup message handlers
+        const unsubscribe = FirebaseService.setupMessageHandlers();
+
+        return () => {
+          unsubscribe();
+        };
+      } catch (error) {
+        console.error("Failed to initialize Firebase:", error);
+      }
+    };
+
+    initializeFirebase().then(() => console.log("Firebase initialized"));
+  }, []);
+
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider>
-          <LanguageManager>
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(app)" options={{ headerShown: false }} />
-            </Stack>
-          </LanguageManager>
-        </SafeAreaProvider>
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <SafeAreaProvider>
+            <LanguageManager>
+              <Slot />
+            </LanguageManager>
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
   );
 }
