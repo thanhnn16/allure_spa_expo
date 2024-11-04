@@ -5,7 +5,9 @@ import {
   Button,
   Image,
   SkeletonView,
+  Incubator,
 } from "react-native-ui-lib";
+
 import { Link, router } from "expo-router";
 import i18n from "@/languages/i18n";
 
@@ -31,12 +33,35 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
 }) => {
   const dispatch = useDispatch();
 
+  const renderCustomContent = () => {
+    return (
+      <View bg-$backgroundNeutralLight flex padding-10>
+        <Text $textDefault text60>This is a custom content</Text>
+        <Text $textDefault>
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry
+          standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
+          make a type specimen book.
+        </Text>
+      </View>
+    );
+  };
+
   const handleAddToCart = () => {
     const cartItem = {
       ...product,
       quantity: 1,
     };
     dispatch(addItemToCart({ product: cartItem }));
+    <Incubator.Toast
+      visible
+      centerMessage
+      children={renderCustomContent()}
+      message={i18n.t("productDetail.add_to_cart_success").toString()}
+      position="bottom"
+      autoDismiss={1500}
+    >
+      
+    </Incubator.Toast>;
   };
 
   const handlePurchase = () => {

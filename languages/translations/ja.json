@@ -262,5 +262,16 @@
     "add_address_fail": "住所の追加に失敗しました",
     "edit_address_success": "住所の編集に成功しました",
     "edit_address_fail": "住所の編集に失敗しました"
+  },
+  "date": {
+    "formats":  {
+      "short": "dd/MM/yyyy"
+    }
+  },
+  "currency": { 
+    "unit": "₫", 
+    "separator": ".", 
+    "delimiter": ",", 
+    "format": "%n %u" 
   }
 }

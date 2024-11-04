@@ -18,9 +18,12 @@ const WeatherView = () => {
     const [location, setLocation] = useState<LocationsType | null>(null);
     const [weatherIcon, setWeatherIcon] = useState<string>("");
     const [currentDate, setCurrentDate] = useState<string>("");
+    const [weekday, setWeekday] = useState<string>("");
     useEffect(() => {
         (async () => {
             try {
+                console.log(currentDate);
+                console.log(i18n.l("date.formats.short", "2009-09-18"));
                 const nearestProvince = await getLocation();
                 if (!nearestProvince) {
                     throw new Error("Failed to get location");
@@ -61,11 +64,14 @@ const WeatherView = () => {
             i18n.t("days.fri"),
             i18n.t("days.sat"),
         ];
+
         const weekday = weekdays[date.getDay()];
         const day = date.getDate().toString().padStart(2, "0");
         const month = (date.getMonth() + 1).toString().padStart(2, "0");
         const year = date.getFullYear();
-        setCurrentDate(`${weekday}, ${i18n.t("days.day")} ${day}/${month}/${year}`);
+        setWeekday(`${weekday}, ${i18n.t("days.day")}`);
+        setCurrentDate(`${day}-${month}-${year}`);
+        // setCurrentDate(`${weekday}, ${i18n.t("days.day")} ${day}/${month}/${year}`);
     }, []);
     return (
         <View
@@ -108,7 +114,7 @@ const WeatherView = () => {
                     marginR-15
                 />
                 <View>
-                    <Text h3_bold>{currentDate}</Text>
+                    <Text h3_bold>{weekday}{" "}{i18n.l("date.formats.short" , currentDate)}</Text>
                     <View row centerV>
                         <FontAwesome6
                             name="location-dot"
