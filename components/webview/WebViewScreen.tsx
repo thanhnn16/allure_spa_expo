@@ -45,10 +45,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   };
 
   const handlePaymentCallback = async (navState: any) => {
-    if (
-      navState.url.startsWith("allurespa://") ||
-      navState.url.startsWith("exp+allurespa://")
-    ) {
+    if (navState.url.startsWith("allurespa://") || navState.url.startsWith("exp+allurespa://")) {
       const params = new URL(navState.url).searchParams;
       const status = params.get("status");
 
@@ -68,41 +65,32 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
           if (response.data.success) {
             await AsyncStorage.removeItem("payos_order_code");
 
-            // Check if this is a test payment
+            // Handle different payment types
             if (orderCode.startsWith("TEST_")) {
               router.push("/transaction/success");
-            } else {
-              // For real invoice payments
+            } else if (orderCode.startsWith("INV_")) {
+              const [, invoiceId] = orderCode.split("_");
               router.push({
                 pathname: "/(app)/invoice/success",
                 params: {
-                  invoice_id: orderCode.split("_")[1],
+                  invoice_id: invoiceId,
                   amount: response.data.data.amount,
+                  payment_time: response.data.data.paymentTime,
                 },
               });
             }
           } else {
             showDialog(
               "Thanh Toán Thất Bại",
-              "Không thể xác nhận thanh toán",
+              response.data.message || "Không thể xác nhận thanh toán",
               "error"
             );
-            setTimeout(() => {
-              router.push({
-                pathname: "/transaction",
-                params: { error: "payment_failed" },
-              });
-            }, 2000);
+            setTimeout(() => router.back(), 2000);
           }
         } catch (error) {
           console.error("Verify payment error:", error);
           showDialog("Lỗi Xác Thực", "Không thể xác thực thanh toán", "error");
-          setTimeout(() => {
-            router.push({
-              pathname: "/transaction",
-              params: { error: "verification_failed" },
-            });
-          }, 2000);
+          setTimeout(() => router.back(), 2000);
         }
       } else if (status === "cancel") {
         await AsyncStorage.removeItem("payos_order_code");
@@ -111,9 +99,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
           "Bạn đã hủy quá trình thanh toán",
           "info"
         );
-        setTimeout(() => {
-          router.back();
-        }, 2000);
+        setTimeout(() => router.back(), 2000);
       }
     }
   };

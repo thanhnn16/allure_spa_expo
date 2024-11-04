@@ -18,15 +18,29 @@ interface PaymentDetails {
 }
 
 export default function InvoiceSuccess() {
-  const params = useLocalSearchParams<{ invoice_id: string }>();
+  const params = useLocalSearchParams<{
+    invoice_id: string;
+    amount: string;
+    payment_time: string;
+  }>();
+  
   const [loading, setLoading] = useState(true);
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
-    null
-  );
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
   const [showDialog, setShowDialog] = useState(true);
 
   useEffect(() => {
-    fetchPaymentDetails();
+    if (params.amount && params.payment_time) {
+      // Use params if available
+      setPaymentDetails({
+        amount: Number(params.amount),
+        paymentTime: params.payment_time,
+        orderCode: `INV_${params.invoice_id}`,
+      });
+      setLoading(false);
+    } else {
+      // Fallback to API call
+      fetchPaymentDetails();
+    }
   }, []);
 
   const fetchPaymentDetails = async () => {
