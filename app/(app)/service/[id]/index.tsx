@@ -30,6 +30,8 @@ import {
 import AxiosInstance from "@/utils/services/helper/AxiosInstance";
 import AppButton from "@/components/buttons/AppButton";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PagerView from 'react-native-pager-view';
+import path from "path";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -44,7 +46,6 @@ const ServiceDetailPage = () => {
   const [index, setIndex] = useState<number>(0);
   const [price, setPrice] = useState<number>();
   const [combo, setCombo] = useState<number>(0);
-  const [images, setImages] = useState<{ uri: string }[]>([]);
   const [comboName, setComboName] = useState<string>("");
   const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
   const windowWidth = Dimensions.get("window").width;
@@ -55,24 +56,21 @@ const ServiceDetailPage = () => {
       const res: ServiceDetailResponeParams = (
         await AxiosInstance().get(`services/${id}`)
       ).data;
-      
+
       if (res.status_code === 200 && res.data) {
         setService(res.data);
         setPrice(res.data.single_price);
         setMedia(res.data.media);
-        if(res.data.media.length === 0) alert("Không có media hình ảnh")
       }
       setIsLoading(false);
     };
     getServiceDetail();
   }, [id]);
 
-  useEffect(() => {
-    setImages([
-      { uri: "https://picsum.photos/1600/900" },
-      { uri: "https://picsum.photos/1920/1080" },
-    ]);
-  }, []);
+  const images = useMemo(() => {
+    if (!media || media.length === 0) return [];
+    return media.map(item => ({ uri: item.full_url }));
+  }, [media]);
 
   const handleOpenImage = (index: number) => {
     setImageViewIndex(index);
@@ -85,6 +83,7 @@ const ServiceDetailPage = () => {
       </View>
     );
   };
+
   useMemo(() => {
     switch (combo) {
       case 1:
@@ -105,49 +104,76 @@ const ServiceDetailPage = () => {
   const renderSkeletonView = () => {
     return (
       <View flex>
-            <SkeletonView
-              height={200}
-              width={windowWidth * 0.9}
-              style={{
-                borderRadius: 20,
-                alignSelf: "center",
-                marginTop: 10,
-              }}
-            />
-            <View padding-20 gap-10 flex>
-                <SkeletonView height={24} width={windowWidth * 0.7} />
-                <SkeletonView
-                  height={20}
-                  width={windowWidth * 0.4}
-                  marginT-10
-                />
-                <SkeletonView
-                  height={20}
-                  width={windowWidth * 0.6}
-                  marginT-10
-                />
-                <SkeletonView
-                  height={30}
-                  width={windowWidth * 0.9}
-                  style={{
-                    alignSelf: "center",
-                    marginTop: 90,
-                  }}
-                />
-              </View>
-              <SkeletonView
-                  height={50}
-                  width={windowWidth * 0.9}
-                  style={{
-                    alignSelf: "center",
-                    marginBottom: 10,
-                  }}
-                />
-          </View>
+        <SkeletonView
+          height={200}
+          width={windowWidth * 0.9}
+          style={{
+            borderRadius: 20,
+            alignSelf: "center",
+            marginTop: 10,
+          }}
+        />
+        <View padding-20 gap-10 flex>
+          <SkeletonView height={24} width={windowWidth * 0.7} />
+          <SkeletonView
+            height={20}
+            width={windowWidth * 0.4}
+            marginT-10
+          />
+          <SkeletonView
+            height={20}
+            width={windowWidth * 0.6}
+            marginT-10
+          />
+          <SkeletonView
+            height={30}
+            width={windowWidth * 0.9}
+            style={{
+              alignSelf: "center",
+              marginTop: 90,
+            }}
+          />
+        </View>
+        <SkeletonView
+          height={50}
+          width={windowWidth * 0.9}
+          style={{
+            alignSelf: "center",
+            marginBottom: 10,
+          }}
+        />
+      </View>
     )
   }
+  const renderItem = (item: { uri: string }, idx: number) => {
+    return (
+      <Pressable
+        onPress={() => handleOpenImage(idx)}
+        key={`carousel-item-${item.uri}-${idx}`}
+      >
+        <AnimatedImage
+          animationDuration={1000}
+          source={{ uri: item.uri }}
+          aspectRatio={16 / 9}
+          cover
+        />
+      </Pressable>
+    );
+  };
+
+  const handleBooking = () => {
+   
+   router.push({
+    pathname: `/(app)/booking`,
+    params: {
+      service_id: service?.id,
+      combo_id: combo
+    }
+  });
+  }
   return (
-      <View useSafeArea flex bg-$white>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View flex bg-$white>
         <AppBar back title={i18n.t("service.service_details")} />
         {isLoading ? (
           renderSkeletonView()
@@ -167,8 +193,9 @@ const ServiceDetailPage = () => {
                     }}
                   >
                     <Carousel
+                      key={`carousel-${images.length}`}
                       autoplay
-                      loop
+                      loop={images.length > 1}
                       onChangePage={(index: number) => setIndex(index)}
                       pageControlPosition={PageControlPosition.OVER}
                       pageControlProps={{
@@ -177,20 +204,7 @@ const ServiceDetailPage = () => {
                         inactiveColor: "#c4c4c4",
                       }}
                     >
-                      {images?.map((item, index) => (
-                        <Pressable
-                          onPress={() => handleOpenImage(index)}
-                          key={index}
-                        >
-                          <AnimatedImage
-                            animationDuration={1000}
-                            source={{ uri: item.uri }}
-                            aspectRatio={16 / 9}
-                            cover
-                            key={index}
-                          />
-                        </Pressable>
-                      ))}
+                      {images.map((item, idx) => renderItem(item, idx))}
                     </Carousel>
                   </View>
 
@@ -219,7 +233,8 @@ const ServiceDetailPage = () => {
                         <TouchableOpacity
                           onPress={() => {
                             alert('Chưa có api thêm vào favorite');
-                            setIsFavorite(!isFavorite)}}
+                            setIsFavorite(!isFavorite)
+                          }}
                         >
                           {isFavorite ? (
                             <AntDesign name="heart" size={24} color="black" />
@@ -286,7 +301,8 @@ const ServiceDetailPage = () => {
                         },
                       },
                       {
-                        label: i18n.t("package.commbo5"),
+                        label: i18n.t("package.combo5"),
+
                         onPress: () => {
                           setCombo(1);
                         },
@@ -340,7 +356,7 @@ const ServiceDetailPage = () => {
                     title={i18n.t("service.book_now")}
                     type="primary"
                     onPress={() => {
-                      router.push(`/(app)/booking/${id}` as Href<string>)
+                      handleBooking()
                     }}
                   />
                 </View>
@@ -349,6 +365,7 @@ const ServiceDetailPage = () => {
           )
         )}
       </View>
+    </SafeAreaView>
   );
 };
 

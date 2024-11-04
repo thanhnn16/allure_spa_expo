@@ -13,6 +13,7 @@ import MicIcon from "@/assets/icons/mic.svg";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { Href, router } from "expo-router";
 import { BlurView } from "expo-blur";
+import i18n from "@/languages/i18n";
 
 type AppSearchProps = {
   value?: string;
@@ -69,7 +70,7 @@ const AppSearch = ({
           >
             <View flex marginL-10>
               <Text h3 gray>
-                Tìm kiếm mỹ phẩm, liệu trình ...
+                {i18n.t("home.placeholder_search")}
               </Text>
             </View>
           </Pressable>

@@ -6,6 +6,7 @@
   "settings": "Settings",
   "change_language": "Change Language",
   "continue": "Continue",
+  "book": "Book",
   "back": "Back",
   "sendOTP": "Send OTP",
   "close": "Close",
@@ -183,7 +184,15 @@
   "home": {
     "featured_services": "Featured services",
     "featured_products": "Featured Products",
-    "discover": "Discover"
+    "discover": "Discover",
+    "see_more": "See more",
+    "introduce": "Introduce",
+    "voucher": "Voucher",
+    "service": "Service",
+    "product": "Product",
+    "course": "Course",
+    "news": "News",
+    "placeholder_search": "Search for cosmetics, treatments..."
   },
   "greeting": {
     "morning": "Allure Spa wishes you a good morning!",
@@ -205,7 +214,10 @@
     "select_time": "Select time",
     "note": "Note",
     "enter_content": "Enter content",
-    "continue": "Continue"
+    "continue": "Continue",
+    "plase_select_date": "Please select a date!",
+    "plase_select_time": "Please select a time!",
+    "appointment_successful": "Appointment successful!"
   },
   "system": {
     "fud": "Feature under development!"

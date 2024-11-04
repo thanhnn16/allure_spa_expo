@@ -182,7 +182,15 @@
   "home": {
     "featured_services": "優れたサービス",
     "featured_products": "優れた製品",
-    "discover": "発見する"
+    "discover": "発見する",
+    "see_more": "もっと見る",
+    "introduce": "導入",
+    "voucher": "バウチャー",
+    "service": "サービス",
+    "product": "製品",
+    "course": "コース",
+    "news": "ニュース",
+    "placeholder_search": "化粧品、トリートメントを検索..."
   },
   "greeting": {
     "morning": "Allure Spa はあなたの幸せな朝を願っています。",
@@ -204,7 +212,11 @@
     "select_time": "時間を選択してください",
     "note": "注記",
     "enter_content": "内容を入力してください",
-    "continue": "続く"
+    "continue": "続く",
+    "book": "Book",
+    "plase_select_date": "日付を選択してください。",
+    "plase_select_time": "時間を選択してください。",
+    "appointment_successful": "無事にスケジュールが決まりました！"
   },
   "system": {
     "fud": "機能は開発中です!",
