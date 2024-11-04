@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { Double } from 'react-native/Libraries/Types/CodegenTypes';
 
-let KEY = process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY;
+let KEY = process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY
+
+console.log(KEY)
 
 const getWeather = async (lat: Double, lon: Double) => {
   try {

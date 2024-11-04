@@ -1,7 +1,7 @@
 import { Href, router } from "expo-router";
 import { View, Text, TouchableOpacity, Image } from "react-native-ui-lib";
 import { StyleSheet, FlatList } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchChatsThunk } from "@/redux/features/chat/fetchChatsThunk";
@@ -16,38 +16,45 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { updateChatLastMessage } from "@/redux/features/chat/chatSlice";
+import AppDialog from "@/components/dialog/AppDialog";
+import { useAuth } from "@/hooks/useAuth";
 
 const ChatListScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { chats, isLoading } = useSelector((state: RootState) => state.chat);
+  const { isGuest } = useAuth();
+  const [loginDialogVisible, setLoginDialogVisible] = useState(false);
 
   useEffect(() => {
-    // Fetch chats khi component mount
-    dispatch(fetchChatsThunk());
+    if (!isGuest) {
+      dispatch(fetchChatsThunk());
 
-    const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-      if (remoteMessage.data?.type === "chat_message" && remoteMessage.messageId) {
-        await FirebaseService.showChatNotification(remoteMessage);
+      const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+        if (remoteMessage.data?.type === "chat_message" && remoteMessage.messageId) {
+          await FirebaseService.showChatNotification(remoteMessage);
 
-        const newMessage = {
-          id: remoteMessage.messageId,
-          chat_id: remoteMessage.data.chat_id,
-          message: String(remoteMessage.data?.message || ""),
-          sender_id: String(remoteMessage.data?.sender_id || ""),
-          created_at: new Date().toISOString(),
-        };
+          const newMessage = {
+            id: remoteMessage.messageId,
+            chat_id: remoteMessage.data.chat_id,
+            message: String(remoteMessage.data?.message || ""),
+            sender_id: String(remoteMessage.data?.sender_id || ""),
+            created_at: new Date().toISOString(),
+          };
 
-        dispatch(
-          updateChatLastMessage({
-            chatId: remoteMessage.data.chat_id,
-            message: newMessage,
-          })
-        );
-      }
-    });
+          dispatch(
+              updateChatLastMessage({
+                chatId: remoteMessage.data.chat_id,
+                message: newMessage,
+              })
+          );
+        }
+      });
 
-    return () => unsubscribe();
-  }, [dispatch]);
+      return () => unsubscribe();
+    } else {
+      setLoginDialogVisible(true);
+    }
+  }, [dispatch, isGuest]);
 
   const chatDataWithAI = [
     { id: "ai" }, // Chat AI luôn ở đầu
@@ -69,63 +76,81 @@ const ChatListScreen = () => {
     // Nếu là chat AI
     if (item.id === "ai") {
       return (
-        <TouchableOpacity
-          onPress={() => handleChatScreen("ai")}
-          style={styles.chatItem}
-        >
-          <Image source={IconCskh} style={styles.avatar} />
-          <View style={styles.messageContainer}>
-            <Text h3_bold>{i18n.t("chat.chat_with_ai")}</Text>
-            <Text h3 numberOfLines={1}>
-              {i18n.t("chat.ai_description")}
-            </Text>
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+              onPress={() => handleChatScreen("ai")}
+              style={styles.chatItem}
+          >
+            <Image source={IconCskh} style={styles.avatar} />
+            <View style={styles.messageContainer}>
+              <Text h3_bold>{i18n.t("chat.chat_with_ai")}</Text>
+              <Text h3 numberOfLines={1}>
+                {i18n.t("chat.ai_description")}
+              </Text>
+            </View>
+          </TouchableOpacity>
       );
     }
 
     // Nếu là chat với admin/staff
     const lastMessage =
-      item.messages?.[0]?.message || i18n.t("chat.no_messages");
+        item.messages?.[0]?.message || i18n.t("chat.no_messages");
     const lastMessageTime = item.messages?.[0]?.created_at;
 
     return (
-      <TouchableOpacity
-        onPress={() => handleChatScreen(item.id)}
-        style={styles.chatItem}
-      >
-        <Image source={IconCskh} style={styles.avatar} />
-        <View style={styles.messageContainer}>
-          <Text h3_bold>{i18n.t("chat.customer_care")}</Text>
-          <Text h3 numberOfLines={1}>
-            {lastMessage}
-          </Text>
-        </View>
-        {lastMessageTime && (
-          <Text h3>
-            {formatDistanceToNow(new Date(lastMessageTime), {
-              locale: vi,
-            })}
-          </Text>
-        )}
-      </TouchableOpacity>
+        <TouchableOpacity
+            onPress={() => handleChatScreen(item.id)}
+            style={styles.chatItem}
+        >
+          <Image source={IconCskh} style={styles.avatar} />
+          <View style={styles.messageContainer}>
+            <Text h3_bold>{i18n.t("chat.customer_care")}</Text>
+            <Text h3 numberOfLines={1}>
+              {lastMessage}
+            </Text>
+          </View>
+          {lastMessageTime && (
+              <Text h3>
+                {formatDistanceToNow(new Date(lastMessageTime), {
+                  locale: vi,
+                })}
+              </Text>
+          )}
+        </TouchableOpacity>
     );
   };
 
+  const handleLoginConfirm = () => {
+    setLoginDialogVisible(false);
+    router.replace("/(auth)");
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View flex bg-$backgroundDefault>
-        <AppBar title={i18n.t("pageTitle.chat")} />
-        <FlatList
-          data={chatDataWithAI}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          refreshing={isLoading}
-          onRefresh={() => dispatch(fetchChatsThunk())}
-        />
-      </View>
-    </SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View flex bg-$backgroundDefault>
+          <AppBar title={i18n.t("pageTitle.chat")} />
+          {isGuest ? (
+              <AppDialog
+                  visible={loginDialogVisible}
+                  title={i18n.t("auth.login.login_required")}
+                  description={i18n.t("auth.login.login_chat")}
+                  closeButtonLabel={i18n.t("common.cancel")}
+                  confirmButtonLabel={i18n.t("auth.login.login_now")}
+                  severity="info"
+                  onClose={() => setLoginDialogVisible(false)}
+                  onConfirm={handleLoginConfirm}
+              />
+          ) : (
+              <FlatList
+                  data={chatDataWithAI}
+                  renderItem={renderItem}
+                  keyExtractor={(item) => item.id}
+                  contentContainerStyle={styles.listContainer}
+                  refreshing={isLoading}
+                  onRefresh={() => dispatch(fetchChatsThunk())}
+              />
+          )}
+        </View>
+      </SafeAreaView>
   );
 };
 
