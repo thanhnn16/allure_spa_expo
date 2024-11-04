@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import FirebaseService from '@/utils/services/firebase/firebaseService';
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const logoutThunk = createAsyncThunk(

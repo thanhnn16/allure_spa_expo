@@ -57,7 +57,7 @@ export const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        addMessage: (state, action: PayloadAction<ChatMessage>) => {
+        addMessage: (state: ChatState, action: any) => {
             // Kiểm tra tin nhắn trùng lặp trước khi thêm vào
             const isDuplicate = state.messages.some(
                 msg => msg.id === action.payload.id
@@ -66,9 +66,9 @@ export const chatSlice = createSlice({
                 state.messages.unshift(action.payload);
             }
         },
-        updateChatLastMessage: (state, action: PayloadAction<{ chatId: string; message: ChatMessage }>) => {
+        updateChatLastMessage: (state: ChatState, action: any) => {
             const { chatId, message } = action.payload;
-            const chatIndex = state.chats.findIndex(chat => chat.id === chatId);
+            const chatIndex = state.chats.findIndex((chat: Chat) => chat.id === chatId);
 
             if (chatIndex !== -1) {
                 // Nếu chat chưa có mảng messages, tạo mới
@@ -85,21 +85,21 @@ export const chatSlice = createSlice({
                 }
             }
         },
-        addTempMessage: (state, action: PayloadAction<ChatMessage>) => {
+        addTempMessage: (state: ChatState, action: any) => {
             state.messages.unshift({
                 ...action.payload,
                 sending: true
             });
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: (builder: any) => {
         // Fetch Chats
         builder
-            .addCase(fetchChatsThunk.pending, (state) => {
+            .addCase(fetchChatsThunk.pending, (state: ChatState) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(fetchChatsThunk.fulfilled, (state, action) => {
+            .addCase(fetchChatsThunk.fulfilled, (state: ChatState, action: any) => {
                 state.isLoading = false;
                 state.chats = action.payload.map((chat: Chat) => ({
                     ...chat,
@@ -107,17 +107,17 @@ export const chatSlice = createSlice({
                 }));
                 state.error = null;
             })
-            .addCase(fetchChatsThunk.rejected, (state, action) => {
+            .addCase(fetchChatsThunk.rejected, (state: ChatState, action: any) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
             });
 
         // Fetch Messages
         builder
-            .addCase(fetchMessagesThunk.pending, (state) => {
+            .addCase(fetchMessagesThunk.pending, (state: ChatState) => {
                 state.isLoading = true;
             })
-            .addCase(fetchMessagesThunk.fulfilled, (state, action) => {
+            .addCase(fetchMessagesThunk.fulfilled, (state: ChatState, action: any) => {
                 state.isLoading = false;
                 if (action.meta.arg.page === 1) {
                     // First page - replace all messages
@@ -128,17 +128,17 @@ export const chatSlice = createSlice({
                 }
                 state.error = null;
             })
-            .addCase(fetchMessagesThunk.rejected, (state, action) => {
+            .addCase(fetchMessagesThunk.rejected, (state: ChatState, action: any) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
             });
 
         // Send Message
         builder
-            .addCase(sendMessageThunk.pending, (state) => {
+            .addCase(sendMessageThunk.pending, (state: ChatState) => {
                 state.isSending = true;
             })
-            .addCase(sendMessageThunk.fulfilled, (state, action) => {
+            .addCase(sendMessageThunk.fulfilled, (state: ChatState, action: any) => {
                 state.isSending = false;
                 // Replace temp message with actual message
                 const messageIndex = state.messages.findIndex(
@@ -152,7 +152,7 @@ export const chatSlice = createSlice({
                 }
                 state.error = null;
             })
-            .addCase(sendMessageThunk.rejected, (state, action) => {
+            .addCase(sendMessageThunk.rejected, (state: ChatState, action: any) => {
                 state.isSending = false;
                 // Update message status on error
                 const messageIndex = state.messages.findIndex(
@@ -166,8 +166,8 @@ export const chatSlice = createSlice({
 
         // Mark as Read
         builder
-            .addCase(markAsReadThunk.fulfilled, (state) => {
-                state.messages = state.messages.map(msg => ({
+            .addCase(markAsReadThunk.fulfilled, (state: ChatState) => {
+                state.messages = state.messages.map((msg: ChatMessage) => ({
                     ...msg,
                     is_read: true
                 }));

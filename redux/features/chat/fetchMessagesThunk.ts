@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import AxiosInstance from '@/utils/services/helper/AxiosInstance';
+import AxiosInstance from '@/utils/services/helper/axiosInstance';
 
 interface FetchMessagesParams {
   chatId: string;
@@ -9,7 +9,7 @@ interface FetchMessagesParams {
 
 export const fetchMessagesThunk = createAsyncThunk(
   'chat/fetchMessages',
-  async (params: FetchMessagesParams, { rejectWithValue }) => {
+  async (params: FetchMessagesParams, { rejectWithValue }: any) => {
     try {
       const { chatId, page, perPage = 20 } = params;
       const response = await AxiosInstance().get(`/chats/${chatId}/messages`, {
