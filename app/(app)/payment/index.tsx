@@ -360,7 +360,10 @@ export default function Payment() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Voucher</Text>
           <Card>
-            <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
+            <TouchableOpacity
+              onPress={() => console.log('Voucher được cập nhật')}
+              style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}
+            >
               <Incubator.TextField
                 placeholder="Không có"
                 value=""
@@ -368,17 +371,20 @@ export default function Payment() {
                 style={[styles.inputField, styles.placeholderStyle]}
                 placeholderTextColor="#000000"
               />
-            </View>
+              <TouchableOpacity onPress={() => console.log('Icon được nhấn')}>
+                <Ionicons name="chevron-down" size={20} color="#BCBABA" style={styles.icon} />
+              </TouchableOpacity>
+            </TouchableOpacity>
           </Card>
           <View style={styles.borderInset} />
         </View>
 
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
+          <Text style={styles.sectionTitle}>Hình th��c thanh toán</Text>
           <Card>
             <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => setModalVisible(true)}
                 style={styles.paymentSelector}
               >
@@ -489,24 +495,24 @@ export default function Payment() {
             <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>2.385.000 VNĐ</Text>
           </View>
         </View>
-          <Button
-            label='Tiếp Tục'
-            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-            onPress={() => router.push('/transaction')}
-          />
-          <Button
-            label='Detail Transaction'
-            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-            onPress={() => router.push('/transaction/detail')}
-          />
+        <Button
+          label='Tiếp Tục'
+          labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          padding-20
+          borderRadius={10}
+          style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+          onPress={() => router.push('/transaction')}
+        />
+        <Button
+          label='Detail Transaction'
+          labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          padding-20
+          borderRadius={10}
+          style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+          onPress={() => router.push('/transaction/detail')}
+        />
       </ScrollView>
     </SafeAreaView>
   );
