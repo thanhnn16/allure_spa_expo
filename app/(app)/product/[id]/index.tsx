@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Incubator,
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
@@ -53,6 +54,7 @@ export default function DetailsScreen() {
   const { isGuest } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -288,12 +290,17 @@ export default function DetailsScreen() {
               )}
               <ProductDescription product={product} isLoading={isLoading} />
             </View>
-            <ProductQuantity isLoading={isLoading} />
+            <ProductQuantity
+              isLoading={isLoading}
+              quantity={quantity}
+              setQuantity={setQuantity}
+            />
           </ScrollView>
           <ProductBottomComponent
             isLoading={isLoading}
             product={product}
             onPurchase={isGuest ? handleGuestPurchase : undefined}
+            quantity={quantity}
           />
 
           <AppDialog

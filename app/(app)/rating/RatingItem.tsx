@@ -38,16 +38,16 @@ const RatingItem = ({ item }: { item: RatingItemProps }) => {
       <View row centerV>
         <View row gap-10 centerV>
           <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />
-          <Text h2_bold>{item.user.name}</Text>
+          <Text h3_bold>{item.user.name}</Text>
         </View>
-        <View row gap-5 flex right>
-          <Image source={StarIcon} size={13}/>
-          <Text h3_bold>{item.rating}</Text>
+        <View row gap-5 centerV flex right>
+          <Image source={StarIcon} width={20} height={20}/>
+          <Text h3_bold center>{item.rating}</Text>
         </View>
       </View>
 
       <View marginV-10>
-        <Text h2>{item.comment}</Text>
+        <Text h3>{item.comment}</Text>
       </View>
 
       {item.images.length > 0 && (

@@ -1,26 +1,21 @@
-import React, { useCallback, useRef, useState } from "react";
-import { router, useLocalSearchParams } from "expo-router";
-import { View, Text, Image, Button, Colors } from "react-native-ui-lib";
+import { useCallback, useRef, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import { View, Text, Button, Colors } from "react-native-ui-lib";
 import { Rating } from "react-native-ratings";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Dimensions, TouchableOpacity } from "react-native"; // Add this import
-
-import StarIcon from "@/assets/icons/star.svg";
 import RatingBar from "@/components/rating/RatingBar";
 import RatingItem from "./RatingItem";
 import { FlatList, SafeAreaView, StyleSheet, TextInput } from "react-native";
 import { data } from "./data";
-import { AppStyles } from "@/constants/AppStyles";
-import { BlurView } from "expo-blur";
 import AppBar from "@/components/app-bar/AppBar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import i18n from "@/languages/i18n";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
+import RatingStar from "@/components/rating/RatingStar";
 
 const RatingPage = () => {
   const { id } = useLocalSearchParams();
-  const [isBuy, setIsBuy] = useState(true);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   // ref
@@ -37,25 +32,19 @@ const RatingPage = () => {
 
   return (
     <GestureHandlerRootView>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#ffffff" }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View bg-$backgroundDefault flex>
-          <AppBar title="" />
+          <AppBar back title="Đánh giá" />
           <View padding-20 row centerV>
             <View>
-              <Text h0_bold>4.9/5</Text>
+              <Text h2_bold>4.9/5</Text>
               <View height={2}></View>
               <Text h3_medium>
                 {i18n.t("rating.base_on")} 69 {i18n.t("rating.reviews")}
               </Text>
               <View height={10}></View>
               <View left>
-                <Rating
-                  ratingCount={5}
-                  imageSize={16}
-                  ratingBackgroundColor="#E0E0E0"
-                  ratingColor="#FFC700"
-                  ratingTextColor="#000"
-                />
+                <RatingStar rating={4.5} />
               </View>
             </View>
 
@@ -76,35 +65,6 @@ const RatingPage = () => {
               ListFooterComponent={<View height={90} />}
             />
           </View>
-
-          {isBuy && (
-            <BlurView
-              style={{
-                flex: 1,
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: 60,
-              }}
-              intensity={200}
-            >
-              <Button
-                label={i18n.t("rating.add_review").toString()}
-                labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-                backgroundColor={Colors.primary}
-                padding-20
-                borderRadius={10}
-                style={{
-                  width: 240,
-                  height: 40,
-                  alignSelf: "center",
-                  marginVertical: 10,
-                }}
-                onPress={handleOpenBottomSheet}
-              />
-            </BlurView>
-          )}
 
           <BottomSheet
             ref={bottomSheetRef}

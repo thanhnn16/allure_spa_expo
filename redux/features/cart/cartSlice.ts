@@ -27,13 +27,17 @@ export const cartSlice = createSlice({
       state.items = action.payload;
     },
     addItemToCart: (state: CartState, action: any) => {
-      const { product } = action.payload;
+      const { product, quantity } = action.payload;
       if (!product) return;
       const existingItem = state.items.find(item => item.id === product.id);
       if (existingItem) {
         state.items = state.items.map(item => {
           if (item.id === product.id) {
-            item.quantity += 1;
+            if (quantity) {
+              item.quantity += quantity;
+            } else {
+              item.quantity += 1;
+            }
           }
           return item;
         });
