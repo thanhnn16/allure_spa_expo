@@ -206,7 +206,15 @@
   "home": {
     "featured_services": "Dịch vụ nổi bật",
     "featured_products": "Sản phẩm nổi bật",
-    "discover": "Khám phá"
+    "discover": "Khám phá",
+    "see_more": "Xem thêm",
+    "introduce": "Giới thiệu",
+    "voucher": "Voucher",
+    "service": "Dịch vụ",
+    "product": "Sản phẩm",
+    "course": "Khoá học",
+    "news": "Tin tức",
+    "placeholder_search": "Tìm kiếm mỹ phẩm, liệu trình ..."
   },
   "greeting": {
     "morning": "Allure Spa chúc bạn buổi sáng vui vẻ!",
@@ -228,7 +236,11 @@
     "select_time": "Chọn giờ",
     "note": "Ghi chú",
     "enter_content": "Nhập nội dung",
-    "continue": "Tiếp tục"
+    "continue": "Tiếp tục",
+    "book": "Book",
+    "plase_select_date": "Vui lòng chọn ngày!",
+    "plase_select_time": "Vui lòng chọn giờ!",
+    "appointment_successful": "Đặt lịch thành công!"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",

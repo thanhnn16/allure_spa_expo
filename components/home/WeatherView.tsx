@@ -33,7 +33,6 @@ const WeatherView = () => {
                 if (!weatherData) {
                     throw new Error("Failed to fetch weather data");
                 }
-
                 setLocation(nearestProvince);
                 setWeatherIcon(weatherData.weather[0].icon);
                 const temperatureData = weatherData["main"]["temp"];

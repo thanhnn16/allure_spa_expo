@@ -12,22 +12,218 @@ interface Product {
   image: any;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'Lamellar Lipocollage',
-    price: '1.170.000 VNĐ',
-    quantity: 1,
-    image: require('@/assets/images/sp2.png')
-  },
-  {
-    id: 2,
-    name: 'Lamellar Lipocollage',
-    price: '1.170.000 VNĐ',
-    quantity: 1,
-    image: require('@/assets/images/sp2.png')
-  },
-];
+
+export default function Payment() {
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState('Thanh toán khi nhận hàng');
+
+  const paymentMethods = [
+    { id: 2, name: 'VISA / MasterCard', icon: require('@/assets/images/visa.png') },
+    { id: 3, name: 'ZaloPay', icon: require('@/assets/images/zalopay.png') },
+    { id: 4, name: 'Apple Pay', icon: require('@/assets/images/apple.png') }
+  ];
+
+  const handlePaymentSelect = (payment: string) => {
+    setSelectedPayment(payment);
+    setModalVisible(false);
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+
+      <View style={styles.header}>
+        <Button
+          iconSource={require('@/assets/images/home/arrow_ios.png')}
+          onPress={() => router.back()}
+          link
+          iconStyle={{ tintColor: 'black' }}
+        />
+        <Text style={{ flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
+          Thanh toán
+        </Text>
+      </View>
+
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.productListContainer, { backgroundColor: '#FFFFFF' }]}
+      >
+
+        <View style={styles.sectionNoBorder}>
+          <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
+          <Card>
+            <TouchableOpacity
+              onPress={() => console.log('Cập nhật sau')}
+              style={[styles.customerInfoCard, { backgroundColor: '#f8f8f8' }]}
+            >
+              <View style={styles.customerInfo}>
+                <Text style={{ fontSize: 14 }}>Lộc Nè Con</Text>
+                <Text style={{ fontSize: 14 }}>+84 123 456 789</Text>
+                <Text style={{ fontSize: 14 }}>123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM</Text>
+              </View>
+              <Image
+                source={require('@/assets/images/home/arrow_ios.png')}
+                style={styles.arrowIcon}
+              />
+            </TouchableOpacity>
+          </Card>
+        </View>
+
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Voucher</Text>
+          <Card>
+            <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
+              <Incubator.TextField
+                placeholder="Không có"
+                value=""
+                editable={false}
+                style={[styles.inputField, styles.placeholderStyle]}
+                placeholderTextColor="#000000"
+              />
+            </View>
+          </Card>
+          <View style={styles.borderInset} />
+        </View>
+
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
+          <Card>
+            <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
+              <TouchableOpacity 
+                onPress={() => setModalVisible(true)}
+                style={styles.paymentSelector}
+              >
+                <Text style={styles.placeholderStyle}>{selectedPayment}</Text>
+                <Ionicons name="chevron-down" size={20} color="#BCBABA" style={styles.icon} />
+              </TouchableOpacity>
+            </View>
+          </Card>
+          <View style={styles.borderInset} />
+        </View>
+
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalTitleContainer}>
+                <Text style={styles.modalTitle}>Chọn phương thức thanh toán</Text>
+              </View>
+              <View
+                style={[styles.productDivider, { height: 1, backgroundColor: '#E0E0E0' }]}
+              />
+              {paymentMethods.map((method) => (
+                <TouchableOpacity
+                  key={method.id}
+                  style={styles.paymentOption}
+                  onPress={() => handlePaymentSelect(method.name)}
+                >
+                  <View style={styles.optionLeft}>
+                    <View style={styles.paymentIconContainer}>
+                      <Image
+                        source={method.icon}
+                        style={styles.paymentIcon}
+                      />
+                    </View>
+                  </View>
+                  {selectedPayment === method.name && (
+                    <View style={styles.checkIconContainer}>
+                      <Ionicons name="checkmark" size={14} style={styles.checkIcon} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+
+              <Button
+                label="Tiếp tục"
+                labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+                backgroundColor={Colors.primary}
+                padding-20
+                borderRadius={10}
+                style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+                onPress={() => setModalVisible(false)}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
+
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Sản phẩm</Text>
+          {products.map((product: Product) => (
+            <Card
+              key={product.id}
+              style={styles.productCard}
+              enableShadow={false}
+              backgroundColor="transparent"
+            >
+              <View style={styles.cardRow}>
+                <Card.Image
+                  source={product.image}
+                  style={styles.productImage}
+                />
+                <View style={styles.productInfo}>
+                  <View style={{ marginBottom: 8 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{product.name}</Text>
+                  </View>
+
+                  <View style={{ marginBottom: 8 }}>
+                    <Text style={{ fontSize: 16 }}>{product.price}</Text>
+                  </View>
+
+                  <View style={styles.productRow}>
+                    <Text style={{ fontSize: 12 }}>Số lượng: {product.quantity}</Text>
+                    <Text style={[styles.categoryText, { fontSize: 12 }]}>Dưỡng ẩm</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.productDivider} />
+            </Card>
+          ))}
+        </View>
+
+
+
+        <View style={styles.totalSection}>
+          <View style={styles.row}>
+            <Text style={{ fontWeight: 'bold' }}>Voucher</Text>
+            <Text>Không có</Text>
+          </View>
+          <View style={[styles.row, { marginTop: 8 }]}>
+            <Text style={{ fontWeight: 'bold' }}>Tổng thanh toán</Text>
+            <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>2.385.000 VNĐ</Text>
+          </View>
+        </View>
+          <Button
+            label='Tiếp Tục'
+            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+            backgroundColor={Colors.primary}
+            padding-20
+            borderRadius={10}
+            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            onPress={() => router.push('/transaction')}
+          />
+          <Button
+            label='Detail Transaction'
+            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+            backgroundColor={Colors.primary}
+            padding-20
+            borderRadius={10}
+            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            onPress={() => router.push('/transaction/detail')}
+          />
+      </ScrollView>
+    </SafeAreaView>
+  );
+} 
 
 const styles = StyleSheet.create({
   container: {
@@ -273,6 +469,25 @@ const styles = StyleSheet.create({
   },
 });
 
+const products: Product[] = [
+  {
+    id: 1,
+    name: 'Lamellar Lipocollage',
+    price: '1.170.000 VNĐ',
+    quantity: 1,
+    image: require('@/assets/images/sp2.png')
+  },
+  {
+    id: 2,
+    name: 'Lamellar Lipocollage',
+    price: '1.170.000 VNĐ',
+    quantity: 1,
+    image: require('@/assets/images/sp2.png')
+  },
+];
+
+
+
 const modalOverlay: ViewStyle = {
   flex: 1,
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -300,214 +515,3 @@ const updatedStylesWithDivider = StyleSheet.create({
 
 Object.assign(styles, updatedStylesWithDivider);
 
-export default function Payment() {
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState('Thanh toán khi nhận hàng');
-
-  const paymentMethods = [
-    { id: 2, name: 'VISA / MasterCard', icon: require('@/assets/images/visa.png') },
-    { id: 3, name: 'ZaloPay', icon: require('@/assets/images/zalopay.png') },
-    { id: 4, name: 'Apple Pay', icon: require('@/assets/images/apple.png') }
-  ];
-
-  const handlePaymentSelect = (payment: string) => {
-    setSelectedPayment(payment);
-    setModalVisible(false);
-  };
-
-  return (
-    <SafeAreaView style={styles.container}>
-
-      <View style={styles.header}>
-        <Button
-          iconSource={require('@/assets/images/home/arrow_ios.png')}
-          onPress={() => router.back()}
-          link
-          iconStyle={{ tintColor: 'black' }}
-        />
-        <Text style={{ flex: 1, textAlign: 'center', fontSize: 18, fontWeight: 'bold' }}>
-          Thanh toán
-        </Text>
-      </View>
-
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[styles.productListContainer, { backgroundColor: '#FFFFFF' }]}
-      >
-
-        <View style={styles.sectionNoBorder}>
-          <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
-          <Card>
-            <TouchableOpacity
-              onPress={() => console.log('Cập nhật sau')}
-              style={[styles.customerInfoCard, { backgroundColor: '#f8f8f8' }]}
-            >
-              <View style={styles.customerInfo}>
-                <Text style={{ fontSize: 14 }}>Lộc Nè Con</Text>
-                <Text style={{ fontSize: 14 }}>+84 123 456 789</Text>
-                <Text style={{ fontSize: 14 }}>123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM</Text>
-              </View>
-              <Image
-                source={require('@/assets/images/home/arrow_ios.png')}
-                style={styles.arrowIcon}
-              />
-            </TouchableOpacity>
-          </Card>
-        </View>
-
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Voucher</Text>
-          <Card>
-            <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
-              <Incubator.TextField
-                placeholder="Không có"
-                value=""
-                editable={false}
-                style={[styles.inputField, styles.placeholderStyle]}
-                placeholderTextColor="#000000"
-              />
-            </View>
-          </Card>
-          <View style={styles.borderInset} />
-        </View>
-
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
-          <Card>
-            <View style={[styles.textFieldContainer, { backgroundColor: '#f8f8f8' }]}>
-              <TouchableOpacity 
-                onPress={() => setModalVisible(true)}
-                style={styles.paymentSelector}
-              >
-                <Text style={styles.placeholderStyle}>{selectedPayment}</Text>
-                <Ionicons name="chevron-down" size={20} color="#BCBABA" style={styles.icon} />
-              </TouchableOpacity>
-            </View>
-          </Card>
-          <View style={styles.borderInset} />
-        </View>
-
-        <Modal
-          visible={isModalVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setModalVisible(false)}
-          >
-            <View style={styles.modalContent}>
-              <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>Chọn phương thức thanh toán</Text>
-              </View>
-              <View
-                style={[styles.productDivider, { height: 1, backgroundColor: '#E0E0E0' }]}
-              />
-              {paymentMethods.map((method) => (
-                <TouchableOpacity
-                  key={method.id}
-                  style={styles.paymentOption}
-                  onPress={() => handlePaymentSelect(method.name)}
-                >
-                  <View style={styles.optionLeft}>
-                    <View style={styles.paymentIconContainer}>
-                      <Image
-                        source={method.icon}
-                        style={styles.paymentIcon}
-                      />
-                    </View>
-                  </View>
-                  {selectedPayment === method.name && (
-                    <View style={styles.checkIconContainer}>
-                      <Ionicons name="checkmark" size={14} style={styles.checkIcon} />
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-
-              <Button
-                label="Tiếp tục"
-                labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-                backgroundColor={Colors.primary}
-                padding-20
-                borderRadius={10}
-                style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-                onPress={() => setModalVisible(false)}
-              />
-            </View>
-          </TouchableOpacity>
-        </Modal>
-
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sản phẩm</Text>
-          {products.map((product: Product) => (
-            <Card
-              key={product.id}
-              style={styles.productCard}
-              enableShadow={false}
-              backgroundColor="transparent"
-            >
-              <View style={styles.cardRow}>
-                <Card.Image
-                  source={product.image}
-                  style={styles.productImage}
-                />
-                <View style={styles.productInfo}>
-                  <View style={{ marginBottom: 8 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{product.name}</Text>
-                  </View>
-
-                  <View style={{ marginBottom: 8 }}>
-                    <Text style={{ fontSize: 16 }}>{product.price}</Text>
-                  </View>
-
-                  <View style={styles.productRow}>
-                    <Text style={{ fontSize: 12 }}>Số lượng: {product.quantity}</Text>
-                    <Text style={[styles.categoryText, { fontSize: 12 }]}>Dưỡng ẩm</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.productDivider} />
-            </Card>
-          ))}
-        </View>
-
-
-
-        <View style={styles.totalSection}>
-          <View style={styles.row}>
-            <Text style={{ fontWeight: 'bold' }}>Voucher</Text>
-            <Text>Không có</Text>
-          </View>
-          <View style={[styles.row, { marginTop: 8 }]}>
-            <Text style={{ fontWeight: 'bold' }}>Tổng thanh toán</Text>
-            <Text style={{ fontWeight: 'bold', color: Colors.red30 }}>2.385.000 VNĐ</Text>
-          </View>
-        </View>
-          <Button
-            label='Tiếp Tục'
-            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-            onPress={() => router.push('/transaction')}
-          />
-          <Button
-            label='Detail Transaction'
-            labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-            onPress={() => router.push('/transaction/detail')}
-          />
-      </ScrollView>
-    </SafeAreaView>
-  );
-} 
