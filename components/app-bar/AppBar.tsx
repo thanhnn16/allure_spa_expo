@@ -15,7 +15,7 @@ interface AppBarProps {
 const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
   return (
     <BlurView intensity={200}>
-      <View height={60} paddingH-16 row centerV spread>
+      <View paddingH-16 row centerV spread>
         {back ? (
           <Pressable onPress={router.back}>
             <View width={48} height={48} centerV>

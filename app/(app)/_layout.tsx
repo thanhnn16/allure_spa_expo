@@ -1,21 +1,28 @@
 import React, { useEffect } from "react";
 import { Stack, router } from "expo-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const AppLayout = () => {
-  const { isAuthenticated, isGuest } = useAuth();
+  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (!isAuthenticated && !isGuest) {
-        router.replace("/(auth)");
+    const checkAuthAndNavigate = async () => {
+      try {
+        if (!isAuthenticated && !isGuest) {
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Đợi animation
+          router.replace("/(auth)");
+        }
+      } catch (err) {
+        console.error("Navigation error:", err);
       }
     };
-    checkAuth();
+
+    checkAuthAndNavigate();
   }, [isAuthenticated, isGuest]);
 
   return (
-    <Stack screenOptions={{ headerShown: false }} initialRouteName={'(tabs)'}>
+    <Stack screenOptions={{ headerShown: false }} initialRouteName={"(tabs)"}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="transaction/index" />
       <Stack.Screen name="product/[id]/index" />
@@ -30,6 +37,7 @@ const AppLayout = () => {
       <Stack.Screen name="chat/ai-chat" />
       <Stack.Screen name="chat/[id]/index" />
       <Stack.Screen name="service/[id]/index" />
+      <Stack.Screen name="booking/[id]/index" />
     </Stack>
   );
 };

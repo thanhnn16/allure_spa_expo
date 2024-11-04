@@ -2,7 +2,13 @@ const { getDefaultConfig } = require("expo/metro-config");
 
 module.exports = (() => {
     const config = getDefaultConfig(__dirname);
-
+    config.maxWorkers = 2;
+    
+    config.transformer.minifierConfig = {
+        compress: {
+          drop_console: true,
+        },
+      };
     const { transformer, resolver } = config;
 
     config.transformer = {

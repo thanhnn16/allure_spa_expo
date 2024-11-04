@@ -10,8 +10,8 @@ export interface AppButtonProps {
     buttonStyle?: any;
     titleStyle?: any;
     disabled?: boolean;
-    loading?: boolean; // Add loading prop
-    children?: React.ReactNode; // Add children prop
+    loading?: boolean;
+    children?: React.ReactNode;
 }
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
@@ -45,7 +45,7 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
     const buttonStyles = getButtonStyles();
 
     return (
-        <View marginV-6>
+        <View>
             <Button
                 label={props.title}
                 onPress={props.onPress}

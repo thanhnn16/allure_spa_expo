@@ -1,25 +1,29 @@
-import React, { useEffect } from "react";
-import { Stack, router } from "expo-router";
-import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+import { useRouter } from "expo-router";
+import { Stack } from "expo-router/stack";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function AuthLayout() {
-  const { isAuthenticated, isGuest } = useAuth();
+  const router = useRouter();
+  const { initializing, user, error } = useAuth();
 
   useEffect(() => {
-    const redirect = async () => {
-      if (isAuthenticated || isGuest) {
-        router.replace("/(app)");
+    const checkAuthAndNavigate = async () => {
+      try {
+        if (initializing) return;
+        if (user) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          router.replace("/(app)");
+        }
+      } catch (err) {
+        console.error("Navigation error:", err);
       }
     };
-    redirect();
-  }, [isAuthenticated, isGuest]);
+
+    checkAuthAndNavigate();
+  }, [initializing, user]);
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="zalo-oauth" options={{ headerShown: false }} />
-      <Stack.Screen name="change-password" options={{ headerShown: false }} />
-      <Stack.Screen name="otp" options={{ headerShown: false }} />
-    </Stack>
+    <Stack screenOptions={{ headerShown: false }} />
   );
 }

@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export const useHeaderDimensions = () => {
   const headerHeight = useHeaderHeight();
   const { top: statusBarHeight } = useSafeAreaInsets();
-  const HEADER_HEIGHT = headerHeight + statusBarHeight + 100;
+  const HEADER_HEIGHT = headerHeight + statusBarHeight + 80;
   const SCROLL_THRESHOLD = HEADER_HEIGHT / 2;
   const OPACITY_THRESHOLD = SCROLL_THRESHOLD / 2;
 

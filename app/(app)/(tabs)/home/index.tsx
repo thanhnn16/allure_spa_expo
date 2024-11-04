@@ -175,7 +175,7 @@ const HomePage = () => {
           { borderRadius: 16, width: 230, height: "auto" },
         ]}
         onPress={() => {
-          router.push(`/(app)/service/${item.id}`);
+          router.push({ pathname: "/service/[id]", params: { id: item.id } });
         }}
       >
         <Image

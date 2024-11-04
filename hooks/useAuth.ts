@@ -11,19 +11,20 @@ import { useZaloAuth } from './useZaloAuth';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user, token, isAuthenticated, isGuest, isLoading, error } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const authState = useSelector((state: RootState) => state.auth);
   const { login: zaloLogin } = useZaloAuth();
+
 
   const signIn = async (credentials: LoginCredentials) => {
     try {
       const result = await dispatch(loginThunk(credentials)).unwrap();
       if (result) {
+        await new Promise(resolve => setTimeout(resolve, 100));
         router.replace('/(app)/(tabs)/home');
         return result;
       }
     } catch (error: any) {
+      console.error('Sign in failed:', error);
       throw error;
     }
   };
@@ -32,10 +33,12 @@ export const useAuth = () => {
     try {
       const result = await dispatch(registerThunk(credentials)).unwrap();
       if (result) {
+        await new Promise(resolve => setTimeout(resolve, 100));
         router.replace('/(app)/(tabs)/home');
         return result;
       }
     } catch (error: any) {
+      console.error('Sign up failed:', error);
       throw error;
     }
   };
@@ -44,6 +47,7 @@ export const useAuth = () => {
     try {
       await zaloLogin();
     } catch (error: any) {
+      console.error('Sign in with Zalo failed:', error);
       throw error;
     }
   };
@@ -51,8 +55,10 @@ export const useAuth = () => {
   const signOut = async () => {
     try {
       await dispatch(logoutThunk()).unwrap();
+      await new Promise(resolve => setTimeout(resolve, 100));
       router.replace('/(auth)');
     } catch (error: any) {
+      console.error('Sign out failed:', error);
       throw error;
     }
   };
@@ -61,8 +67,10 @@ export const useAuth = () => {
     try {
       await AuthService.loginAsGuest();
       dispatch(setGuestUser());
+      await new Promise(resolve => setTimeout(resolve, 100));
       router.replace('/(app)/(tabs)/home');
     } catch (error: any) {
+      console.error('Sign in as guest failed:', error);
       throw error;
     }
   };
@@ -73,12 +81,7 @@ export const useAuth = () => {
   };
 
   return {
-    user,
-    token,
-    isAuthenticated,
-    isGuest,
-    isLoading,
-    error,
+    ...authState,
     signIn,
     signUp,
     signOut,

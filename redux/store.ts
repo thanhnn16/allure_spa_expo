@@ -9,12 +9,16 @@ import { serviceSlice } from './features/service/serviceSlice';
 import { authSlice } from './features/auth/authSlice';
 import productReducer from "./features/products/productSlice";
 import searchReducer from "./features/search/searchSlice";
+import cartReducer from "./features/cart/cartSlice";
+import chatReducer from './features/chat/chatSlice';
 
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['language', 'zalo', 'auth']
+    whitelist: ['language', 'zalo', 'auth'],
+    timeout: 10000,
+    debug: __DEV__
 }
 
 const rootReducer: any = combineReducers({
@@ -24,7 +28,9 @@ const rootReducer: any = combineReducers({
     service: serviceSlice.reducer,
     auth: authSlice.reducer,
     product: productReducer,
-    search: searchReducer
+    search: searchReducer,
+    cart: cartReducer,
+    chat: chatReducer
 })
 
 
@@ -38,9 +44,26 @@ export const store = configureStore({
         getDefaultMiddleware({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+            thunk: {
+                extraArgument: undefined
             }
-        })
+        }),
+    devTools: __DEV__,
+    preloadedState: undefined
 });
 
 export const persistor = persistStore(store);
 export type AppDispatch = typeof store.dispatch;
+
+export const isStoreReady = () => {
+    return new Promise((resolve) => {
+        const unsubscribe = persistor.subscribe(() => {
+            const { bootstrapped } = persistor.getState();
+            if (bootstrapped) {
+                unsubscribe();
+                resolve(true);
+            }
+        });
+    });
+};

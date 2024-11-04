@@ -5,30 +5,29 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const logoutThunk = createAsyncThunk(
     'user/logout',
-    async () => {
+    async (_: any, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
         try {
-            // Get current FCM token
             const fcmToken = await FirebaseService.getFCMToken();
 
-            // Get user token from AsyncStorage
-            const userToken = await AsyncStorage.getItem('userToken');
-
-            if (userToken) {
-                // Call logout API with FCM token
-                await AxiosInstance().post('/auth/logout', {
-                    fcm_token: fcmToken
-                });
+            if (fcmToken) {
+                try {
+                    await AxiosInstance().post('/auth/logout', {
+                        fcm_token: fcmToken
+                    });
+                } catch (apiError) {
+                    console.warn('Logout API call failed:', apiError);
+                    // Continue with local cleanup even if API fails
+                }
             }
 
-            // Clear local storage regardless of API call result
+            // Always clear local storage
             await AsyncStorage.multiRemove(['userToken', 'user', 'zaloTokens', 'isGuest']);
-
             return true;
         } catch (error: any) {
             console.error('Logout error:', error);
-            // Still clear storage even if API call fails
+            // Still try to clear storage on error
             await AsyncStorage.multiRemove(['userToken', 'user', 'zaloTokens', 'isGuest']);
-            return true; // Return success anyway since we've cleared local storage
+            return rejectWithValue(error.message);
         }
     }
 );

@@ -2,7 +2,6 @@ import { useRef, useState, useEffect } from "react";
 import {
   StyleSheet,
   FlatList,
-  SafeAreaView,
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -10,83 +9,133 @@ import {
 import { View, Text, Colors } from "react-native-ui-lib";
 import messaging from "@react-native-firebase/messaging";
 import { useLocalSearchParams } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import { useAuth } from "@/hooks/useAuth";
 import MessageTextInput from "@/components/message/MessageTextInput";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import MessageBubble from "@/components/message/MessageBubble";
-
-interface Message {
-  id: string;
-  message: string;
-  sender_id: string;
-  created_at: string;
-}
+import { fetchMessagesThunk } from "@/redux/features/chat/fetchMessagesThunk";
+import { sendMessageThunk } from "@/redux/features/chat/sendMessageThunk";
+import { markAsReadThunk } from "@/redux/features/chat/markAsReadThunk";
+import { addMessage, addTempMessage } from "@/redux/features/chat/chatSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatScreen = () => {
   const { id } = useLocalSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
   const { user } = useAuth();
+  const { messages, isLoading, isSending, error } = useSelector(
+    (state: RootState) => state.chat
+  );
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<FlatList>(null);
+  const [sendingMessageId, setSendingMessageId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const processedMessages = useRef(new Set());
 
   useEffect(() => {
     const setupChat = async () => {
       try {
-        setLoading(true);
-        const response = await AxiosInstance().get(`/chats/${id}/messages`);
-        setMessages(response.data);
+        const result = await dispatch(
+          fetchMessagesThunk({
+            chatId: id as string,
+            page: 1,
+          })
+        ).unwrap();
+        setHasMore(result.has_more);
+        dispatch(markAsReadThunk(id as string));
 
-        // Đăng ký FCM listener
         const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-          if (remoteMessage.data?.chat_id === id) {
-            const newMessage: Message = {
-              id: remoteMessage.messageId || Date.now().toString(),
-              message: String(remoteMessage.data?.message || ""),
-              sender_id: String(remoteMessage.data?.sender_id || ""),
-              created_at: new Date().toISOString(),
-            };
-            setMessages((prev) => [...prev, newMessage]);
-            scrollRef.current?.scrollToEnd({ animated: true });
+          if (remoteMessage.data?.chat_id === id && remoteMessage.messageId) {
+            const messageExists = messages.some(
+              (msg: any) => msg.id === remoteMessage.messageId
+            );
+
+            if (!messageExists) {
+              const newMessage = {
+                id: remoteMessage.messageId,
+                chat_id: remoteMessage.data.chat_id,
+                message: String(remoteMessage.data?.message || ""),
+                sender_id: String(remoteMessage.data?.sender_id || ""),
+                created_at: new Date().toISOString(),
+              };
+
+              dispatch(addMessage(newMessage));
+              scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+            }
           }
         });
 
-        return () => unsubscribe();
+        return () => {
+          unsubscribe();
+        };
       } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
+        console.error("Error setting up chat:", err);
       }
     };
 
     setupChat();
-  }, [id]);
+  }, [id, dispatch]);
+
+  const loadMoreMessages = async () => {
+    if (!hasMore || isLoadingMore) return;
+
+    try {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      const result = await dispatch(
+        fetchMessagesThunk({
+          chatId: id as string,
+          page: nextPage,
+        })
+      ).unwrap();
+
+      setPage(nextPage);
+      setHasMore(result.has_more);
+    } catch (error) {
+      console.error("Error loading more messages:", error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const handleSend = async () => {
     if (message.trim() === "") return;
 
-    try {
-      const newMessage = {
-        message: message.trim(),
-        chat_id: id,
-      };
+    const tempMessageId = Date.now().toString();
+    const tempMessage = {
+      id: tempMessageId,
+      chat_id: id as string,
+      message: message.trim(),
+      sender_id: user?.id || "",
+      created_at: new Date().toISOString(),
+    };
 
-      await AxiosInstance().post("/messages", newMessage);
+    try {
+      dispatch(addTempMessage(tempMessage));
       setMessage("");
-      scrollRef.current?.scrollToEnd({ animated: true });
+      scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+
+      await dispatch(
+        sendMessageThunk({
+          chat_id: id as string,
+          message: tempMessage.message,
+          tempId: tempMessageId,
+        })
+      ).unwrap();
     } catch (err) {
-      setError((err as Error).message);
+      console.error("Error sending message:", err);
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <AppBar title={i18n.t("chat.customer_care")} back />
-
-      {loading ? (
+      {isLoading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
         </View>
@@ -109,10 +158,16 @@ const ChatScreen = () => {
                 isOwn={item.sender_id === user?.id}
               />
             )}
-            onContentSizeChange={() => scrollRef.current?.scrollToEnd()}
+            onEndReached={loadMoreMessages}
+            onEndReachedThreshold={0.3}
+            ListFooterComponent={
+              isLoadingMore ? (
+                <ActivityIndicator size="small" color={Colors.primary} />
+              ) : null
+            }
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.messageList}
-            inverted={false}
+            inverted={true}
             showsVerticalScrollIndicator={false}
           />
 

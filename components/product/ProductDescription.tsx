@@ -1,8 +1,10 @@
 import { Dimensions, StyleSheet } from "react-native";
-import { View, Text, SkeletonView } from "react-native-ui-lib";
-import React from "react";
+import { View, Text, SkeletonView, ExpandableSection, Image } from "react-native-ui-lib";
+import React, { useState } from "react";
 import { Product } from "@/types/product.type";
 import i18n from "@/languages/i18n";
+
+import ArrowDownIcon from "@/assets/icons/arrow-down.svg";
 
 interface ProductDescriptionProps {
   product: Product | null;
@@ -12,6 +14,7 @@ interface ProductDescriptionProps {
 const windowWidth = Dimensions.get("window").width;
 
 const ProductDescription: React.FC<ProductDescriptionProps> = ({ product, isLoading = false }) => {
+  const [ingredientExpanded, setIngredientExpanded] = useState(false);
   if (isLoading) {
     return (
       <View marginT-10>
@@ -51,16 +54,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product, isLoad
           {product?.benefits}
         </Text>
       </View>
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>
-            {i18n.t("productDetail.description.ingredient")}:{" "}
-          </Text>
-          <Text h3_medium>{product?.key_ingredients}, </Text>
-          {product?.ingredients}
-        </Text>
-      </View>
+
       <View row>
         <Text h2>• </Text>
         <Text h3>
@@ -86,6 +80,27 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product, isLoad
           {product?.product_notes}
         </Text>
       </View>
+
+      <ExpandableSection
+        expanded={ingredientExpanded}
+        sectionHeader={
+          <View style={{ flexDirection: 'row', marginLeft: 13 }}>
+            <Text h3_bold>{i18n.t("productDetail.description.ingredient")}{" "}</Text>
+            <Image right source={ArrowDownIcon} size={10} />
+          </View>
+        }
+        onPress={() => setIngredientExpanded(!ingredientExpanded)}
+
+      >
+        <View row>
+          <Text h2>• </Text>
+          <Text h3>
+            <Text h3_medium>{product?.key_ingredients}, </Text>
+            {product?.ingredients}
+          </Text>
+        </View>
+      </ExpandableSection>
+      
     </View>
   );
 };

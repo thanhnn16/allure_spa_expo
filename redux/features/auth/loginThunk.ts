@@ -13,14 +13,10 @@ export const loginThunk = createAsyncThunk(
   'user/login',
   async (body: LoginRequest, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
     try {
-      console.log('Login request body:', body);
-
       const res = await AxiosInstance().post<AuthResponse>('auth/login', {
         phone_number: body.phoneNumber,
         password: body.password
       });
-
-      console.log('Login response:', res.data);
 
       if (res.data.success && res.data.data) {
         const { token, user } = res.data.data;
@@ -29,25 +25,25 @@ export const loginThunk = createAsyncThunk(
           return rejectWithValue('No token received from server');
         }
 
-        // Save token to AsyncStorage
+        // Save token first
         await AsyncStorage.setItem('userToken', token);
 
-        // Register FCM token after successful login
-        await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(user.id);
+        // Then handle FCM registration
+        try {
+          await FirebaseService.requestUserPermission();
+          await FirebaseService.registerTokenWithServer(user.id);
+        } catch (fcmError) {
+          console.warn('FCM registration failed but login successful:', fcmError);
+          // Continue with login even if FCM fails
+        }
 
-        return {
-          user: user,
-          token: token
-        };
+        return { user, token };
       }
 
-      console.log('Login failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Login failed');
     } catch (error: any) {
       console.error('Login error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'An error occurred during login';
-      return rejectWithValue(errorMessage);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   }
 );
