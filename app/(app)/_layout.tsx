@@ -38,6 +38,7 @@ const AppLayout = () => {
       <Stack.Screen name="chat/[id]/index" />
       <Stack.Screen name="service/[id]/index" />
       <Stack.Screen name="booking/index" />
+      <Stack.Screen name="invoice/success" />
     </Stack>
   );
 };

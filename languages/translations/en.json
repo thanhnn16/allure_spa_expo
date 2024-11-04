@@ -15,7 +15,8 @@
     "confirm": "Confirm",
     "ok": "OK",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "back_to_home": "Back to Home"
   },
   "auth": {
     "login": {
@@ -47,7 +48,7 @@
       "login_required": "Login required",
       "login_buy_product": "You need to login to buy this product",
       "login_chat_ai": "You need to login to chat with AI",
-        "login_chat": "You need to login to chat",
+      "login_chat": "You need to login to chat",
       "login_chat_customer_care": "You need to login to chat with customer care",
       "login_appointment": "You need to login to make an appointment",
       "login_profile": "You need to login to access your profile",
@@ -274,5 +275,14 @@
     "add_address_fail": "Add address failed",
     "edit_address_success": "Edit address successfully",
     "edit_address_fail": "Edit address failed"
+  },
+  "invoice": {
+    "payment_success": "Payment Success",
+    "payment_details": "Payment Details",
+    "payment_successful": "Payment Successful!",
+    "payment_success_message": "Thank you for your payment. Your order has been confirmed.",
+    "amount": "Amount",
+    "payment_time": "Payment Time",
+    "order_code": "Order Code"
   }
 }

@@ -1,24 +1,22 @@
-import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Dimensions, SafeAreaView, ScrollView } from "react-native";
+import { useState } from "react";
+import {
+  FlatList,
+  StyleSheet,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  GridList,
-  Spacings,
-  TextField,
-  Modal,
-} from "react-native-ui-lib";
+import { View, Text, TouchableOpacity, TextField } from "react-native-ui-lib";
 import { Calendar } from "react-native-calendars";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import moment from "moment";
 import AppButton from "@/components/buttons/AppButton";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 
 const BookingPage = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -28,11 +26,11 @@ const BookingPage = () => {
   const numColumns = 2;
   const itemWidth = (windowWidth - padding * 2 - gap) / numColumns;
 
-  const { service_id, combo_id } = useLocalSearchParams();
+  const { service_id } = useLocalSearchParams();
   const [today] = useState(moment().format("YYYY-MM-DD"));
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState();
-  const [note, setNote] = useState<string>("")
+  const [note, setNote] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
 
   const handleDayPress = (day: any) => {
@@ -68,8 +66,10 @@ const BookingPage = () => {
 
   const handleBooking = async () => {
     try {
-      if (selectedDate === "") return alert(i18n.t("service.plase_select_date"));
-      if (selectedTime === undefined) return alert(i18n.t("service.plase_select_time"));
+      if (selectedDate === "")
+        return alert(i18n.t("service.plase_select_date"));
+      if (selectedTime === undefined)
+        return alert(i18n.t("service.plase_select_time"));
 
       const body = {
         user_id: user?.id,
@@ -79,8 +79,8 @@ const BookingPage = () => {
         time_slot_id: selectedTime,
         appointment_type: "consultation",
         status: "pending",
-        note: note === "" ? "Không có ghi chú" : note
-      }
+        note: note === "" ? "Không có ghi chú" : note,
+      };
       console.log(body);
       const res = await AxiosInstance().post("/appointments", body);
       if (res.status === 200) {
@@ -90,12 +90,11 @@ const BookingPage = () => {
     } catch (error: any) {
       console.log("Booking error", error);
     }
-  }
-
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View flex bg-$white >
+      <View flex bg-$white>
         <AppBar back title={i18n.t("service.make_appointment")} />
         <ScrollView showsVerticalScrollIndicator={false}>
           <View paddingH-24 gap-24>
@@ -188,7 +187,6 @@ const BookingPage = () => {
                   contentContainerStyle={{ gap: 12 }}
                   nestedScrollEnabled
                 />
-
               </View>
             </View>
 
@@ -216,7 +214,9 @@ const BookingPage = () => {
             <AppButton
               title={i18n.t("service.continue")}
               type="primary"
-              onPress={() => { handleBooking() }}
+              onPress={() => {
+                handleBooking();
+              }}
             />
           </View>
         </ScrollView>
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
   },
   timeSlotContainer: {
     flex: 1,
-    paddingBottom: 5
+    paddingBottom: 5,
   },
   timeSlot: {
     borderRadius: 12,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    height: 30
+    height: 30,
   },
   selectedTimeSlot: {
     borderColor: "#717658",

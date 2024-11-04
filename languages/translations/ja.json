@@ -14,7 +14,8 @@
     "confirm": "確認",
     "ok": "OK",
     "error": "エラー",
-    "success": "成功"
+    "success": "成功",
+    "back_to_home": "ホームに戻る"
   },
   "auth": {
     "login": {
@@ -46,7 +47,7 @@
       "login_required": "ログインが必要です",
       "login_buy_product": "この商品を購入するにはログインが必要です",
       "login_chat_ai": "この商品を購入するにはログインが必要です",
-        "login_chat": "この商品を購入するにはログインが必要です",
+      "login_chat": "この商品を購入するにはログインが必要です",
       "login_chat_customer_care": "この商品を購入するにはログインが必要です",
       "login_appointment": "この商品を購入するにはログインが必要です",
       "login_profile": "この商品を購入するにはログインが必要です",
@@ -177,7 +178,7 @@
   },
   "aboutapp": {
     "title": "アプリについて",
-    "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
+    "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに��単にアクセスできるようにもします。",
     "title2": "Allure Spaアプリケーションの基本情報:",
     "name_app": "アプリ名: Allure Spa",
     "developer": "開発者: Allure Spa",
@@ -275,5 +276,14 @@
     "add_address_fail": "住所の追加に失敗しました",
     "edit_address_success": "住所の編集に成功しました",
     "edit_address_fail": "住所の編集に失敗しました"
+  },
+  "invoice": {
+    "payment_success": "支払い完了",
+    "payment_details": "支払い詳細",
+    "payment_successful": "支払いが完了しました！",
+    "payment_success_message": "ご支払いありがとうございます。ご注文が確認されました。",
+    "amount": "金額",
+    "payment_time": "支払い時間",
+    "order_code": "注文コード"
   }
 }
