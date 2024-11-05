@@ -64,7 +64,6 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
           if (response.data.success) {
             await AsyncStorage.removeItem("payos_order_code");
 
-            // Check if this is an invoice payment by checking invoice_id param
             if (invoiceId) {
               router.push({
                 pathname: "/(app)/invoice/success",
@@ -75,30 +74,36 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
                 },
               });
             } else {
-              // Regular transaction success
               router.push("/transaction/success");
             }
           } else {
-            showDialog(
-              "Thanh Toán Thất Bại",
-              response.data.message || "Không thể xác nhận thanh toán",
-              "error"
-            );
-            setTimeout(() => router.back(), 2000);
+            router.replace({
+              pathname: "/(app)/invoice/failed",
+              params: {
+                type: "failed",
+                reason:
+                  response.data.message || "Không thể xác nhận thanh toán",
+              },
+            });
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error("Verify payment error:", error);
-          showDialog("Lỗi Xác Thực", "Không thể xác thực thanh toán", "error");
-          setTimeout(() => router.back(), 2000);
+          router.replace({
+            pathname: "/(app)/invoice/failed",
+            params: {
+              type: "failed",
+              reason: "Không thể xác thực thanh toán",
+            },
+          });
         }
       } else if (status === "cancel") {
         await AsyncStorage.removeItem("payos_order_code");
-        showDialog(
-          "Thanh Toán Đã Hủy",
-          "Bạn đã hủy quá trình thanh toán",
-          "info"
-        );
-        setTimeout(() => router.back(), 2000);
+        router.replace({
+          pathname: "/(app)/invoice/failed",
+          params: {
+            type: "cancel",
+          },
+        });
       }
     }
   };

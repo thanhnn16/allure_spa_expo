@@ -321,13 +321,15 @@ export default function Payment() {
       const invoiceId = params.invoice_id as string;
 
       if (status && invoiceId) {
-        if (status === "success") {
-          try {
+        try {
+          await AsyncStorage.removeItem("current_invoice_id");
+          await AsyncStorage.removeItem("payment_data");
+
+          if (status === "success") {
             const savedInvoiceId = await AsyncStorage.getItem(
               "current_invoice_id"
             );
             if (savedInvoiceId === invoiceId) {
-              // Verify payment status with backend
               const paymentData = await AsyncStorage.getItem("payment_data");
               if (paymentData) {
                 const { order_id } = JSON.parse(paymentData);
@@ -342,20 +344,25 @@ export default function Payment() {
                 });
               }
             }
-          } catch (error) {
-            console.error("Payment verification error:", error);
-            showDialog(
-              "Thông báo",
-              "Không thể xác thực thanh toán. Vui lòng kiểm tra lại sau.",
-              "error"
-            );
-          } finally {
-            // Cleanup stored data
-            await AsyncStorage.removeItem("current_invoice_id");
-            await AsyncStorage.removeItem("payment_data");
+          } else if (status === "cancel") {
+            router.replace({
+              pathname: "/(app)/invoice/failed",
+              params: {
+                type: "cancel",
+                invoice_id: invoiceId,
+              },
+            });
           }
-        } else if (status === "cancel") {
-          showDialog("Thông báo", "Thanh toán đã bị hủy", "warning");
+        } catch (error) {
+          console.error("Payment status check error:", error);
+          router.replace({
+            pathname: "/(app)/invoice/failed",
+            params: {
+              type: "failed",
+              reason:
+                "Không thể xác thực thanh toán. Vui lòng kiểm tra lại sau.",
+            },
+          });
         }
       }
     };
