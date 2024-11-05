@@ -6,7 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebViewType } from "@/utils/constants/webview";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useState } from "react";
-
+import Constants from "expo-constants";
 interface Transaction {
   orderNumber: string;
   status: "cancelled" | "delivered" | "pending"; // Thêm trạng thái
@@ -196,7 +196,7 @@ const Transaction = () => {
         buyerAddress: "123 Test Street",
       };
 
-      const apiUrl = `${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/test`;
+      const apiUrl = `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/test`;
 
       console.log("Payment Request:", { url: apiUrl, payload });
 

@@ -4,7 +4,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 const AppLayout = () => {
-  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, isGuest } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   useEffect(() => {
     const checkAuthAndNavigate = async () => {

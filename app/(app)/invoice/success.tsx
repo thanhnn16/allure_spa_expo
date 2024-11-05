@@ -8,7 +8,7 @@ import AppButton from "@/components/buttons/AppButton";
 import axios from "axios";
 import i18n from "@/languages/i18n";
 import { Dimensions } from "react-native";
-
+import Constants from "expo-constants";
 const screenWidth = Dimensions.get("window").width;
 
 interface PaymentDetails {
@@ -23,9 +23,11 @@ export default function InvoiceSuccess() {
     amount: string;
     payment_time: string;
   }>();
-  
+
   const [loading, setLoading] = useState(true);
-  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
+    null
+  );
   const [showDialog, setShowDialog] = useState(true);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ export default function InvoiceSuccess() {
   const fetchPaymentDetails = async () => {
     try {
       const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_SERVER_URL}/api/invoices/${params.invoice_id}/payment`
+        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/invoices/${params.invoice_id}/payment`
       );
       setPaymentDetails(response.data);
     } catch (error) {

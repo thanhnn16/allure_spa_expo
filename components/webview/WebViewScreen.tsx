@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { WebView } from "react-native-webview";
 import { View, StyleSheet } from "react-native";
 import Constants from "expo-constants";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import axios from "axios";
 import { LoaderScreen } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
@@ -45,7 +45,10 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   };
 
   const handlePaymentCallback = async (navState: any) => {
-    if (navState.url.startsWith("allurespa://") || navState.url.startsWith("exp+allurespa://")) {
+    if (
+      navState.url.startsWith("allurespa://") ||
+      navState.url.startsWith("exp+allurespa://")
+    ) {
       const params = new URL(navState.url).searchParams;
       const status = params.get("status");
 
@@ -58,7 +61,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
           }
 
           const response = await axios.post(
-            `${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
+            `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
             { orderCode }
           );
 
