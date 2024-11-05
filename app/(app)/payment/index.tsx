@@ -152,6 +152,10 @@ export default function Payment() {
 
       const response = await OrderService.createInvoice(invoiceData);
 
+      if (!response || !response.id) {
+        throw new Error("Không thể tạo hóa đơn");
+      }
+
       if (selectedPayment.code === "cod") {
         router.push({
           pathname: "/transaction/success",
@@ -166,28 +170,55 @@ export default function Payment() {
         setLoadingMessage("Đang tạo link thanh toán...");
 
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
+        const returnUrl = `${scheme}://payment?status=success&invoice_id=${response.id}`;
+        const cancelUrl = `${scheme}://payment?status=cancel&invoice_id=${response.id}`;
 
-        const paymentResponse = await OrderService.createPaymentLink({
-          invoice_id: response.id,
-          returnUrl: `${scheme}://payment?status=success&invoice_id=${response.id}`,
-          cancelUrl: `${scheme}://payment?status=cancel&invoice_id=${response.id}`,
-        });
-
-        if (paymentResponse.success && paymentResponse.checkoutUrl) {
-          await AsyncStorage.setItem("current_invoice_id", response.id);
-
-          router.push({
-            pathname: "/webview",
-            params: {
-              url: paymentResponse.checkoutUrl,
-              type: WebViewType.PAYMENT,
-              invoice_id: response.id,
-            },
+        try {
+          const paymentResponse = await OrderService.createPaymentLink({
+            invoice_id: response.id,
+            returnUrl,
+            cancelUrl,
           });
-        } else {
-          throw new Error(
-            paymentResponse.message || "Không thể tạo link thanh toán"
+
+          if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
+            await AsyncStorage.setItem(
+              "current_invoice_id",
+              response.id.toString()
+            );
+
+            await AsyncStorage.setItem(
+              "payment_data",
+              JSON.stringify({
+                invoice_id: response.id,
+                order_id: response.order.id,
+                amount: totalAmount,
+                payment_method: selectedPayment.code,
+                timestamp: new Date().toISOString(),
+              })
+            );
+
+            router.push({
+              pathname: "/webview",
+              params: {
+                url: paymentResponse.data?.checkoutUrl,
+                type: WebViewType.PAYMENT,
+                invoice_id: response.id,
+              },
+            });
+          } else {
+            throw new Error(
+              paymentResponse.message || "Không thể tạo link thanh toán"
+            );
+          }
+        } catch (paymentError: any) {
+          console.error("Payment link creation error:", paymentError);
+          showDialog(
+            "Lỗi Thanh Toán",
+            "Không thể tạo link thanh toán. Vui lòng thử lại sau.",
+            "error"
           );
+
+          // Có thể thêm logic để hủy invoice đã tạo nếu cần
         }
       }
     } catch (error: any) {
@@ -231,48 +262,105 @@ export default function Payment() {
 
   const renderPaymentMethods = () => {
     return (
-      <View flex padding-16>
-        {paymentMethods.map((method) => (
-          <TouchableOpacity
-            key={method.id}
-            onPress={() => handleSelectPayment(method)}
-            style={[
-              styles.paymentOption,
-              selectedPayment?.id === method.id && styles.selectedOption,
-            ]}
-          >
-            <View row spread centerV>
-              <View row centerV>
-                {method.iconType === "Ionicons" ? (
+      <BottomSheetView>
+        <View flex padding-16>
+          {paymentMethods.map((method) => (
+            <TouchableOpacity
+              key={method.id}
+              onPress={() => handleSelectPayment(method)}
+              style={[
+                styles.paymentOption,
+                selectedPayment?.id === method.id && styles.selectedOption,
+              ]}
+            >
+              <View row spread centerV>
+                <View row centerV>
+                  {method.iconType === "Ionicons" ? (
+                    <ExpoIonicons
+                      name={method.icon as any}
+                      size={24}
+                      color={Colors.grey10}
+                    />
+                  ) : (
+                    <MaterialCommunityIcons
+                      name={method.icon as any}
+                      size={24}
+                      color={Colors.grey10}
+                    />
+                  )}
+                  <Text marginL-8 text70>
+                    {method.name}
+                  </Text>
+                </View>
+                {selectedPayment?.id === method.id && (
                   <ExpoIonicons
-                    name={method.icon as any}
+                    name="checkmark-circle"
                     size={24}
-                    color={Colors.grey10}
-                  />
-                ) : (
-                  <MaterialCommunityIcons
-                    name={method.icon as any}
-                    size={24}
-                    color={Colors.grey10}
+                    color={Colors.primary}
                   />
                 )}
-                <Text marginL-8 text70>
-                  {method.name}
-                </Text>
               </View>
-              {selectedPayment?.id === method.id && (
-                <ExpoIonicons
-                  name="checkmark-circle"
-                  size={24}
-                  color={Colors.primary}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </BottomSheetView>
     );
   };
+
+  useEffect(() => {
+    return () => {
+      setLoading(false);
+      setLoadingMessage("");
+    };
+  }, []);
+
+  useEffect(() => {
+    const checkPaymentStatus = async () => {
+      const status = params.status as string;
+      const invoiceId = params.invoice_id as string;
+
+      if (status && invoiceId) {
+        if (status === "success") {
+          try {
+            const savedInvoiceId = await AsyncStorage.getItem(
+              "current_invoice_id"
+            );
+            if (savedInvoiceId === invoiceId) {
+              // Verify payment status with backend
+              const paymentData = await AsyncStorage.getItem("payment_data");
+              if (paymentData) {
+                const { order_id } = JSON.parse(paymentData);
+                router.replace({
+                  pathname: "/transaction/success",
+                  params: {
+                    invoice_id: invoiceId,
+                    order_id: order_id.toString(),
+                    payment_status: "completed",
+                    payment_method: "payos",
+                  },
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Payment verification error:", error);
+            showDialog(
+              "Thông báo",
+              "Không thể xác thực thanh toán. Vui lòng kiểm tra lại sau.",
+              "error"
+            );
+          } finally {
+            // Cleanup stored data
+            await AsyncStorage.removeItem("current_invoice_id");
+            await AsyncStorage.removeItem("payment_data");
+          }
+        } else if (status === "cancel") {
+          showDialog("Thông báo", "Thanh toán đã bị hủy", "warning");
+        }
+      }
+    };
+
+    checkPaymentStatus();
+  }, [params.status, params.invoice_id]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
