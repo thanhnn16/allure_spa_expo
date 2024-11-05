@@ -276,6 +276,17 @@
     "edit_address_success": "Edit address successfully",
     "edit_address_fail": "Edit address failed"
   },
+  "date": {
+    "formats":  {
+      "short": "dd/MM/yyyy"
+    }
+  },
+  "currency": { 
+    "unit": "₫", 
+    "separator": ".", 
+    "delimiter": ",", 
+    "format": "%u%n" 
+  },
   "invoice": {
     "payment_success": "Payment Success",
     "payment_details": "Payment Details",

@@ -99,7 +99,7 @@ const HomePage = () => {
         marginB-5
         style={[
           AppStyles.shadowItem,
-          { borderRadius: 16, width: 230, height: "auto" },
+          { borderRadius: 22, width: 230, height: "auto" },
         ]}
         onPress={() => {
           router.push(`/service/${item.id}`);
@@ -111,15 +111,19 @@ const HomePage = () => {
               ? { uri: urlImage }
               : require("@/assets/images/logo/logo.png")
           }
-          width={"100%"}
-          height={210}
+          width={230}
+          height={225}
           style={{ resizeMode: "cover" }}
         />
-        <View paddingH-12>
+        <View paddingH-12 flex marginB-5>
           <Text text70H>{item.service_name}</Text>
+        </View>
+        <View paddingH-12>
           <Text style={{ color: "#8C8585" }}>
             {truncateText(item.description, 50)}
           </Text>
+        </View>
+        <View paddingH-12 paddingB-10 bottom>
           <Text marginT-10 text70H style={{ color: "#A85A29" }}>
             {item.single_price.toLocaleString("vi-VN")} VNĐ
           </Text>

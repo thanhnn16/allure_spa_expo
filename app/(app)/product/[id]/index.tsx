@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Incubator,
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
@@ -19,8 +20,6 @@ import HeartIcon from "@/assets/icons/heart.svg";
 import HeartFullIcon from "@/assets/icons/heart_full.svg";
 import TagIcon from "@/assets/icons/tag.svg";
 import LinkIcon from "@/assets/icons/link.svg";
-import StarIcon from "@/assets/icons/star.svg";
-
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
@@ -35,11 +34,11 @@ import ProductBottomComponent from "@/components/product/ProductBottomComponent"
 import ProductQuantity from "@/components/product/ProductQuantity";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
+import RatingStar from "@/components/rating/RatingStar";
 
-// Add interface for media item
+
 interface MediaItem {
   full_url: string;
-  // Add other properties if needed
 }
 
 export default function DetailsScreen() {
@@ -55,6 +54,7 @@ export default function DetailsScreen() {
   const { isGuest } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -128,7 +128,7 @@ export default function DetailsScreen() {
   const createBulletPoints = (lines: string[]) => {
     return lines.map((line, index) => (
       <View key={index} row>
-        <Text h2>• </Text>
+        <Text h3>• </Text>
         <Text h3>{line}</Text>
       </View>
     ));
@@ -256,10 +256,12 @@ export default function DetailsScreen() {
                   </View>
                 </View>
 
-                <View row>
-                  <View row centerV gap-5>
-                    <Image source={StarIcon} size={24} />
-                    <Text h3_medium>5.0</Text>
+                <View row centerV>
+                  <View
+                    row gap-5
+                  >
+                    <RatingStar rating={4.5} />
+                    <Text h3_medium>4.5</Text>
                   </View>
                   <View flex row right>
                     <Text h3_medium>
@@ -279,17 +281,26 @@ export default function DetailsScreen() {
             )}
 
             <View marginT-10 marginH-20 paddingR-10>
-              <Text h2_medium>
-                {i18n.t("productDetail.product_description")}
-              </Text>
+              {isLoading ? (
+                <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
+              ) : (
+                <Text h2_medium>
+                  {i18n.t("productDetail.product_description")}
+                </Text>
+              )}
               <ProductDescription product={product} isLoading={isLoading} />
             </View>
-            <ProductQuantity isLoading={isLoading} />
+            <ProductQuantity
+              isLoading={isLoading}
+              quantity={quantity}
+              setQuantity={setQuantity}
+            />
           </ScrollView>
           <ProductBottomComponent
             isLoading={isLoading}
             product={product}
             onPurchase={isGuest ? handleGuestPurchase : undefined}
+            quantity={quantity}
           />
 
           <AppDialog

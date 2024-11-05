@@ -277,6 +277,17 @@
     "edit_address_success": "住所の編集に成功しました",
     "edit_address_fail": "住所の編集に失敗しました"
   },
+  "date": {
+    "formats":  {
+      "short": "dd/MM/yyyy"
+    }
+  },
+  "currency": { 
+    "unit": "₫", 
+    "separator": ".", 
+    "delimiter": ",", 
+    "format": "%n %u" 
+  },
   "invoice": {
     "payment_success": "支払い完了",
     "payment_details": "支払い詳細",
