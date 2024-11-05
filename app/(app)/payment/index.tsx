@@ -150,18 +150,20 @@ export default function Payment() {
         })),
       };
 
-      const response = await OrderService.createInvoice(invoiceData);
+      const invoiceResponse = await OrderService.createInvoice(invoiceData);
 
-      if (!response || !response.id) {
-        throw new Error("Không thể tạo hóa đơn");
+      if (!invoiceResponse.success || !invoiceResponse.data?.id) {
+        throw new Error(invoiceResponse.message || "Không thể tạo hóa đơn");
       }
+
+      const invoice = invoiceResponse.data;
 
       if (selectedPayment.code === "cod") {
         router.push({
           pathname: "/transaction/success",
           params: {
-            invoice_id: response.id,
-            order_id: response.order.id.toString(),
+            invoice_id: invoice.id,
+            order_id: invoice.order.id.toString(),
             payment_status: "pending",
             payment_method: "cod",
           },
@@ -170,12 +172,12 @@ export default function Payment() {
         setLoadingMessage("Đang tạo link thanh toán...");
 
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
-        const returnUrl = `${scheme}://payment?status=success&invoice_id=${response.id}`;
-        const cancelUrl = `${scheme}://payment?status=cancel&invoice_id=${response.id}`;
+        const returnUrl = `${scheme}://payment?status=success&invoice_id=${invoice.id}`;
+        const cancelUrl = `${scheme}://payment?status=cancel&invoice_id=${invoice.id}`;
 
         try {
           const paymentResponse = await OrderService.createPaymentLink({
-            invoice_id: response.id,
+            invoice_id: invoice.id,
             returnUrl,
             cancelUrl,
           });
@@ -183,14 +185,14 @@ export default function Payment() {
           if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
             await AsyncStorage.setItem(
               "current_invoice_id",
-              response.id.toString()
+              invoice.id.toString()
             );
 
             await AsyncStorage.setItem(
               "payment_data",
               JSON.stringify({
-                invoice_id: response.id,
-                order_id: response.order.id,
+                invoice_id: invoice.id,
+                order_id: invoice.order.id,
                 amount: totalAmount,
                 payment_method: selectedPayment.code,
                 timestamp: new Date().toISOString(),
@@ -200,9 +202,9 @@ export default function Payment() {
             router.push({
               pathname: "/webview",
               params: {
-                url: paymentResponse.data?.checkoutUrl,
+                url: paymentResponse.data.checkoutUrl,
                 type: WebViewType.PAYMENT,
-                invoice_id: response.id,
+                invoice_id: invoice.id,
               },
             });
           } else {
@@ -214,11 +216,10 @@ export default function Payment() {
           console.error("Payment link creation error:", paymentError);
           showDialog(
             "Lỗi Thanh Toán",
-            "Không thể tạo link thanh toán. Vui lòng thử lại sau.",
+            paymentError.message ||
+              "Không thể tạo link thanh toán. Vui lòng thử lại sau.",
             "error"
           );
-
-          // Có thể thêm logic để hủy invoice đã tạo nếu cần
         }
       }
     } catch (error: any) {

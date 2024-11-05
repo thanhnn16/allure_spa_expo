@@ -14,8 +14,59 @@ interface PaymentLinkResponse {
     error_details?: any;
 }
 
+interface CreateInvoiceResponse {
+    success: boolean;
+    data: {
+        id: string;
+        created_at: string;
+        updated_at: string;
+        user_id: string;
+        order_id: number;
+        total_amount: string;
+        paid_amount: string;
+        status: string;
+        note: string | null;
+        created_by_user_id: string;
+        staff_user_id: string;
+        order: {
+            id: number;
+            user_id: string;
+            total_amount: string;
+            discount_amount: string;
+            status: string;
+            payment_method_id: number;
+            shipping_address_id: number | null;
+            voucher_id: number | null;
+            created_at: string;
+            updated_at: string;
+            items: any[];
+        };
+        user: {
+            id: string;
+            full_name: string;
+            email: string | null;
+            phone_number: string;
+            gender: string;
+            date_of_birth: string | null;
+            avatar_url: string | null;
+            note: string | null;
+            loyalty_points: number;
+            purchase_count: number;
+            role: string;
+            media_id: string | null;
+            media: any | null;
+            created_at: string;
+            updated_at: string;
+            deleted_at: string | null;
+            skin_condition: string | null;
+        };
+    };
+    message: string;
+    status_code: number;
+}
+
 class OrderService {
-    async createInvoice(data: any) {
+    async createInvoice(data: any): Promise<CreateInvoiceResponse> {
         const response = await AxiosInstance().post("/invoices", data);
         console.log("OrderService createInvoice", response.data);
         return response.data;
