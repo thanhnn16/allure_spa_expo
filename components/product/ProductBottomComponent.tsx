@@ -43,7 +43,22 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
     if (onPurchase) {
       onPurchase();
     } else {
-      // Xử lý logic mua hàng bình thường
+      router.push({
+        pathname: "/payment",
+        params: {
+          products: JSON.stringify([
+            {
+              id: product?.id,
+              name: product?.name,
+              price: product?.price,
+              quantity: 1,
+              image: product?.media?.[0]?.full_url,
+              type: "product",
+            },
+          ]),
+          total_amount: product?.price || 0,
+        },
+      });
     }
   };
 
