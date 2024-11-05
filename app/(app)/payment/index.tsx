@@ -356,7 +356,7 @@ export default function Payment() {
         } catch (error) {
           console.error("Payment status check error:", error);
           router.replace({
-            pathname: "/(app)/invoice/failed",
+            pathname: "/(app)/invoice/success",
             params: {
               type: "failed",
               reason:
