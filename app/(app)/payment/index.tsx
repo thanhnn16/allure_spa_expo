@@ -315,56 +315,6 @@ export default function Payment() {
     };
   }, []);
 
-  useEffect(() => {
-    const checkPaymentStatus = async () => {
-      const status = params.status as string;
-      const invoiceId = params.invoice_id as string;
-
-      if (status && invoiceId) {
-        try {
-          await AsyncStorage.removeItem("current_invoice_id");
-          await AsyncStorage.removeItem("payment_data");
-
-          if (status === "success") {
-            const paymentData = await AsyncStorage.getItem("payment_data");
-            if (paymentData) {
-              const { order_id } = JSON.parse(paymentData);
-              router.replace({
-                pathname: "/transaction/success",
-                params: {
-                  invoice_id: invoiceId,
-                  order_id: order_id.toString(),
-                  payment_status: "completed",
-                  payment_method: "payos",
-                },
-              });
-            }
-          } else if (status === "cancel") {
-            router.replace({
-              pathname: "/(app)/invoice/failed",
-              params: {
-                type: "cancel",
-                invoice_id: invoiceId,
-              },
-            });
-          }
-        } catch (error) {
-          console.error("Payment status check error:", error);
-          router.replace({
-            pathname: "/(app)/invoice/failed",
-            params: {
-              type: "failed",
-              reason:
-                "Không thể xác thực thanh toán. Vui lòng kiểm tra lại sau.",
-            },
-          });
-        }
-      }
-    };
-
-    checkPaymentStatus();
-  }, [params.status, params.invoice_id]);
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>

@@ -54,50 +54,73 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
       const orderCode = params.get("orderCode");
       const invoiceId = params.get("invoice_id");
 
-      // Clear payment data first
-      await AsyncStorage.removeItem("payos_order_code");
-      await AsyncStorage.removeItem("current_invoice_id");
-      await AsyncStorage.removeItem("payment_data");
+      try {
+        await AsyncStorage.removeItem("payos_order_code");
+        await AsyncStorage.removeItem("current_invoice_id");
+        const paymentData = await AsyncStorage.getItem("payment_data");
+        await AsyncStorage.removeItem("payment_data");
 
-      if (status === "success" && orderCode) {
-        try {
-          const response = await axios.post(
-            `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
-            { orderCode }
-          );
+        if (status === "success" && orderCode) {
+          try {
+            const response = await axios.post(
+              `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
+              { orderCode }
+            );
 
-          if (response.data.success) {
+            if (response.data.success) {
+              router.replace({
+                pathname: "/transaction/success",
+                params: {
+                  invoice_id: invoiceId,
+                  amount: response.data.data.amount,
+                  payment_time: response.data.data.paymentTime,
+                  payment_status: "completed",
+                  payment_method: "payos",
+                },
+              });
+            } else {
+              throw new Error(
+                response.data.message || "Không thể xác nhận thanh toán"
+              );
+            }
+          } catch (error: any) {
+            console.error("Payment verification error:", error);
             router.replace({
-              pathname: "/transaction/success",
+              pathname: "/(app)/invoice/failed",
               params: {
-                invoice_id: invoiceId,
-                amount: response.data.data.amount,
-                payment_time: response.data.data.paymentTime,
-                payment_status: "completed",
-                payment_method: "payos",
+                type: "failed",
+                reason: error.message || "Không thể xác thực thanh toán",
+                invoice_id: invoiceId
               },
             });
-          } else {
-            throw new Error(
-              response.data.message || "Không thể xác nhận thanh toán"
-            );
           }
-        } catch (error: any) {
-          console.error("Verify payment error:", error);
+        } else if (status === "cancel") {
+          let parsedPaymentData = null;
+          if (paymentData) {
+            try {
+              parsedPaymentData = JSON.parse(paymentData);
+            } catch (e) {
+              console.error("Error parsing payment data:", e);
+            }
+          }
+
           router.replace({
             pathname: "/(app)/invoice/failed",
             params: {
-              type: "failed",
-              reason: error.message || "Không thể xác thực thanh toán",
+              type: "cancel",
+              invoice_id: invoiceId || parsedPaymentData?.invoice_id,
+              reason: "Bạn đã hủy giao dịch thanh toán"
             },
           });
         }
-      } else if (status === "cancel") {
+      } catch (error) {
+        console.error("Payment callback error:", error);
         router.replace({
           pathname: "/(app)/invoice/failed",
           params: {
-            type: "cancel",
-            invoice_id: invoiceId,
+            type: "failed",
+            reason: "Đã xảy ra lỗi trong quá trình xử lý thanh toán",
+            invoice_id: invoiceId
           },
         });
       }
