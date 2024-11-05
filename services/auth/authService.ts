@@ -55,7 +55,7 @@ class AuthService {
 
         return response.data;
     }
-
+  
     private async handleSuccessfulAuth(data: AuthResponse): Promise<void> {
         await AsyncStorage.setItem('userToken', data.token);
         await FirebaseService.requestUserPermission();

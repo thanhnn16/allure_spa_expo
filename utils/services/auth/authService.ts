@@ -69,6 +69,9 @@ class AuthService {
   private async clearAuthData(): Promise<void> {
     await AsyncStorage.multiRemove(['userToken']);
   }
+
+ 
+
 }
 
 export default new AuthService(); 
