@@ -14,13 +14,13 @@ const RatingBar = ({ star, percent }: { star: number, percent: number }) => {
     <View row gap-10 centerV>
 
       <View row centerV>
-        <Image source={StarIcon} size={13} />
+        <Image source={StarIcon} width={16} height={16}/>
         <Text h3_bold>{star}</Text>
       </View>
 
-      <ProgressBar progress={progress} style={{ width: 100, height: 2, borderRadius: 100 }} progressColor={Colors.primary} />
+      <ProgressBar progress={progress} style={{ width: 70, height: 2, borderRadius: 100 }} progressColor={Colors.primary} />
 
-      <Text h3_bold>{percent}%</Text>
+      <Text h3_medium>{percent}%</Text>
 
     </View>
   )

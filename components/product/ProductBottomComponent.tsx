@@ -5,7 +5,10 @@ import {
   Button,
   Image,
   SkeletonView,
+  Incubator,
+  Colors,
 } from "react-native-ui-lib";
+
 import { Link, router } from "expo-router";
 import i18n from "@/languages/i18n";
 
@@ -15,6 +18,7 @@ import { Dimensions } from "react-native";
 import { useDispatch } from "react-redux";
 import { addItemToCart, CartItem } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
+import { useState } from "react";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -22,21 +26,25 @@ interface ProductBottomComponentProps {
   isLoading: boolean;
   product: Product | null;
   onPurchase?: () => void;
+  quantity: number;
 }
 
 const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   isLoading = false,
   product,
   onPurchase,
+  quantity
 }) => {
   const dispatch = useDispatch();
+  const [isToastVisible, setToastIsVisible] = useState(false);
 
   const handleAddToCart = () => {
     const cartItem = {
       ...product,
       quantity: 1,
     };
-    dispatch(addItemToCart({ product: cartItem }));
+    dispatch(addItemToCart({ product: cartItem, quantity : quantity }));
+    setToastIsVisible(true);
   };
 
   const handlePurchase = () => {
@@ -103,8 +111,19 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           label={i18n.t("productDetail.buy_now").toString()}
           br40
           onPress={handlePurchase}
+          backgroundColor={Colors.primary}
         />
       </View>
+      <Incubator.Toast
+        visible={isToastVisible}
+        position={'bottom'}
+        autoDismiss={1500}
+        onDismiss={() => setToastIsVisible(false)}
+      >
+        <View bg-$backgroundSuccessLight flex padding-10>
+          <Text h3_medium>Thêm giỏ hàng thành công</Text>
+        </View>
+      </Incubator.Toast>
     </View>
   );
 };

@@ -2,6 +2,7 @@ import { AppStyles } from "@/constants/AppStyles";
 import { router } from "expo-router";
 import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
+import StarIcon from "@/assets/icons/star.svg";
 
 interface RenderProductItemProps {
   item: any;
@@ -25,23 +26,28 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
       marginH-12
       style={[
         AppStyles.shadowItem,
-        { borderRadius: 8, width: 200, height: 270 },
+        { borderRadius: 22, width: 200, height: "auto" },
       ]}
       onPress={() => router.push(`/product/${item.id}`)}
     >
-      <Image
-        source={productImage}
-        width={"100%"}
-        height={180}
-        style={{ resizeMode: "cover" }}
-      />
+      <View
+        style={{ borderRadius: 22, overflow: "hidden" }}
+      >
+        <Image
+          source={productImage}
+          width={"100%"}
+          height={170}
+          style={{ resizeMode: "cover" }}
+        />
+      </View>
       <View flex paddingH-10 paddingV-5 gap-2>
         <Text text70H numberOfLines={2}>
           {item?.name}
         </Text>
-        <View flex-1 gap-5 row>
+
+        <View flex-1 gap-5 row centerV>
           <Image
-            source={require("@/assets/images/home/icons/yellowStar.png")}
+            source={StarIcon}
             width={15}
             height={15}
           />
@@ -49,7 +55,8 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
             5.0 | {item?.quantity} có sẵn
           </Text>
         </View>
-        <View bottom>
+
+        <View bottom paddingB-5>
           <Text text70H style={{ color: "#A85A29" }}>
             {formattedPrice}
           </Text>

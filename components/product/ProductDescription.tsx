@@ -5,6 +5,7 @@ import { Product } from "@/types/product.type";
 import i18n from "@/languages/i18n";
 
 import ArrowDownIcon from "@/assets/icons/arrow-down.svg";
+import ProductDescriptionColapable from "./ProductDescriptionColapable";
 
 interface ProductDescriptionProps {
   product: Product | null;
@@ -33,74 +34,43 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product, isLoad
 
   return (
     <View marginT-10>
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>{i18n.t("productDetail.description.brand")}: </Text>
-          {product?.brand_description}
-        </Text>
-      </View>
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>{i18n.t("productDetail.description.usage")}: </Text>
-          {product?.usage}
-        </Text>
-      </View>
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>{i18n.t("productDetail.description.benefit")}: </Text>
-          {product?.benefits}
-        </Text>
-      </View>
 
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>
-            {i18n.t("productDetail.description.directions")}:{" "}
-          </Text>
-          {product?.directions}
-        </Text>
-      </View>
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>{i18n.t("productDetail.description.storage")}: </Text>
-          {product?.storage_instructions}
-        </Text>
-      </View>
-      <View row>
-        <Text h2>• </Text>
-        <Text h3>
-          <Text h3_bold>
-            {i18n.t("productDetail.description.product_notes")}:{" "}
-          </Text>
-          {product?.product_notes}
-        </Text>
-      </View>
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.brand")}
+        childrenText={product?.brand_description}
+      />
 
-      <ExpandableSection
-        expanded={ingredientExpanded}
-        sectionHeader={
-          <View style={{ flexDirection: 'row', marginLeft: 13 }}>
-            <Text h3_bold>{i18n.t("productDetail.description.ingredient")}{" "}</Text>
-            <Image right source={ArrowDownIcon} size={10} />
-          </View>
-        }
-        onPress={() => setIngredientExpanded(!ingredientExpanded)}
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.usage")}
+        childrenText={product?.usage}
+      />
 
-      >
-        <View row>
-          <Text h2>• </Text>
-          <Text h3>
-            <Text h3_medium>{product?.key_ingredients}, </Text>
-            {product?.ingredients}
-          </Text>
-        </View>
-      </ExpandableSection>
-      
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.benefit")}
+        childrenText={product?.benefits}
+      />
+
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.directions")}
+        childrenText={product?.directions}
+      />
+
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.storage")}
+        childrenText={product?.storage_instructions}
+      />
+
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.product_notes")}
+        childrenText={product?.product_notes}
+      />
+
+      <ProductDescriptionColapable
+        headerText={i18n.t("productDetail.description.ingredient")}
+        childrenText={product?.ingredients}
+        keyText={product?.key_ingredients}
+      />
+
     </View>
   );
 };

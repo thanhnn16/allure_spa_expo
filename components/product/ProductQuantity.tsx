@@ -12,10 +12,11 @@ const windowWidth = Dimensions.get("window").width;
 
 interface ProductQuantityProps {
   isLoading?: boolean;
+  quantity: number;
+  setQuantity: (quantity: number) => void;
 }
 
-const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false }) => {
-  const [quantity, setQuantity] = useState(1);
+const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, quantity, setQuantity }) => {
 
   if (isLoading) {
     return (

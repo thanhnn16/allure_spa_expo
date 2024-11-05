@@ -274,6 +274,17 @@
     "edit_address_success": "Sửa địa chỉ thành công",
     "edit_address_fail": "Sửa địa chỉ thất bại"
   },
+  "date": {
+    "formats":  {
+      "short": "dd/MM/yyyy"
+    }
+  },
+  "currency": { 
+    "unit": "₫", 
+    "separator": ".", 
+    "delimiter": ",", 
+    "format": "%n %u" 
+  },
   "invoice": {
     "payment_success": "Thanh toán thành công",
     "payment_details": "Chi tiết thanh toán",

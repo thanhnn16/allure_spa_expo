@@ -1,9 +1,9 @@
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { View, Image, Text } from 'react-native-ui-lib';
+import { View, Image, Text, Colors } from 'react-native-ui-lib';
 import { AnimatedImage } from 'react-native-ui-lib';
 import VideoPlayer from 'expo-video-player';
 import PagerView from 'react-native-pager-view';
-import { ResizeMode } from 'expo-av';
+import { ResizeMode, Video } from 'expo-av';
 
 import StarIcon from '@/assets/icons/star.svg';
 import { useEffect, useState } from 'react';
@@ -31,7 +31,7 @@ const PagerViewPage = () => {
   // useEffect(() => {
   //   const getItemId = ratingData.find((item: RatingItemProps) => item.id === Number(id));
   //   setItem(getItemId); // Ensure item is set to null if not found
-    
+
   // }, [id]);
 
   const item: RatingItemProps = {
@@ -67,14 +67,22 @@ const PagerViewPage = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <PagerView style={styles.container}>
         {item && item.video && (
-          <VideoPlayer
-            videoProps={{
-              shouldPlay: true,
-              resizeMode: ResizeMode.CONTAIN,
-              source: {
-                uri: item.video,
-              },
-            }}
+          // <VideoPlayer
+          //   videoProps={{
+          //     shouldPlay: true,
+          //     resizeMode: ResizeMode.CONTAIN,
+          //     source: {
+          //       uri: item.video,
+          //     },
+          //   }}
+          // />
+          <Video
+            source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }}
+            rate={1.0}
+            volume={1.0}
+            isMuted={false}
+            shouldPlay
+            style={{ width: 300, height: 300 }}
           />
         )}
 
@@ -87,17 +95,17 @@ const PagerViewPage = () => {
         <View style={styles.bottomContainer}>
           <View row centerV>
             <View row gap-10 centerV>
-              <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />
-              <Text h2_bold white>{item.user.name}</Text>
+              <Image width={35} height={35} borderRadius={20} source={{ uri: item.user.avatar }} />
+              <Text h3_bold white>{item.user.name}</Text>
             </View>
             <View row gap-5 flex right>
-              <Image source={StarIcon} size={13} />
+              <Image source={StarIcon} backgroundColor={Colors.black} size={13} />
               <Text h3_bold white>{item.rating.toString()}</Text>
             </View>
           </View>
 
           <View marginV-10>
-            <Text h2 white>{item.comment}</Text>
+            <Text h3 white>{item.comment}</Text>
           </View>
         </View>
       )}
