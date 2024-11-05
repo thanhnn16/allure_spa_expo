@@ -1,10 +1,12 @@
-import React from "react";
 import { StyleSheet, FlatList, SafeAreaView, Image } from "react-native";
 import { View, Text, Colors, Button } from "react-native-ui-lib";
 import { router } from "expo-router";
 import axios from "axios";
-import { Alert, Platform } from "react-native";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { WebViewType } from "@/utils/constants/webview";
+import AppDialog from "@/components/dialog/AppDialog";
+import { useState } from "react";
+import Constants from "expo-constants";
 interface Transaction {
   orderNumber: string;
   status: "cancelled" | "delivered" | "pending"; // Thêm trạng thái
@@ -158,12 +160,26 @@ const Transaction = () => {
     }
   };
 
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState({
+    title: "",
+    description: "",
+    severity: "error" as "error" | "success" | "info" | "warning",
+  });
+
+  const showDialog = (
+    title: string,
+    description: string,
+    severity: "error" | "success" | "info" | "warning"
+  ) => {
+    setDialogConfig({ title, description, severity });
+    setDialogVisible(true);
+  };
+
   const handlePayment = async () => {
     try {
-      // Lấy scheme dựa vào môi trường development/production
-      const scheme = __DEV__
-        ? "exp+allurespa" // Development scheme
-        : "allurespa"; // Production scheme
+      // Get scheme based on environment
+      const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
 
       const returnUrl = `${scheme}://transaction?status=success`;
       const cancelUrl = `${scheme}://transaction?status=cancel`;
@@ -173,48 +189,49 @@ const Transaction = () => {
         description: "Test payment",
         returnUrl,
         cancelUrl,
+        // Add optional customer info if available
+        buyerName: "Test User",
+        buyerEmail: "test@example.com",
+        buyerPhone: "0123456789",
+        buyerAddress: "123 Test Street",
       };
 
-      // Đảm bảo URL không có dấu / kép
-      const apiUrl =
-        `${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/test`.replace(
-          /\/+/g,
-          "/"
-        );
+      const apiUrl = `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/test`;
 
-      console.log("Payment Request:", {
-        url: apiUrl,
-        payload,
-      });
+      console.log("Payment Request:", { url: apiUrl, payload });
 
       const response = await axios.post(apiUrl, payload);
 
       console.log("Payment Response:", response.data);
 
       if (response.data.success && response.data.checkoutUrl) {
+        // Store orderCode for verification
+        await AsyncStorage.setItem("payos_order_code", response.data.orderCode);
+
         router.push({
           pathname: "/webview",
-          params: { url: response.data.checkoutUrl },
+          params: {
+            url: response.data.checkoutUrl,
+            type: WebViewType.PAYMENT,
+          },
         });
       } else {
-        Alert.alert("Lỗi", "Không thể tạo thanh toán");
+        showDialog(
+          "Lỗi Thanh Toán",
+          response.data.message || "Không thể tạo thanh toán",
+          "error"
+        );
       }
     } catch (error: any) {
       console.error("Payment Error:", {
         message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          data: error.config?.data,
-        },
+        response: error.response?.data,
       });
 
-      Alert.alert(
-        "Lỗi",
-        `Đã có lỗi xảy ra khi tạo thanh toán: ${error.message}`
+      showDialog(
+        "Lỗi Thanh Toán",
+        error.response?.data?.message || "Đã có lỗi xảy ra khi tạo thanh toán",
+        "error"
       );
     }
   };
@@ -278,6 +295,17 @@ const Transaction = () => {
           marginVertical: 10,
         }}
         onPress={handlePayment}
+      />
+
+      <AppDialog
+        visible={dialogVisible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        severity={dialogConfig.severity}
+        onClose={() => setDialogVisible(false)}
+        closeButton={true}
+        confirmButton={false}
+        closeButtonLabel="Đóng"
       />
     </SafeAreaView>
   );

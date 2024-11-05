@@ -14,7 +14,8 @@
     "confirm": "Xác nhận",
     "ok": "OK",
     "error": "Lỗi",
-    "success": "Thành công"
+    "success": "Thành công",
+    "back_to_home": "Về trang chủ"
   },
   "auth": {
     "login": {
@@ -56,11 +57,107 @@
       "login_address": "Bạn cần đăng nhập để truy cập vào địa chỉ",
       "login_favorite": "Bạn cần đăng nhập để truy cập vào yêu thích",
       "login_notification": "Bạn cần đăng nhập để truy cập vào thông báo",
-      "login_now": "Đăng nhập ngay"
+      "login_now": "Đăng nhập ngay",
+      "invalid_email": "Email không hợp lệ",
+      "password_mismatch": "Mật khẩu không khớp"
     },
     "art": {
       "title": "Nghệ thuật chăm sóc da",
       "subtitle": "Từ nghệ nhân Nhật Bản"
+    },
+    "pageTitle": {
+      "chat": "Tin nhắn",
+      "favorite": "Yêu thích",
+      "cart": "Giỏ hàng",
+      "order": "Đơn hàng",
+      "notification": "Thông báo",
+      "profile": "Hồ sơ"
+    },
+    "productDetail": {
+      "quantity": "SỐ LƯỢNG",
+      "product_description": "MÔ TẢ SẢN PHẨM",
+      "reviews": "Đánh giá",
+      "add_to_cart": "Thêm giỏ hàng",
+      "buy_now": "Mua ngay"
+    },
+    "rating": {
+      "add_review": "Thêm đánh giá",
+      "base_on": "Dựa trên",
+      "reviews": "đánh giá",
+      "how_do_you_feel": "Bạn cảm thấy thế nào",
+      "feel_about_product": "Cảm nghĩ về sản phẩm",
+      "type_content": "Nhập nội dung",
+      "images": "Hình ảnh",
+      "send_review": "Gửi đánh giá"
+    },
+    "chat": {
+      "customer_care": "Chăm sóc khách hàng",
+      "chat_with_ai": "Chat với AI",
+      "send": "Gửi",
+      "chat_with": "Chat với"
+    },
+    "profile": {
+      "title": "Hồ sơ",
+      "username": "Nguyễn Văn Tèo",
+      "my_account": "Tài khoản của tôi",
+      "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
+      "purchase_policy": "Chính sách mua hàng và đổi trả",
+      "policy_description": "Chính sách áp dụng cho Allure Spa",
+      "order_address": "Địa chỉ đặt hàng",
+      "address_list": "Danh sách địa chỉ",
+      "logout": "Đăng xuất",
+      "help_support": "Trợ giúp & Hỗ trợ",
+      "about_app": "Về ứng dụng",
+      "settings": "Cài đặt",
+      "more": "Thêm",
+      "edit_profile": "Chỉnh sửa hồ sơ",
+      "change_password": "Đổi mật khẩu",
+      "history_login": "Lịch sử đăng nhập",
+      "dowload_information": "Tải thông tin xuống",
+      "delete_account": "Xóa tài khoản",
+      "change_info": "Đổi thông tin"
+    },
+    "settings": {
+      "title": "Cài đặt",
+      "language": "Ngôn ngữ",
+      "darkMode": "Chế độ tối",
+      "notifications": "Thông báo"
+    },
+    "voucher": {
+      "title": "Giảm giá",
+      "all": "Tất cả",
+      "birthday": "Sinh nhật",
+      "event": "Sự kiện",
+      "prominent": "Nổi bật",
+      "gift": "Quà tặng",
+      "many_offers_comingsoon": "Nhiều ưu đãi sắp tới"
+    },
+    "reward": {
+      "title": "Phần thưởng",
+      "cosmetic": "Mỹ phẩm",
+      "spa": "Spa",
+      "changed": "475 đã đổi",
+      "change_now": "Đổi ngay",
+      "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
+      "title_spa": "Liệu trình Photo Facial"
+    },
+    "aboutapp": {
+      "title": "Giới thiệu về ứng dụng",
+      "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
+      "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
+      "name_app": "Tên ứng dụng: Allure Spa",
+      "developer": "Nhà phát triển: Allure Spa",
+      "version": "Phiên bản: 1.0.0",
+      "date_release": "Ngày phát hành: 01/01/2021"
+    },
+    "deleteaccount": {
+      "title": "Xóa tài khoản",
+      "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
+      "placeholder": "Nhập nội dung",
+      "next": "Tiếp theo",
+      "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
+      "verify_yes": "Có , gửi dữ liệu của tôi tới email",
+      "verify_no": "Không, cảm ơn !"
     },
     "register": {
       "title": "Đăng ký",
@@ -206,7 +303,15 @@
   "home": {
     "featured_services": "Dịch vụ nổi bật",
     "featured_products": "Sản phẩm nổi bật",
-    "discover": "Khám phá"
+    "discover": "Khám phá",
+    "see_more": "Xem thêm",
+    "introduce": "Giới thiệu",
+    "voucher": "Voucher",
+    "service": "Dịch vụ",
+    "product": "Sản phẩm",
+    "course": "Khoá học",
+    "news": "Tin tức",
+    "placeholder_search": "Tìm kiếm mỹ phẩm, liệu trình ..."
   },
   "greeting": {
     "morning": "Allure Spa chúc bạn buổi sáng vui vẻ!",
@@ -228,7 +333,11 @@
     "select_time": "Chọn giờ",
     "note": "Ghi chú",
     "enter_content": "Nhập nội dung",
-    "continue": "Tiếp tục"
+    "continue": "Tiếp tục",
+    "book": "Book",
+    "plase_select_date": "Vui lòng chọn ngày!",
+    "plase_select_time": "Vui lòng chọn giờ!",
+    "appointment_successful": "Đặt lịch thành công!"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",
@@ -262,5 +371,25 @@
     "edit_address_fail": "Sửa địa chỉ thất bại",
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện"
+  },
+  "date": {
+    "formats": {
+      "short": "dd/MM/yyyy"
+    }
+  },
+  "currency": {
+    "unit": "₫",
+    "separator": ".",
+    "delimiter": ",",
+    "format": "%n %u"
+  },
+  "invoice": {
+    "payment_success": "Thanh toán thành công",
+    "payment_details": "Chi tiết thanh toán",
+    "payment_successful": "Thanh toán thành công!",
+    "payment_success_message": "Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận.",
+    "amount": "Số tiền",
+    "payment_time": "Thời gian thanh toán",
+    "order_code": "Mã đơn hàng"
   }
 }

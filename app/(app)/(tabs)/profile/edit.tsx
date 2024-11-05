@@ -17,49 +17,62 @@ import EmailIcon from "@/assets/icons/sms.svg";
 import AddressIcon from "@/assets/icons/location.svg";
 import GenderIcon from "@/assets/icons/gender.svg";
 import BirthdayIcon from "@/assets/icons/birthday.svg";
-// import RNPickerSelect from "react-native-picker-select";
-// import DateTimePicker from "@react-native-community/datetimepicker";
+import { useAuth } from "@/hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { updateUserThunk } from "@/redux/features/users/updateUserThunk";
+import { updateAvatarUrlThunk } from "@/redux/features/users/updateAvatarUrlThunk";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
   const navigation = useNavigation();
-  const [name, setName] = React.useState("Nguyễn Văn Tèo");
-  const [phone, setPhone] = React.useState("0346 542 636");
-  const [email, setEmail] = React.useState("example@gmail.com");
-  const [address, setAddress] = React.useState("Hà Nội");
-  const [gender, setGender] = React.useState("Nam");
-  const [birthday, setBirthday] = React.useState("01/01/2000");
-  const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
-  const [avatar, setAvatar] = React.useState<{ uri: string }>({
-    uri: "@/assets/images/avt.png",
-  });
+  const dispatch = useDispatch();
+  const { user } = useAuth();
 
-  const showDatePicker = () => {
-    setDatePickerVisible(true);
-  };
-  const hideDatePicker = () => {
-    setDatePickerVisible(false);
-  };
-  const handleConfirm = (event: any, sekectedDate?: Date) => {
-    hideDatePicker();
-    if (sekectedDate) {
-      setBirthday(
-        `${sekectedDate.getDate()}/${
-          sekectedDate.getMonth() + 1
-        }/${sekectedDate.getFullYear()}`
-      );
+  // Initialize state with user data
+  const [name, setName] = React.useState(user?.full_name || "");
+  const [phone, setPhone] = React.useState(user?.phone_number || "");
+  const [email, setEmail] = React.useState(user?.email || "");
+  const [gender, setGender] = React.useState(user?.gender || "");
+  const [birthday, setBirthday] = React.useState(
+    user?.date_of_birth ? new Date(user.date_of_birth) : new Date()
+  );
+  const [avatar, setAvatar] = React.useState<{ uri: string }>({
+    uri: user?.avatar_url || "",
+  });
+  const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
+
+  const handleSaveChanges = async () => {
+    try {
+      // Update user info
+      await dispatch(
+        updateUserThunk({
+          full_name: name,
+          phone_number: phone,
+          email,
+          gender,
+          date_of_birth: birthday,
+        })
+      ).unwrap();
+
+      // If avatar was changed, update it separately
+      if (avatar.uri !== user?.avatar_url) {
+        const formData = new FormData();
+        const response = await fetch(avatar.uri);
+        const blob = await response.blob();
+        formData.append("avatar", blob, "avatar.jpg");
+        await dispatch(updateAvatarUrlThunk(formData)).unwrap();
+      }
+
+      navigation.goBack();
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      // Handle error (show error message)
     }
   };
-  const [items, setItems] = React.useState([
-    { label: "Nam", value: "Nam" },
-    { label: "Nữ", value: "Nữ" },
-    { label: "Khác", value: "Khác" },
-  ]);
-  const handleValueChange = (value: string) => {
-    setGender(value);
-  }
 
-  const [open, setOpen] = React.useState(false);
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -71,6 +84,25 @@ const ProfileEdit = (props: ProfileEditProps) => {
       setAvatar({ uri: result.assets[0].uri });
     }
   };
+
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
+
+  const handleDateChange = (
+    event: DateTimePickerEvent,
+    selectedDate?: Date
+  ) => {
+    setDatePickerVisible(false);
+    if (selectedDate && event.type === "set") {
+      setBirthday(selectedDate);
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD format
+  };
+
   return (
     <View flex marginH-20 marginT-20>
       <View row centerV>
@@ -98,7 +130,11 @@ const ProfileEdit = (props: ProfileEditProps) => {
           height={76}
           borderRadius={50}
           style={{ borderColor: "#D5D6CD", borderWidth: 2 }}
-          source={avatar}
+          source={
+            avatar.uri
+              ? { uri: avatar.uri }
+              : require("@/assets/images/avt.png")
+          }
         />
         <TouchableOpacity
           onPress={pickImage}
@@ -139,12 +175,6 @@ const ProfileEdit = (props: ProfileEditProps) => {
             icon: EmailIcon,
             onChangeText: setEmail,
           },
-          {
-            placeholder: "Địa chỉ",
-            value: address,
-            icon: AddressIcon,
-            onChangeText: setAddress,
-          },
         ].map((item, index) => (
           <View key={index} marginT-20>
             <View row centerV gap-10>
@@ -168,8 +198,8 @@ const ProfileEdit = (props: ProfileEditProps) => {
           <View row centerV gap-10>
             <Image width={24} height={24} source={GenderIcon} />
             <Picker
-              value={gender} 
-              onChange={(value: any) => handleValueChange(value)}
+              value={gender}
+              onChange={(value: any) => setGender(value)}
               style={{
                 borderBottomWidth: 0.5,
                 flex: 1,
@@ -197,16 +227,15 @@ const ProfileEdit = (props: ProfileEditProps) => {
                 marginLeft: 10,
               }}
             >
-              <Text>{birthday}</Text>
+              <Text>{formatDate(birthday)}</Text>
             </TouchableOpacity>
             {isDatePickerVisible && (
-              // <DateTimePicker
-              //   value={new Date()}
-              //   mode="date"
-              //   is24Hour={true}
-              //   onChange={handleConfirm}
-              // />
-              null
+              <DateTimePicker
+                value={birthday}
+                mode="date"
+                is24Hour={true}
+                onChange={handleDateChange}
+              />
             )}
           </View>
         </View>
@@ -223,9 +252,10 @@ const ProfileEdit = (props: ProfileEditProps) => {
             elevation: 5,
             marginTop: 20,
           }}
+          onPress={handleSaveChanges}
         >
           <Text center white text70BO>
-           {i18n.t("profile.change_info")}
+            {i18n.t("profile.change_info")}
           </Text>
         </TouchableOpacity>
       </View>

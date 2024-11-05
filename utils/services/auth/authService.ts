@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AxiosInstance from '@/utils/services/helper/axiosInstance';
+import FirebaseService from '@/utils/services/firebase/firebaseService';
 import { AuthResponse, LoginCredentials, RegisterCredentials } from '@/types/auth.type';
 import messaging from '@react-native-firebase/messaging';
 import { Platform } from 'react-native';
-import AxiosInstance from '@/utils/services/helper/AxiosInstance';
 
 const TOKEN_KEY = '@auth_token';
 const FCM_TOKEN_KEY = '@fcm_token';
@@ -158,4 +159,4 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+export default new AuthService(); 

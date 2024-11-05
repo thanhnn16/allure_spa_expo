@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { ServiceCategoriesResponeParams } from '@/types/service.type'
 
 export const getServiceCateThunk: any = createAsyncThunk(

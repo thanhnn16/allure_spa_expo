@@ -12,7 +12,7 @@ import {
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
 import { Href, Link, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Platform, Dimensions, ScrollView, StatusBar } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -33,8 +33,11 @@ import WeatherView from "@/components/home/WeatherView";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-
-  const [services, setServices] = useState<any[]>([]);
+  const selectUser = (state: RootState) => state.auth;
+  const { user } = useSelector(selectUser);
+  const currentDate = new Date();
+  const hours = currentDate.getHours();
+  const [greeting, setGreeting] = useState<string>("");
   const [banner, setBanner] = useState([
     { uri: "https://intphcm.com/data/upload/banner-spa-cta.jpg" },
     { uri: "https://easysalon.vn/wp-content/uploads/2019/12/banner-spa.jpg" },
@@ -48,7 +51,6 @@ const HomePage = () => {
   const { servicesList, isLoading } = useSelector(
     (state: RootState) => state.service
   );
-
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
 
@@ -57,32 +59,19 @@ const HomePage = () => {
   const { products, isLoading: productsLoading } = useSelector(
     (state: RootState) => state.product
   );
+  useMemo(() => {
+    if (hours < 12) {
+      setGreeting(i18n.t("greeting.morning"));
+    } else if (hours >= 12 && hours < 18) {
+      setGreeting(i18n.t("greeting.afternoon"));
+    } else {
+      setGreeting(i18n.t("greeting.evening"));
+    }
+  }, [hours]);
 
   useEffect(() => {
     dispatch(getServicesThunk(1));
   }, [dispatch]);
-
-  useEffect(() => {
-    if (servicesList && servicesList.data) {
-      setServices(servicesList.data);
-    }
-  }, [servicesList]);
-
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await fetch(
-          "https://66fa1d4eafc569e13a9a70d9.mockapi.io/api/v1/products"
-        );
-        const data = await res.json();
-        if (data) setServices(data);
-      } catch (error: any) {
-        console.error("Error fetching products:", error);
-      }
-    };
-
-    getProducts();
-  }, []);
 
   useEffect(() => {
     dispatch(getAllProductsThunk());
@@ -98,7 +87,7 @@ const HomePage = () => {
     if (!item || !item.service_name) {
       return null;
     }
-
+    const urlImage = item.media[0]?.full_url;
     const truncateText = (text: string, maxLength: number) => {
       if (text?.length <= maxLength) return text;
       return text?.slice(0, maxLength).trim() + "...";
@@ -110,7 +99,7 @@ const HomePage = () => {
         marginB-5
         style={[
           AppStyles.shadowItem,
-          { borderRadius: 16, width: 230, height: "auto" },
+          { borderRadius: 22, width: 230, height: "auto" },
         ]}
         onPress={() => {
           router.push(`/service/${item.id}`);
@@ -118,19 +107,23 @@ const HomePage = () => {
       >
         <Image
           source={
-            item.image_url
-              ? { uri: item.image_url }
-              : require("@/assets/images/home/service1.png")
+            urlImage !== null
+              ? { uri: urlImage }
+              : require("@/assets/images/logo/logo.png")
           }
-          width={"100%"}
-          height={210}
+          width={230}
+          height={225}
           style={{ resizeMode: "cover" }}
         />
-        <View paddingH-12>
+        <View paddingH-12 flex marginB-5>
           <Text text70H>{item.service_name}</Text>
+        </View>
+        <View paddingH-12>
           <Text style={{ color: "#8C8585" }}>
             {truncateText(item.description, 50)}
           </Text>
+        </View>
+        <View paddingH-12 paddingB-10 bottom>
           <Text marginT-10 text70H style={{ color: "#A85A29" }}>
             {item.single_price.toLocaleString("vi-VN")} VNĐ
           </Text>
@@ -148,7 +141,7 @@ const HomePage = () => {
           title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={renderServicesItem}
-          onPressMore={() => {}}
+          onPressMore={() => { }}
         />
       )}
       {products && products.length > 0 && (
@@ -268,8 +261,8 @@ const HomePage = () => {
                     source={require("@/assets/images/logo/logo.png")}
                   />
                   <View centerV marginL-10>
-                    <Text h2_bold>Đức Lộc</Text>
-                    <Text h4>{i18n.t("greeting.morning")}</Text>
+                    <Text h2_bold>{user?.full_name}</Text>
+                    <Text h4>{greeting}</Text>
                   </View>
                 </View>
               </View>
@@ -345,37 +338,37 @@ export default HomePage;
 const cateArr = [
   {
     id: "1",
-    name: "Giới thiệu",
+    name: i18n.t("home.introduce"),
     icon: require("@/assets/images/home/icons/Introduce.png"),
     url: "https://allurespa.com.vn/gioi-thieu/",
   },
   {
     id: "2",
-    name: "Voucher",
+    name: i18n.t("home.voucher"),
     icon: require("@/assets/images/home/icons/Voucher.png"),
     url: "https://allurespa.com.vn/voucher/",
   },
   {
     id: "3",
-    name: "Dịch vụ",
+    name: i18n.t("home.service"),
     icon: require("@/assets/images/home/icons/Service.png"),
     url: "https://allurespa.com.vn/dich-vu/",
   },
   {
     id: "4",
-    name: "Sản phẩm",
+    name: i18n.t("home.product"),
     icon: require("@/assets/images/home/icons/Product.png"),
     url: "https://allurespa.com.vn/san-pham/",
   },
   {
     id: "5",
-    name: "Khoá học",
+    name: i18n.t("home.course"),
     icon: require("@/assets/images/home/icons/Course.png"),
     url: "https://allurespa.com.vn/khoa-hoc/",
   },
   {
     id: "6",
-    name: "Tin tức",
+    name: i18n.t("home.news"),
     icon: require("@/assets/images/home/icons/News.png"),
     url: "https://allurespa.com.vn/category/tin-tuc/",
   },

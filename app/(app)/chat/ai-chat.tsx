@@ -1,29 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
 import { Audio } from "expo-av";
+import { useEffect, useRef, useState } from "react";
 import {
-  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
   FlatList,
-  TouchableWithoutFeedback,
-  Platform,
   Keyboard,
   KeyboardAvoidingView,
-  ActivityIndicator,
+  Platform,
+  StyleSheet,
   TouchableOpacity,
-  Dimensions,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { Image, View, Text, Colors } from "react-native-ui-lib";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { LinearTransition } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors, Image, Text, View } from "react-native-ui-lib";
 
-import MessageBubble from "@/components/message/MessageBubble";
-import messagesData from "../../../data/chat/ChatDefaultData";
-import MessageTextInput from "@/components/message/MessageTextInput";
+import KeyboardIcon from "@/assets/icons/keyboard.svg";
+import MicIcon from "@/assets/icons/mic.svg";
+import StopIcon from "@/assets/icons/stop_fill.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
+import MessageBubble from "@/components/message/MessageBubble";
+import MessageTextInput from "@/components/message/MessageTextInput";
 import i18n from "@/languages/i18n";
-import MicIcon from "@/assets/icons/mic.svg";
-import KeyboardIcon from "@/assets/icons/keyboard.svg";
-import StopIcon from "@/assets/icons/stop_fill.svg";
 
 const AIChatScreen = () => {
   const [message, setMessage] = useState("");
@@ -38,25 +37,7 @@ const AIChatScreen = () => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
 
   const handleSend = () => {
-    if (message.trim() === "") return;
-    const newMessage = {
-      id: (messagesData.length + 1).toString(),
-      text: message,
-      sender: "user",
-      time: new Date().toLocaleTimeString().split(":").slice(0, 2).join(":"),
-    };
-    messagesData.push(newMessage);
-    setMessageStatus("Đang gửi");
-    setMessage("");
-    scrollRef.current?.scrollToEnd({ animated: true });
-
-    setTimeout(() => {
-      setMessageStatus("Đã gửi");
-    }, 4000);
-
-    setTimeout(() => {
-      setMessageStatus("Đã đọc");
-    }, 6000);
+    // TODO: Send message to AI
   };
 
   const handleRead = () => {
@@ -143,7 +124,7 @@ const AIChatScreen = () => {
   const renderChatUI = () => (
     <>
       <FlatList
-        data={messagesData}
+        data={[]}
         renderItem={({ item }) => (
           <MessageBubble message={item} isOwn={false} />
         )}

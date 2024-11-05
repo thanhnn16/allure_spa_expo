@@ -3,9 +3,10 @@ import { View, Text, Card, Image, TouchableOpacity } from "react-native-ui-lib";
 import { useAuth } from "@/hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import i18n from "@/languages/i18n";
-import {Href, router} from "expo-router";
+import { Href, router } from "expo-router";
 import { useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
+import { ScrollView } from "react-native";
 
 const ProfilePage = () => {
   const { user, signOut, isGuest } = useAuth();
@@ -22,7 +23,7 @@ const ProfilePage = () => {
   const handleLoginConfirm = () => {
     setLoginDialogVisible(false);
     router.replace("/(auth)");
-  }
+  };
 
   const handleNavigation = (path: Href<string>) => {
     if (isGuest) {
@@ -34,53 +35,66 @@ const ProfilePage = () => {
   };
 
   return (
-      <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
-        <View flex paddingH-24 marginT-16>
+    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
+      <ScrollView>
+        <View flex paddingH-24 marginT-10>
           <Card
-              width={"100%"}
-              height={100}
-              row
-              elevation={5}
-              centerV
-              gap-15
-              space-evenly
-              borderRadius={20}
-              backgroundColor={"#D5D6CD"}
-              paddingH-20
+            width={"100%"}
+            height={100}
+            row
+            elevation={5}
+            centerV
+            gap-15
+            spread
+            borderRadius={20}
+            backgroundColor={"#D5D6CD"}
+            paddingH-20
           >
-            <Image
+            <View row centerV gap-10>
+              <Image
                 width={64}
                 height={64}
                 borderRadius={50}
-                source={require("@/assets/images/avt.png")}
-            />
-            <View>
-              <Text text60>{i18n.t("profile.username")}</Text>
-              <Text>+84 346 542 636</Text>
+                source={
+                  user?.avatar_url
+                    ? { uri: user.avatar_url }
+                    : require("@/assets/images/avt.png")
+                }
+              />
+              <View>
+                <Text text60>
+                  {user?.full_name || i18n.t("profile.username")}
+                </Text>
+                <Text>{user?.phone_number || ""}</Text>
+              </View>
             </View>
-
-            <View gap-10>
+            <View gap-10 center>
               <View row gap-5>
                 <Image
-                    width={20}
-                    height={20}
-                    source={require("@/assets/images/allureCoin.png")}
+                  width={20}
+                  height={20}
+                  source={require("@/assets/images/allureCoin.png")}
                 />
-                <Text white>1234</Text>
+                <Text white>{user?.loyalty_points || 0}</Text>
               </View>
 
               <TouchableOpacity
-                  center
-                  backgroundColor="#FFFFFF"
-                  style={{ borderRadius: 10, width: 48, height: 29, elevation: 5 }}
-                  onPress={() => {
-                    console.log("Gift");
-                  }}
+                center
+                backgroundColor="#FFFFFF"
+                style={{
+                  borderRadius: 10,
+                  width: 48,
+                  height: 29,
+                  elevation: 5,
+                }}
+                onPress={() => {
+                  router.push("/(app)/reward/rewardItem");
+                }}
               >
                 <Image
-                    width={20}
-                    height={20}
-                    source={require("@/assets/images/gift.png")}
+                  width={20}
+                  height={20}
+                  source={require("@/assets/images/gift.png")}
                 />
               </TouchableOpacity>
             </View>
@@ -106,35 +120,37 @@ const ProfilePage = () => {
                 onPress: () => handleNavigation("/profile/address"),
               },
               {
-                title: isGuest ? i18n.t("auth.login.login_now") : i18n.t("profile.logout"),
+                title: isGuest
+                  ? i18n.t("auth.login.login_now")
+                  : i18n.t("profile.logout"),
                 description: "",
                 icon: require("@/assets/images/logout.png"),
                 onPress: handleSignOut,
               },
             ].map((item, index) => (
-                <TouchableOpacity key={index} onPress={item.onPress}>
-                  <View row padding-10 gap-20 center>
-                    <TouchableOpacity
-                        style={{
-                          width: 50,
-                          height: 50,
-                          borderRadius: 50,
-                          backgroundColor: "#F7F7F7",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                    >
-                      <Image source={item.icon} width={24} height={24} />
-                    </TouchableOpacity>
-                    <View flex gap-5>
-                      <Text text70BL>{item.title}</Text>
-                      {item.description ? (
-                          <Text gray>{item.description}</Text>
-                      ) : null}
-                    </View>
-                    <Image source={ArrowRight} />
+              <TouchableOpacity key={index} onPress={item.onPress}>
+                <View row padding-10 gap-20 center>
+                  <TouchableOpacity
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 50,
+                      backgroundColor: "#F7F7F7",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image source={item.icon} width={24} height={24} />
+                  </TouchableOpacity>
+                  <View flex gap-5>
+                    <Text text70BL>{item.title}</Text>
+                    {item.description ? (
+                      <Text gray>{item.description}</Text>
+                    ) : null}
                   </View>
-                </TouchableOpacity>
+                  <Image source={ArrowRight} />
+                </View>
+              </TouchableOpacity>
             ))}
           </Card>
           <Text text80BO gray style={{ letterSpacing: 1 }} marginT-10>
@@ -158,40 +174,41 @@ const ProfilePage = () => {
                 onPress: () => handleNavigation("/settings"),
               },
             ].map((item, index) => (
-                <TouchableOpacity key={index} onPress={item.onPress}>
-                  <View row padding-10 gap-20 center>
-                    <TouchableOpacity
-                        style={{
-                          width: 50,
-                          height: 50,
-                          borderRadius: 50,
-                          backgroundColor: "#F7F7F7",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                    >
-                      <Image source={item.icon} width={24} height={24} />
-                    </TouchableOpacity>
-                    <View flex gap-5>
-                      <Text text70BL>{item.title}</Text>
-                    </View>
-                    <Image source={ArrowRight} />
+              <TouchableOpacity key={index} onPress={item.onPress}>
+                <View row padding-10 gap-20 center>
+                  <TouchableOpacity
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 50,
+                      backgroundColor: "#F7F7F7",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image source={item.icon} width={24} height={24} />
+                  </TouchableOpacity>
+                  <View flex gap-5>
+                    <Text text70BL>{item.title}</Text>
                   </View>
-                </TouchableOpacity>
+                  <Image source={ArrowRight} />
+                </View>
+              </TouchableOpacity>
             ))}
           </Card>
         </View>
-        <AppDialog
-            visible={loginDialogVisible}
-            title={i18n.t("auth.login.login_required")}
-            description={i18n.t("auth.login.login_profile")}
-            closeButtonLabel={i18n.t("common.cancel")}
-            confirmButtonLabel={i18n.t("auth.login.login_now")}
-            severity="info"
-            onClose={() => setLoginDialogVisible(false)}
-            onConfirm={handleLoginConfirm}
-        />
-      </SafeAreaView>
+      </ScrollView>
+      <AppDialog
+        visible={loginDialogVisible}
+        title={i18n.t("auth.login.login_required")}
+        description={i18n.t("auth.login.login_profile")}
+        closeButtonLabel={i18n.t("common.cancel")}
+        confirmButtonLabel={i18n.t("auth.login.login_now")}
+        severity="info"
+        onClose={() => setLoginDialogVisible(false)}
+        onConfirm={handleLoginConfirm}
+      />
+    </SafeAreaView>
   );
 };
 

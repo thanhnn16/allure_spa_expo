@@ -22,12 +22,32 @@ export interface RegisterCredentials {
 }
 
 export interface AuthResponse {
-  [x: string]: any;
+  success: boolean;
   message: string;
   status_code: number;
-  success: boolean;
-  data: {
+  data?: {
     user: User;
     token: string;
   }
+}
+
+export enum AuthErrorCode {
+  USER_NOT_FOUND = 'USER_NOT_FOUND',
+  WRONG_PASSWORD = 'WRONG_PASSWORD',
+  EMAIL_ALREADY_EXISTS = 'EMAIL_ALREADY_EXISTS',
+  PHONE_ALREADY_EXISTS = 'PHONE_ALREADY_EXISTS',
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  MISSING_CONTACT_INFO = 'MISSING_CONTACT_INFO',
+  SERVER_ERROR = 'SERVER_ERROR',
+  UNAUTHORIZED_ACCESS = 'UNAUTHORIZED_ACCESS',
+  INVALID_PHONE_FORMAT = 'INVALID_PHONE_FORMAT',
+  INVALID_PASSWORD_FORMAT = 'INVALID_PASSWORD_FORMAT',
+  INVALID_EMAIL_FORMAT = 'INVALID_EMAIL_FORMAT',
+  INVALID_NAME_FORMAT = 'INVALID_NAME_FORMAT',
+  PASSWORDS_NOT_MATCH = 'PASSWORDS_NOT_MATCH'
+}
+
+export interface AuthError {
+  code: AuthErrorCode | string;
+  message: string;
 } 

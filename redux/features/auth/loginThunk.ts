@@ -1,8 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AuthResponse } from "@/types/auth.type";
+import { AuthResponse, AuthErrorCode } from "@/types/auth.type";
+import i18n from "@/languages/i18n";
 
 interface LoginRequest {
   phoneNumber: string;
@@ -11,7 +12,7 @@ interface LoginRequest {
 
 export const loginThunk = createAsyncThunk(
   'user/login',
-  async (body: LoginRequest, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
+  async (body: LoginRequest, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
       const res = await AxiosInstance().post<AuthResponse>('auth/login', {
         phone_number: body.phoneNumber,
@@ -22,33 +23,66 @@ export const loginThunk = createAsyncThunk(
         const { token, user } = res.data.data;
 
         if (!token) {
-          return rejectWithValue('No token received from server');
+          return rejectWithValue({
+            code: 'NO_TOKEN',
+            message: 'No token received from server'
+          });
         }
 
-        // Save complete user data
-        await AsyncStorage.multiSet([
-          ['userToken', token],
-          ['userData', JSON.stringify(user)]
-        ]);
+        await AsyncStorage.setItem('userToken', token);
 
-        console.log('Saved token:', token); // Debug log
-
-        // Then handle FCM registration
         try {
           await FirebaseService.requestUserPermission();
           await FirebaseService.registerTokenWithServer(user.id);
         } catch (fcmError) {
-          console.warn('FCM registration failed but login successful:', fcmError);
-          // Continue with login even if FCM fails
+          // Do nothing
         }
 
         return { user, token };
       }
 
-      return rejectWithValue(res.data.message || 'Login failed');
+      return rejectWithValue({
+        code: res.data.status_code || 'UNKNOWN_ERROR',
+        message: res.data.message || i18n.t('auth.login.unknown_error')
+      });
+
     } catch (error: any) {
-      console.error('Login error:', error);
-      return rejectWithValue(error.response?.data?.message || error.message);
+      if (error.response?.status === 422) {
+        const validationErrors = error.response.data.errors;
+        if (validationErrors.phone_number) {
+          return rejectWithValue({
+            code: AuthErrorCode.INVALID_PHONE_FORMAT,
+            message: validationErrors.phone_number[0]
+          });
+        }
+        if (validationErrors.password) {
+          return rejectWithValue({
+            code: AuthErrorCode.INVALID_PASSWORD_FORMAT,
+            message: validationErrors.password[0]
+          });
+        }
+      }
+
+      if (error.response?.data?.status_code) {
+        switch (error.response.data.status_code) {
+          case AuthErrorCode.USER_NOT_FOUND:
+          case AuthErrorCode.WRONG_PASSWORD:
+            return rejectWithValue({
+              code: error.response.data.status_code,
+              message: i18n.t('auth.login.invalid_credentials')
+            });
+          default:
+            return rejectWithValue({
+              code: error.response.data.status_code,
+              message: error.response.data.message || i18n.t('auth.login.unknown_error')
+            });
+        }
+      }
+
+      return rejectWithValue({
+        code: AuthErrorCode.SERVER_ERROR,
+        message: i18n.t('auth.login.server_error')
+      });
     }
   }
 );

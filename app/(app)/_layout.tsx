@@ -4,7 +4,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
 const AppLayout = () => {
-  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, isGuest } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   useEffect(() => {
     const checkAuthAndNavigate = async () => {
@@ -37,7 +39,9 @@ const AppLayout = () => {
       <Stack.Screen name="chat/ai-chat" />
       <Stack.Screen name="chat/[id]/index" />
       <Stack.Screen name="service/[id]/index" />
-      <Stack.Screen name="booking/[id]/index" />
+      <Stack.Screen name="booking/index" />
+      <Stack.Screen name="invoice/failed" />
+      <Stack.Screen name="invoice/success" />
     </Stack>
   );
 };

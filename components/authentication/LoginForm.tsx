@@ -5,11 +5,10 @@ import i18n from "@/languages/i18n";
 import AppButton from "@/components/buttons/AppButton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
-import { loginThunk } from "@/redux/features/auth/loginThunk";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { router } from "expo-router";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
+import { useDialog } from "@/hooks/useDialog";
+import AppDialog from "../dialog/AppDialog";
 
 interface LoginFormProps {
   onBackPress: () => void;
@@ -21,8 +20,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   const [loading, setLoading] = useState(false);
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const dispatch = useDispatch<AppDispatch>();
   const { signIn } = useAuth();
+  const { showDialog, dialogConfig, hideDialog } = useDialog();
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
@@ -69,10 +68,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
     try {
       await signIn({ phoneNumber, password });
     } catch (error: any) {
-      Alert.alert(
-        i18n.t("auth.login.error"),
-        error.message || i18n.t("auth.login.unknown_error")
-      );
+      showDialog(i18n.t("auth.login.error"), error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -146,6 +142,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
           onPress={onBackPress}
         />
       </View>
+
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        severity={dialogConfig.severity}
+        onClose={hideDialog}
+        closeButton={true}
+        confirmButton={false}
+      />
     </>
   );
 };

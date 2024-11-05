@@ -5,15 +5,53 @@ import { registerThunk } from '@/redux/features/auth/registerThunk';
 import { logoutThunk } from '@/redux/features/auth/logoutThunk';
 import { setGuestUser, clearGuestUser } from '@/redux/features/auth/authSlice';
 import { router } from 'expo-router';
-import { LoginCredentials, RegisterCredentials } from '@/types/auth.type';
+import { LoginCredentials, RegisterCredentials, AuthErrorCode } from '@/types/auth.type';
 import AuthService from '@/utils/services/auth/authService';
 import { useZaloAuth } from './useZaloAuth';
+import i18n from '@/languages/i18n';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
   const { login: zaloLogin } = useZaloAuth();
 
+  const handleAuthError = (error: any) => {
+    let errorMessage = i18n.t('auth.login.unknown_error');
+    
+    const errorCode = error?.code;
+    const errorMsg = error?.message;
+
+    if (errorCode) {
+      switch (errorCode) {
+        case AuthErrorCode.USER_NOT_FOUND:
+        case AuthErrorCode.WRONG_PASSWORD:
+          errorMessage = i18n.t('auth.login.invalid_credentials');
+          break;
+        case AuthErrorCode.INVALID_PHONE_FORMAT:
+          errorMessage = i18n.t('auth.login.invalid_phone_number');
+          break;
+        case AuthErrorCode.INVALID_PASSWORD_FORMAT:
+          errorMessage = i18n.t('auth.login.invalid_password_special_char');
+          break;
+        case AuthErrorCode.INVALID_EMAIL_FORMAT:
+          errorMessage = i18n.t('auth.login.invalid_email');
+          break;
+        case AuthErrorCode.INVALID_NAME_FORMAT:
+          errorMessage = i18n.t('auth.login.invalid_full_name');
+          break;
+        case AuthErrorCode.PASSWORDS_NOT_MATCH:
+          errorMessage = i18n.t('auth.register.password_mismatch');
+          break;
+        case AuthErrorCode.SERVER_ERROR:
+          errorMessage = i18n.t('auth.login.server_error');
+          break;
+        default:
+          errorMessage = errorMsg || i18n.t('auth.login.unknown_error');
+      }
+    }
+    
+    return errorMessage;
+  };
 
   const signIn = async (credentials: LoginCredentials) => {
     try {
@@ -24,8 +62,8 @@ export const useAuth = () => {
         return result;
       }
     } catch (error: any) {
-      console.error('Sign in failed:', error);
-      throw error;
+      const errorMessage = handleAuthError(error);
+      throw new Error(errorMessage);
     }
   };
 

@@ -13,11 +13,10 @@ import {
 import CartProductItem from "@/components/cart/CartProductItem";
 import { RootState } from "@/redux/store";
 import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
-import { useNavigation } from 'expo-router';
+import i18n from "@/languages/i18n";
 
 export default function Cart() {
     const dispatch = useDispatch();
-    const navigation = useNavigation();
     const { items, totalAmount } = useSelector(
         (state: RootState) => state.cart
     );
@@ -41,10 +40,14 @@ export default function Cart() {
         dispatch(clearCart())
     };
 
-    const formattedPrice = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-    }).format(parseFloat(totalAmount));
+    // const formattedPrice = new Intl.NumberFormat("vi-VN", {
+    //     style: "currency",
+    //     currency: "VND",
+    // }).format(parseFloat(totalAmount));
+
+    const formattedPrice = i18n.numberToCurrency(totalAmount);
+
+    
 
     const handleNavigateToPayment = () => {
         if (items.length === 0) return;

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FirebaseService from '@/utils/services/firebase/firebaseService';
 import { AuthResponse, LoginCredentials, RegisterCredentials } from '@/types/auth.type';
-import AxiosInstance from '@/utils/services/helper/AxiosInstance';
+import AxiosInstance from '@/utils/services/helper/axiosInstance';
 
 class AuthService {
     async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -57,9 +57,9 @@ class AuthService {
     }
 
     private async handleSuccessfulAuth(data: AuthResponse): Promise<void> {
-        await AsyncStorage.setItem('userToken', data.token);
+        await AsyncStorage.setItem('userToken', data.data?.token || '');
         await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(data.user.id);
+        await FirebaseService.registerTokenWithServer(data.data?.user?.id?.toString() || '');
     }
 
     private async clearAuthData(): Promise<void> {

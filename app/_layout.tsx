@@ -6,7 +6,7 @@ import { persistor } from "@/redux/store";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import "expo-dev-client";
 import { useFonts } from "expo-font";
-import { Slot, Stack } from "expo-router";
+import { router, Slot, Stack } from "expo-router";
 import { useEffect, useCallback } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Text, View } from "react-native";
@@ -15,6 +15,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
+import { Button } from "react-native-ui-lib";
 
 SplashScreen.preventAutoHideAsync();
 interface ErrorFallbackProps {
@@ -26,6 +27,7 @@ function ErrorFallback({ error }: ErrorFallbackProps) {
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Text>Something went wrong:</Text>
       <Text>{error.message}</Text>
+      <Button label="Go back" onPress={() => router.back()} />
     </View>
   );
 }

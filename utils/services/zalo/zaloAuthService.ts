@@ -3,7 +3,7 @@ import axios from 'axios';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import { Platform } from 'react-native';
-
+import Constants from "expo-constants";
 export interface AccessTokenResponse {
   access_token: string;
   refresh_token: string;
@@ -27,9 +27,9 @@ export interface UserProfile {
   gender?: string;
 }
 
-const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
-const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
-const appUrl = process.env.EXPO_PUBLIC_SERVER_URL;
+const clientId = Constants.expoConfig?.extra?.EXPO_PUBLIC_ZALO_CLIENT_ID;
+const clientSecret = Constants.expoConfig?.extra?.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
+const appUrl = Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL;
 
 // Tạo redirect URI dựa trên platform
 export const getRedirectUri = () => {
