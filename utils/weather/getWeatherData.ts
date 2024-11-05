@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Double } from 'react-native/Libraries/Types/CodegenTypes';
-
-let KEY = process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY;
+import Constants from "expo-constants";
+let KEY = Constants.expoConfig?.extra?.EXPO_PUBLIC_OPEN_WEATHER_API_KEY;
 
 const getWeather = async (lat: Double, lon: Double) => {
   try {

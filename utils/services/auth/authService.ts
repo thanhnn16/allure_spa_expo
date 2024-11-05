@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AxiosInstance from '@/utils/services/helper/AxiosInstance';
+import AxiosInstance from '@/utils/services/helper/axiosInstance';
 import FirebaseService from '@/utils/services/firebase/firebaseService';
 import { AuthResponse, LoginCredentials, RegisterCredentials } from '@/types/auth.type';
 

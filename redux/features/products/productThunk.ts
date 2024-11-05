@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { ProductResponseParams } from "@/types/product.type";
 
 interface ProductRequest {

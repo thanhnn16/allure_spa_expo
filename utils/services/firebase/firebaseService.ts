@@ -1,5 +1,5 @@
 import messaging from '@react-native-firebase/messaging';
-import AxiosInstance from '../helper/AxiosInstance';
+import AxiosInstance from '../helper/axiosInstance';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';

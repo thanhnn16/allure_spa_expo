@@ -14,7 +14,8 @@
     "confirm": "Xác nhận",
     "ok": "OK",
     "error": "Lỗi",
-    "success": "Thành công"
+    "success": "Thành công",
+    "back_to_home": "Về trang chủ"
   },
   "auth": {
     "login": {
@@ -46,6 +47,7 @@
       "login_required": "Cần đăng nhập",
       "login_buy_product": "Bạn cần đăng nhập để mua sắm sản phẩm tại Allure Spa",
       "login_chat_ai": "Bạn cần đăng nhập để chat với AI",
+      "login_chat": "Bạn cần đăng nhập để chat",
       "login_chat_customer_care": "Bạn cần đăng nhập để chat với chăm sóc khách hàng",
       "login_appointment": "Bạn cần đăng nhập để đặt lịch hẹn",
       "login_profile": "Bạn cần đăng nhập để truy cập vào hồ sơ",
@@ -205,7 +207,15 @@
   "home": {
     "featured_services": "Dịch vụ nổi bật",
     "featured_products": "Sản phẩm nổi bật",
-    "discover": "Khám phá"
+    "discover": "Khám phá",
+    "see_more": "Xem thêm",
+    "introduce": "Giới thiệu",
+    "voucher": "Voucher",
+    "service": "Dịch vụ",
+    "product": "Sản phẩm",
+    "course": "Khoá học",
+    "news": "Tin tức",
+    "placeholder_search": "Tìm kiếm mỹ phẩm, liệu trình ..."
   },
   "greeting": {
     "morning": "Allure Spa chúc bạn buổi sáng vui vẻ!",
@@ -227,7 +237,11 @@
     "select_time": "Chọn giờ",
     "note": "Ghi chú",
     "enter_content": "Nhập nội dung",
-    "continue": "Tiếp tục"
+    "continue": "Tiếp tục",
+    "book": "Book",
+    "plase_select_date": "Vui lòng chọn ngày!",
+    "plase_select_time": "Vui lòng chọn giờ!",
+    "appointment_successful": "Đặt lịch thành công!"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",
@@ -270,5 +284,14 @@
     "separator": ".", 
     "delimiter": ",", 
     "format": "%n %u" 
+  },
+  "invoice": {
+    "payment_success": "Thanh toán thành công",
+    "payment_details": "Chi tiết thanh toán",
+    "payment_successful": "Thanh toán thành công!",
+    "payment_success_message": "Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận.",
+    "amount": "Số tiền",
+    "payment_time": "Thời gian thanh toán",
+    "order_code": "Mã đơn hàng"
   }
 }

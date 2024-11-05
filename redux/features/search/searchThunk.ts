@@ -1,4 +1,4 @@
-import AxiosInstance from '@/utils/services/helper/AxiosInstance';
+import AxiosInstance from '@/utils/services/helper/axiosInstance';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const searchItems = createAsyncThunk(

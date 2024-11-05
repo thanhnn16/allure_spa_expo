@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { WebView } from "react-native-webview";
 import { View, StyleSheet } from "react-native";
 import Constants from "expo-constants";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import axios from "axios";
 import { LoaderScreen } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AppDialog from "@/components/dialog/AppDialog";
 
 interface WebViewScreenProps {
   url: string;
@@ -13,6 +15,22 @@ interface WebViewScreenProps {
 }
 
 const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState({
+    title: "",
+    description: "",
+    severity: "error" as "error" | "success" | "info" | "warning",
+  });
+
+  const showDialog = (
+    title: string,
+    description: string,
+    severity: "error" | "success" | "info" | "warning"
+  ) => {
+    setDialogConfig({ title, description, severity });
+    setDialogVisible(true);
+  };
+
   const handleZaloCallback = (navState: any) => {
     const urlObj = new URL(navState.url);
     const code = urlObj.searchParams.get("code");
@@ -27,29 +45,60 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   };
 
   const handlePaymentCallback = async (navState: any) => {
-    if (navState.url.startsWith("allurespa://")) {
+    if (
+      navState.url.startsWith("allurespa://") ||
+      navState.url.startsWith("exp+allurespa://")
+    ) {
       const params = new URL(navState.url).searchParams;
       const status = params.get("status");
       const orderCode = params.get("orderCode");
+      const invoiceId = params.get("invoice_id");
 
       if (status === "success" && orderCode) {
         try {
           const response = await axios.post(
-            `${process.env.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
+            `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
             { orderCode }
           );
 
           if (response.data.success) {
-            router.push("/transaction/success");
+            await AsyncStorage.removeItem("payos_order_code");
+
+            // Check if this is an invoice payment by checking invoice_id param
+            if (invoiceId) {
+              router.push({
+                pathname: "/(app)/invoice/success",
+                params: {
+                  invoice_id: invoiceId,
+                  amount: response.data.data.amount,
+                  payment_time: response.data.data.paymentTime,
+                },
+              });
+            } else {
+              // Regular transaction success
+              router.push("/transaction/success");
+            }
           } else {
-            router.push("/transaction?error=payment_failed");
+            showDialog(
+              "Thanh Toán Thất Bại",
+              response.data.message || "Không thể xác nhận thanh toán",
+              "error"
+            );
+            setTimeout(() => router.back(), 2000);
           }
         } catch (error) {
           console.error("Verify payment error:", error);
-          router.push("/transaction?error=verification_failed");
+          showDialog("Lỗi Xác Thực", "Không thể xác thực thanh toán", "error");
+          setTimeout(() => router.back(), 2000);
         }
       } else if (status === "cancel") {
-        router.back();
+        await AsyncStorage.removeItem("payos_order_code");
+        showDialog(
+          "Thanh Toán Đã Hủy",
+          "Bạn đã hủy quá trình thanh toán",
+          "info"
+        );
+        setTimeout(() => router.back(), 2000);
       }
     }
   };
@@ -79,6 +128,17 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         javaScriptEnabled={true}
         renderLoading={() => <LoaderScreen />}
         pullToRefreshEnabled={true}
+      />
+
+      <AppDialog
+        visible={dialogVisible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        severity={dialogConfig.severity}
+        onClose={() => setDialogVisible(false)}
+        closeButton={true}
+        confirmButton={false}
+        closeButtonLabel="Đóng"
       />
     </View>
   );
