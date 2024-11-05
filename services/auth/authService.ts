@@ -55,7 +55,31 @@ class AuthService {
 
         return response.data;
     }
-
+    async getUser(): Promise<AuthResponse> {
+        const response = await AxiosInstance().get<AuthResponse>('user/info');
+        if (response.data.success) {
+          await this.handleSuccessfulAuth(response.data);
+        }
+    
+        return response.data;
+      }
+      async updateProfile(data: any): Promise<AuthResponse> {
+        const response = await AxiosInstance().put<AuthResponse>(`users/${data.id}`, data);
+        if (response.data.success) {
+          await this.handleSuccessfulAuth(response.data);
+        }
+    
+        return response.data;
+      }
+    
+      async updateAvatar(data: any): Promise<AuthResponse> {
+        const response = await AxiosInstance().put<AuthResponse>('user/avatar', data);
+        if (response.data.success) {
+          await this.handleSuccessfulAuth(response.data);
+        }
+    
+        return response.data;
+      }
     private async handleSuccessfulAuth(data: AuthResponse): Promise<void> {
         await AsyncStorage.setItem('userToken', data.token);
         await FirebaseService.requestUserPermission();
