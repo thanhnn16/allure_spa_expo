@@ -117,6 +117,12 @@
       "delete_account": "Xóa tài khoản",
       "change_info": "Đổi thông tin"
     },
+    "settings": {
+      "title": "Cài đặt",
+      "language": "Ngôn ngữ",
+      "darkMode": "Chế độ tối",
+      "notifications": "Thông báo"
+    },
     "voucher": {
       "title": "Giảm giá",
       "all": "Tất cả",

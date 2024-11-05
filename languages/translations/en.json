@@ -3,7 +3,6 @@
   "login": "Login",
   "logout": "Logout",
   "language": "Language",
-  "settings": "Settings",
   "change_language": "Change Language",
   "continue": "Continue",
   "book": "Book",
@@ -149,10 +148,10 @@
     "policy_description": "Policy applicable to Allure Spa",
     "order_address": "Order address",
     "address_list": "Address list",
+    "settings": "Settings",
     "logout": "Logout",
     "help_support": "Help & Support",
     "about_app": "About the App",
-    "settings": "Settings",
     "more": "More",
     "edit_profile": "Edit Profile",
     "change_password": "Change Password",
@@ -161,7 +160,12 @@
     "delete_account": "Delete Account",
     "change_info": "Change Information"
   },
-
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "darkMode": "Dark Mode",
+    "notifications": "Notifications"
+  },
   "voucher": {
     "title": "Voucher",
     "all": "All",

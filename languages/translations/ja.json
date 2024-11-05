@@ -3,7 +3,6 @@
   "login": "ログイン",
   "logout": "ログアウト",
   "language": "言語",
-  "settings": "設定",
   "change_language": "Change Language",
   "continue": "続ける",
   "back": "戻る",
@@ -224,6 +223,12 @@
     "dowload_information": "情報をダウンロード",
     "delete_account": "アカウントを削除",
     "change_info": "情報を変更"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "言語",
+    "darkMode": "ダークモード",
+    "notifications": "通知"
   },
   "voucher": {
     "title": "クーポン",
