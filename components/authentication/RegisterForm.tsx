@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, Colors } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import i18n from "@/languages/i18n";
 import AppButton from "@/components/buttons/AppButton";
 import { Alert, ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
+import authService from "@/utils/services/auth/authService";
 
 interface RegisterFormProps {
   onBackPress: () => void;
@@ -21,6 +22,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const { signUp } = useAuth();
+
+  useEffect(() => {
+    const initFCM = async () => {
+      try {
+        await authService.initializeFCM();
+      } catch (error) {
+        console.error('Failed to initialize FCM:', error);
+      }
+    };
+    
+    initFCM();
+  }, []);
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {

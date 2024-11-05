@@ -22,6 +22,7 @@ export interface RegisterCredentials {
 }
 
 export interface AuthResponse {
+  [x: string]: any;
   message: string;
   status_code: number;
   success: boolean;

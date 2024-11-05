@@ -13,9 +13,11 @@ import {
 import CartProductItem from "@/components/cart/CartProductItem";
 import { RootState } from "@/redux/store";
 import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
+import { useNavigation } from 'expo-router';
 
 export default function Cart() {
     const dispatch = useDispatch();
+    const navigation = useNavigation();
     const { items, totalAmount } = useSelector(
         (state: RootState) => state.cart
     );
@@ -44,6 +46,18 @@ export default function Cart() {
         currency: "VND",
     }).format(parseFloat(totalAmount));
 
+    const handleNavigateToPayment = () => {
+        if (items.length === 0) return;
+        
+        router.push({
+            pathname: '/payment',
+            params: {
+                cartItems: JSON.stringify(items),
+                totalAmount: totalAmount.toString()
+            }
+        });
+    };
+
     const CartHaveItems = () => {
         return <View flex paddingH-20>
             <View right paddingB-5>
@@ -60,16 +74,15 @@ export default function Cart() {
                 <Text h3_bold>Tổng cộng: </Text>
                 <Text h3_bold secondary>{formattedPrice}</Text>
             </View>
-            <Link href="/payment" asChild>
-                <Button
-                    label='Tiếp Tục'
-                    labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-                    backgroundColor={Colors.primary}
-                    padding-20
-                    borderRadius={10}
-                    style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-                />
-            </Link>
+            <Button
+                label='Tiếp Tục'
+                onPress={handleNavigateToPayment}
+                labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+                backgroundColor={Colors.primary}
+                padding-20
+                borderRadius={10}
+                style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+            />
         </View>
     }
 

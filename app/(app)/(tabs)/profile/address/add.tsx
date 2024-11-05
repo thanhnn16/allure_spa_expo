@@ -2,13 +2,19 @@ import {Image, Text, TouchableOpacity, View} from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
 import { useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react"; // Add useEffect
 import AppButton from "@/components/buttons/AppButton";
-import {SafeAreaView, ScrollView, TextInput} from "react-native";
-import axios from 'axios';
+import {SafeAreaView, ScrollView, TextInput, Alert} from "react-native";
+import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const addAddress = async (data: AddressRequest) => {
-  return axios.post('/api/addresses', data);
+export const addAddress = async (data: AddressRequest, token: string) => {
+    return AxiosInstance().post('/user/addresses', data, {  // Remove duplicate 'api' prefix
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
 };
 
 export interface AddressRequest {
@@ -20,6 +26,41 @@ export interface AddressRequest {
   is_default: boolean;
   is_temporary: boolean;
 }
+
+// Update interface to match actual API response
+interface UserResponse {
+    message: string;
+    status_code: number;
+    success: boolean;
+    data: {
+        phone_number: string;
+        full_name: string;
+    }
+}
+
+// Fix API endpoint functions
+const getUserInfo = async (token: string): Promise<UserResponse> => {
+    try {
+        // Add prefix Bearer to token
+        const bearerToken = token.startsWith('Bearer') ? token : `Bearer ${token}`;
+        console.log('Calling API with token:', bearerToken);
+
+        // Fix: Remove duplicate 'api' prefix
+        const response = await AxiosInstance().get<UserResponse>('/user/info', {
+            headers: {
+                'Authorization': bearerToken,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log('User API Response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+};
 
 const Add = () => {
     const navigation = useNavigation();
@@ -35,6 +76,39 @@ const Add = () => {
         is_default: false,
         is_temporary: false
     });
+
+    useEffect(() => {
+        const loadUserData = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                console.log('Token from storage:', token);
+
+                if (!token) {
+                    Alert.alert('Error', 'Please login first');
+                    return;
+                }
+
+                const userData = await getUserInfo(token);
+                console.log('User data:', userData);
+
+                if (userData?.data) {  // Remove one level of nesting
+                    setFormData(prev => ({
+                        ...prev,
+                        name: userData.data.full_name,
+                        phone: userData.data.phone_number
+                    }));
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+                Alert.alert(
+                    'Error',
+                    'Could not load user information. Please try again.'
+                );
+            }
+        };
+
+        loadUserData();
+    }, []);
 
     const handleChange = (field: string, value: string) => {
         setFormData(prev => ({...prev, [field]: value}));
@@ -52,8 +126,17 @@ const Add = () => {
     const handleSubmit = async () => {
         try {
             setLoading(true);
+            const [userIdValue, tokenValue] = await AsyncStorage.multiGet(['userId', 'userToken']);
+            const userId = userIdValue[1];
+            const token = tokenValue[1];
+            
+            if (!userId || !token) {
+                Alert.alert('Error', 'Please login to add address');
+                return;
+            }
+
             const payload: AddressRequest = {
-                user_id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // Should come from auth context
+                user_id: userId,
                 province: formData.province,
                 district: formData.district,
                 address: formData.address,
@@ -62,11 +145,18 @@ const Add = () => {
                 is_temporary: formData.is_temporary
             };
 
-            await addAddress(payload);
-            navigation.goBack();
-        } catch (error) {
+            const response = await addAddress(payload, token);
+            
+            if (response.status === 200 || response.status === 201) {
+                Alert.alert('Success', 'Address added successfully');
+                navigation.goBack();
+            }
+        } catch (error: any) {
             console.error('Failed to add address:', error);
-            // Show error toast/alert here
+            Alert.alert(
+                'Error',
+                error.response?.data?.message || 'Failed to add address'
+            );
         } finally {
             setLoading(false);
         }
@@ -115,16 +205,30 @@ const Add = () => {
                     <TextInput
                         value={formData.name}
                         placeholder={i18n.t("address.name")}
-                        onChangeText={(value) => handleChange('name', value)}
-                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
+                        editable={false} // Disable editing
+                        style={{ 
+                            fontSize: 14, 
+                            color: "#555555", 
+                            height: 55, 
+                            width: "100%", 
+                            paddingHorizontal: 20,
+                            backgroundColor: '#f5f5f5' // Add background to show it's disabled
+                        }}
                     />
                 </View>
-                <View  marginT-2 bg-white>
+                <View marginT-2 bg-white>
                     <TextInput
                         value={formData.phone}
                         placeholder={i18n.t("address.phone")}
-                        onChangeText={(value) => handleChange('phone', value)}
-                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
+                        editable={false} // Disable editing
+                        style={{ 
+                            fontSize: 14, 
+                            color: "#555555", 
+                            height: 55, 
+                            width: "100%", 
+                            paddingHorizontal: 20,
+                            backgroundColor: '#f5f5f5' // Add background to show it's disabled
+                        }}
                     />
                 </View>
                 <View marginT-20 bg-white>
@@ -211,3 +315,6 @@ const styles = {
         color: '#717658',
     },
 };
+function setLoading(arg0: boolean) {
+    throw new Error("Function not implemented.");
+}

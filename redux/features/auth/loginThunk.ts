@@ -25,8 +25,13 @@ export const loginThunk = createAsyncThunk(
           return rejectWithValue('No token received from server');
         }
 
-        // Save token first
-        await AsyncStorage.setItem('userToken', token);
+        // Save complete user data
+        await AsyncStorage.multiSet([
+          ['userToken', token],
+          ['userData', JSON.stringify(user)]
+        ]);
+
+        console.log('Saved token:', token); // Debug log
 
         // Then handle FCM registration
         try {

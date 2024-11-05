@@ -1,46 +1,33 @@
-import React, { useState, useRef } from 'react';
-import { SafeAreaView, StyleSheet, Image, ScrollView, Modal, View, Text, TouchableOpacity, Animated } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Image, ScrollView, Modal, View, Text, TouchableOpacity, Animated, Pressable } from 'react-native';
 import { Button, Card, Colors } from 'react-native-ui-lib';
-import { Link, router } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Picker, PickerProps } from '@react-native-picker/picker';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { CartItem } from '@/redux/features/cart/cartSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
 
-// Update the Product interface to include numeric price
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  priceValue: number; // Add this field
-  quantity: number;
-  image: any;
+// Update the Product interface to include numeric price and image
+interface Product extends CartItem {
+  priceValue: number;
+  image: string;
+  imgUrl?: string;
 }
 
+// FormattedProduct interface with same structure as Product
+interface FormattedProduct extends Product {
+  priceValue: number;
+  image: string;
+}
 
 interface Voucher {
   label: string;
   value: string;
   discountPercentage: number;
 }
-
-// Update the products array with numeric price values
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'Lamellar Lipocollage',
-    price: '1.170.000 VNĐ',
-    priceValue: 1170000,
-    quantity: 1,
-    image: require('@/assets/images/sp2.png'),
-  },
-  {
-    id: 2,
-    name: 'Lamellar Lipocollage',
-    price: '1.170.000 VNĐ',
-    priceValue: 1170000,
-    quantity: 1,
-    image: require('@/assets/images/sp2.png'),
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -562,9 +549,86 @@ const PaymentPicker = ({
   );
 };
 
+// Add EmptyCart component
+const EmptyCart = () => {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Pressable
+        onPress={() => router.back()}
+        style={{ alignItems: 'center' }}
+      >
+        <CartEmptyIcon
+          width={200}
+          height={200}
+        />
+        <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20 }}>
+          Giỏ hàng trống
+        </Text>
+        <View style={{ marginTop: 10 }}>
+          <Text style={{ fontSize: 16 }}>Khám phá sản phẩm khác nhé</Text>
+        </View>
+      </Pressable>
+    </View>
+  );
+};
+
+// Add ProductList component
+const ProductList = ({ products }: { products: Product[] }) => {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Sản phẩm</Text>
+      {products.map((product: Product) => (
+        <Card
+          key={product.id}
+          style={styles.productCard}
+          enableShadow={false}
+          backgroundColor="transparent"
+        >
+          <View style={styles.cardRow}>
+            <Image 
+              source={
+                typeof product.image === 'string' 
+                  ? { uri: product.image }
+                  : product.image
+              }
+              style={styles.productImage}
+              resizeMode="cover"            />
+            <View style={styles.productInfo}>
+              <View style={{ marginBottom: 8 }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{product.name}</Text>
+              </View>
+
+              <View style={{ marginBottom: 8 }}>
+                <Text style={{ fontSize: 16 }}>
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND'
+                  }).format(parseFloat(product.price))}
+                </Text>
+              </View>
+
+              <View style={styles.productRow}>
+                <Text style={{ fontSize: 12 }}>Số lượng: {product.quantity}</Text>
+                <Text style={[styles.categoryText, { fontSize: 12 }]}>
+                  {String(product.category) || 'Dưỡng ẩm'}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.productDivider} />
+        </Card>
+      ))}
+    </View>
+  );
+};
 
 // In your Payment component
 export default function Payment() {
+  const params = useLocalSearchParams();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [discountedPrice, setDiscountedPrice] = useState(0);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('Thanh toán khi nhận hàng');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -589,18 +653,38 @@ export default function Payment() {
     }
   ]);
 
-  // Calculate total price based on products
-  const calculateTotalPrice = () => {
-    let total = 0;
-    products.forEach((product) => {
-      total += product.priceValue * product.quantity;
-    });
-    return total;
-  };
-
-  // State for total price
-  const [totalPrice, setTotalPrice] = useState(calculateTotalPrice());
-  const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
+  // Initialize products and prices from cart data with proper image handling
+  useEffect(() => {
+    try {
+      // Try to parse cart items from params first
+      const paramsItems = params.cartItems ? JSON.parse(params.cartItems as string) : cartItems;
+      
+      const formattedProducts: Product[] = paramsItems.map((item: CartItem) => ({
+        ...item,
+        priceValue: parseFloat(item.price),
+        // Ensure we get the image URL from either imgUrl or image property
+        image: item.imgUrl || item.image || '',
+      }));
+      
+      console.log('Formatted products:', formattedProducts); // Debug log
+      setProducts(formattedProducts);
+      
+      const total = formattedProducts.reduce((sum, item) => 
+        sum + (parseFloat(item.price) * item.quantity), 0
+      );
+      setTotalPrice(total);
+      setDiscountedPrice(total);
+    } catch (error) {
+      console.error('Error processing cart items:', error);
+      // Fallback to cart items from redux if params parsing fails
+      const formattedProducts = cartItems.map((item: CartItem) => ({
+        ...item,
+        priceValue: parseFloat(item.price),
+        image: item.imgUrl || item.image || '',
+      }));
+      setProducts(formattedProducts);
+    }
+  }, [params.cartItems, cartItems]);
 
   const paymentMethods = [
     { id: 2, name: 'VISA / MasterCard', icon: require('@/assets/images/visa.png') },
@@ -772,46 +856,18 @@ export default function Payment() {
             </View>
           </TouchableOpacity>
         </Modal>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Sản phẩm</Text>
-          {products.map((product: Product) => (
-            <Card
-              key={product.id}
-              style={styles.productCard}
-              enableShadow={false}
-              backgroundColor="transparent"
-            >
-              <View style={styles.cardRow}>
-                <Card.Image
-                  source={product.image}
-                  style={styles.productImage}
-                />
-                <View style={styles.productInfo}>
-                  <View style={{ marginBottom: 8 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 15 }}>{product.name}</Text>
-                  </View>
-
-                  <View style={{ marginBottom: 8 }}>
-                    <Text style={{ fontSize: 16 }}>{product.price}</Text>
-                  </View>
-
-                  <View style={styles.productRow}>
-                    <Text style={{ fontSize: 12 }}>Số lượng: {product.quantity}</Text>
-                    <Text style={[styles.categoryText, { fontSize: 12 }]}>Dưỡng ẩm</Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.productDivider} />
-            </Card>
-          ))}
-        </View>
+        
+        {products.length === 0 ? <EmptyCart /> : <ProductList products={products} />}
 
         {/* Total section display */}
         <View style={styles.totalSection}>
           <View style={styles.row}>
             <Text style={{ fontWeight: 'bold' }}>Tạm tính</Text>
             <Text style={{ fontWeight: 'bold' }}>
-              {totalPrice.toLocaleString('vi-VN')} VNĐ
+              {new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+              }).format(totalPrice)}
             </Text>
           </View>
           <View style={styles.row}>
@@ -845,14 +901,14 @@ export default function Payment() {
           style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
           onPress={() => router.push('/transaction')}
         />
-        <Button
+        {/* <Button
           label="Detail Transaction"
           backgroundColor={Colors.primary}
           padding-20
           borderRadius={10}
           style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
           onPress={() => router.push('/transaction/detail')}
-        />
+        /> */}
       </ScrollView>
     </SafeAreaView>
   );

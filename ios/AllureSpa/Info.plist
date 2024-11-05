@@ -102,6 +102,10 @@
     <key>UIUserInterfaceStyle</key>
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
+    <key>UIBackgroundModes</key>
+    <array>
+    <string>remote-notification</string>
+    </array>  
     <false/>
   </dict>
 </plist>
