@@ -51,15 +51,11 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
     ) {
       const params = new URL(navState.url).searchParams;
       const status = params.get("status");
+      const orderCode = params.get("orderCode");
+      const invoiceId = params.get("invoice_id");
 
-      if (status === "success") {
+      if (status === "success" && orderCode) {
         try {
-          const orderCode = await AsyncStorage.getItem("payos_order_code");
-          if (!orderCode) {
-            showDialog("Lỗi Xác Thực", "Không tìm thấy mã đơn hàng", "error");
-            return;
-          }
-
           const response = await axios.post(
             `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
             { orderCode }
@@ -68,11 +64,8 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
           if (response.data.success) {
             await AsyncStorage.removeItem("payos_order_code");
 
-            // Handle different payment types
-            if (orderCode.startsWith("TEST_")) {
-              router.push("/transaction/success");
-            } else if (orderCode.startsWith("INV_")) {
-              const [, invoiceId] = orderCode.split("_");
+            // Check if this is an invoice payment by checking invoice_id param
+            if (invoiceId) {
               router.push({
                 pathname: "/(app)/invoice/success",
                 params: {
@@ -81,6 +74,9 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
                   payment_time: response.data.data.paymentTime,
                 },
               });
+            } else {
+              // Regular transaction success
+              router.push("/transaction/success");
             }
           } else {
             showDialog(

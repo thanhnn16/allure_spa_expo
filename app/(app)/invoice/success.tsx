@@ -36,7 +36,7 @@ export default function InvoiceSuccess() {
       setPaymentDetails({
         amount: Number(params.amount),
         paymentTime: params.payment_time,
-        orderCode: `INV_${params.invoice_id}`,
+        orderCode: params.invoice_id,
       });
       setLoading(false);
     } else {
