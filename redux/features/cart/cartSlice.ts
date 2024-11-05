@@ -33,18 +33,14 @@ export const cartSlice = createSlice({
       if (existingItem) {
         state.items = state.items.map(item => {
           if (item.id === product.id) {
-            if (quantity) {
-              item.quantity += quantity;
-            } else {
-              item.quantity += 1;
-            }
+            item.quantity += quantity;
           }
           return item;
         });
       } else {
-        state.items.push({ ...product, quantity: 1 });
+        state.items.push({ ...product, quantity });
       }
-      state.totalAmount += parseFloat(product.price);
+      state.totalAmount += parseFloat(product.price) * quantity;
       AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
     },
     incrementCartItem: (state: CartState, action: any) => {
@@ -68,8 +64,12 @@ export const cartSlice = createSlice({
       });
     },
     removeCartItem: (state: CartState, action: any) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
-      AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
+      const itemToRemove = state.items.find(item => item.id === action.payload);
+      if (itemToRemove) {
+        state.totalAmount -= parseFloat(itemToRemove.price) * itemToRemove.quantity;
+        state.items = state.items.filter(item => item.id !== action.payload);
+        AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
+      }
     },
     clearCart: (state: CartState) => {
       state.items = [];

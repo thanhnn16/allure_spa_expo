@@ -14,6 +14,9 @@ import CartProductItem from "@/components/cart/CartProductItem";
 import { RootState } from "@/redux/store";
 import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
 import i18n from "@/languages/i18n";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { FormatNumberOptions } from "i18n-js";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 export default function Cart() {
     const dispatch = useDispatch();
@@ -40,14 +43,7 @@ export default function Cart() {
         dispatch(clearCart())
     };
 
-    // const formattedPrice = new Intl.NumberFormat("vi-VN", {
-    //     style: "currency",
-    //     currency: "VND",
-    // }).format(parseFloat(totalAmount));
-
-    const formattedPrice = i18n.numberToCurrency(totalAmount);
-
-    
+    const formattedPrice = formatCurrency({ price: totalAmount });
 
     const CartHaveItems = () => {
         return <View flex paddingH-20>
@@ -97,10 +93,12 @@ export default function Cart() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <AppBar title="Giỏ Hàng" back />
-            {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
-        </SafeAreaView>
+        <GestureHandlerRootView>
+            <SafeAreaView style={styles.container}>
+                <AppBar title="Giỏ Hàng" back />
+                {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
+            </SafeAreaView>
+        </GestureHandlerRootView>
     );
 }
 
@@ -114,9 +112,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         marginHorizontal: 10,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: 'rgba(113, 118, 88, 0.2)',
         borderRadius: 10,
-        borderColor: '#E0E0E0',
     },
     totalText: {
         fontSize: 16,

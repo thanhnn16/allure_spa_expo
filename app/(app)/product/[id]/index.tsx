@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
 import {
   Text,
@@ -35,6 +35,7 @@ import ProductQuantity from "@/components/product/ProductQuantity";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import RatingStar from "@/components/rating/RatingStar";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 
 interface MediaItem {
@@ -55,6 +56,7 @@ export default function DetailsScreen() {
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const cartButtonRef = useRef<HTMLDivElement>(null);
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -153,7 +155,7 @@ export default function DetailsScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View flex bg-$white>
-        <AppBar back title="Chi tiết sản phẩm" />
+        <AppBar back rightComponent title="Chi tiết sản phẩm"/>
         <View flex>
           <ScrollView showsVerticalScrollIndicator={false}>
             {isLoading ? (
@@ -236,10 +238,7 @@ export default function DetailsScreen() {
                 <View row marginB-10>
                   <Image source={TagIcon} size={24} />
                   <Text h2_medium secondary marginL-5>
-                    {product?.price
-                      ? Number(product.price).toLocaleString("vi-VN")
-                      : "0"}{" "}
-                    VNĐ
+                    {formatCurrency({ price: Number(product?.price) })}
                   </Text>
 
                   <View flex centerV row gap-15 right>

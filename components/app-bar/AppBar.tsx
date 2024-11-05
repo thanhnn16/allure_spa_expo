@@ -1,15 +1,15 @@
 import { Pressable, StyleSheet } from "react-native";
-import { Text, View, Image } from "react-native-ui-lib";
+import { Text, Image } from "react-native-ui-lib";
+import { View } from "react-native-ui-lib";
 import { BlurView } from "expo-blur";
-import React from "react";
-
+import { Href, router } from "expo-router";
 import BackIcon from "@/assets/icons/arrow_left.svg";
-import { router } from "expo-router";
+import ShoppingBagIcon from "@/assets/icons/shopping_bag.svg";
 
 interface AppBarProps {
   back?: boolean;
   title: string;
-  rightComponent?: React.ReactNode;
+  rightComponent?: boolean;
 }
 
 const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
@@ -29,9 +29,11 @@ const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
           {title}
         </Text>
         {rightComponent ? (
-          <View width={48} height={48} centerV>
-            {rightComponent}
-          </View>
+            <Pressable onPress={() => router.push('/(app)/cart' as Href)}>
+              <View width={48} height={48} centerV right>
+                <Image source={ShoppingBagIcon} />
+              </View>
+            </Pressable>
         ) : (
           <View width={48} height={48} />
         )}

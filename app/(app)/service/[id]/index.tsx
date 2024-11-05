@@ -1,7 +1,7 @@
 import AppBar from "@/components/app-bar/AppBar";
-import { router, useLocalSearchParams } from "expo-router";
+import { Href, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Dimensions } from "react-native";
+import { Pressable, ScrollView, Dimensions, Share } from "react-native";
 import {
   AnimatedImage,
   Carousel,
@@ -13,23 +13,31 @@ import {
   ActionSheet,
   SkeletonView,
 } from "react-native-ui-lib";
-import Feather from "@expo/vector-icons/Feather";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import i18n from "@/languages/i18n";
 import ImageView from "react-native-image-viewing";
-import AntDesign from "@expo/vector-icons/AntDesign";
-
-import CommentIcon from "@/assets/icons/comment.svg";
-import TicketIcon from "@/assets/icons/ticket.svg";
-import SunIcon from "@/assets/icons/sun.svg";
 import {
   MediaResponeModelParams,
   ServiceDetailResponeModel,
   ServiceDetailResponeParams,
 } from "@/types/service.type";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import AppButton from "@/components/buttons/AppButton";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ServiceBottomComponent from "@/components/service/ServiceBottomComponent";
+import RatingStar from "@/components/rating/RatingStar";
+
+import HeartIcon from "@/assets/icons/heart.svg";
+import MapMarkerIcon from "@/assets/icons/map_marker.svg";
+import HeartFullIcon from "@/assets/icons/heart_full.svg";
+import TagIcon from "@/assets/icons/tag.svg";
+import LinkIcon from "@/assets/icons/link.svg";
+import SunIcon from "@/assets/icons/sun.svg";
+import PhoneCallIcon from "@/assets/icons/phone.svg";
+import { useAuth } from "@/hooks/useAuth";
+import formatCurrency from "@/utils/price/formatCurrency";
+import AppDialog from "@/components/dialog/AppDialog";
+
+
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -46,6 +54,9 @@ const ServiceDetailPage = () => {
   const [combo, setCombo] = useState<number>(0);
   const [comboName, setComboName] = useState<string>("");
   const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
+  const { isGuest } = useAuth();
+  const [buyProductDialog, setBuyProductDialog] = useState(false);
+  const [favoriteDialog, setFavoriteDialog] = useState(false);
   const windowWidth = Dimensions.get("window").width;
 
   useEffect(() => {
@@ -79,6 +90,46 @@ const ServiceDetailPage = () => {
         <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
       </View>
     );
+  };
+
+  const createBulletPoints = (text: string) => {
+    return <View row>
+      <Text h3>• </Text>
+      <Text h3>{text}</Text>
+    </View>
+  };
+
+  const handleFavorite = () => {
+    if (isGuest) {
+      setFavoriteDialog(true);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!service) return;
+    if (service.media && service.media.length > 0) {
+      const media = service.media[0];
+      if (media.full_url) {
+        try {
+          await Share.share({
+            message: media.full_url,
+          });
+        } catch (error) {
+          console.error("Error sharing the link:", error);
+        }
+      }
+    }
+  };
+
+  const handleLoginConfirm = () => {
+    setBuyProductDialog(false);
+    router.replace("/(auth)");
+  };
+
+  const handleGuestPurchase = () => {
+    if (isGuest) {
+      setBuyProductDialog(true);
+    }
   };
 
   useMemo(() => {
@@ -134,25 +185,11 @@ const ServiceDetailPage = () => {
       </View>
     );
   };
-  const renderItem = (item: { uri: string }, idx: number) => {
-    return (
-      <Pressable
-        onPress={() => handleOpenImage(idx)}
-        key={`carousel-item-${item.uri}-${idx}`}
-      >
-        <AnimatedImage
-          animationDuration={1000}
-          source={{ uri: item.uri }}
-          aspectRatio={16 / 9}
-          cover
-        />
-      </Pressable>
-    );
-  };
 
   const handleBooking = () => {
-    router.push(`/(app)/booking/${service?.id}`);
+    router.push(`/(app)/booking/${service?.id}` as Href);
   };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View flex bg-$white>
@@ -160,199 +197,206 @@ const ServiceDetailPage = () => {
         {isLoading
           ? renderSkeletonView()
           : service && (
+            <View flex>
               <View flex>
-                <View flex>
-                  <ScrollView showsVerticalScrollIndicator={false}>
-                    <View
-                      style={{
-                        width: "90%",
-                        height: 200,
-                        borderRadius: 20,
-                        overflow: "hidden",
-                        marginTop: 10,
-                        alignSelf: "center",
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View
+                    style={{
+                      width: "90%",
+                      height: 200,
+                      borderRadius: 20,
+                      overflow: "hidden",
+                      marginTop: 10,
+                      alignSelf: "center",
+                    }}
+                  >
+                    <Carousel
+                      onChangePage={(index: number) => setIndex(index)}
+                      pageControlPosition={PageControlPosition.OVER}
+                      pageControlProps={{
+                        size: 10,
+                        color: "#ffffff",
+                        inactiveColor: "#c4c4c4",
                       }}
                     >
-                      <Carousel
-                        key={`carousel-${images.length}`}
-                        autoplay
-                        loop={images.length > 1}
-                        onChangePage={(index: number) => setIndex(index)}
-                        pageControlPosition={PageControlPosition.OVER}
-                        pageControlProps={{
-                          size: 10,
-                          color: "#ffffff",
-                          inactiveColor: "#c4c4c4",
+                      {images.map((item, index) => (
+                        <Pressable
+                          onPress={() => handleOpenImage(index)}
+                          key={index}
+                        >
+                          <AnimatedImage
+                            animationDuration={1000}
+                            source={{ uri: item.uri }}
+                            aspectRatio={16 / 9}
+                            cover
+                            key={index}
+                          />
+                        </Pressable>
+                      ))}
+                    </Carousel>
+                  </View>
+
+                  <ImageView
+                    images={images}
+                    imageIndex={0}
+                    visible={visible}
+                    onRequestClose={() => setIsVisible(false)}
+                    onImageIndexChange={(index) => setImageViewIndex(index)}
+                    key={index}
+                    swipeToCloseEnabled={true}
+                    doubleTapToZoomEnabled={true}
+                    FooterComponent={ImageViewFooterComponent}
+                  />
+
+                  <View padding-20 gap-10>
+                    <Text h2_bold marginB-10>
+                      {service?.service_name}
+                    </Text>
+                    <View row marginB-10>
+                      <Image source={TagIcon} size={24} />
+                      <Text h2_medium secondary marginL-5>
+                        {formatCurrency({ price: Number(service?.single_price) })}
+                      </Text>
+
+                      <View flex centerV row gap-15 right>
+                        <TouchableOpacity onPress={() => handleShare()}>
+                          <Image source={LinkIcon} size={24} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleFavorite()}>
+                          {isFavorite ? (
+                            <Image source={HeartFullIcon} size={24} />
+                          ) : (
+                            <Image source={HeartIcon} size={24} />
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    <View row centerV>
+                      <View
+                        row gap-5
+                      >
+                        <RatingStar rating={4.5} />
+                        <Text h3_medium>4.5</Text>
+                      </View>
+                      <View flex row right>
+                        <Text h3_medium>
+                          {" "}
+                          +99 {i18n.t("productDetail.purchases")}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View row paddingR-20>
+                      <View>
+                        <Image source={SunIcon} width={18} height={18} />
+                      </View>
+                      <View>{createBulletPoints(service?.description)}</View>
+                    </View>
+                    <View row paddingR-20>
+                      <View>
+                        <Image source={MapMarkerIcon} width={18} height={18} />
+                      </View>
+                      <View>{createBulletPoints("Tầng 1 Shophouse P1- SH02 Vinhome Central Park, 720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, HCM")}</View>
+                    </View>
+                    <View row paddingR-20>
+                      <View>
+                        <Image source={PhoneCallIcon} width={18} height={18} />
+                      </View>
+                      <View>{createBulletPoints("+84986910920 (Zalo) | +84889130222")}</View>
+                    </View>
+                  </View>
+
+                  <View padding-20 gap-20>
+                    <Text h2_bold>{i18n.t("service.treatment")}</Text>
+
+                    <TouchableOpacity
+                      onPress={() => setShowActionSheet(true)}
+                    >
+                      <View
+                        center
+                        row
+                        paddingH-20
+                        height={50}
+                        style={{
+                          borderWidth: 1,
+                          borderRadius: 10,
+                          borderColor: "#E0E0E0",
                         }}
                       >
-                        {images.map((item, idx) => renderItem(item, idx))}
-                      </Carousel>
-                    </View>
-
-                    <ImageView
-                      images={images}
-                      imageIndex={0}
-                      visible={visible}
-                      onRequestClose={() => setIsVisible(false)}
-                      onImageIndexChange={(index) => setImageViewIndex(index)}
-                      key={index}
-                      swipeToCloseEnabled={true}
-                      doubleTapToZoomEnabled={true}
-                      FooterComponent={ImageViewFooterComponent}
-                    />
-
-                    <View padding-20 gap-10>
-                      <Text h1_bold marginB-10>
-                        {service?.service_name}
-                      </Text>
-                      <View row marginB-10>
-                        <Image source={TicketIcon} size={24} />
-                        <Text h1_medium secondary marginL-5>
-                          {price?.toLocaleString("vi-VN")} VNĐ
+                        <Text flex h3>
+                          {comboName}
                         </Text>
-                        <View flex right>
-                          <TouchableOpacity
-                            onPress={() => {
-                              alert("Chưa có api thêm vào favorite");
-                              setIsFavorite(!isFavorite);
-                            }}
-                          >
-                            {isFavorite ? (
-                              <AntDesign name="heart" size={24} color="black" />
-                            ) : (
-                              <AntDesign
-                                name="hearto"
-                                size={24}
-                                color="black"
-                              />
-                            )}
-                          </TouchableOpacity>
-                        </View>
+                        <SimpleLineIcons
+                          name="arrow-down"
+                          size={18}
+                          color="#BCBABA"
+                        />
                       </View>
-                      <View row paddingR-20>
-                        <View>
-                          <Image source={SunIcon} size={24} />
-                        </View>
-                        <View>
-                          <View key={index} row>
-                            <Text h2> </Text>
-                            <Text h3>{service?.description}</Text>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-
-                    <View padding-20 gap-20>
-                      <Text h2_bold>{i18n.t("service.treatment")}</Text>
-
-                      <TouchableOpacity
-                        onPress={() => setShowActionSheet(true)}
-                      >
-                        <View
-                          center
-                          row
-                          paddingH-20
-                          height={50}
-                          style={{
-                            borderWidth: 1,
-                            borderRadius: 10,
-                            borderColor: "#E0E0E0",
-                          }}
-                        >
-                          <Text flex h3>
-                            {comboName}
-                          </Text>
-                          <SimpleLineIcons
-                            name="arrow-down"
-                            size={18}
-                            color="#BCBABA"
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-
-                    <ActionSheet
-                      title={i18n.t("package.select_combo")}
-                      cancelButtonIndex={4}
-                      showCancelButton={true}
-                      destructiveButtonIndex={0}
-                      visible={showActionSheet}
-                      containerStyle={{ padding: 10, gap: 10 }}
-                      onDismiss={() => setShowActionSheet(false)}
-                      useNativeIOS
-                      options={[
-                        {
-                          label: i18n.t("package.single"),
-                          onPress: () => {
-                            setCombo(0);
-                          },
-                        },
-                        {
-                          label: i18n.t("package.combo5"),
-
-                          onPress: () => {
-                            setCombo(1);
-                          },
-                        },
-                        {
-                          label: i18n.t("package.combo10"),
-                          onPress: () => {
-                            setCombo(2);
-                          },
-                        },
-                      ]}
-                    />
-                  </ScrollView>
-                </View>
-
-                <View
-                  row
-                  center
-                  paddingH-24
-                  paddingT-15
-                  gap-30
-                  style={{
-                    borderTopStartRadius: 30,
-                    borderTopEndRadius: 30,
-                    borderTopWidth: 2,
-                    borderLeftWidth: 2,
-                    borderRightWidth: 2,
-                    borderColor: "#E0E0E0",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <View row gap-30>
-                    <TouchableOpacity
-                      center
-                      onPress={() => alert(i18n.t("system.fud"))}
-                    >
-                      <View center marginB-4>
-                        <Feather name="phone-call" size={24} color="#AFAFAF" />
-                      </View>
-                      <Text h3_medium>{i18n.t("service.contact")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      center
-                      onPress={() => router.push("/rating/1")}
-                    >
-                      <View center marginB-4>
-                        <Image source={CommentIcon} size={24} />
-                      </View>
-                      <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
                     </TouchableOpacity>
                   </View>
-                  <View flex>
-                    <AppButton
-                      title={i18n.t("service.book_now")}
-                      type="primary"
-                      onPress={() => {
-                        handleBooking();
-                      }}
-                    />
-                  </View>
-                </View>
+
+                  <ActionSheet
+                    title={i18n.t("package.select_combo")}
+                    cancelButtonIndex={4}
+                    showCancelButton={true}
+                    destructiveButtonIndex={0}
+                    visible={showActionSheet}
+                    containerStyle={{ padding: 10, gap: 10 }}
+                    onDismiss={() => setShowActionSheet(false)}
+                    useNativeIOS
+                    options={[
+                      {
+                        label: i18n.t("package.single"),
+                        onPress: () => {
+                          setCombo(0);
+                        },
+                      },
+                      {
+                        label: i18n.t("package.combo5"),
+
+                        onPress: () => {
+                          setCombo(1);
+                        },
+                      },
+                      {
+                        label: i18n.t("package.combo10"),
+                        onPress: () => {
+                          setCombo(2);
+                        },
+                      },
+                    ]}
+                  />
+                </ScrollView>
               </View>
-            )}
+
+              <ServiceBottomComponent
+                isLoading={isLoading}
+                onPurchase={isGuest ? handleGuestPurchase : undefined}
+              />
+
+              <AppDialog
+                visible={buyProductDialog}
+                title={i18n.t("auth.login.login_required")}
+                description={i18n.t("auth.login.login_buy_product")}
+                closeButtonLabel={i18n.t("common.cancel")}
+                confirmButtonLabel={i18n.t("auth.login.login_now")}
+                severity="info"
+                onClose={() => setBuyProductDialog(false)}
+                onConfirm={handleLoginConfirm}
+              />
+              <AppDialog
+                visible={favoriteDialog}
+                title={i18n.t("auth.login.login_required")}
+                description={i18n.t("auth.login.login_favorite")}
+                closeButtonLabel={i18n.t("common.cancel")}
+                confirmButtonLabel={i18n.t("auth.login.login_now")}
+                severity="info"
+                onClose={() => setFavoriteDialog(false)}
+                onConfirm={handleLoginConfirm}
+              />
+            </View>
+          )}
       </View>
     </SafeAreaView>
   );

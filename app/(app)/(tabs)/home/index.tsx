@@ -30,6 +30,7 @@ import { SkeletonView } from "react-native-ui-lib";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import i18n from "@/languages/i18n";
 import WeatherView from "@/components/home/WeatherView";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -125,7 +126,7 @@ const HomePage = () => {
         </View>
         <View paddingH-12 paddingB-10 bottom>
           <Text marginT-10 text70H style={{ color: "#A85A29" }}>
-            {item.single_price.toLocaleString("vi-VN")} VNĐ
+            {formatCurrency({ price: item.single_price })}
           </Text>
         </View>
       </TouchableOpacity>
