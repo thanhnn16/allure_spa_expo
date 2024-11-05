@@ -1,58 +1,24 @@
-import { Order, OrderItem } from '@/types';
-import AxiosInstance from '@/utils/services/helper/axiosInstance';
-import Constants from 'expo-constants';
-
-
-interface CreateOrderData {
-    user_id: string;
-    payment_method_id: number;
-    total_amount: number;
-    discount_amount: number;
-    voucher_id?: number | null;
-    order_items: OrderItem[];
-}
-
-interface PaymentLinkData {
-    invoice_id: string;
-    returnUrl: string;
-    cancelUrl: string;
-}
-
-interface PaymentResponse {
-    success: boolean;
-    checkoutUrl?: string;
-    message?: string;
-}
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 
 class OrderService {
-    async createOrder(orderData: CreateOrderData): Promise<{
-        id: string;
-        order: Order;
-        status: string;
-    }> {
-        try {
-            const response = await AxiosInstance().post('/invoices', orderData);
-            return response.data;
-        } catch (error: any) {
-            throw new Error(error.response?.data?.message || "Không thể tạo đơn hàng");
-        }
+    async createInvoice(data: any) {
+        const response = await AxiosInstance().post("/invoices", data);
+        return response.data;
     }
 
-    async createPaymentLink(data: PaymentLinkData): Promise<PaymentResponse> {
-        try {
-            const response = await AxiosInstance().post(`/invoices/${data.invoice_id}/pay-with-payos`, {
-                returnUrl: data.returnUrl,
-                cancelUrl: data.cancelUrl,
-            });
-            return response.data;
-        } catch (error: any) {
-            throw new Error(error.response?.data?.message || "Không thể tạo link thanh toán");
-        }
+    async createPaymentLink(data: any) {
+        const response = await AxiosInstance().post(`/invoices/${data.invoice_id}/payos`, {
+            returnUrl: data.returnUrl,
+            cancelUrl: data.cancelUrl,
+        });
+        return response.data;
     }
 
     async verifyPayment(orderCode: string) {
         try {
-            const response = await AxiosInstance().post("/payos/verify", { orderCode });
+            const response = await AxiosInstance().post("/payos/verify", {
+                orderCode,
+            });
             return response.data;
         } catch (error: any) {
             throw new Error(error.response?.data?.message || "Không thể xác thực thanh toán");
@@ -60,4 +26,4 @@ class OrderService {
     }
 }
 
-export default new OrderService(); 
+export default new OrderService();

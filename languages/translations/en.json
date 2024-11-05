@@ -58,7 +58,9 @@
       "login_address": "You need to login to access your address",
       "login_favorite": "You need to login to access your favorite",
       "login_notification": "You need to login to access your notification",
-      "login_now": "Login now"
+      "login_now": "Login now",
+      "invalid_email": "Invalid email format",
+      "password_mismatch": "Passwords do not match"
     },
     "art": {
       "title": "The Art of Skincare",
@@ -277,15 +279,15 @@
     "edit_address_fail": "Edit address failed"
   },
   "date": {
-    "formats":  {
+    "formats": {
       "short": "dd/MM/yyyy"
     }
   },
-  "currency": { 
-    "unit": "₫", 
-    "separator": ".", 
-    "delimiter": ",", 
-    "format": "%u%n" 
+  "currency": {
+    "unit": "₫",
+    "separator": ".",
+    "delimiter": ",",
+    "format": "%u%n"
   },
   "invoice": {
     "payment_success": "Payment Success",

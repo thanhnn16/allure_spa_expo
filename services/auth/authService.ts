@@ -55,11 +55,11 @@ class AuthService {
 
         return response.data;
     }
-  
+
     private async handleSuccessfulAuth(data: AuthResponse): Promise<void> {
-        await AsyncStorage.setItem('userToken', data.token);
+        await AsyncStorage.setItem('userToken', data.data?.token || '');
         await FirebaseService.requestUserPermission();
-        await FirebaseService.registerTokenWithServer(data.user.id);
+        await FirebaseService.registerTokenWithServer(data.data?.user?.id?.toString() || '');
     }
 
     private async clearAuthData(): Promise<void> {

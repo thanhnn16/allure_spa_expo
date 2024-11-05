@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { User } from "@/types/user.type";
 // Thunk để lấy thông tin người dùng
 export const getUserThunk = createAsyncThunk(
@@ -10,7 +10,7 @@ export const getUserThunk = createAsyncThunk(
 
       if (res.data.success) {
         return res.data.data.data;
-    }
+      }
 
       console.log('Get all user failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Get all products failed');
@@ -20,4 +20,3 @@ export const getUserThunk = createAsyncThunk(
     }
   });
 
-  

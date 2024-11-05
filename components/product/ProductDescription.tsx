@@ -1,10 +1,9 @@
 import { Dimensions, StyleSheet } from "react-native";
-import { View, Text, SkeletonView, ExpandableSection, Image } from "react-native-ui-lib";
+import { View, SkeletonView } from "react-native-ui-lib";
 import React, { useState } from "react";
 import { Product } from "@/types/product.type";
 import i18n from "@/languages/i18n";
 
-import ArrowDownIcon from "@/assets/icons/arrow-down.svg";
 import ProductDescriptionColapable from "./ProductDescriptionColapable";
 
 interface ProductDescriptionProps {
@@ -14,8 +13,10 @@ interface ProductDescriptionProps {
 
 const windowWidth = Dimensions.get("window").width;
 
-const ProductDescription: React.FC<ProductDescriptionProps> = ({ product, isLoading = false }) => {
-  const [ingredientExpanded, setIngredientExpanded] = useState(false);
+const ProductDescription: React.FC<ProductDescriptionProps> = ({
+  product,
+  isLoading = false,
+}) => {
   if (isLoading) {
     return (
       <View marginT-10>
@@ -34,47 +35,43 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product, isLoad
 
   return (
     <View marginT-10>
-
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.brand")}
-        childrenText={product?.brand_description}
+        childrenText={product?.brand_description || "N/A"}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.usage")}
-        childrenText={product?.usage}
+        childrenText={product?.usage || "N/A"}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.benefit")}
-        childrenText={product?.benefits}
+        childrenText={product?.benefits || "N/A"}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.directions")}
-        childrenText={product?.directions}
+        childrenText={product?.directions || "N/A"}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.storage")}
-        childrenText={product?.storage_instructions}
+        childrenText={product?.storage_instructions || "N/A"}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.product_notes")}
-        childrenText={product?.product_notes}
+        childrenText={product?.product_notes || "N/A"}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.ingredient")}
-        childrenText={product?.ingredients}
-        keyText={product?.key_ingredients}
+        childrenText={product?.ingredients || "N/A"}
+        keyText={product?.key_ingredients || "N/A"}
       />
-
     </View>
   );
 };
 
 export default ProductDescription;
-
-const styles = StyleSheet.create({});

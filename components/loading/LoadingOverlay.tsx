@@ -1,20 +1,20 @@
-import React from 'react';
-import { StyleSheet, ActivityIndicator, Modal } from 'react-native';
-import { View, Text, Colors } from 'react-native-ui-lib';
+import React from "react";
+import { StyleSheet, ActivityIndicator, Modal } from "react-native";
+import { View, Text, Colors } from "react-native-ui-lib";
 
 interface LoadingOverlayProps {
+  visible?: boolean;
   message?: string;
 }
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
-  message = 'Đang xử lý...' 
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
+  visible = false,
+  message = "Đang xử lý...",
 }) => {
+  if (!visible) return null;
+
   return (
-    <Modal
-      transparent
-      animationType="fade"
-      visible={true}
-    >
+    <Modal transparent animationType="fade" visible={visible}>
       <View style={styles.container}>
         <View style={styles.content}>
           <ActivityIndicator size="large" color={Colors.primary} />
@@ -28,17 +28,17 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     backgroundColor: Colors.white,
     padding: 24,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
     minWidth: 200,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
     color: Colors.textColor,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
-export default LoadingOverlay; 
+export default LoadingOverlay;

@@ -33,7 +33,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   isLoading = false,
   product,
   onPurchase,
-  quantity
+  quantity,
 }) => {
   const dispatch = useDispatch();
   const [isToastVisible, setToastIsVisible] = useState(false);
@@ -43,7 +43,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       ...product,
       quantity: 1,
     };
-    dispatch(addItemToCart({ product: cartItem, quantity : quantity }));
+    dispatch(addItemToCart({ product: cartItem, quantity: quantity }));
     setToastIsVisible(true);
   };
 
@@ -51,20 +51,20 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
     if (onPurchase) {
       onPurchase();
     } else {
+      const productData = {
+        id: product?.id,
+        name: product?.name,
+        price: product?.price,
+        quantity: quantity,
+        image: product?.media?.[0]?.full_url,
+        type: "product",
+      };
+
       router.push({
         pathname: "/payment",
         params: {
-          products: JSON.stringify([
-            {
-              id: product?.id,
-              name: product?.name,
-              price: product?.price,
-              quantity: 1,
-              image: product?.media?.[0]?.full_url,
-              type: "product",
-            },
-          ]),
-          total_amount: product?.price || 0,
+          products: JSON.stringify([productData]),
+          total_amount: Number(product?.price || 0) * quantity,
         },
       });
     }
@@ -116,7 +116,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       </View>
       <Incubator.Toast
         visible={isToastVisible}
-        position={'bottom'}
+        position={"bottom"}
         autoDismiss={1500}
         onDismiss={() => setToastIsVisible(false)}
       >

@@ -57,100 +57,101 @@
       "login_address": "この商品を購入するにはログインが必要です",
       "login_favorite": "この商品を購入するにはログインが必要です",
       "login_notification": "この商品を購入するにはログインが必要です",
-      "login_now": "ログインする"
+      "login_now": "ログインする",
+      "invalid_email": "無効なメール形式",
+      "password_mismatch": "パスワードが一致しません"
     },
     "art": {
       "title": "スキンケアのアート",
       "subtitle": "日本の職人から"
     },
     "pageTitle": {
-        "chat": "チャット",
-        "favorite": "お気に入り",
-        "cart": "カート",
-        "order": "注文",
-        "notification": "通知",
-        "profile": "プロフィール"
+      "chat": "チャット",
+      "favorite": "お気に入り",
+      "cart": "カート",
+      "order": "注文",
+      "notification": "通知",
+      "profile": "プロフィール"
     },
     "productDetail": {
-        "quantity": "数量",
-        "product_description": "商品説明",
-        "reviews": "レビュー",
-        "add_to_cart": "カートに追加",
-        "buy_now": "今すぐ購入"
+      "quantity": "数量",
+      "product_description": "商品説明",
+      "reviews": "レビュー",
+      "add_to_cart": "カートに追加",
+      "buy_now": "今すぐ購入"
     },
     "rating": {
-        "add_review": "レビューを追加",
-        "base_on": "ベース",
-        "reviews": "レビュー",
-        "how_do_you_feel": "どのように感じますか",
-        "feel_about_product": "商品についての感想",
-        "type_content": "コンテンツを入力",
-        "images": "画像",
-        "send_review": "レビューを送信"
+      "add_review": "レビューを追加",
+      "base_on": "ベース",
+      "reviews": "レビュー",
+      "how_do_you_feel": "どのように感じますか",
+      "feel_about_product": "商品についての感想",
+      "type_content": "コンテンツを入力",
+      "images": "画像",
+      "send_review": "レビューを送信"
     },
     "chat": {
-        "customer_care": "カスタマーケア",
-        "chat_with_ai": "AIとチャット",
-        "send": "送信",
-        "chat_with": "チャット"
+      "customer_care": "カスタマーケア",
+      "chat_with_ai": "AIとチャット",
+      "send": "送信",
+      "chat_with": "チャット"
     },
     "profile": {
-        "title": "プロフィール",
-        "username": "Nguyen Van Teo",
-        "my_account": "マイアカウント",
-        "edit_personal_info": "個人情報を編集",
-        "purchase_policy": "購入と返品ポリシー",
-        "policy_description": "購入と返品に関するポリシー",
-        "order_address": "注文住所",
-        "address_list": "住所リスト",
-        "logout": "ログアウト",
-        "help_support": "ヘルプ＆サポート",
-        "about_app": "アプリについて",
-        "settings": "設定",
-        "more": "もっと見る",
-        "edit_profile": "プロフィールを編集",
-        "change_password": "パスワードを変更",
-        "history_login": "ログイン履歴",
-        "dowload_information": "情報をダウンロード",
-        "delete_account": "アカウントを削除",
-        "change_info": "情報を変更"
+      "title": "プロフィール",
+      "username": "Nguyen Van Teo",
+      "my_account": "マイアカウント",
+      "edit_personal_info": "個人情報を編集",
+      "purchase_policy": "購入と返品ポリシー",
+      "policy_description": "購入と返品に関するポリシー",
+      "order_address": "注文住所",
+      "address_list": "住所リスト",
+      "logout": "ログアウト",
+      "help_support": "ヘルプ＆サポート",
+      "about_app": "アプリについて",
+      "settings": "設定",
+      "more": "もっと見る",
+      "edit_profile": "プロフィールを編集",
+      "change_password": "パスワードを変更",
+      "history_login": "ログイン履歴",
+      "dowload_information": "情報をダウンロード",
+      "delete_account": "アカウントを削除",
+      "change_info": "情報を変更"
     },
     "voucher": {
-        "title": "クーポン",
-        "all": "すべて",
-        "birthday": "誕生日",
-        "event": "イベント",
-        "prominent": "目立つ",
-        "gift": "ギフト",
-        "many_offers_comingsoon": "多くのオファーが近日公開予定"
+      "title": "クーポン",
+      "all": "すべて",
+      "birthday": "誕生日",
+      "event": "イベント",
+      "prominent": "目立つ",
+      "gift": "ギフト",
+      "many_offers_comingsoon": "多くのオファーが近日公開予定"
     },
     "reward": {
-        "title": "報酬",
-        "cosmetic": "化粧品",
-        "spa": "スパ",
-        "changed": "475 交換済み",
-        "change_now": "今すぐ変更",
-        "title_cosmetic": "リポコラージュ ラメラ クレンジング コピー",
-        "title_spa": "トリートメントフォトフェイシャル"
+      "title": "報酬",
+      "cosmetic": "化粧品",
+      "spa": "スパ",
+      "changed": "475 交換済み",
+      "change_now": "今すぐ変更",
+      "title_cosmetic": "リポコラージュ ラメラ クレンジング コピー",
+      "title_spa": "トリートメントフォトフェイシャル"
     },
     "aboutapp": {
-        "title": "アプリについて",
-        "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
-        "title2": "Allure Spaアプリケーションの基本情報:",
-        "name_app": "アプリ名: Allure Spa",
-        "developer": "開発者: Allure Spa",
-        "version": "バージョン: 1.0.0",
-        "date_release": "発売日: 01/01/2021"
-    } ,
-    "deleteaccount":{
-        "title": "アカウントを削除",
-        "description": "アカウントを削除すると、すべてのデータが失われます。 この操作は取り消すことができません。 本当にアカウントを削除しますか？",
-        "placeholder": "内容を入力してください",
-        "next": "次へ", 
-        "description2": "データをメールに送信するよう当社に依頼してください。",
-        "verify_yes":"はい、データを電子メールに送信します",
-        "verify_no":"結構です！"
-
+      "title": "アプリについて",
+      "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
+      "title2": "Allure Spaアプリケーションの基本情報:",
+      "name_app": "アプリ名: Allure Spa",
+      "developer": "開発者: Allure Spa",
+      "version": "バージョン: 1.0.0",
+      "date_release": "発売日: 01/01/2021"
+    },
+    "deleteaccount": {
+      "title": "アカウントを削除",
+      "description": "アカウントを削除すると、すべてのデータが失われます。 この操作は取り消すことができません。 本当にアカウントを削除しますか？",
+      "placeholder": "内容を入力してください",
+      "next": "次へ",
+      "description2": "データをメールに送信するよう当社に依頼してください。",
+      "verify_yes": "はい、データを電子メールに送信します",
+      "verify_no": "結構です！"
     }
   },
   "terms": "利用規約",
@@ -244,7 +245,7 @@
   },
   "aboutapp": {
     "title": "アプリについて",
-    "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに��単にアクセスできるようにもします。",
+    "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに単にアクセスできるようにもします。",
     "title2": "Allure Spaアプリケーションの基本情報:",
     "name_app": "アプリ名: Allure Spa",
     "developer": "開発者: Allure Spa",
@@ -344,15 +345,15 @@
     "edit_address_fail": "住所の編集に失敗しました"
   },
   "date": {
-    "formats":  {
+    "formats": {
       "short": "dd/MM/yyyy"
     }
   },
-  "currency": { 
-    "unit": "₫", 
-    "separator": ".", 
-    "delimiter": ",", 
-    "format": "%n %u" 
+  "currency": {
+    "unit": "₫",
+    "separator": ".",
+    "delimiter": ",",
+    "format": "%n %u"
   },
   "invoice": {
     "payment_success": "支払い完了",

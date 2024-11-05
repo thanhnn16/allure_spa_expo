@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { User } from "@/types/user.type";
 // Thunk để lấy thông tin người dùng
   export const updateUserThunk = createAsyncThunk(
