@@ -326,23 +326,18 @@ export default function Payment() {
           await AsyncStorage.removeItem("payment_data");
 
           if (status === "success") {
-            const savedInvoiceId = await AsyncStorage.getItem(
-              "current_invoice_id"
-            );
-            if (savedInvoiceId === invoiceId) {
-              const paymentData = await AsyncStorage.getItem("payment_data");
-              if (paymentData) {
-                const { order_id } = JSON.parse(paymentData);
-                router.replace({
-                  pathname: "/transaction/success",
-                  params: {
-                    invoice_id: invoiceId,
-                    order_id: order_id.toString(),
-                    payment_status: "completed",
-                    payment_method: "payos",
-                  },
-                });
-              }
+            const paymentData = await AsyncStorage.getItem("payment_data");
+            if (paymentData) {
+              const { order_id } = JSON.parse(paymentData);
+              router.replace({
+                pathname: "/transaction/success",
+                params: {
+                  invoice_id: invoiceId,
+                  order_id: order_id.toString(),
+                  payment_status: "completed",
+                  payment_method: "payos",
+                },
+              });
             }
           } else if (status === "cancel") {
             router.replace({
@@ -356,7 +351,7 @@ export default function Payment() {
         } catch (error) {
           console.error("Payment status check error:", error);
           router.replace({
-            pathname: "/(app)/invoice/success",
+            pathname: "/(app)/invoice/failed",
             params: {
               type: "failed",
               reason:

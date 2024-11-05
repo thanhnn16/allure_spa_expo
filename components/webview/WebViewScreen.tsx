@@ -54,6 +54,11 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
       const orderCode = params.get("orderCode");
       const invoiceId = params.get("invoice_id");
 
+      // Clear payment data first
+      await AsyncStorage.removeItem("payos_order_code");
+      await AsyncStorage.removeItem("current_invoice_id");
+      await AsyncStorage.removeItem("payment_data");
+
       if (status === "success" && orderCode) {
         try {
           const response = await axios.post(
@@ -62,29 +67,20 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
           );
 
           if (response.data.success) {
-            await AsyncStorage.removeItem("payos_order_code");
-
-            if (invoiceId) {
-              router.push({
-                pathname: "/(app)/invoice/success",
-                params: {
-                  invoice_id: invoiceId,
-                  amount: response.data.data.amount,
-                  payment_time: response.data.data.paymentTime,
-                },
-              });
-            } else {
-              router.push("/transaction/success");
-            }
-          } else {
             router.replace({
-              pathname: "/(app)/invoice/failed",
+              pathname: "/transaction/success",
               params: {
-                type: "failed",
-                reason:
-                  response.data.message || "Không thể xác nhận thanh toán",
+                invoice_id: invoiceId,
+                amount: response.data.data.amount,
+                payment_time: response.data.data.paymentTime,
+                payment_status: "completed",
+                payment_method: "payos",
               },
             });
+          } else {
+            throw new Error(
+              response.data.message || "Không thể xác nhận thanh toán"
+            );
           }
         } catch (error: any) {
           console.error("Verify payment error:", error);
@@ -92,16 +88,16 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
             pathname: "/(app)/invoice/failed",
             params: {
               type: "failed",
-              reason: "Không thể xác thực thanh toán",
+              reason: error.message || "Không thể xác thực thanh toán",
             },
           });
         }
       } else if (status === "cancel") {
-        await AsyncStorage.removeItem("payos_order_code");
         router.replace({
           pathname: "/(app)/invoice/failed",
           params: {
             type: "cancel",
+            invoice_id: invoiceId,
           },
         });
       }
