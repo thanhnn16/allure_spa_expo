@@ -129,7 +129,7 @@ export const sendTextMessage = createAsyncThunk(
         model: systemConfig?.model_type || 'gemini-1.5-pro',
         systemInstruction: systemConfig?.context,
         tools: toolsConfig,
-        toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
+        toolConfig: toolsConfig ? { functionCallingConfig: { mode: "ANY" as FunctionCallingMode } } : undefined
       });
 
       const chat = model.startChat({
@@ -154,20 +154,26 @@ export const sendTextMessage = createAsyncThunk(
       const result = await chat.sendMessage(text.trim());
       const response = result.response;
 
-      console.log('response: ', response);
+      // Kiểm tra parts trong response
+      const parts = response.candidates?.[0]?.content?.parts;
+      if (!parts || parts.length === 0) {
+        throw new Error('Invalid response format');
+      }
 
-      // Kiểm tra function call
-      if (response.candidates?.[0]?.content?.parts?.[0]?.functionCall) {
-        const functionCall = response.candidates[0].content.parts[0].functionCall;
+      // Xử lý text response (nếu có)
+      let responseText = '';
+      if (parts[0]?.text) {
+        responseText = parts[0].text;
+      }
 
-        // Thêm tin nhắn tạm thời
-        dispatch(addTemporaryMessage("Để tôi kiểm tra thông tin cho bạn..."));
-
+      // Xử lý function call (nếu có)
+      const functionCallPart = parts.find(part => part.functionCall);
+      if (functionCallPart?.functionCall) {
         try {
           // Gọi API function
           const functionResult = await handleFunctionCall(
-            functionCall.name,
-            functionCall.args
+            functionCallPart.functionCall.name,
+            functionCallPart.functionCall.args || {}
           );
 
           // Gửi kết quả function call lại cho AI
@@ -178,17 +184,20 @@ export const sendTextMessage = createAsyncThunk(
             })
           );
 
-          // Xóa tin nhắn tạm thời
-          dispatch(removeTemporaryMessage());
-          return followUpResult.response.text();
-
+          // Kết hợp response ban đầu với kết quả function call
+          const finalResponse = followUpResult.response.text();
+          if (finalResponse && finalResponse.trim() !== '') {
+            responseText += '\n' + finalResponse;
+          }
         } catch (error) {
-          dispatch(removeTemporaryMessage());
-          throw new Error('Không thể xử lý yêu cầu của bạn. Vui lòng thử lại sau.');
+          console.error('Function call processing error:', error);
+          responseText += '\nXin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn.';
         }
       }
 
-      return response.text();
+      // Trả về kết quả cuối cùng
+      return responseText || 'Xin lỗi, tôi không hiểu yêu cầu của bạn. Vui lòng thử lại.';
+
     } catch (error: any) {
       console.error("Send text error:", error);
       return rejectWithValue(error.message || 'Lỗi không xác định khi gửi tin nhắn');
@@ -196,16 +205,20 @@ export const sendTextMessage = createAsyncThunk(
   }
 );
 
-// Thêm hàm xử lý function call
+// Cập nhật hàm xử lý function call
 const handleFunctionCall = async (functionName: string, args: any) => {
+  console.log('Calling function:', functionName, 'with args:', args);
+
   try {
     const response = await AxiosInstance().post('/ai/function-call', {
       function: functionName,
       args: args
     });
-    return response.data;
-  } catch (error) {
+    console.log('Function call response:', response.data.data);
+    return response.data.data;
+  } catch (error: any) {
     console.error('Function call error:', error);
+    console.error(`Function call error: ${JSON.stringify(error.response.data)}`);
     throw error;
   }
 };
@@ -284,6 +297,14 @@ const aiSlice = createSlice({
       if (state.messages.length > 0) {
         state.messages.pop();
       }
+    },
+    updateLastMessage: (state: AiState, action: any) => {
+      if (state.messages.length > 0) {
+        state.messages[state.messages.length - 1] = {
+          role: 'model',
+          parts: [{ text: action.payload }]
+        };
+      }
     }
   },
   extraReducers: (builder: any) => {
@@ -310,8 +331,7 @@ const aiSlice = createSlice({
         state.error = null;
         if (action.meta.arg.text) {
           state.messages.push(
-            { role: 'user', parts: [{ text: action.meta.arg.text }] },
-            { role: 'model', parts: [{ text: '...' }] }
+            { role: 'user', parts: [{ text: action.meta.arg.text }] }
           );
         }
       })
@@ -319,19 +339,17 @@ const aiSlice = createSlice({
         state.isLoading = false;
         state.isThinking = false;
         state.error = null;
-        if (state.messages.length > 0) {
-          state.messages[state.messages.length - 1] = {
-            role: 'model',
-            parts: [{ text: action.payload }]
-          };
-        }
+        state.messages.push({
+          role: 'model',
+          parts: [{ text: action.payload }]
+        });
       })
       .addCase(sendTextMessage.rejected, (state: AiState, action: any) => {
         state.isLoading = false;
         state.isThinking = false;
         state.error = action.payload as string;
         // Remove the last message if it was a loading message
-        if (state.messages.length > 0 && state.messages[state.messages.length - 1].parts[0].text === '...') {
+        if (state.messages.length > 0 && state.messages[state.messages.length - 1].parts[0].text === 'Để tôi kiểm tra thông tin cho bạn...') {
           state.messages.pop();
         }
       })
@@ -349,7 +367,7 @@ const aiSlice = createSlice({
               ...action.meta.arg.images.map((img: any) => ({ image: img }))
             ]
           },
-          { role: 'model', parts: [{ text: '...' }] }
+          { role: 'model', parts: [{ text: 'Để tôi kiểm tra thông tin cho bạn...' }] }
         );
       })
       .addCase(sendImageMessage.fulfilled, (state: AiState, action: any) => {
@@ -367,7 +385,7 @@ const aiSlice = createSlice({
         state.isLoading = false;
         state.isThinking = false;
         state.error = action.payload as string;
-        if (state.messages.length > 0 && state.messages[state.messages.length - 1].parts[0].text === '...') {
+        if (state.messages.length > 0 && state.messages[state.messages.length - 1].parts[0].text === 'Để tôi kiểm tra thông tin cho bạn...') {
           state.messages.pop();
         }
       });
@@ -378,6 +396,8 @@ export const {
   clearMessages,
   clearError,
   addTemporaryMessage,
-  removeTemporaryMessage
+  removeTemporaryMessage,
+  updateLastMessage
 } = aiSlice.actions;
+
 export default aiSlice.reducer;
