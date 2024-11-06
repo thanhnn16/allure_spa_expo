@@ -42,6 +42,25 @@ const getActiveConfigByType = (configs: AiConfig[] | null, type: string): AiConf
   return configs?.find(c => c.type === type && c.is_active);
 };
 
+// Helper function to get API key from config
+const getApiKey = (config: AiConfig | undefined, configs: AiConfig[] | null): string => {
+  if (!config) {
+    throw new Error('Không tìm thấy cấu hình');
+  }
+
+  // Ưu tiên sử dụng global_api_key nếu có
+  if (config.global_api_key) {
+    return config.global_api_key;
+  }
+
+  // Nếu không có global_api_key, sử dụng api_key của config
+  if (config.api_key) {
+    return config.api_key;
+  }
+
+  throw new Error('Thiếu cấu hình API key');
+};
+
 // Fetch AI configs from server
 export const fetchAiConfigs = createAsyncThunk(
   'ai/fetchConfigs',
@@ -69,14 +88,13 @@ export const sendTextMessage = createAsyncThunk(
       const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
       const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
 
-      if (!generalConfig?.api_key) {
-        throw new Error('Thiếu cấu hình API key');
-      }
+      // Lấy API key với ưu tiên global_api_key
+      const apiKey = getApiKey(generalConfig, state.ai.configs);
 
-      const genAI = new GoogleGenerativeAI(generalConfig.api_key);
+      const genAI = new GoogleGenerativeAI(apiKey);
 
       // Validate model configuration
-      if (!generalConfig.model_type) {
+      if (!generalConfig?.model_type) {
         throw new Error('Thiếu cấu hình model type');
       }
 
@@ -146,13 +164,13 @@ export const sendImageMessage = createAsyncThunk(
       const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
 
       const activeConfig = visionConfig || generalConfig;
-      if (!activeConfig?.api_key) {
-        throw new Error('Thiếu cấu hình API key');
-      }
+      
+      // Lấy API key với ưu tiên global_api_key
+      const apiKey = getApiKey(activeConfig, state.ai.configs);
 
-      const genAI = new GoogleGenerativeAI(activeConfig.api_key);
+      const genAI = new GoogleGenerativeAI(apiKey);
 
-      if (!activeConfig.model_type) {
+      if (!activeConfig?.model_type) {
         throw new Error('Thiếu cấu hình model type');
       }
 

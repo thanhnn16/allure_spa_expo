@@ -59,6 +59,7 @@ export interface AiConfig {
   type: 'system_prompt' | 'vision_config' | 'general';
   context: string;
   api_key: string;
+  global_api_key?: string;
   language: string;
   gemini_settings?: any;
   is_active: boolean;
