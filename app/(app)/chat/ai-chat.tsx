@@ -1,5 +1,5 @@
 import { Audio } from "expo-av";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -24,14 +24,13 @@ import SelectImagesBar from "@/components/images/SelectImagesBar";
 import MessageBubble from "@/components/message/MessageBubble";
 import MessageTextInput from "@/components/message/MessageTextInput";
 import i18n from "@/languages/i18n";
-import { AppDispatch, RootState } from "@/redux/store";
 import {
-  sendTextMessage,
-  sendImageMessage,
   fetchAiConfigs,
+  sendImageMessage,
+  sendTextMessage,
 } from "@/redux/features/ai/aiSlice";
-import { convertImageToBase64 } from "@/utils/imageUtils";
-import { AiConfig } from "@/types/ai-config";
+import { AppDispatch, RootState } from "@/redux/store";
+import { convertImageToBase64, isValidImageFormat } from '@/utils/helpers/imageHelper';
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,26 +66,19 @@ const AIChatScreen = () => {
         throw new Error("Chưa tải được cấu hình AI");
       }
 
-      const generalConfig = configs.find(
-        (c: AiConfig) => c.type === "general" && c.is_active
-      );
-      const visionConfig = configs.find(
-        (c: AiConfig) => c.type === "vision_config" && c.is_active
-      );
-
-      if (!generalConfig?.api_key && !visionConfig?.api_key) {
-        throw new Error("Thiếu cấu hình API key");
-      }
-
       if (selectedImages.length > 0) {
-        // Handle image message
         try {
+          const invalidImages = selectedImages.filter(uri => !isValidImageFormat(uri));
+          if (invalidImages.length > 0) {
+            throw new Error('Một số ảnh có định dạng không được hỗ trợ');
+          }
+
           const imageData = await Promise.all(
             selectedImages.map(async (uri) => {
-              const base64 = await convertImageToBase64(uri);
+              const base64Data = await convertImageToBase64(uri);
               return {
-                data: base64,
-                mimeType: "image/jpeg",
+                data: base64Data,
+                mimeType: base64Data.split(';')[0].split(':')[1]
               };
             })
           );

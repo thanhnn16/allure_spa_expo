@@ -100,14 +100,7 @@ export const sendTextMessage = createAsyncThunk(
 
       const model = genAI.getGenerativeModel({
         model: generalConfig.model_type,
-        generationConfig: {
-          temperature: generalConfig.temperature || 0.9,
-          topK: generalConfig.top_k || 40,
-          topP: generalConfig.top_p || 1,
-          maxOutputTokens: generalConfig.max_tokens || 2048,
-          stopSequences: generalConfig.stop_sequences || []
-        },
-        safetySettings: generalConfig.safety_settings || []
+        systemInstruction: systemConfig?.context,
       });
 
       const chat = model.startChat({
@@ -129,8 +122,8 @@ export const sendTextMessage = createAsyncThunk(
 
       try {
         const result = await chat.sendMessage(text);
-        const response = await result.response;
-        const responseText = await response.text();
+        const response = result.response;
+        const responseText = response.text();
 
         if (!responseText) {
           throw new Error('Không nhận được phản hồi từ AI');
@@ -159,50 +152,40 @@ export const sendImageMessage = createAsyncThunk(
   }, { getState, rejectWithValue }: any) => {
     try {
       const state = getState() as RootState;
-      const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
       const visionConfig = getActiveConfigByType(state.ai.configs, 'vision_config');
       const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
+      const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
 
       const activeConfig = visionConfig || generalConfig;
-      
-      // Lấy API key với ưu tiên global_api_key
       const apiKey = getApiKey(activeConfig, state.ai.configs);
 
+      // Initialize services
       const genAI = new GoogleGenerativeAI(apiKey);
 
-      if (!activeConfig?.model_type) {
-        throw new Error('Thiếu cấu hình model type');
-      }
-
+      // Use gemini-1.5-pro for better vision capabilities
       const model = genAI.getGenerativeModel({
-        model: activeConfig.model_type,
-        generationConfig: {
-          temperature: activeConfig.temperature || 0.7,
-          topK: activeConfig.top_k || 40,
-          topP: activeConfig.top_p || 1,
-          maxOutputTokens: activeConfig.max_tokens || 1024,
-          stopSequences: activeConfig.stop_sequences || []
-        },
-        safetySettings: activeConfig.safety_settings || []
+        model: "gemini-1.5-pro",
+        systemInstruction: visionConfig?.context || systemConfig?.context
       });
 
-      try {
-        const result = await model.generateContent([
-          { text },
-          ...images.map(img => ({ inlineData: { data: img.data, mimeType: img.mimeType } }))
-        ]);
+      // Create prompt parts array
+      const parts = [text, ...images.map(img => ({
+        inlineData: {
+          data: img.data,
+          mimeType: img.mimeType
+        },
+      })),
+      ];
 
-        const response = await result.response;
-        const responseText = await response.text();
+      const result = await model.generateContent(parts);
+      const response = result.response;
+      const responseText = response.text();
 
-        if (!responseText) {
-          throw new Error('Không nhận được phản hồi từ AI');
-        }
-
-        return responseText;
-      } catch (chatError: any) {
-        throw new Error(`Lỗi khi xử lý hình ảnh: ${chatError.message}`);
+      if (!responseText) {
+        throw new Error('Không nhận được phản hồi từ AI');
       }
+
+      return responseText;
     } catch (error: any) {
       console.error("Send image error:", error);
       return rejectWithValue(error.message || 'Lỗi không xác định khi gửi hình ảnh');
