@@ -52,9 +52,6 @@ const AIChatScreen = () => {
   useEffect(() => {
     dispatch(fetchAiConfigs())
       .unwrap()
-      .then((configs: AiConfig[]) => {
-        console.log("Fetched configs:", configs);
-      })
       .catch((error: any) => {
         console.error("Error fetching configs:", error);
       });
@@ -63,37 +60,48 @@ const AIChatScreen = () => {
   const handleSend = async () => {
     if (!message.trim() && selectedImages.length === 0) return;
 
-    scrollRef.current?.scrollToEnd({ animated: true });
-
-    const generalConfig = configs?.find((c: AiConfig) => c.type === 'general' && c.is_active);
-    const visionConfig = configs?.find((c: AiConfig) => c.type === 'vision_config' && c.is_active);
-
-    if (!generalConfig?.api_key && !visionConfig?.api_key) {
-      setMessageStatus("Lỗi: Thiếu cấu hình API key");
-      return;
-    }
-
     try {
       setMessageStatus("Đang gửi");
 
-      if (selectedImages.length > 0) {
-        const imageData = await Promise.all(
-          selectedImages.map(async (uri) => {
-            const base64 = await convertImageToBase64(uri);
-            return {
-              data: base64,
-              mimeType: "image/jpeg",
-            };
-          })
-        );
+      if (!configs || configs.length === 0) {
+        throw new Error("Chưa tải được cấu hình AI");
+      }
 
-        await dispatch(
-          sendImageMessage({
-            text: message,
-            images: imageData,
-          })
-        ).unwrap();
+      const generalConfig = configs.find(
+        (c: AiConfig) => c.type === "general" && c.is_active
+      );
+      const visionConfig = configs.find(
+        (c: AiConfig) => c.type === "vision_config" && c.is_active
+      );
+
+      if (!generalConfig?.api_key && !visionConfig?.api_key) {
+        throw new Error("Thiếu cấu hình API key");
+      }
+
+      if (selectedImages.length > 0) {
+        // Handle image message
+        try {
+          const imageData = await Promise.all(
+            selectedImages.map(async (uri) => {
+              const base64 = await convertImageToBase64(uri);
+              return {
+                data: base64,
+                mimeType: "image/jpeg",
+              };
+            })
+          );
+
+          await dispatch(
+            sendImageMessage({
+              text: message,
+              images: imageData,
+            })
+          ).unwrap();
+        } catch (error: any) {
+          throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
+        }
       } else {
+        // Handle text message
         await dispatch(
           sendTextMessage({
             text: message,
@@ -104,9 +112,9 @@ const AIChatScreen = () => {
       setMessage("");
       setSelectedImages([]);
       setMessageStatus("Đã gửi");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to send message:", err);
-      setMessageStatus("Lỗi: " + (err as Error).message);
+      setMessageStatus(`Lỗi: ${err.message}`);
     }
   };
 
@@ -208,7 +216,11 @@ const AIChatScreen = () => {
                 .map((p: any) => p.image.data),
             }}
             isOwn={item.role === "user"}
-            isThinking={item.role === "model" && isThinking && index === messages.length - 1}
+            isThinking={
+              item.role === "model" &&
+              isThinking &&
+              index === messages.length - 1
+            }
           />
         )}
         ref={scrollRef}
@@ -303,8 +315,7 @@ const AIChatScreen = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    dispatch(fetchAiConfigs())
-      .finally(() => setRefreshing(false));
+    dispatch(fetchAiConfigs()).finally(() => setRefreshing(false));
   }, []);
 
   return (

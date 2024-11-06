@@ -23,24 +23,42 @@ const initialState: AiState = {
   configs: null
 };
 
-// Fetch AI configs from server
-export const fetchAiConfigs = createAsyncThunk(
-  'ai/fetchConfigs',
-  async (_: any, { rejectWithValue }: any) => {
-    try {
-      const response = await AxiosInstance().get('/ai-config');
-      return response.data.data;
-    } catch (error: any) {
-      console.log(`Failed to fetch AI configs: ${error.response?.data.message}`);
-      return rejectWithValue(error.response?.data?.message || 'Failed to fetch AI configs');
-    }
+// Helper function to handle API errors
+const handleApiError = (error: any) => {
+  console.error('API Error:', error);
+  let errorMessage = 'Đã xảy ra lỗi không xác định';
+
+  if (error.response?.data?.message) {
+    errorMessage = error.response.data.message;
+  } else if (error.message) {
+    errorMessage = error.message;
   }
-);
+
+  return errorMessage;
+};
 
 // Helper function to get active config by type
 const getActiveConfigByType = (configs: AiConfig[] | null, type: string): AiConfig | undefined => {
   return configs?.find(c => c.type === type && c.is_active);
 };
+
+// Fetch AI configs from server
+export const fetchAiConfigs = createAsyncThunk(
+  'ai/fetchConfigs',
+  async (_: any, { rejectWithValue }: any) => {
+    try {
+      const response = await AxiosInstance().get('/ai-configs');
+      if (!response.data?.data?.configs) {
+        throw new Error('Invalid config data received');
+      }
+      return response.data.data.configs;
+    } catch (error: any) {
+      const errorMessage = handleApiError(error);
+      console.error('Failed to fetch AI configs:', errorMessage);
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
 
 // Send text message to AI
 export const sendTextMessage = createAsyncThunk(
@@ -52,22 +70,35 @@ export const sendTextMessage = createAsyncThunk(
       const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
 
       if (!generalConfig?.api_key) {
-        throw new Error('Missing API key configuration');
+        throw new Error('Thiếu cấu hình API key');
       }
 
       const genAI = new GoogleGenerativeAI(generalConfig.api_key);
+
+      // Validate model configuration
+      if (!generalConfig.model_type) {
+        throw new Error('Thiếu cấu hình model type');
+      }
+
       const model = genAI.getGenerativeModel({
         model: generalConfig.model_type,
-        systemInstruction: systemConfig?.context || generalConfig.context
+        generationConfig: {
+          temperature: generalConfig.temperature || 0.9,
+          topK: generalConfig.top_k || 40,
+          topP: generalConfig.top_p || 1,
+          maxOutputTokens: generalConfig.max_tokens || 2048,
+          stopSequences: generalConfig.stop_sequences || []
+        },
+        safetySettings: generalConfig.safety_settings || []
       });
 
-      const history = state.ai.messages.map((msg: any) => ({
-        role: msg.role,
-        parts: [{ text: msg.parts[0]?.text || "" }]
-      })).filter((msg: any) => msg.parts[0].text !== "");
-
       const chat = model.startChat({
-        history: history.length > 0 ? history : undefined,
+        history: state.ai.messages
+          .filter((msg: any) => msg.parts[0]?.text)
+          .map((msg: any) => ({
+            role: msg.role,
+            parts: [{ text: msg.parts[0].text || "" }]
+          })),
         generationConfig: {
           temperature: generalConfig.temperature,
           topK: generalConfig.top_k,
@@ -78,12 +109,22 @@ export const sendTextMessage = createAsyncThunk(
         safetySettings: generalConfig.safety_settings
       });
 
-      const result = await chat.sendMessage(text);
-      const response = await result.response;
-      return response.text();
+      try {
+        const result = await chat.sendMessage(text);
+        const response = await result.response;
+        const responseText = await response.text();
+
+        if (!responseText) {
+          throw new Error('Không nhận được phản hồi từ AI');
+        }
+
+        return responseText;
+      } catch (chatError: any) {
+        throw new Error(`Lỗi khi gửi tin nhắn: ${chatError.message}`);
+      }
     } catch (error: any) {
       console.error("Send text error:", error);
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.message || 'Lỗi không xác định khi gửi tin nhắn');
     }
   }
 );
@@ -106,50 +147,47 @@ export const sendImageMessage = createAsyncThunk(
 
       const activeConfig = visionConfig || generalConfig;
       if (!activeConfig?.api_key) {
-        throw new Error('Missing API key configuration');
+        throw new Error('Thiếu cấu hình API key');
       }
 
       const genAI = new GoogleGenerativeAI(activeConfig.api_key);
+
+      if (!activeConfig.model_type) {
+        throw new Error('Thiếu cấu hình model type');
+      }
+
       const model = genAI.getGenerativeModel({
         model: activeConfig.model_type,
-        systemInstruction: systemConfig?.context || activeConfig.context
-      });
-
-      const chat = model.startChat({
-        history: state.ai.messages.map((msg: any) => ({
-          role: msg.role,
-          parts: msg.parts.map((part: any) => {
-            if (part.text) return { text: part.text };
-            if (part.image) return { image: part.image };
-            return { text: "" };
-          })
-        })),
         generationConfig: {
-          temperature: activeConfig.temperature,
-          topK: activeConfig.top_k,
-          topP: activeConfig.top_p,
-          maxOutputTokens: activeConfig.max_tokens,
-          stopSequences: activeConfig.stop_sequences
+          temperature: activeConfig.temperature || 0.7,
+          topK: activeConfig.top_k || 40,
+          topP: activeConfig.top_p || 1,
+          maxOutputTokens: activeConfig.max_tokens || 1024,
+          stopSequences: activeConfig.stop_sequences || []
         },
-        safetySettings: activeConfig.safety_settings
+        safetySettings: activeConfig.safety_settings || []
       });
 
-      const prompt = {
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text },
-              ...images.map(img => ({ image: img }))
-            ]
-          }
-        ]
-      };
+      try {
+        const result = await model.generateContent([
+          { text },
+          ...images.map(img => ({ inlineData: { data: img.data, mimeType: img.mimeType } }))
+        ]);
 
-      const result = await chat.sendMessage(prompt as any);
-      return result.response.text();
+        const response = await result.response;
+        const responseText = await response.text();
+
+        if (!responseText) {
+          throw new Error('Không nhận được phản hồi từ AI');
+        }
+
+        return responseText;
+      } catch (chatError: any) {
+        throw new Error(`Lỗi khi xử lý hình ảnh: ${chatError.message}`);
+      }
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      console.error("Send image error:", error);
+      return rejectWithValue(error.message || 'Lỗi không xác định khi gửi hình ảnh');
     }
   }
 );
@@ -160,6 +198,7 @@ const aiSlice = createSlice({
   reducers: {
     clearMessages: (state: AiState) => {
       state.messages = [];
+      state.error = null;
     },
     clearError: (state: AiState) => {
       state.error = null;
@@ -170,50 +209,62 @@ const aiSlice = createSlice({
       // Fetch configs
       .addCase(fetchAiConfigs.pending, (state: AiState) => {
         state.isLoading = true;
+        state.error = null;
       })
       .addCase(fetchAiConfigs.fulfilled, (state: AiState, action: any) => {
         state.isLoading = false;
         state.configs = action.payload;
+        state.error = null;
       })
       .addCase(fetchAiConfigs.rejected, (state: AiState, action: any) => {
         state.isLoading = false;
-        state.error = action.payload;
+        state.error = action.payload as string;
       })
 
       // Send text message
       .addCase(sendTextMessage.pending, (state: AiState, action: any) => {
         state.isLoading = true;
         state.isThinking = true;
-        state.messages.push(
-          { role: 'user', parts: [{ text: action.payload.text }] },
-          { role: 'model', parts: [{ text: '...' }] }
-        );
+        state.error = null;
+        if (action.meta.arg.text) {
+          state.messages.push(
+            { role: 'user', parts: [{ text: action.meta.arg.text }] },
+            { role: 'model', parts: [{ text: '...' }] }
+          );
+        }
       })
       .addCase(sendTextMessage.fulfilled, (state: AiState, action: any) => {
         state.isLoading = false;
         state.isThinking = false;
-        state.messages[state.messages.length - 1] = {
-          role: 'model',
-          parts: [{ text: action.payload }]
-        };
+        state.error = null;
+        if (state.messages.length > 0) {
+          state.messages[state.messages.length - 1] = {
+            role: 'model',
+            parts: [{ text: action.payload }]
+          };
+        }
       })
       .addCase(sendTextMessage.rejected, (state: AiState, action: any) => {
         state.isLoading = false;
         state.isThinking = false;
-        state.error = action.payload;
-        state.messages.pop();
+        state.error = action.payload as string;
+        // Remove the last message if it was a loading message
+        if (state.messages.length > 0 && state.messages[state.messages.length - 1].parts[0].text === '...') {
+          state.messages.pop();
+        }
       })
 
-      // Send image message  
+      // Send image message
       .addCase(sendImageMessage.pending, (state: AiState, action: any) => {
         state.isLoading = true;
         state.isThinking = true;
+        state.error = null;
         state.messages.push(
           {
             role: 'user',
             parts: [
-              { text: action.payload.text },
-              ...action.payload.images.map((img: any) => ({ image: img }))
+              { text: action.meta.arg.text },
+              ...action.meta.arg.images.map((img: any) => ({ image: img }))
             ]
           },
           { role: 'model', parts: [{ text: '...' }] }
@@ -222,19 +273,24 @@ const aiSlice = createSlice({
       .addCase(sendImageMessage.fulfilled, (state: AiState, action: any) => {
         state.isLoading = false;
         state.isThinking = false;
-        state.messages[state.messages.length - 1] = {
-          role: 'model',
-          parts: [{ text: action.payload }]
-        };
+        state.error = null;
+        if (state.messages.length > 0) {
+          state.messages[state.messages.length - 1] = {
+            role: 'model',
+            parts: [{ text: action.payload }]
+          };
+        }
       })
       .addCase(sendImageMessage.rejected, (state: AiState, action: any) => {
         state.isLoading = false;
         state.isThinking = false;
-        state.error = action.payload;
-        state.messages.pop();
+        state.error = action.payload as string;
+        if (state.messages.length > 0 && state.messages[state.messages.length - 1].parts[0].text === '...') {
+          state.messages.pop();
+        }
       });
   }
 });
 
 export const { clearMessages, clearError } = aiSlice.actions;
-export default aiSlice.reducer; 
+export default aiSlice.reducer;
