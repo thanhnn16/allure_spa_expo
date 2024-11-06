@@ -30,7 +30,10 @@ import {
   sendTextMessage,
 } from "@/redux/features/ai/aiSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import { convertImageToBase64, isValidImageFormat } from '@/utils/helpers/imageHelper';
+import {
+  convertImageToBase64,
+  isValidImageFormat,
+} from "@/utils/helpers/imageHelper";
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -68,20 +71,14 @@ const AIChatScreen = () => {
 
       if (selectedImages.length > 0) {
         try {
-          const invalidImages = selectedImages.filter(uri => !isValidImageFormat(uri));
-          if (invalidImages.length > 0) {
-            throw new Error('Một số ảnh có định dạng không được hỗ trợ');
+          const imageData = [];
+          for (const uri of selectedImages) {
+            const processedImage = await convertImageToBase64(uri);
+            imageData.push({
+              data: processedImage.base64,
+              mimeType: "image/jpeg",
+            });
           }
-
-          const imageData = await Promise.all(
-            selectedImages.map(async (uri) => {
-              const base64Data = await convertImageToBase64(uri);
-              return {
-                data: base64Data,
-                mimeType: base64Data.split(';')[0].split(':')[1]
-              };
-            })
-          );
 
           await dispatch(
             sendImageMessage({
@@ -93,7 +90,6 @@ const AIChatScreen = () => {
           throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
         }
       } else {
-        // Handle text message
         await dispatch(
           sendTextMessage({
             text: message,

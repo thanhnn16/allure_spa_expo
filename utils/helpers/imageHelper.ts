@@ -1,42 +1,53 @@
 import * as FileSystem from 'expo-file-system';
+import * as ImageManipulator from 'expo-image-manipulator';
 
-// Định nghĩa các định dạng ảnh được hỗ trợ
 const SUPPORTED_EXTENSIONS = {
-  'jpg': 'image/jpeg',
-  'jpeg': 'image/jpeg', 
-  'png': 'image/png',
-  'webp': 'image/webp',
-  'heic': 'image/heic',
-  'heif': 'image/heif'
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'webp': 'image/webp',
+    'heic': 'image/heic',
+    'heif': 'image/heif'
 };
 
 type SupportedExtension = keyof typeof SUPPORTED_EXTENSIONS;
 
-export const convertImageToBase64 = async (uri: string): Promise<string> => {
-  try {
-    // Lấy phần mở rộng từ URI và chuyển thành chữ thường
-    const extension = uri.split('.').pop()?.toLowerCase() as SupportedExtension;
-    
-    // Kiểm tra xem định dạng có được hỗ trợ không
-    if (!extension || !SUPPORTED_EXTENSIONS[extension]) {
-      throw new Error(`Định dạng ảnh không được hỗ trợ: ${extension}`);
+// Thêm interface để phân biệt rõ kiểu dữ liệu trả về
+interface ProcessedImage {
+  base64: string;        // Chuỗi base64 thuần túy cho API
+  uri: string;           // URI đầy đủ cho việc hiển thị
+}
+
+export const convertImageToBase64 = async (uri: string): Promise<ProcessedImage> => {
+    try {
+        // Nén và resize ảnh trước khi chuyển đổi
+        const manipulatedImage = await ImageManipulator.manipulateAsync(
+            uri,
+            [
+                { resize: { width: 720 } },
+            ],
+            {
+                compress: 0.65,
+                format: ImageManipulator.SaveFormat.JPEG,
+            }
+        );
+
+        // Chỉ trả về chuỗi base64 thuần túy, không có prefix
+        const base64 = await FileSystem.readAsStringAsync(manipulatedImage.uri, {
+            encoding: FileSystem.EncodingType.Base64,
+        });
+
+        return {
+            base64: base64,                                    // Cho API
+            uri: `data:image/jpeg;base64,${base64}`           // Cho UI
+        };
+    } catch (error: any) {
+        console.error('Error processing image:', error);
+        throw new Error(`Không thể xử lý hình ảnh: ${error.message}`);
     }
-
-    // Đọc file dưới dạng base64
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
-    // Tạo chuỗi base64 với MIME type phù hợp
-    return `data:${SUPPORTED_EXTENSIONS[extension]};base64,${base64}`;
-  } catch (error: any) {
-    console.error('Error converting image to base64:', error);
-    throw new Error(`Không thể chuyển đổi hình ảnh sang base64: ${error.message}`);
-  }
 };
 
-// Helper function để kiểm tra xem một URI có phải là định dạng ảnh hợp lệ không
 export const isValidImageFormat = (uri: string): boolean => {
-  const extension = uri.split('.').pop()?.toLowerCase() as SupportedExtension;
-  return !!SUPPORTED_EXTENSIONS[extension];
+    const extension = uri.split('.').pop()?.toLowerCase() as SupportedExtension;
+    return !!SUPPORTED_EXTENSIONS[extension];
 };

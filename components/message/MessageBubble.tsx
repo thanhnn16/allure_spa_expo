@@ -69,12 +69,15 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
                 </Markdown>
               )}
 
-              {message.attachments?.map((uri, index) => (
+              {message.attachments?.map((attachment, index) => (
                 <Image
                   key={index}
-                  source={{ uri }}
-                  style={styles.image}
-                  resizeMode="cover"
+                  source={{ 
+                    uri: attachment.startsWith('data:') 
+                      ? attachment 
+                      : `data:image/jpeg;base64,${attachment}`
+                  }}
+                  style={styles.attachmentImage}
                 />
               ))}
 
@@ -176,6 +179,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.grey40,
     opacity: 0.6,
     transform: [{ scale: 1 }],
+  },
+  attachmentImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginVertical: 4,
   },
 });
 
