@@ -79,21 +79,34 @@ export const fetchAiConfigs = createAsyncThunk(
   }
 );
 
+// Thêm interface cho function call response
+interface FunctionCallResponse {
+  name: string;
+  args: any;
+}
+
+// Thêm interface cho candidate response
+interface CandidateResponse {
+  content: {
+    parts: Array<{
+      text?: string;
+      functionCall?: FunctionCallResponse;
+    }>;
+  };
+}
+
 // Send text message to AI
 export const sendTextMessage = createAsyncThunk(
   'ai/sendTextMessage',
-  async ({ text }: { text: string }, { getState, rejectWithValue }: any) => {
+  async ({ text }: { text: string }, { getState, dispatch, rejectWithValue }: any) => {
     try {
       const state = getState() as RootState;
       const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
       const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
 
-      // Lấy API key với ưu tiên global_api_key
       const apiKey = getApiKey(generalConfig, state.ai.configs);
-
       const genAI = new GoogleGenerativeAI(apiKey);
 
-      // Validate model configuration
       if (!generalConfig?.model_type) {
         throw new Error('Thiếu cấu hình model type');
       }
@@ -117,28 +130,68 @@ export const sendTextMessage = createAsyncThunk(
           maxOutputTokens: generalConfig.max_tokens,
           stopSequences: generalConfig.stop_sequences
         },
-        safetySettings: generalConfig.safety_settings
+        safetySettings: generalConfig.safety_settings,
+        tools: [{
+          functionDeclarations: generalConfig.function_declarations
+        }]
       });
 
-      try {
-        const result = await chat.sendMessage(text);
-        const response = result.response;
-        const responseText = response.text();
+      const result = await chat.sendMessage(text);
+      const response = result.response;
+      
+      // Kiểm tra function call
+      if (response.candidates?.[0]?.content?.parts?.[0]?.functionCall) {
+        const functionCall = response.candidates[0].content.parts[0].functionCall;
+        
+        // Thêm tin nhắn tạm thời
+        dispatch(addTemporaryMessage("Để tôi kiểm tra thông tin cho bạn..."));
+        
+        try {
+          // Gọi API function
+          const functionResult = await handleFunctionCall(
+            functionCall.name, 
+            functionCall.args
+          );
+          
+          // Gửi kết quả function call lại cho AI
+          const followUpResult = await chat.sendMessage(
+            JSON.stringify({
+              success: true,
+              data: functionResult.data
+            })
+          );
 
-        if (!responseText) {
-          throw new Error('Không nhận được phản hồi từ AI');
+          // Xóa tin nhắn tạm thời
+          dispatch(removeTemporaryMessage());
+          return followUpResult.response.text();
+          
+        } catch (error) {
+          dispatch(removeTemporaryMessage());
+          throw new Error('Không thể xử lý yêu cầu của bạn. Vui lòng thử lại sau.');
         }
-
-        return responseText;
-      } catch (chatError: any) {
-        throw new Error(`Lỗi khi gửi tin nhắn: ${chatError.message}`);
       }
+
+      return response.text();
     } catch (error: any) {
       console.error("Send text error:", error);
       return rejectWithValue(error.message || 'Lỗi không xác định khi gửi tin nhắn');
     }
   }
 );
+
+// Thêm hàm xử lý function call
+const handleFunctionCall = async (functionName: string, args: any) => {
+  try {
+    const response = await AxiosInstance().post('/ai/function-call', {
+      function: functionName,
+      args: args
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Function call error:', error);
+    throw error;
+  }
+};
 
 // Send image message to AI
 export const sendImageMessage = createAsyncThunk(
@@ -203,6 +256,17 @@ const aiSlice = createSlice({
     },
     clearError: (state: AiState) => {
       state.error = null;
+    },
+    addTemporaryMessage: (state: AiState, action: any) => {
+      state.messages.push({
+        role: 'model',
+        parts: [{ text: action.payload }]
+      });
+    },
+    removeTemporaryMessage: (state: AiState) => {
+      if (state.messages.length > 0) {
+        state.messages.pop();
+      }
     }
   },
   extraReducers: (builder: any) => {
@@ -293,5 +357,10 @@ const aiSlice = createSlice({
   }
 });
 
-export const { clearMessages, clearError } = aiSlice.actions;
+export const {
+  clearMessages,
+  clearError,
+  addTemporaryMessage,
+  removeTemporaryMessage
+} = aiSlice.actions;
 export default aiSlice.reducer;
