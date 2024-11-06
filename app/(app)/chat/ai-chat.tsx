@@ -35,7 +35,7 @@ import { AiConfig } from "@/types/ai-config";
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, isLoading, error, configs } = useSelector(
+  const { messages, isLoading, isThinking, error, configs } = useSelector(
     (state: RootState) => state.ai
   );
   const [message, setMessage] = useState("");
@@ -65,20 +65,11 @@ const AIChatScreen = () => {
 
     scrollRef.current?.scrollToEnd({ animated: true });
 
-    const tempMessage = {
-      id: `temp-${Date.now()}`,
-      message: message,
-      sender_id: "user",
-      created_at: new Date().toISOString(),
-      attachments: selectedImages,
-      sending: true
-    };
+    const generalConfig = configs?.find((c: AiConfig) => c.type === 'general' && c.is_active);
+    const visionConfig = configs?.find((c: AiConfig) => c.type === 'vision_config' && c.is_active);
 
-    const generalConfig = await configs?.find((c: AiConfig) => c.is_active);
-
-    if (!generalConfig?.api_key) {
-      console.log("No general config found");
-      setMessageStatus("Lỗi: Thiếu API key cấu hình");
+    if (!generalConfig?.api_key && !visionConfig?.api_key) {
+      setMessageStatus("Lỗi: Thiếu cấu hình API key");
       return;
     }
 
@@ -217,6 +208,7 @@ const AIChatScreen = () => {
                 .map((p: any) => p.image.data),
             }}
             isOwn={item.role === "user"}
+            isThinking={item.role === "model" && isThinking && index === messages.length - 1}
           />
         )}
         ref={scrollRef}

@@ -53,13 +53,14 @@ export interface GeneralSettings {
   metadata?: any;
 }
 
-export type AiConfig = {
+export interface AiConfig {
   id: number;
   ai_name: string;
   type: 'system_prompt' | 'vision_config' | 'general';
   context: string;
+  api_key: string;
   language: string;
-  gemini_settings: any;
+  gemini_settings?: any;
   is_active: boolean;
   priority: number;
   version?: string;
@@ -69,6 +70,10 @@ export type AiConfig = {
   top_p: number;
   top_k: number;
   metadata?: any;
-  last_used_at?: string;
-  api_key?: string;
+  safety_settings?: any[];
+  function_declarations?: any[];
+  tool_config?: any;
+  system_instructions?: string;
+  response_format?: string;
+  stop_sequences?: string[];
 } 
