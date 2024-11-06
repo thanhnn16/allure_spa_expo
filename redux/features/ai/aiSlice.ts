@@ -1,9 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { GenerateContentRequest, GoogleGenerativeAI } from '@google/generative-ai';
-import { RootState } from '../../store';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { RootState } from "../../store";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { AiConfig } from '@/types/ai-config';
-import type { SystemPrompt, VisionPrompt, GeneralSettings } from '@/types/ai-config';
 
 interface AiState {
   messages: Array<{
@@ -27,22 +26,14 @@ export const fetchAiConfigs = createAsyncThunk(
   'ai/fetchConfigs',
   async (_: any, { rejectWithValue }: any) => {
     try {
-      const response = await axios.get('/api/ai-config');
-      return response.data;
+      const response = await AxiosInstance().get('/ai-config');
+      return response.data.data;
     } catch (error: any) {
+      console.log(`Failed to fetch AI configs: ${error.response?.data.message}`);
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch AI configs');
     }
   }
 );
-
-const getModelConfig = (config: AiConfig) => {
-  return {
-    temperature: config?.temperature || 0.9,
-    topK: config?.top_k || 40,
-    topP: config?.top_p || 1,
-    maxOutputTokens: config?.max_tokens || 2048,
-  };
-};
 
 // Send text message to AI
 export const sendTextMessage = createAsyncThunk(
@@ -51,46 +42,44 @@ export const sendTextMessage = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const generalConfig = state.ai.configs?.find(
-        (c: AiConfig) => c.type === 'general' && c.is_active
+        (c: AiConfig) => c.is_active
       );
-      const systemPrompt = state.ai.configs?.find(
-        (c: AiConfig) => c.type === 'system_prompt' && c.is_active
-      );
-      
-      // Check for API key in config
-      const apiKey = generalConfig?.api_key;
-      if (!apiKey) {
-        throw new Error('Missing API key configuration');
+
+      if (!generalConfig) {
+        throw new Error('General configuration not found');
       }
 
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ 
-        model: generalConfig.model_type,
-        generationConfig: {
-          temperature: generalConfig.temperature,
-          topK: generalConfig.top_k,
-          topP: generalConfig.top_p,
-          maxOutputTokens: generalConfig.max_tokens,
-        }
+      const genAI = new GoogleGenerativeAI(generalConfig.api_key);
+      const model = genAI.getGenerativeModel({
+        model: generalConfig.model_type || "gemini-1.0-pro",
+        systemInstruction:
+          generalConfig.context ||
+          "Always answer that you are Allure SPA, and waiting for training session to support customer. Please come back later.",
       });
 
+      // Format chat history correctly
+      const history = state.ai.messages.map((msg: any) => ({
+        role: msg.role,
+        parts: [{ text: msg.parts[0]?.text || "" }]
+      })).filter((msg: any) => msg.parts[0].text !== "");
+
+      // Create chat
       const chat = model.startChat({
-        history: state.ai.messages,
+        history: history.length > 0 ? history : undefined,
         generationConfig: {
-          temperature: generalConfig.temperature,
-          topK: generalConfig.top_k,
-          topP: generalConfig.top_p,
-          maxOutputTokens: generalConfig.max_tokens,
+          temperature: generalConfig.temperature || 0.7,
+          topK: generalConfig.top_k || 40,
+          topP: generalConfig.top_p || 0.95,
+          maxOutputTokens: generalConfig.max_tokens || 1024,
         }
       });
 
-      if (systemPrompt?.context) {
-        await chat.sendMessage(systemPrompt.context);
-      }
-
+      // Send message
       const result = await chat.sendMessage(text);
-      return result.response.text();
+      const response = await result.response;
+      return response.text();
     } catch (error: any) {
+      console.error("Send text error:", error);
       return rejectWithValue(error.message);
     }
   }
@@ -99,11 +88,11 @@ export const sendTextMessage = createAsyncThunk(
 // Send image message to AI
 export const sendImageMessage = createAsyncThunk(
   'ai/sendImageMessage',
-  async ({ 
-    text, 
-    images 
-  }: { 
-    text: string; 
+  async ({
+    text,
+    images
+  }: {
+    text: string;
     images: Array<{ data: string; mimeType: string }>;
   }, { getState, rejectWithValue }: any) => {
     try {
@@ -122,8 +111,24 @@ export const sendImageMessage = createAsyncThunk(
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ 
+      const model = genAI.getGenerativeModel({
         model: visionConfig?.model_type || generalConfig.model_type,
+        systemInstruction:
+          visionConfig?.context ||
+          generalConfig.context ||
+          "Always answer that you are Allure SPA, and waiting for training session to support customer. Please come back later.",
+      });
+
+      // Create chat with history
+      const chat = model.startChat({
+        history: state.ai.messages.map((msg: any) => ({
+          role: msg.role,
+          parts: msg.parts.map((part: any) => {
+            if (part.text) return part.text;
+            if (part.image) return `[Image uploaded]`;
+            return "";
+          }).filter(Boolean)
+        })),
         generationConfig: {
           temperature: visionConfig?.temperature || generalConfig.temperature,
           topK: visionConfig?.top_k || generalConfig.top_k,
@@ -148,7 +153,7 @@ export const sendImageMessage = createAsyncThunk(
         ].filter(Boolean)
       };
 
-      const result = await model.generateContent(prompt as GenerateContentRequest);
+      const result = await chat.sendMessage(prompt as any);
       return result.response.text();
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -181,7 +186,7 @@ const aiSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       })
-      
+
       // Send text message
       .addCase(sendTextMessage.pending, (state: AiState) => {
         state.isLoading = true;
@@ -205,8 +210,8 @@ const aiSlice = createSlice({
       .addCase(sendImageMessage.fulfilled, (state: AiState, action: any) => {
         state.isLoading = false;
         state.messages.push(
-          { 
-            role: 'user', 
+          {
+            role: 'user',
             parts: [
               { text: action.meta.arg.text },
               ...action.meta.arg.images.map((img: any) => ({ image: img }))
@@ -216,7 +221,7 @@ const aiSlice = createSlice({
         );
       })
       .addCase(sendImageMessage.rejected, (state: AiState, action: any) => {
-        state.isLoading = false; 
+        state.isLoading = false;
         state.error = action.payload as string;
       });
   }

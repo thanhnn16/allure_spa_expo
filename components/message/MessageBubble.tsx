@@ -1,6 +1,6 @@
-import React from "react";
-import { StyleSheet, Image, ActivityIndicator } from "react-native";
+import { StyleSheet, Image, ActivityIndicator, TextStyle } from "react-native";
 import { View, Text, Colors } from "react-native-ui-lib";
+import Markdown from "react-native-markdown-display";
 
 interface MessageBubbleProps {
   message: {
@@ -23,13 +23,45 @@ const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
   };
 
   return (
-    <View style={[styles.container, isOwn ? styles.ownContainer : styles.otherContainer]}>
+    <View
+      style={[
+        styles.container,
+        isOwn ? styles.ownContainer : styles.otherContainer,
+      ]}
+    >
       <View style={[styles.bubbleWrapper]}>
-        <View style={[styles.bubble, isOwn ? styles.ownBubble : styles.otherBubble]}>
+        <View
+          style={[styles.bubble, isOwn ? styles.ownBubble : styles.otherBubble]}
+        >
           {message.message && (
-            <Text style={[styles.text, isOwn ? styles.ownText : styles.otherText]}>
+            <Markdown
+              style={{
+                body: StyleSheet.compose(
+                  styles.text,
+                  isOwn ? styles.ownText : styles.otherText
+                ) as TextStyle,
+                paragraph: { marginVertical: 0 } as TextStyle,
+                link: {
+                  color: isOwn ? Colors.grey50 : Colors.primary,
+                } as TextStyle,
+                code_block: {
+                  backgroundColor: isOwn
+                    ? Colors.rgba(Colors.white, 0.1)
+                    : Colors.grey70,
+                  padding: 8,
+                  borderRadius: 4,
+                } as TextStyle,
+                code_inline: {
+                  backgroundColor: isOwn
+                    ? Colors.rgba(Colors.white, 0.1)
+                    : Colors.grey70,
+                  padding: 4,
+                  borderRadius: 2,
+                } as TextStyle,
+              }}
+            >
               {message.message}
-            </Text>
+            </Markdown>
           )}
 
           {message.attachments?.map((uri, index) => (
@@ -41,16 +73,18 @@ const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
             />
           ))}
 
-          <Text style={[styles.time, isOwn ? styles.ownTime : styles.otherTime]}>
+          <Text
+            style={[styles.time, isOwn ? styles.ownTime : styles.otherTime]}
+          >
             {formatTime(message.created_at)}
           </Text>
         </View>
-        
+
         {message.sending && (
-          <ActivityIndicator 
-            size="small" 
+          <ActivityIndicator
+            size="small"
             color={Colors.grey40}
-            style={styles.loadingIndicator} 
+            style={styles.loadingIndicator}
           />
         )}
       </View>
@@ -61,17 +95,17 @@ const MessageBubble = ({ message, isOwn }: MessageBubbleProps) => {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 4,
-    maxWidth: '80%',
+    maxWidth: "80%",
   },
   bubbleWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   ownContainer: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   otherContainer: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   bubble: {
     padding: 12,

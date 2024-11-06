@@ -1,5 +1,5 @@
 import { Audio } from "expo-av";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -14,7 +14,7 @@ import {
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, Image, Text, View } from "react-native-ui-lib";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 
 import KeyboardIcon from "@/assets/icons/keyboard.svg";
 import MicIcon from "@/assets/icons/mic.svg";
@@ -24,14 +24,20 @@ import SelectImagesBar from "@/components/images/SelectImagesBar";
 import MessageBubble from "@/components/message/MessageBubble";
 import MessageTextInput from "@/components/message/MessageTextInput";
 import i18n from "@/languages/i18n";
-import { AppDispatch, RootState } from '@/redux/store';
-import { sendTextMessage, sendImageMessage, fetchAiConfigs } from '@/redux/features/ai/aiSlice';
+import { AppDispatch, RootState } from "@/redux/store";
+import {
+  sendTextMessage,
+  sendImageMessage,
+  fetchAiConfigs,
+} from "@/redux/features/ai/aiSlice";
 import { convertImageToBase64 } from "@/utils/imageUtils";
-import { AiConfig } from '@/types/ai-config';
+import { AiConfig } from "@/types/ai-config";
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, isLoading, error, configs } = useSelector((state: RootState) => state.ai);
+  const { messages, isLoading, error, configs } = useSelector(
+    (state: RootState) => state.ai
+  );
   const [message, setMessage] = useState("");
   const [messageStatus, setMessageStatus] = useState("Đã gửi");
   const scrollRef = useRef<FlatList>(null);
@@ -44,50 +50,71 @@ const AIChatScreen = () => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
 
   useEffect(() => {
-    dispatch(fetchAiConfigs());
+    dispatch(fetchAiConfigs())
+      .unwrap()
+      .then((configs: AiConfig[]) => {
+        console.log("Fetched configs:", configs);
+      })
+      .catch((error: any) => {
+        console.error("Error fetching configs:", error);
+      });
   }, [dispatch]);
 
   const handleSend = async () => {
     if (!message.trim() && selectedImages.length === 0) return;
 
-    const generalConfig = configs?.find(
-      (c: AiConfig) => c.type === 'general' && c.is_active
-    );
-    
+    scrollRef.current?.scrollToEnd({ animated: true });
+
+    const tempMessage = {
+      id: `temp-${Date.now()}`,
+      message: message,
+      sender_id: "user",
+      created_at: new Date().toISOString(),
+      attachments: selectedImages,
+      sending: true
+    };
+
+    const generalConfig = await configs?.find((c: AiConfig) => c.is_active);
+
     if (!generalConfig?.api_key) {
+      console.log("No general config found");
       setMessageStatus("Lỗi: Thiếu API key cấu hình");
       return;
     }
 
     try {
       setMessageStatus("Đang gửi");
-      
+
       if (selectedImages.length > 0) {
         const imageData = await Promise.all(
           selectedImages.map(async (uri) => {
             const base64 = await convertImageToBase64(uri);
             return {
               data: base64,
-              mimeType: 'image/jpeg'
+              mimeType: "image/jpeg",
             };
           })
         );
 
-        await dispatch(sendImageMessage({
-          text: message,
-          images: imageData
-        })).unwrap();
+        await dispatch(
+          sendImageMessage({
+            text: message,
+            images: imageData,
+          })
+        ).unwrap();
       } else {
-        await dispatch(sendTextMessage({
-          text: message
-        })).unwrap();
+        await dispatch(
+          sendTextMessage({
+            text: message,
+          })
+        ).unwrap();
       }
 
-      setMessage('');
+      setMessage("");
       setSelectedImages([]);
       setMessageStatus("Đã gửi");
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error("Failed to send message:", err);
       setMessageStatus("Lỗi: " + (err as Error).message);
     }
   };
@@ -177,28 +204,35 @@ const AIChatScreen = () => {
     <>
       <FlatList
         data={messages}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <MessageBubble
+            key={`message-${item.id || index}`}
             message={{
-              id: item.id || Math.random().toString(),
-              message: item.parts[0].text || '',
-              sender_id: item.role === 'user' ? 'user' : 'ai',
+              id: item.id || `msg-${index}`,
+              message: item.parts[0].text || "",
+              sender_id: item.role === "user" ? "user" : "ai",
               created_at: new Date().toISOString(),
               attachments: item.parts
                 .filter((p: any) => p.image)
-                .map((p: any) => p.image.data)
+                .map((p: any) => p.image.data),
             }}
-            isOwn={item.role === 'user'}
+            isOwn={item.role === "user"}
           />
         )}
         ref={scrollRef}
         onContentSizeChange={() =>
           scrollRef.current?.scrollToEnd({ animated: true })
         }
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item.id || `msg-${index}`}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 16 }}
         ListFooterComponent={handleRead}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        onEndReached={() => {
+          // Load more messages if needed
+        }}
+        onEndReachedThreshold={0.5}
       />
 
       {selectedImages.length > 0 && (
@@ -264,6 +298,22 @@ const AIChatScreen = () => {
       setMessageStatus("Lỗi: " + error);
     }
   }, [error]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        scrollRef.current?.scrollToEnd({ animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    dispatch(fetchAiConfigs())
+      .finally(() => setRefreshing(false));
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
