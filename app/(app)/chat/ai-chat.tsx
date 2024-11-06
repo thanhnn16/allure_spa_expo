@@ -14,6 +14,7 @@ import {
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors, Image, Text, View } from "react-native-ui-lib";
+import { useDispatch, useSelector } from 'react-redux';
 
 import KeyboardIcon from "@/assets/icons/keyboard.svg";
 import MicIcon from "@/assets/icons/mic.svg";
@@ -23,8 +24,14 @@ import SelectImagesBar from "@/components/images/SelectImagesBar";
 import MessageBubble from "@/components/message/MessageBubble";
 import MessageTextInput from "@/components/message/MessageTextInput";
 import i18n from "@/languages/i18n";
+import { AppDispatch, RootState } from '@/redux/store';
+import { sendTextMessage, sendImageMessage, fetchAiConfigs } from '@/redux/features/ai/aiSlice';
+import { convertImageToBase64 } from "@/utils/imageUtils";
+import { AiConfig } from '@/types/ai-config';
 
 const AIChatScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { messages, isLoading, error, configs } = useSelector((state: RootState) => state.ai);
   const [message, setMessage] = useState("");
   const [messageStatus, setMessageStatus] = useState("Đã gửi");
   const scrollRef = useRef<FlatList>(null);
@@ -36,8 +43,53 @@ const AIChatScreen = () => {
   const [waveCount, setWaveCount] = useState<number[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
 
-  const handleSend = () => {
-    // TODO: Send message to AI
+  useEffect(() => {
+    dispatch(fetchAiConfigs());
+  }, [dispatch]);
+
+  const handleSend = async () => {
+    if (!message.trim() && selectedImages.length === 0) return;
+
+    const generalConfig = configs?.find(
+      (c: AiConfig) => c.type === 'general' && c.is_active
+    );
+    
+    if (!generalConfig?.api_key) {
+      setMessageStatus("Lỗi: Thiếu API key cấu hình");
+      return;
+    }
+
+    try {
+      setMessageStatus("Đang gửi");
+      
+      if (selectedImages.length > 0) {
+        const imageData = await Promise.all(
+          selectedImages.map(async (uri) => {
+            const base64 = await convertImageToBase64(uri);
+            return {
+              data: base64,
+              mimeType: 'image/jpeg'
+            };
+          })
+        );
+
+        await dispatch(sendImageMessage({
+          text: message,
+          images: imageData
+        })).unwrap();
+      } else {
+        await dispatch(sendTextMessage({
+          text: message
+        })).unwrap();
+      }
+
+      setMessage('');
+      setSelectedImages([]);
+      setMessageStatus("Đã gửi");
+    } catch (err) {
+      console.error('Failed to send message:', err);
+      setMessageStatus("Lỗi: " + (err as Error).message);
+    }
   };
 
   const handleRead = () => {
@@ -124,9 +176,20 @@ const AIChatScreen = () => {
   const renderChatUI = () => (
     <>
       <FlatList
-        data={[]}
+        data={messages}
         renderItem={({ item }) => (
-          <MessageBubble message={item} isOwn={false} />
+          <MessageBubble
+            message={{
+              id: item.id || Math.random().toString(),
+              message: item.parts[0].text || '',
+              sender_id: item.role === 'user' ? 'user' : 'ai',
+              created_at: new Date().toISOString(),
+              attachments: item.parts
+                .filter((p: any) => p.image)
+                .map((p: any) => p.image.data)
+            }}
+            isOwn={item.role === 'user'}
+          />
         )}
         ref={scrollRef}
         onContentSizeChange={() =>
@@ -195,6 +258,12 @@ const AIChatScreen = () => {
       </View>
     </View>
   );
+
+  useEffect(() => {
+    if (error) {
+      setMessageStatus("Lỗi: " + error);
+    }
+  }, [error]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
