@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FunctionCallingMode, GoogleGenerativeAI } from "@google/generative-ai";
 import { RootState } from "../../store";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { AiConfig } from '@/types/ai-config';
@@ -43,7 +43,8 @@ const getActiveConfigByType = (configs: AiConfig[] | null, type: string): AiConf
 };
 
 // Helper function to get API key from config
-const getApiKey = (config: AiConfig | undefined, configs: AiConfig[] | null): string => {
+const getApiKey = (config: AiConfig | undefined): string => {
+
   if (!config) {
     throw new Error('Không tìm thấy cấu hình');
   }
@@ -102,57 +103,73 @@ export const sendTextMessage = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
-      const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
 
-      const apiKey = getApiKey(generalConfig, state.ai.configs);
+      const apiKey = getApiKey(systemConfig);
       const genAI = new GoogleGenerativeAI(apiKey);
 
-      if (!generalConfig?.model_type) {
-        throw new Error('Thiếu cấu hình model type');
+      // Kiểm tra và xử lý function declarations
+      let toolsConfig = undefined;
+      if (systemConfig?.function_declarations) {
+        // Parse function_declarations nếu nó là string
+        const declarations = typeof systemConfig.function_declarations === 'string'
+          ? JSON.parse(systemConfig.function_declarations)
+          : systemConfig.function_declarations;
+
+        if (Array.isArray(declarations)) {
+          toolsConfig = [{
+            functionDeclarations: declarations
+          }];
+        }
       }
 
+      console.log('toolsConfig: ', toolsConfig);
+
+      // Khởi tạo model với tools config
       const model = genAI.getGenerativeModel({
-        model: generalConfig.model_type,
+        model: systemConfig?.model_type || 'gemini-1.5-pro',
         systemInstruction: systemConfig?.context,
+        tools: toolsConfig,
+        toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
       });
 
       const chat = model.startChat({
         history: state.ai.messages
-          .filter((msg: any) => msg.parts[0]?.text)
+          .filter((msg: any) => msg.parts[0]?.text?.trim() !== '')
           .map((msg: any) => ({
             role: msg.role,
-            parts: [{ text: msg.parts[0].text || "" }]
+            parts: [{ text: msg.parts[0]?.text || '' }]
           })),
         generationConfig: {
-          temperature: generalConfig.temperature,
-          topK: generalConfig.top_k,
-          topP: generalConfig.top_p,
-          maxOutputTokens: generalConfig.max_tokens,
-          stopSequences: generalConfig.stop_sequences
+          temperature: systemConfig?.temperature || 0.9,
+          topK: systemConfig?.top_k || 40,
+          topP: systemConfig?.top_p || 0.95,
+          maxOutputTokens: systemConfig?.max_tokens || 8192,
         },
-        safetySettings: generalConfig.safety_settings,
-        tools: [{
-          functionDeclarations: generalConfig.function_declarations
-        }]
       });
 
-      const result = await chat.sendMessage(text);
+      console.log('history: ', state.ai.messages);
+
+      console.log('text: ', text.trim());
+
+      const result = await chat.sendMessage(text.trim());
       const response = result.response;
-      
+
+      console.log('response: ', response);
+
       // Kiểm tra function call
       if (response.candidates?.[0]?.content?.parts?.[0]?.functionCall) {
         const functionCall = response.candidates[0].content.parts[0].functionCall;
-        
+
         // Thêm tin nhắn tạm thời
         dispatch(addTemporaryMessage("Để tôi kiểm tra thông tin cho bạn..."));
-        
+
         try {
           // Gọi API function
           const functionResult = await handleFunctionCall(
-            functionCall.name, 
+            functionCall.name,
             functionCall.args
           );
-          
+
           // Gửi kết quả function call lại cho AI
           const followUpResult = await chat.sendMessage(
             JSON.stringify({
@@ -164,7 +181,7 @@ export const sendTextMessage = createAsyncThunk(
           // Xóa tin nhắn tạm thời
           dispatch(removeTemporaryMessage());
           return followUpResult.response.text();
-          
+
         } catch (error) {
           dispatch(removeTemporaryMessage());
           throw new Error('Không thể xử lý yêu cầu của bạn. Vui lòng thử lại sau.');
@@ -210,7 +227,7 @@ export const sendImageMessage = createAsyncThunk(
       const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
 
       const activeConfig = visionConfig || generalConfig;
-      const apiKey = getApiKey(activeConfig, state.ai.configs);
+      const apiKey = getApiKey(activeConfig);
 
       // Initialize services
       const genAI = new GoogleGenerativeAI(apiKey);
