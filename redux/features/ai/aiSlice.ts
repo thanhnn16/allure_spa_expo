@@ -153,7 +153,7 @@ export const sendTextMessage = createAsyncThunk(
         model: systemConfig?.model_type || 'gemini-1.5-pro',
         systemInstruction: systemConfig?.context,
         tools: toolsConfig,
-        toolConfig: toolsConfig ? { functionCallingConfig: { mode: "ANY" as FunctionCallingMode } } : undefined
+        toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
       });
 
       const chat = model.startChat({
@@ -234,6 +234,15 @@ const handleFunctionCall = async (functionName: string, args: any) => {
   console.log('Calling function:', functionName, 'with args:', args);
 
   try {
+    // Thêm user_id vào args nếu là getUserVouchers
+    if (functionName === 'getUserVouchers') {
+      const { user } = useAuth();
+      args = {
+        ...args,
+        user_id: user?.id
+      };
+    }
+
     const response = await AxiosInstance().post('/ai/function-call', {
       function: functionName,
       args: args
@@ -260,39 +269,105 @@ export const sendImageMessage = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const visionConfig = getActiveConfigByType(state.ai.configs, 'vision_config');
-      const generalConfig = getActiveConfigByType(state.ai.configs, 'general');
       const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
 
-      const activeConfig = visionConfig || generalConfig;
-      const apiKey = getApiKey(activeConfig);
-
-      // Initialize services
+      const apiKey = getApiKey(visionConfig || systemConfig);
       const genAI = new GoogleGenerativeAI(apiKey);
 
-      // Use gemini-1.5-pro for better vision capabilities
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-pro",
-        systemInstruction: visionConfig?.context || systemConfig?.context
-      });
+      // Thêm xử lý function declarations
+      let toolsConfig = undefined;
+      if (systemConfig?.function_declarations) {
+        const declarations = typeof systemConfig.function_declarations === 'string'
+          ? JSON.parse(systemConfig.function_declarations)
+          : systemConfig.function_declarations;
 
-      // Create prompt parts array
-      const parts = [text, ...images.map(img => ({
-        inlineData: {
-          data: img.data,
-          mimeType: img.mimeType
-        },
-      })),
-      ];
-
-      const result = await model.generateContent(parts);
-      const response = result.response;
-      const responseText = response.text();
-
-      if (!responseText) {
-        throw new Error('Không nhận được phản hồi từ AI');
+        if (Array.isArray(declarations)) {
+          toolsConfig = [{
+            functionDeclarations: declarations
+          }];
+        }
       }
 
-      return responseText;
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-pro",
+        systemInstruction: visionConfig?.context || systemConfig?.context,
+        tools: toolsConfig,
+        toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
+      });
+
+      const chat = model.startChat({
+        history: state.ai.messages
+          .filter((msg: any) => msg.parts[0]?.text?.trim() !== '')
+          .map((msg: any) => ({
+            role: msg.role,
+            parts: [{ text: msg.parts[0]?.text || '' }]
+          })),
+        generationConfig: {
+          temperature: systemConfig?.temperature || 0.9,
+          topK: systemConfig?.top_k || 40,
+          topP: systemConfig?.top_p || 0.95,
+          maxOutputTokens: systemConfig?.max_tokens || 8192,
+        },
+      });
+
+      // Tạo message parts với text và hình ảnh
+      const messageParts = [
+        { text: text || '' },
+        ...images.map(img => ({
+          inlineData: {
+            data: img.data,
+            mimeType: img.mimeType
+          }
+        }))
+      ];
+
+      // Sử dụng sendMessage thay vì generateContent
+      const result = await chat.sendMessage(messageParts);
+      const response = result.response;
+      
+      let responseText = response.text() || '';
+
+      // Xử lý function call nếu có
+      const functionCallPart = response.candidates?.[0]?.content?.parts?.find(part => part.functionCall);
+      if (functionCallPart?.functionCall) {
+        try {
+          const functionResult = await handleFunctionCall(
+            functionCallPart.functionCall.name,
+            functionCallPart.functionCall.args || {}
+          );
+
+          const followUpResult = await chat.sendMessage(
+            JSON.stringify({
+              success: true,
+              data: functionResult.data
+            })
+          );
+
+          const finalResponse = followUpResult.response.text();
+          if (finalResponse && finalResponse.trim() !== '') {
+            responseText += '\n' + finalResponse;
+          }
+        } catch (error) {
+          console.error('Function call processing error:', error);
+          responseText += '\nXin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn.';
+        }
+      }
+
+      // Lưu lại format gốc của message để hiển thị
+      const savedParts = [
+        { text: responseText },
+        ...images.map(img => ({
+          image: {
+            data: img.data,
+            mimeType: img.mimeType
+          }
+        }))
+      ];
+
+      return {
+        text: responseText,
+        parts: savedParts
+      };
     } catch (error: any) {
       console.error("Send image error:", error);
       return rejectWithValue(error.message || 'Lỗi không xác định khi gửi hình ảnh');
@@ -401,12 +476,10 @@ const aiSlice = createSlice({
         state.isLoading = false;
         state.isThinking = false;
         state.error = null;
-        if (state.messages.length > 0) {
-          state.messages[state.messages.length - 1] = {
-            role: 'model',
-            parts: [{ text: action.payload }]
-          };
-        }
+        state.messages.push({
+          role: 'model',
+          parts: action.payload.parts || [{ text: action.payload.text }]
+        });
       })
       .addCase(sendImageMessage.rejected, (state: AiState, action: any) => {
         state.isLoading = false;

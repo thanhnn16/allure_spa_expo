@@ -52,10 +52,17 @@ const AIChatScreen = () => {
   const [waveCount, setWaveCount] = useState<number[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
 
-  const hasMessages =
-    messages.filter(
-      (msg: any) => !msg.isSystemMessage && msg.parts?.[0]?.text?.trim() !== ""
-    ).length > 0;
+  const hasValidContent = (msg: any) => {
+    return (
+      !msg.isSystemMessage && 
+      (
+        msg.parts?.[0]?.text?.trim() !== '' || 
+        msg.parts?.some((part: any) => part.image)
+      )
+    );
+  };
+
+  const hasMessages = messages.filter(hasValidContent).length > 0;
 
   const { user } = useAuth();
 
@@ -227,14 +234,13 @@ const AIChatScreen = () => {
   const renderChatUI = () => (
     <>
       <FlatList
-        data={messages.filter((msg: any) => {
-          return !msg.isSystemMessage && msg.parts?.[0]?.text?.trim() !== "";
-        })}
+        data={messages.filter(hasValidContent)}
         renderItem={({ item, index }) => {
           const messageText = item.parts?.[0]?.text || "";
-
-          if (!messageText.trim()) return null;
-
+          const hasImages = item.parts?.some((p: any) => p.image);
+          
+          if (!messageText.trim() && !hasImages) return null;
+          
           return (
             <MessageBubble
               key={`message-${item.id || index}`}
@@ -243,10 +249,9 @@ const AIChatScreen = () => {
                 message: messageText,
                 sender_id: item.role === "user" ? "user" : "ai",
                 created_at: new Date().toISOString(),
-                attachments:
-                  item.parts
-                    ?.filter((p: any) => p.image)
-                    ?.map((p: any) => p.image.data) || [],
+                attachments: item.parts
+                  ?.filter((p: any) => p.image)
+                  ?.map((p: any) => p.image.data) || [],
               }}
               isOwn={item.role === "user"}
               isThinking={
