@@ -1335,7 +1335,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-pager-view (6.4.1):
+  - react-native-pager-view (6.3.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1611,18 +1611,18 @@ PODS:
   - ReactNativeUiLib (4.3.2):
     - React
   - RecaptchaInterop (100.0.0)
-  - RNCAsyncStorage (1.24.0):
+  - RNCAsyncStorage (1.23.1):
     - React-Core
-  - RNDateTimePicker (8.2.0):
+  - RNDateTimePicker (8.0.1):
     - React-Core
-  - RNFBApp (21.2.0):
+  - RNFBApp (21.3.0):
     - Firebase/CoreOnly (<= 11.4.0)
     - React-Core
-  - RNFBAuth (21.2.0):
+  - RNFBAuth (21.3.0):
     - Firebase/Auth (<= 11.4.0)
     - React-Core
     - RNFBApp
-  - RNFBMessaging (21.2.0):
+  - RNFBMessaging (21.3.0):
     - Firebase/Messaging (<= 11.4.0)
     - FirebaseCoreExtension (<= 11.4.0)
     - React-Core
@@ -2096,7 +2096,7 @@ SPEC CHECKSUMS:
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: dce508662b995ffefd29e278a16b78217039d43d
   react-native-image-picker: 8b791a2bec6da84ca7d8cbcad30da159d6dd6da4
-  react-native-pager-view: ec794201907d9b62825bcf2a3a6ed3ff493c2ab8
+  react-native-pager-view: b4ba00095f74ab430250cef2a119a5e2491b2c8d
   react-native-safe-area-context: a240ad4b683349e48b1d51fed1611138d1bdad97
   react-native-webview: 5951c8e0d457322e39c580778dd8505daf3f0327
   React-nativeconfig: f326487bc61eba3f0e328da6efb2711533dcac46
@@ -2124,11 +2124,11 @@ SPEC CHECKSUMS:
   ReactCommon: f79ae672224dc1e6c2d932062176883c98eebd57
   ReactNativeUiLib: acf5e70a64140d6f38a969978f090c16862c2d3d
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  RNCAsyncStorage: ec53e44dc3e75b44aa2a9f37618a49c3bc080a7a
-  RNDateTimePicker: 40ffda97d071a98a10fdca4fa97e3977102ccd14
-  RNFBApp: 5d3d1b9d563857c68d161a3226d9dd6d6be1a846
-  RNFBAuth: 7af4d3571e58aa38b7de2ebc2704fe703120ee72
-  RNFBMessaging: 2895d9dfa1cfea663c26a1b5dfb5faf17ad096f8
+  RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
+  RNDateTimePicker: b6a9b35a785ecbe12b4e7d6de5439d0aa4614146
+  RNFBApp: fcb5659457f5a4857b7e54b4c29a5bbaa8b3b9a9
+  RNFBAuth: f11e9d6753d84254dad80e3afcea18433582c74c
+  RNFBMessaging: bcbcaffb33dc58f8ca1bb1f9900cb41672de1604
   RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
   RNReanimated: d51431fd3597a8f8320319dce8e42cee82a5445f
   RNScreens: 30249f9331c3b00ae7cb7922e11f58b3ed369c07
@@ -2138,4 +2138,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5280bb439af0c9dc0836e966fa9f16deab794cfb
 
-COCOAPODS: 1.16.1
+COCOAPODS: 1.15.2
