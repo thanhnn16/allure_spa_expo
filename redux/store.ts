@@ -11,6 +11,7 @@ import searchReducer from "./features/search/searchSlice";
 import cartReducer from "./features/cart/cartSlice";
 import chatReducer from './features/chat/chatSlice';
 import userReducer from "./features/users/userSlice";
+import aiReducer from './features/ai/aiSlice';
 
 
 const persistConfig = {
@@ -30,7 +31,8 @@ const rootReducer: any = combineReducers({
     product: productReducer,
     search: searchReducer,
     cart: cartReducer,
-    chat: chatReducer
+    chat: chatReducer,
+    ai: aiReducer
 })
 
 
