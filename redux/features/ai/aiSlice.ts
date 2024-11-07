@@ -289,7 +289,7 @@ export const sendImageMessage = createAsyncThunk(
       }
 
       const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-pro",
+        model: systemConfig?.model_type || 'gemini-1.5-pro',
         systemInstruction: visionConfig?.context || systemConfig?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
@@ -324,7 +324,7 @@ export const sendImageMessage = createAsyncThunk(
       // Sử dụng sendMessage thay vì generateContent
       const result = await chat.sendMessage(messageParts);
       const response = result.response;
-      
+
       let responseText = response.text() || '';
 
       // Xử lý function call nếu có
@@ -440,7 +440,7 @@ const aiSlice = createSlice({
         state.isLoading = false;
         state.isThinking = false;
         state.error = null;
-        
+
         // Chỉ thêm response vào messages nếu không phải là system message
         if (!action.payload.skipResponse) {
           state.messages.push({
