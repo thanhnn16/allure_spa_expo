@@ -12,7 +12,7 @@ const AppLayout = () => {
     const checkAuthAndNavigate = async () => {
       try {
         if (!isAuthenticated && !isGuest) {
-          await new Promise((resolve) => setTimeout(resolve, 500)); // Đợi animation
+          await new Promise((resolve) => setTimeout(resolve, 500));
           router.replace("/(auth)");
         }
       } catch (err) {

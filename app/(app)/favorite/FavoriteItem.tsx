@@ -1,6 +1,5 @@
 import React from 'react'
-import { View, Text, Image, AnimatedImage, Card, Dividers, Colors, TouchableOpacity, } from 'react-native-ui-lib'
-
+import { View, Text, Image, TouchableOpacity, Card } from 'react-native-ui-lib'
 import HeartIcon from '@/assets/icons/heart.svg'
 import StarIcon from '@/assets/icons/star.svg'
 
@@ -9,18 +8,18 @@ interface FavoriteItemProps {
     name: string;
     price: number;
     image: string;
-};
+}
 
 const FavoriteItem = ({ item }: { item: FavoriteItemProps }) => {
     return (
         <Card borderRadius={10} elevation={23}>
             <View>
-                <AnimatedImage 
-                    borderTopLeftRadius={10} 
-                    borderTopRightRadius={10} 
-                    width={180} 
-                    height={200} 
-                    source={{ uri: item.image }} 
+                <Image
+                    borderTopLeftRadius={10}
+                    borderTopRightRadius={10}
+                    width={180}
+                    height={200}
+                    source={{ uri: item.image }}
                 />
                 <View padding-8>
                     <View paddingV-5>

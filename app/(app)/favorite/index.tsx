@@ -1,50 +1,51 @@
-import React from 'react';
-import {
-    TabController,
-    View,
-    Colors,
-} from 'react-native-ui-lib';
-import { data } from './data';
-import FavoriteItem from './FavoriteItem';
-import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, SafeAreaView } from 'react-native';
 import AppBar from '@/components/app-bar/AppBar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
-const renderFirstPage = () => {
-    return (
-        <View flex bg-$backgroundDefault>
-            <FlatList
-                data={data}
-                renderItem={({ item }) => <FavoriteItem item={item} />}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
-                style={{ padding: 10 }}
-                contentContainerStyle={{ gap: 10 }}
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
-    );
-}
-
-const secondPage = () => {
-    return (
-        <View flex bg-$backgroundDefault>
-            <FlatList
-                data={data}
-                renderItem={({ item }) => <FavoriteItem item={item} />}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
-                style={{ padding: 10 }}
-                contentContainerStyle={{ gap: 10 }}
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
-    );
-}
+import { TabController, Colors } from 'react-native-ui-lib';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import FavoriteItem from './FavoriteItem';
+import AxiosInstance from '@/utils/services/helper/axiosInstance'; // Assuming you have AxiosInstance set up for API calls
 
 const FavoritePage = () => {
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await AxiosInstance().get('/services'); // Adjust API endpoint as needed
+                setData(response.data); // Assuming the response contains an array of services
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const renderPageContent = (pageData: any) => {
+        return (
+            <FlatList
+                data={pageData}
+                renderItem={({ item }) => <FavoriteItem item={item} />}
+                keyExtractor={(item) => item.id.toString()}
+                numColumns={2}
+                columnWrapperStyle={{ justifyContent: 'space-between' }}
+                style={{ padding: 10 }}
+                contentContainerStyle={{ gap: 10 }}
+                showsVerticalScrollIndicator={false}
+            />
+        );
+    };
+
+    const secondPage = () => {
+        // @ts-ignore
+        return renderPageContent(data.filter(item => item.on_sale));
+    };
+
+    // @ts-ignore
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
@@ -63,18 +64,18 @@ const FavoritePage = () => {
                         indicatorStyle={{ backgroundColor: Colors.$textPrimary, height: 2 }}
                         containerStyle={{ height: 48 }}
                     />
-                    <View flex>
+                    <View>
                         <TabController.TabPage index={0}>
-                            {renderFirstPage()}
+                            {loading ? <Text>Loading...</Text> : renderPageContent(data)}
                         </TabController.TabPage>
                         <TabController.TabPage index={1}>
-                            {secondPage()}
+                            {loading ? <Text>Loading...</Text> : secondPage()}
                         </TabController.TabPage>
                     </View>
                 </TabController>
             </SafeAreaView>
         </GestureHandlerRootView>
     );
-}
+};
 
 export default FavoritePage;
