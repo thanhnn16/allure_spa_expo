@@ -34,6 +34,7 @@ import {
   convertImageToBase64,
   isValidImageFormat,
 } from "@/utils/helpers/imageHelper";
+import { useAuth } from "@/hooks/useAuth";
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -51,6 +52,13 @@ const AIChatScreen = () => {
   const [waveCount, setWaveCount] = useState<number[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
 
+  const hasMessages =
+    messages.filter(
+      (msg: any) => !msg.isSystemMessage && msg.parts?.[0]?.text?.trim() !== ""
+    ).length > 0;
+
+  const { user } = useAuth();
+
   useEffect(() => {
     dispatch(fetchAiConfigs())
       .unwrap()
@@ -59,8 +67,38 @@ const AIChatScreen = () => {
       });
   }, [dispatch]);
 
+  useEffect(() => {
+    const sendInitialContext = async () => {
+      try {
+        if (!configs || configs.length === 0) return;
+
+        const userContext = {
+          user_id: user?.id || "guest",
+          name: user?.full_name || "Khách",
+          timestamp: new Date().toISOString(),
+          is_guest: !user?.id,
+        };
+
+        await dispatch(
+          sendTextMessage({
+            text: JSON.stringify(userContext),
+            isSystemMessage: true,
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error("Failed to send user context:", error);
+      }
+    };
+
+    sendInitialContext();
+  }, [configs]);
+
   const handleSend = async () => {
     if (!message.trim() && selectedImages.length === 0) return;
+
+    const currentMessage = message;
+    setMessage("");
+    setSelectedImages([]);
 
     try {
       setMessageStatus("Đang gửi");
@@ -82,7 +120,7 @@ const AIChatScreen = () => {
 
           await dispatch(
             sendImageMessage({
-              text: message,
+              text: currentMessage,
               images: imageData,
             })
           ).unwrap();
@@ -92,13 +130,11 @@ const AIChatScreen = () => {
       } else {
         await dispatch(
           sendTextMessage({
-            text: message,
+            text: currentMessage,
           })
         ).unwrap();
       }
 
-      setMessage("");
-      setSelectedImages([]);
       setMessageStatus("Đã gửi");
     } catch (err: any) {
       console.error("Failed to send message:", err);
@@ -107,10 +143,11 @@ const AIChatScreen = () => {
   };
 
   const handleRead = () => {
+    if (!hasMessages) return null;
+
     return (
       <View style={styles.statusContainer}>
         <Text>{messageStatus}</Text>
-        {messageStatus === "Đã đọc"}
         {messageStatus === "Đang gửi" && (
           <ActivityIndicator
             size="small"
@@ -190,27 +227,36 @@ const AIChatScreen = () => {
   const renderChatUI = () => (
     <>
       <FlatList
-        data={messages}
-        renderItem={({ item, index }) => (
-          <MessageBubble
-            key={`message-${item.id || index}`}
-            message={{
-              id: item.id || `msg-${index}`,
-              message: item.parts[0].text || "",
-              sender_id: item.role === "user" ? "user" : "ai",
-              created_at: new Date().toISOString(),
-              attachments: item.parts
-                .filter((p: any) => p.image)
-                .map((p: any) => p.image.data),
-            }}
-            isOwn={item.role === "user"}
-            isThinking={
-              item.role === "model" &&
-              isThinking &&
-              index === messages.length - 1
-            }
-          />
-        )}
+        data={messages.filter((msg: any) => {
+          return !msg.isSystemMessage && msg.parts?.[0]?.text?.trim() !== "";
+        })}
+        renderItem={({ item, index }) => {
+          const messageText = item.parts?.[0]?.text || "";
+
+          if (!messageText.trim()) return null;
+
+          return (
+            <MessageBubble
+              key={`message-${item.id || index}`}
+              message={{
+                id: item.id || `msg-${index}`,
+                message: messageText,
+                sender_id: item.role === "user" ? "user" : "ai",
+                created_at: new Date().toISOString(),
+                attachments:
+                  item.parts
+                    ?.filter((p: any) => p.image)
+                    ?.map((p: any) => p.image.data) || [],
+              }}
+              isOwn={item.role === "user"}
+              isThinking={
+                item.role === "model" &&
+                isThinking &&
+                index === messages.length - 1
+              }
+            />
+          );
+        }}
         ref={scrollRef}
         onContentSizeChange={() =>
           scrollRef.current?.scrollToEnd({ animated: true })

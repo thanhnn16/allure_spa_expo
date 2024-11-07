@@ -25,6 +25,9 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
     });
   };
 
+  // Kiểm tra và đảm bảo message là string
+  const messageText = typeof message.message === 'string' ? message.message : '';
+
   return (
     <View
       style={[
@@ -38,7 +41,7 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
         >
           {!isThinking && (
             <>
-              {message.message && (
+              {messageText && (
                 <Markdown
                   style={{
                     body: StyleSheet.compose(
@@ -65,7 +68,7 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
                     } as TextStyle,
                   }}
                 >
-                  {message.message}
+                  {messageText}
                 </Markdown>
               )}
 

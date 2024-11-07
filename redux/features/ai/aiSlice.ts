@@ -3,11 +3,13 @@ import { FunctionCallingMode, GoogleGenerativeAI } from "@google/generative-ai";
 import { RootState } from "../../store";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { AiConfig } from '@/types/ai-config';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AiState {
   messages: Array<{
     role: 'user' | 'model';
     parts: Array<{ text?: string; image?: { data: string; mimeType: string } }>;
+    isSystemMessage?: boolean;
   }>;
   isLoading: boolean;
   isThinking: boolean;
@@ -96,13 +98,35 @@ interface CandidateResponse {
   };
 }
 
+// Thêm interface cho message
+interface AiMessage {
+  role: 'user' | 'model';
+  parts: Array<{ text?: string; image?: { data: string; mimeType: string } }>;
+  isSystemMessage?: boolean;
+}
+
 // Send text message to AI
 export const sendTextMessage = createAsyncThunk(
   'ai/sendTextMessage',
-  async ({ text }: { text: string }, { getState, dispatch, rejectWithValue }: any) => {
+  async ({
+    text,
+    isSystemMessage = false
+  }: {
+    text: string;
+    isSystemMessage?: boolean
+  }, { getState, dispatch, rejectWithValue }: any) => {
     try {
       const state = getState() as RootState;
       const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
+
+      // Nếu là system message, không cần hiển thị response
+      if (isSystemMessage) {
+        return {
+          text: '',
+          isSystemMessage: true,
+          skipResponse: true
+        };
+      }
 
       const apiKey = getApiKey(systemConfig);
       const genAI = new GoogleGenerativeAI(apiKey);
@@ -330,19 +354,25 @@ const aiSlice = createSlice({
         state.isThinking = true;
         state.error = null;
         if (action.meta.arg.text) {
-          state.messages.push(
-            { role: 'user', parts: [{ text: action.meta.arg.text }] }
-          );
+          state.messages.push({
+            role: 'user',
+            parts: [{ text: action.meta.arg.text }],
+            isSystemMessage: action.meta.arg.isSystemMessage
+          });
         }
       })
       .addCase(sendTextMessage.fulfilled, (state: AiState, action: any) => {
         state.isLoading = false;
         state.isThinking = false;
         state.error = null;
-        state.messages.push({
-          role: 'model',
-          parts: [{ text: action.payload }]
-        });
+        
+        // Chỉ thêm response vào messages nếu không phải là system message
+        if (!action.payload.skipResponse) {
+          state.messages.push({
+            role: 'model',
+            parts: [{ text: action.payload }]
+          });
+        }
       })
       .addCase(sendTextMessage.rejected, (state: AiState, action: any) => {
         state.isLoading = false;
@@ -359,16 +389,13 @@ const aiSlice = createSlice({
         state.isLoading = true;
         state.isThinking = true;
         state.error = null;
-        state.messages.push(
-          {
-            role: 'user',
-            parts: [
-              { text: action.meta.arg.text },
-              ...action.meta.arg.images.map((img: any) => ({ image: img }))
-            ]
-          },
-          { role: 'model', parts: [{ text: 'Để tôi kiểm tra thông tin cho bạn...' }] }
-        );
+        state.messages.push({
+          role: 'user',
+          parts: [
+            { text: action.meta.arg.text },
+            ...action.meta.arg.images.map((img: any) => ({ image: img }))
+          ]
+        });
       })
       .addCase(sendImageMessage.fulfilled, (state: AiState, action: any) => {
         state.isLoading = false;
