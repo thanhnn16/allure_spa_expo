@@ -107,6 +107,13 @@ const ProfilePage = () => {
                                 icon: require("@/assets/images/people.png"),
                                 onPress: () => handleNavigation("/profile/detail"),
                             },
+                            //favorite
+                            {
+                                title: i18n.t("pageTitle.favorite"),
+                                description: i18n.t("pageTitle.favorite_description"),
+                                icon: require("@/assets/images/ic_favorite.png"),
+                                onPress: () => handleNavigation("/favorite"),
+                            },
                             {
                                 title: i18n.t("profile.purchase_policy"),
                                 description: i18n.t("profile.policy_description"),

@@ -1,31 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, SafeAreaView } from 'react-native';
+import { FlatList, View, Text } from 'react-native';
 import AppBar from '@/components/app-bar/AppBar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { TabController, Colors } from 'react-native-ui-lib';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import FavoriteItem from './FavoriteItem';
-import AxiosInstance from '@/utils/services/helper/axiosInstance'; // Assuming you have AxiosInstance set up for API calls
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { fetchFavoritesThunk } from '@/redux/features/favorite/favoritesThunk';
 
 const FavoritePage = () => {
-    const [data, setData] = useState([]);
+    const dispatch = useDispatch<AppDispatch>();
+    const favorites = useSelector((state: RootState) => state.favorite.favorites);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await AxiosInstance().get('/services'); // Adjust API endpoint as needed
-                setData(response.data); // Assuming the response contains an array of services
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                setLoading(false);
-            }
+            setLoading(true);
+            await dispatch(fetchFavoritesThunk());
+            setLoading(false);
         };
 
         fetchData();
-    }, []);
+    }, [dispatch]);
 
-    const renderPageContent = (pageData: any) => {
+    const renderPageContent = (pageData: any[]) => {
         return (
             <FlatList
                 data={pageData}
@@ -41,11 +40,9 @@ const FavoritePage = () => {
     };
 
     const secondPage = () => {
-        // @ts-ignore
-        return renderPageContent(data.filter(item => item.on_sale));
+        return renderPageContent(favorites.filter((item: { on_sale: any; }) => item.on_sale));
     };
 
-    // @ts-ignore
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
@@ -66,7 +63,7 @@ const FavoritePage = () => {
                     />
                     <View>
                         <TabController.TabPage index={0}>
-                            {loading ? <Text>Loading...</Text> : renderPageContent(data)}
+                            {loading ? <Text>Loading...</Text> : renderPageContent(favorites)}
                         </TabController.TabPage>
                         <TabController.TabPage index={1}>
                             {loading ? <Text>Loading...</Text> : secondPage()}

@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Dimensions, Pressable, ScrollView, ActivityIndicator } from "react-native";
+import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
 import {
   Text,
   AnimatedImage,
@@ -35,7 +35,7 @@ import ProductQuantity from "@/components/product/ProductQuantity";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import RatingStar from "@/components/rating/RatingStar";
-import AxiosInstance from "@/utils/services/helper/axiosInstance";
+
 
 interface MediaItem {
   full_url: string;
@@ -50,7 +50,6 @@ export default function DetailsScreen() {
   const [visible, setIsVisible] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const { isGuest } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
@@ -83,7 +82,6 @@ export default function DetailsScreen() {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     if (typeof id === "string") {
       getProduct(id);
@@ -97,36 +95,9 @@ export default function DetailsScreen() {
     setIsVisible(true);
   };
 
-  const handleToggleFavorite = async () => {
-    setLoading(true);
-
-    try {
-      const response = await AxiosInstance().post('/api/favorites/toggle', {
-        type: 'product',
-        item_id: product?.id,
-      });
-
-      if (response.status === 200) {
-        // Update favorite status after success
-        setFavorite(!isFavorite);
-        alert(isFavorite ? "Đã xóa khỏi yêu thích" : "Đã thêm vào yêu thích");
-      } else {
-        console.error("API response error:", response);
-        alert("Có lỗi xảy ra. Vui lòng thử lại.");
-      }
-    } catch (error) {
-      console.error("API call error:", error);
-      alert("Lỗi kết nối. Vui lòng thử lại.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleFavorite = () => {
     if (isGuest) {
       setFavoriteDialog(true);
-    } else {
-      handleToggleFavorite();
     }
   };
 
@@ -275,10 +246,8 @@ export default function DetailsScreen() {
                         <TouchableOpacity onPress={() => handleShare()}>
                           <Image source={LinkIcon} size={24} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => handleFavorite()} disabled={loading}>
-                          {loading ? (
-                              <ActivityIndicator size="small" color="black" />
-                          ) : isFavorite ? (
+                        <TouchableOpacity onPress={() => handleFavorite()}>
+                          {isFavorite ? (
                               <Image source={HeartFullIcon} size={24} />
                           ) : (
                               <Image source={HeartIcon} size={24} />

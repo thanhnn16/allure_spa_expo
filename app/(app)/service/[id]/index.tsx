@@ -1,7 +1,7 @@
 import AppBar from "@/components/app-bar/AppBar";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import {Pressable, ScrollView, Dimensions, ActivityIndicator} from "react-native";
+import { Pressable, ScrollView, Dimensions } from "react-native";
 import {
     AnimatedImage,
     Carousel,
@@ -31,14 +31,19 @@ import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import AppButton from "@/components/buttons/AppButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { toggleFavoriteThunk } from '@/redux/features/favorite/favoritesThunk';
+
 const screenWidth = Dimensions.get("window").width;
 
 const ServiceDetailPage = () => {
     const { id } = useLocalSearchParams();
+    const dispatch = useDispatch<AppDispatch>();
+    const favorites = useSelector((state: RootState) => state.favorite.favorites);
     const [service, setService] = useState<ServiceDetailResponeModel>();
     const [visible, setIsVisible] = useState<boolean>(false);
     const [showActionSheet, setShowActionSheet] = useState<boolean>(false);
-    const [isFavorite, setIsFavorite] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [imageViewIndex, setImageViewIndex] = useState<number>(0);
     const [index, setIndex] = useState<number>(0);
@@ -47,8 +52,6 @@ const ServiceDetailPage = () => {
     const [comboName, setComboName] = useState<string>("");
     const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
     const windowWidth = Dimensions.get("window").width;
-
-    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         const getServiceDetail = async () => {
@@ -82,31 +85,6 @@ const ServiceDetailPage = () => {
                 <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
             </View>
         );
-    };
-
-    const handleToggleFavorite = async () => {
-        setLoading(true);
-
-        try {
-            const response = await AxiosInstance().post('/api/favorites/toggle', {
-                type: 'service',
-                item_id: service?.id,
-            });
-
-            if (response.status === 200) {
-                // Update favorite status after success
-                setIsFavorite(!isFavorite);
-                alert(isFavorite ? "Đã xóa khỏi yêu thích" : "Đã thêm vào yêu thích");
-            } else {
-                console.error("API response error:", response);
-                alert("Có lỗi xảy ra. Vui lòng thử lại.");
-            }
-        } catch (error) {
-            console.error("API call error:", error);
-            alert("Lỗi kết nối. Vui lòng thử lại.");
-        } finally {
-            setLoading(false);
-        }
     };
 
     useMemo(() => {
@@ -180,7 +158,16 @@ const ServiceDetailPage = () => {
     };
 
     const handleBooking = () => {
+        // @ts-ignore
         router.push(`/(app)/booking/${service?.id}`);
+    };
+
+    const isFavorite = favorites.some((fav: { item_id: number | undefined; type: string; }) => fav.item_id === service?.id && fav.type === 'service');
+
+    const handleToggleFavorite = () => {
+        if (service) {
+            dispatch(toggleFavoriteThunk('service', service.id));
+        }
     };
 
     return (
@@ -241,11 +228,8 @@ const ServiceDetailPage = () => {
                                             {price?.toLocaleString("vi-VN")} VNĐ
                                         </Text>
                                         <View flex right>
-                                            <TouchableOpacity onPress={handleToggleFavorite} disabled={loading}>
-                                                {loading ? (
-                                                    // eslint-disable-next-line react/jsx-no-undef
-                                                    <ActivityIndicator size="small" color="black" />
-                                                ) : isFavorite ? (
+                                            <TouchableOpacity onPress={handleToggleFavorite}>
+                                                {isFavorite ? (
                                                     <AntDesign name="heart" size={24} color="black" />
                                                 ) : (
                                                     <AntDesign name="hearto" size={24} color="black" />
@@ -312,7 +296,8 @@ const ServiceDetailPage = () => {
                                             },
                                         },
                                         {
-                                            label: i18n.t("package.commbo5"),
+                                            label: i18n.t("package.combo5"),
+
                                             onPress: () => {
                                                 setCombo(1);
                                             },
@@ -327,8 +312,6 @@ const ServiceDetailPage = () => {
                                 />
                             </ScrollView>
                         </View>
-
-
 
                         <View
                             row
@@ -376,7 +359,6 @@ const ServiceDetailPage = () => {
                                 />
                             </View>
                         </View>
-
                     </View>
                 )}
             </View>

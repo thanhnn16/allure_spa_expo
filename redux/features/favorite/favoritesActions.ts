@@ -1,12 +1,11 @@
-import { createAction } from '@reduxjs/toolkit';
+export const FETCH_FAVORITES = 'favorite/fetchFavorites';
+export const SET_FAVORITES = 'favorite/setFavorites';
+export const FETCH_FAVORITES_BY_TYPE = 'favorite/fetchFavoritesByType';
+export const SET_FAVORITES_BY_TYPE = 'favorite/setFavoritesByType';
+export const TOGGLE_FAVORITE = 'favorite/toggleFavorite';
 
-// @ts-ignore
-export const toggleFavorite = createAction<{
-    type: 'product' | 'service';
-    itemId: number;
-}>('favorites/toggle');
-
-export const fetchFavorites = createAction('favorites/fetchFavorites');
-
-// @ts-ignore
-export const setFavorites = createAction<any>('favorites/setFavorites');
+export const fetchFavorites = () => ({ type: FETCH_FAVORITES });
+export const setFavorites = (favorites: any[]) => ({ type: SET_FAVORITES, payload: favorites });
+export const fetchFavoritesByType = (type: string) => ({ type: FETCH_FAVORITES_BY_TYPE, payload: { type } });
+export const setFavoritesByType = (favorites: any[]) => ({ type: SET_FAVORITES_BY_TYPE, payload: favorites });
+export const toggleFavorite = (type: string, itemId: string) => ({ type: TOGGLE_FAVORITE, payload: { type, itemId } });

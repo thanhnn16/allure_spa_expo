@@ -1,7 +1,7 @@
-import React from 'react'
-import { View, Text, Image, TouchableOpacity, Card } from 'react-native-ui-lib'
-import HeartIcon from '@/assets/icons/heart.svg'
-import StarIcon from '@/assets/icons/star.svg'
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, Card } from 'react-native-ui-lib';
+import HeartIcon from '@/assets/icons/heart.svg';
+import StarIcon from '@/assets/icons/star.svg';
 
 interface FavoriteItemProps {
     id: number;
@@ -50,7 +50,7 @@ const FavoriteItem = ({ item }: { item: FavoriteItemProps }) => {
                 </View>
             </View>
         </Card>
-    )
-}
+    );
+};
 
-export default FavoriteItem
+export default FavoriteItem;
