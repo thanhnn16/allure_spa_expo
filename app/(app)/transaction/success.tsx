@@ -24,6 +24,9 @@ import i18n from "@/languages/i18n";
 import { Rating } from "react-native-ratings";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { createRatingProductThunk } from "@/redux/features/rating/createRatingThunk";
 
 interface Product {
   id: number;
@@ -446,6 +449,7 @@ export default function Success() {
     OrderStatus.DELIVERING
   );
   const [isStatusModalVisible, setStatusModalVisible] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const paymentMethods = [
     {
@@ -466,6 +470,16 @@ export default function Success() {
     setOrderStatus(status);
     setStatusModalVisible(false);
   };
+
+  const sendReview = () => {
+    dispatch(createRatingProductThunk({
+      rating_type: "product",
+      item_id: 0,
+      stars: 5,
+      comment: "string",
+      media_id: 1
+    }));
+  }
   return (
     <GestureHandlerRootView>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -809,6 +823,7 @@ export default function Success() {
                 labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
                 backgroundColor={Colors.primary}
                 borderRadius={10}
+                onPress={() => sendReview()}
               />
             </View>
           </BottomSheetView>

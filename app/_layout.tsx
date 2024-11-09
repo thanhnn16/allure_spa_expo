@@ -73,8 +73,8 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Provider store={store}>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaProvider>
             <LanguageManager>
@@ -82,7 +82,7 @@ export default function RootLayout() {
             </LanguageManager>
           </SafeAreaProvider>
         </PersistGate>
-      </Provider>
     </ErrorBoundary>
+      </Provider>
   );
 }

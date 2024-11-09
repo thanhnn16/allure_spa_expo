@@ -19,10 +19,10 @@ Typography.loadTypographies({
   h2_medium: {fontSize: 18, lineHeight: 24, fontFamily: 'SFProText-Medium'},
   h2_bold: {fontSize: 18, lineHeight: 24, fontFamily: 'SFProText-Bold'},
   h2_semibold: {fontSize: 18, lineHeight: 24, fontFamily: 'SFProText-Semibold'},
-  h3: {fontSize: 14, lineHeight: 22, fontFamily: 'SFProText-Regular'},
-  h3_medium: {fontSize: 14, lineHeight: 22, fontFamily: 'SFProText-Medium'},
-  h3_bold: {fontSize: 14, lineHeight: 22, fontFamily: 'SFProText-Bold'},
-  h3_semibold: {fontSize: 14, lineHeight: 22, fontFamily: 'SFProText-Semibold'},
+  h3: {fontSize: 14, lineHeight: 19, fontFamily: 'SFProText-Regular'},
+  h3_medium: {fontSize: 14, lineHeight: 19, fontFamily: 'SFProText-Medium'},
+  h3_bold: {fontSize: 14, lineHeight: 19, fontFamily: 'SFProText-Bold'},
+  h3_semibold: {fontSize: 14, lineHeight: 19, fontFamily: 'SFProText-Semibold'},
 });
 
 export default Typography;

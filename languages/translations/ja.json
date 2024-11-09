@@ -162,6 +162,7 @@
   "pageTitle": {
     "chat": "チャット",
     "favorite": "お気に入り",
+    "favorite_description": "お気に入りの製品を見つける",
     "cart": "カート",
     "order": "注文",
     "notification": "通知",

@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
 import {
   Text,
@@ -35,6 +35,7 @@ import ProductQuantity from "@/components/product/ProductQuantity";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import RatingStar from "@/components/rating/RatingStar";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 
 interface MediaItem {
@@ -55,6 +56,7 @@ export default function DetailsScreen() {
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const cartButtonRef = useRef<HTMLDivElement>(null);
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -74,9 +76,9 @@ export default function DetailsScreen() {
       }
     } catch (error: any) {
       Alert.alert(
-        i18n.t("auth.login.error"),
-        error.message || i18n.t("auth.login.unknown_error"),
-        [{ text: "OK", onPress: () => router.back() }]
+          i18n.t("auth.login.error"),
+          error.message || i18n.t("auth.login.unknown_error"),
+          [{ text: "OK", onPress: () => router.back() }]
       );
     } finally {
       setIsLoading(false);
@@ -119,24 +121,24 @@ export default function DetailsScreen() {
 
   const ImageViewFooterComponent = () => {
     return (
-      <View marginB-20 padding-20>
-        <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
-      </View>
+        <View marginB-20 padding-20>
+          <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
+        </View>
     );
   };
 
   const createBulletPoints = (lines: string[]) => {
     return lines.map((line, index) => (
-      <View key={index} row>
-        <Text h3>• </Text>
-        <Text h3>{line}</Text>
-      </View>
+        <View key={index} row>
+          <Text h3>• </Text>
+          <Text h3>{line}</Text>
+        </View>
     ));
   };
 
   const shortText = [product?.benefits, product?.product_notes];
   const filteredShortText = shortText.filter(
-    (text): text is string => text !== undefined
+      (text): text is string => text !== undefined
   );
 
   const handleGuestPurchase = () => {
@@ -153,7 +155,7 @@ export default function DetailsScreen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View flex bg-$white>
-        <AppBar back title="Chi tiết sản phẩm" />
+        <AppBar back rightComponent title="Chi tiết sản phẩm"/>
         <View flex>
           <ScrollView showsVerticalScrollIndicator={false}>
             {isLoading ? (
@@ -236,10 +238,7 @@ export default function DetailsScreen() {
                 <View row marginB-10>
                   <Image source={TagIcon} size={24} />
                   <Text h2_medium secondary marginL-5>
-                    {product?.price
-                      ? Number(product.price).toLocaleString("vi-VN")
-                      : "0"}{" "}
-                    VNĐ
+                    {formatCurrency({ price: Number(product?.price) })}
                   </Text>
 
                   <View flex centerV row gap-15 right>
@@ -258,73 +257,163 @@ export default function DetailsScreen() {
 
                 <View row centerV>
                   <View
-                    row gap-5
+                      style={{
+                        width: "90%",
+                        height: 200,
+                        borderRadius: 20,
+                        overflow: "hidden",
+                        marginTop: 10,
+                        alignSelf: "center",
+                      }}
                   >
-                    <RatingStar rating={4.5} />
-                    <Text h3_medium>4.5</Text>
+                    <Carousel
+                        onChangePage={(index: number) => setIndex(index)}
+                        pageControlPosition={PageControlPosition.OVER}
+                        pageControlProps={{
+                          size: 10,
+                          color: "#ffffff",
+                          inactiveColor: "#c4c4c4",
+                        }}
+                    >
+                      {images.map((item, index) => (
+                          <Pressable
+                              onPress={() => handleOpenImage(index)}
+                              key={index}
+                          >
+                            <AnimatedImage
+                                animationDuration={1000}
+                                source={{ uri: item.uri }}
+                                aspectRatio={16 / 9}
+                                cover
+                                key={index}
+                            />
+                          </Pressable>
+                      ))}
+                    </Carousel>
                   </View>
-                  <View flex row right>
-                    <Text h3_medium>
-                      {" "}
-                      +99 {i18n.t("productDetail.purchases")}
-                    </Text>
-                  </View>
-                </View>
-
-                <View row paddingR-20>
-                  <View>
-                    <Image source={SunIcon} size={24} />
-                  </View>
-                  <View>{createBulletPoints(filteredShortText)}</View>
-                </View>
-              </View>
-            )}
-
-            <View marginT-10 marginH-20 paddingR-10>
-              {isLoading ? (
-                <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
-              ) : (
-                <Text h2_medium>
-                  {i18n.t("productDetail.product_description")}
-                </Text>
               )}
-              <ProductDescription product={product} isLoading={isLoading} />
-            </View>
-            <ProductQuantity
-              isLoading={isLoading}
-              quantity={quantity}
-              setQuantity={setQuantity}
-            />
-          </ScrollView>
-          <ProductBottomComponent
-            isLoading={isLoading}
-            product={product}
-            onPurchase={isGuest ? handleGuestPurchase : undefined}
-            quantity={quantity}
-          />
+              <ImageView
+                  images={images}
+                  imageIndex={0}
+                  visible={visible}
+                  onRequestClose={() => setIsVisible(false)}
+                  onImageIndexChange={(index) => setImageViewIndex(index)}
+                  key={index}
+                  swipeToCloseEnabled={true}
+                  doubleTapToZoomEnabled={true}
+                  FooterComponent={ImageViewFooterComponent}
+              />
+              {isLoading ? (
+                  <View padding-20 gap-10>
+                    <SkeletonView height={24} width={windowWidth * 0.7} />
+                    <SkeletonView
+                        height={20}
+                        width={windowWidth * 0.4}
+                        marginT-10
+                    />
+                    <SkeletonView
+                        height={20}
+                        width={windowWidth * 0.6}
+                        marginT-10
+                    />
+                  </View>
+              ) : (
+                  <View padding-20 gap-10>
+                    <Text h2_bold marginB-10>
+                      {product?.name}
+                    </Text>
+                    <View row marginB-10>
+                      <Image source={TagIcon} size={24} />
+                      <Text h2_medium secondary marginL-5>
+                        {product?.price
+                            ? Number(product.price).toLocaleString("vi-VN")
+                            : "0"}{" "}
+                        VNĐ
+                      </Text>
 
-          <AppDialog
-            visible={buyProductDialog}
-            title={i18n.t("auth.login.login_required")}
-            description={i18n.t("auth.login.login_buy_product")}
-            closeButtonLabel={i18n.t("common.cancel")}
-            confirmButtonLabel={i18n.t("auth.login.login_now")}
-            severity="info"
-            onClose={() => setBuyProductDialog(false)}
-            onConfirm={handleLoginConfirm}
-          />
-          <AppDialog
-            visible={favoriteDialog}
-            title={i18n.t("auth.login.login_required")}
-            description={i18n.t("auth.login.login_favorite")}
-            closeButtonLabel={i18n.t("common.cancel")}
-            confirmButtonLabel={i18n.t("auth.login.login_now")}
-            severity="info"
-            onClose={() => setFavoriteDialog(false)}
-            onConfirm={handleLoginConfirm}
-          />
+                      <View flex centerV row gap-15 right>
+                        <TouchableOpacity onPress={() => handleShare()}>
+                          <Image source={LinkIcon} size={24} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleFavorite()}>
+                          {isFavorite ? (
+                              <Image source={HeartFullIcon} size={24} />
+                          ) : (
+                              <Image source={HeartIcon} size={24} />
+                          )}
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+
+                    <View row centerV>
+                      <View
+                          row gap-5
+                      >
+                        <RatingStar rating={4.5} />
+                        <Text h3_medium>4.5</Text>
+                      </View>
+                      <View flex row right>
+                        <Text h3_medium>
+                          {" "}
+                          +99 {i18n.t("productDetail.purchases")}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View row paddingR-20>
+                      <View>
+                        <Image source={SunIcon} size={24} />
+                      </View>
+                      <View>{createBulletPoints(filteredShortText)}</View>
+                    </View>
+                  </View>
+              )}
+
+              <View marginT-10 marginH-20 paddingR-10>
+                {isLoading ? (
+                    <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
+                ) : (
+                    <Text h2_medium>
+                      {i18n.t("productDetail.product_description")}
+                    </Text>
+                )}
+                <ProductDescription product={product} isLoading={isLoading} />
+              </View>
+              <ProductQuantity
+                  isLoading={isLoading}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
+              />
+            </ScrollView>
+            <ProductBottomComponent
+                isLoading={isLoading}
+                product={product}
+                onPurchase={isGuest ? handleGuestPurchase : undefined}
+                quantity={quantity}
+            />
+
+            <AppDialog
+                visible={buyProductDialog}
+                title={i18n.t("auth.login.login_required")}
+                description={i18n.t("auth.login.login_buy_product")}
+                closeButtonLabel={i18n.t("common.cancel")}
+                confirmButtonLabel={i18n.t("auth.login.login_now")}
+                severity="info"
+                onClose={() => setBuyProductDialog(false)}
+                onConfirm={handleLoginConfirm}
+            />
+            <AppDialog
+                visible={favoriteDialog}
+                title={i18n.t("auth.login.login_required")}
+                description={i18n.t("auth.login.login_favorite")}
+                closeButtonLabel={i18n.t("common.cancel")}
+                confirmButtonLabel={i18n.t("auth.login.login_now")}
+                severity="info"
+                onClose={() => setFavoriteDialog(false)}
+                onConfirm={handleLoginConfirm}
+            />
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
   );
 }

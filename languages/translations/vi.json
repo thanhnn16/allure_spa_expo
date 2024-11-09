@@ -68,6 +68,7 @@
     "pageTitle": {
       "chat": "Tin nhắn",
       "favorite": "Yêu thích",
+      "favorite_description": "Danh sách sản phẩm yêu thích",
       "cart": "Giỏ hàng",
       "order": "Đơn hàng",
       "notification": "Thông báo",
