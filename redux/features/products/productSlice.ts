@@ -2,12 +2,14 @@ import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/to
 import { Product } from "@/types/product.type";
 import { getProductThunk } from "./productThunk";
 import { getAllProductsThunk } from "./getAllProductsThunk";
+import {toggleFavoriteThunk} from "@/redux/features/favorite/favoritesThunk";
 
 interface ProductState {
   product: Product | null;
   products: Product[];
   isLoading: boolean;
   error: string | null;
+  status: string | null;
 }
 
 const initialState: ProductState = {
@@ -50,7 +52,18 @@ export const productSlice = createSlice({
       .addCase(getAllProductsThunk.rejected, (state: ProductState, action: any) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to fetch products";
-      });
+      })
+        .addCase(toggleFavoriteThunk.pending, (state: ProductState) => {
+            state.isLoading = true;
+        })
+        .addCase(toggleFavoriteThunk.fulfilled, (state: ProductState, action: any) => {
+            state.isLoading = false;
+            state.status = action.payload;
+        })
+        .addCase(toggleFavoriteThunk.rejected, (state: ProductState, action: any) => {
+            state.isLoading = false;
+            state.error = action.payload || "Failed to toggle favorite";
+        });
   },
 });
 
