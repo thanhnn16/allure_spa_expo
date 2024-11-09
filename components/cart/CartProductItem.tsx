@@ -1,11 +1,15 @@
-import { Text, View, Image, TouchableOpacity, Button } from 'react-native-ui-lib'
-import { StyleSheet } from 'react-native'
+import { Text, View, Image, TouchableOpacity, Button, Checkbox } from 'react-native-ui-lib'
+import { Dimensions, StyleSheet } from 'react-native'
 import React from 'react'
 import { CartItem, incrementCartItem, decrementCartItem, removeCartItem } from '@/redux/features/cart/cartSlice';
 import { useDispatch } from 'react-redux';
+import { Swipeable } from 'react-native-gesture-handler';
+import formatCurrency from '@/utils/price/formatCurrency';
 
-const CartProductItem = ( product: CartItem ) => {
+const CartProductItem = (product: CartItem) => {
     const dispatch = useDispatch();
+    const windowWidth = Dimensions.get("window").width;
+
     const handleIncreaseQuantity = (id: number) => {
         dispatch(incrementCartItem(id));
     };
@@ -21,58 +25,86 @@ const CartProductItem = ( product: CartItem ) => {
             ? { uri: product.media[0].full_url }
             : require("@/assets/images/home/product1.png");
 
-    const formattedPrice = new Intl.NumberFormat("vi-VN", {
-        style: "currency",
-        currency: "VND",
-    }).format(parseFloat(product.price));
+
+    const total = parseFloat(product.price) * product.quantity;
+
+    const renderRightActions = () => {
+        return (
+            <View style={styles.rightActionContainer}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => handleDelete(product.id)}>
+                    <Text style={styles.actionText}>Delete</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
 
     return (
-        <View row centerV marginB-10>
-            <View style={styles.imageContainer}>
-                <Image source={productImage} style={styles.productImage} />
-            </View>
-            <View marginL-16>
-                <View width={'80%'}>
-                    <Text h3_bold>{product.name}</Text>
-                </View>
-                <View>
-                    <Text h3_bold secondary>{formattedPrice}</Text>
-                </View>
-                <View>
-                    <View gap-13 style={styles.quantityContainer}>
-                        <View style={styles.quantityButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.quantityButton}
-                                onPress={() => {
-                                    handleDecreaseQuantity(product.id);
-                                }}
-                            >
-                                <Text h2_medium>-</Text>
-                            </TouchableOpacity>
+        <Swipeable renderRightActions={renderRightActions}>
+            <View marginB-10>
+                <View
+                    row centerV
+                    style={{
+                        backgroundColor: '#fff',
+                        borderTopStartRadius: 13,
+                        borderTopEndRadius: 13,
+                        padding: 10,
+                        borderWidth: 1,
+                        borderColor: '#rgba(113, 118, 88, 0.2)',
+                    }}
+                >
+                    <View style={styles.imageContainer}>
+                        <Image source={productImage} style={styles.productImage} />
+                    </View>
+                    <View marginL-16>
+                        <View width={windowWidth * 0.55}>
+                            <Text h3_bold>{product.name}</Text>
                         </View>
-                        <Text h2>{product.quantity}</Text>
-                        <View style={styles.quantityButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.quantityButton}
-                                onPress={() => {
-                                    handleIncreaseQuantity(product.id);
-                                }}
-                            >
-                                <Text h2_medium>+</Text>
-                            </TouchableOpacity>
+                        <View>
+                            <Text h3_bold secondary>{formatCurrency({ price: Number(product?.price) })}</Text>
+                        </View>
+                        <View>
+                            <View gap-13 style={styles.quantityContainer}>
+                                <View style={styles.quantityButtonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.quantityButton}
+                                        onPress={() => {
+                                            handleDecreaseQuantity(product.id);
+                                        }}
+                                    >
+                                        <Text h2_medium>-</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Text h2>{product.quantity}</Text>
+                                <View style={styles.quantityButtonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.quantityButton}
+                                        onPress={() => {
+                                            handleIncreaseQuantity(product.id);
+                                        }}
+                                    >
+                                        <Text h2_medium>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
                         </View>
                     </View>
                 </View>
+                <View
+                    row
+                    style={{
+                        justifyContent: 'space-between',
+                        borderBottomStartRadius: 13,
+                        borderBottomEndRadius: 13,
+                        backgroundColor: '#rgba(113, 118, 88, 0.2)',
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                    }}
+                >
+                    <Text h3_bold>Tổng tiền:</Text>
+                    <Text h3_bold secondary>{formatCurrency({ price: total })}</Text>
+                </View>
             </View>
-            <View style={styles.deleteButton}>
-                <Button
-                    iconSource={require('@/assets/images/home/icons/delete.png')}
-                    onPress={() => handleDelete(product.id)}
-                    link
-                    iconStyle={{ tintColor: 'black' }}
-                />
-            </View>
-        </View>
+        </Swipeable>
     )
 }
 
@@ -108,10 +140,9 @@ const styles = StyleSheet.create({
     },
     quantityButtonContainer: {
         borderWidth: 1,
-        backgroundColor: '#E0E0E0',
-        borderColor: '#E0E0E0',
+        backgroundColor: '#rgba(113, 118, 88, 0.2)',
+        borderColor: '#rgba(113, 118, 88, 0.2)',
         borderRadius: 10,
-        marginHorizontal: 5,
         width: 30,
         height: 30,
         justifyContent: 'center',
@@ -125,7 +156,26 @@ const styles = StyleSheet.create({
     },
     deleteButton: {
         position: 'absolute',
-        right: 5,
-        top: 5,
-    }
+        right: 7,
+        top: 10,
+    },
+    rightActionContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 75,
+        backgroundColor: 'red',
+        marginBottom: 10,
+        borderTopEndRadius: 13,
+        borderBottomEndRadius: 13,
+    },
+    actionButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
+    },
+    actionText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
 })

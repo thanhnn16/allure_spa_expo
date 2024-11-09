@@ -3,14 +3,29 @@ import { View, Text } from "react-native-ui-lib";
 import RatingBar from "@/components/rating/RatingBar";
 import RatingItem from "./RatingItem";
 import { FlatList, SafeAreaView } from "react-native";
-import { data } from "./data";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 
 import RatingStar from "@/components/rating/RatingStar";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useEffect, useState } from "react";
+import { getAllRatingProductThunk } from "@/redux/features/rating/getAllRatingProductThunk";
+
 
 const RatingPage = () => {
   const { id } = useLocalSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(false);
+  const [images, setImages] = useState<any[]>([]);
+
+  const { ratings, isLoading: RatingLoading } = useSelector(
+    (state: RootState) => state.rating
+  );
+  useEffect(() => {
+    dispatch(getAllRatingProductThunk({ id: id }));
+    console.log("Rating:", ratings);
+  }, [dispatch]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -40,7 +55,7 @@ const RatingPage = () => {
 
         <View style={{ flex: 1 }}>
           <FlatList
-            data={data}
+            data={ratings}
             renderItem={({ item }) => <RatingItem item={item} />}
             contentContainerStyle={{ gap: 10 }}
             ListFooterComponent={<View height={90} />}

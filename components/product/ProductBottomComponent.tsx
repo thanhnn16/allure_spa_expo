@@ -16,7 +16,7 @@ import CommentIcon from "@/assets/icons/comment.svg";
 import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
 import { Dimensions } from "react-native";
 import { useDispatch } from "react-redux";
-import { addItemToCart, CartItem } from "@/redux/features/cart/cartSlice";
+import { addItemToCart } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
 import { useState } from "react";
 
@@ -73,7 +73,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   if (isLoading) {
     return (
       <View padding-24>
-        <SkeletonView height={50} width={windowWidth * 0.8} />
+        <SkeletonView height={50} width={windowWidth * 0.85} />
       </View>
     );
   }
@@ -120,8 +120,20 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         autoDismiss={1500}
         onDismiss={() => setToastIsVisible(false)}
       >
-        <View bg-$backgroundSuccessLight flex padding-10>
+        <View 
+          style={{
+            backgroundColor: "#f6f6f6",
+            padding: 20,
+            borderTopStartRadius: 30,
+            borderTopEndRadius: 30,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
           <Text h3_medium>Thêm giỏ hàng thành công</Text>
+          <TouchableOpacity onPress={() => router.push("/(app)/cart")}>
+            <Text h3_medium color={Colors.primary}>Xem giỏ hàng</Text>
+          </TouchableOpacity>
         </View>
       </Incubator.Toast>
     </View>

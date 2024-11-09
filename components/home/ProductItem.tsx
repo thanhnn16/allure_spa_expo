@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import StarIcon from "@/assets/icons/star.svg";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 interface RenderProductItemProps {
   item: any;
@@ -18,8 +19,6 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
     item.media && item.media.length > 0
       ? { uri: item.media[0].full_url }
       : require("@/assets/images/home/product1.png");
-
-  const formattedPrice = formatPrice(parseFloat(item.price));
 
   return (
     <TouchableOpacity
@@ -58,7 +57,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
 
         <View bottom paddingB-5>
           <Text text70H style={{ color: "#A85A29" }}>
-            {formattedPrice}
+            {formatCurrency({ price: item.price })}
           </Text>
         </View>
       </View>

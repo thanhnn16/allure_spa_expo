@@ -12,6 +12,7 @@ import cartReducer from "./features/cart/cartSlice";
 import chatReducer from './features/chat/chatSlice';
 import userReducer from "./features/users/userSlice";
 import aiReducer from './features/ai/aiSlice';
+import ratingReducer from './features/rating/ratingSlice';
 import favoriteReducer from './features/favorite/favoritesReducer';
 
 
@@ -34,6 +35,7 @@ const rootReducer: any = combineReducers({
     cart: cartReducer,
     chat: chatReducer,
     ai: aiReducer,
+    rating: ratingReducer,
     favorite: favoriteReducer,
 })
 

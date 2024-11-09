@@ -22,7 +22,7 @@ const ProductDescriptionColapable = ({ headerText, childrenText, keyText }: Prod
         <View marginV-5>
             <ExpandableSection
                 expanded={expanded}
-                minHeight={60}
+                minHeight={55}
                 onPress={() => setExpanded(!expanded)}
             >
                 {childrenText.length > 80 ?

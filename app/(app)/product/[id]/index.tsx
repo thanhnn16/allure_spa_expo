@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
 import {
   Text,
@@ -35,6 +35,7 @@ import ProductQuantity from "@/components/product/ProductQuantity";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import RatingStar from "@/components/rating/RatingStar";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 
 interface MediaItem {
@@ -55,6 +56,7 @@ export default function DetailsScreen() {
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const cartButtonRef = useRef<HTMLDivElement>(null);
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -151,22 +153,109 @@ export default function DetailsScreen() {
   };
 
   return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View flex bg-$white>
-          <AppBar back title="Chi tiết sản phẩm" />
-          <View flex>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {isLoading ? (
-                  <SkeletonView
-                      height={200}
-                      width={windowWidth * 0.9}
-                      style={{
-                        borderRadius: 20,
-                        alignSelf: "center",
-                        marginTop: 10,
-                      }}
-                  />
-              ) : (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View flex bg-$white>
+        <AppBar back rightComponent title="Chi tiết sản phẩm"/>
+        <View flex>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {isLoading ? (
+              <SkeletonView
+                height={200}
+                width={windowWidth * 0.9}
+                style={{
+                  borderRadius: 20,
+                  alignSelf: "center",
+                  marginTop: 10,
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: "90%",
+                  height: 200,
+                  borderRadius: 20,
+                  overflow: "hidden",
+                  marginTop: 10,
+                  alignSelf: "center",
+                }}
+              >
+                <Carousel
+                  onChangePage={(index: number) => setIndex(index)}
+                  pageControlPosition={PageControlPosition.OVER}
+                  pageControlProps={{
+                    size: 10,
+                    color: "#ffffff",
+                    inactiveColor: "#c4c4c4",
+                  }}
+                >
+                  {images.map((item, index) => (
+                    <Pressable
+                      onPress={() => handleOpenImage(index)}
+                      key={index}
+                    >
+                      <AnimatedImage
+                        animationDuration={1000}
+                        source={{ uri: item.uri }}
+                        aspectRatio={16 / 9}
+                        cover
+                        key={index}
+                      />
+                    </Pressable>
+                  ))}
+                </Carousel>
+              </View>
+            )}
+            <ImageView
+              images={images}
+              imageIndex={0}
+              visible={visible}
+              onRequestClose={() => setIsVisible(false)}
+              onImageIndexChange={(index) => setImageViewIndex(index)}
+              key={index}
+              swipeToCloseEnabled={true}
+              doubleTapToZoomEnabled={true}
+              FooterComponent={ImageViewFooterComponent}
+            />
+            {isLoading ? (
+              <View padding-20 gap-10>
+                <SkeletonView height={24} width={windowWidth * 0.7} />
+                <SkeletonView
+                  height={20}
+                  width={windowWidth * 0.4}
+                  marginT-10
+                />
+                <SkeletonView
+                  height={20}
+                  width={windowWidth * 0.6}
+                  marginT-10
+                />
+              </View>
+            ) : (
+              <View padding-20 gap-10>
+                <Text h2_bold marginB-10>
+                  {product?.name}
+                </Text>
+                <View row marginB-10>
+                  <Image source={TagIcon} size={24} />
+                  <Text h2_medium secondary marginL-5>
+                    {formatCurrency({ price: Number(product?.price) })}
+                  </Text>
+
+                  <View flex centerV row gap-15 right>
+                    <TouchableOpacity onPress={() => handleShare()}>
+                      <Image source={LinkIcon} size={24} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleFavorite()}>
+                      {isFavorite ? (
+                        <Image source={HeartFullIcon} size={24} />
+                      ) : (
+                        <Image source={HeartIcon} size={24} />
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                <View row centerV>
                   <View
                       style={{
                         width: "90%",
