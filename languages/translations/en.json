@@ -248,7 +248,15 @@
     "continue": "Continue",
     "plase_select_date": "Please select a date!",
     "plase_select_time": "Please select a time!",
-    "appointment_successful": "Appointment successful!"
+    "appointment_successful": "Appointment successful!",
+    "confirm_information": "Confirm information",
+    "customer_name": "Customer name",
+    "service_name": "Service Name",
+    "time": "Time",
+    "date": "Date",
+    "agree": "Agree",
+    "cancel": "Cancel",
+    "no_notes": "No notes"
   },
   "system": {
     "fud": "Feature under development!"

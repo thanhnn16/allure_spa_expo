@@ -337,7 +337,16 @@
     "book": "Book",
     "plase_select_date": "Vui lòng chọn ngày!",
     "plase_select_time": "Vui lòng chọn giờ!",
-    "appointment_successful": "Đặt lịch thành công!"
+    "appointment_successful": "Đặt lịch thành công!",
+    "confirm_information": "Xác nhận thông tin",
+    "customer_name": "Tên khách hàng",
+    "service_name": "Tên dịch vụ",
+    "time": "Thời gian",
+    "date": "Ngày",
+    "agree": "Đồng ý",
+    "cancel": "Huỷ",
+    "no_notes": "Không có ghi chú"
+
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",

@@ -19,6 +19,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { User } from "@/types/user.type";
+import Octicons from '@expo/vector-icons/Octicons';
 
 const BookingPage = () => {
   const user: User = useSelector((state: RootState) => state.auth.user);
@@ -266,31 +267,34 @@ const BookingPage = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <View flex gap-12>
-              <Text h1_bold center>Xác nhận thông tin</Text>
+              <Text h1_bold center>{i18n.t("service.confirm_information")}</Text>
+              <View center>
+                <Octicons name="checklist" size={44} color="#717658" />
+              </View>
               <View gap-5>
-                <Text h2>Tên khách hàng:
+                <Text h2>{i18n.t("service.customer_name")}:
                   <Text h2_bold> {user.full_name}</Text>
                 </Text>
-                <Text h2>Dịch vụ:
+                <Text h2>{i18n.t("service.service_name")}:
                   <Text h2_bold> {service_name}</Text>
                 </Text>
-                <Text h2>Thời gian:
+                <Text h2>{i18n.t("service.time")}:
                   <Text h2_bold> {timeString}</Text>
                 </Text>
-                <Text h2>Ngày: <Text h2_bold> {moment(selectedDate).format("DD/MM/YYYY")}</Text></Text>
-                <Text h2>Ghi chú: <Text h2_bold> {note}</Text></Text>
+                <Text h2>{i18n.t("service.date")}: <Text h2_bold> {moment(selectedDate).format("DD/MM/YYYY")}</Text></Text>
+                <Text h2>{i18n.t("service.note")}: <Text h2_bold> {note === "" ? i18n.t("service.no_notes") : note}</Text></Text>
               </View>
             </View>
             <View gap-12 marginT-20>
               <AppButton
-                title={'Đồng ý'}
+                title={i18n.t("service.agree")}
                 type="primary"
                 onPress={() => {
                   handleBooking();
                 }}
               />
               <AppButton
-                title={'Huỷ'}
+                title={i18n.t("service.cancel")}
                 type="outline"
                 onPress={() => {
                   setShowModal(false)
