@@ -12,6 +12,7 @@ import cartReducer from "./features/cart/cartSlice";
 import chatReducer from './features/chat/chatSlice';
 import userReducer from "./features/users/userSlice";
 import aiReducer from './features/ai/aiSlice';
+import ratingReducer from './features/rating/ratingSlice';
 
 
 const persistConfig = {
@@ -32,7 +33,8 @@ const rootReducer: any = combineReducers({
     search: searchReducer,
     cart: cartReducer,
     chat: chatReducer,
-    ai: aiReducer
+    ai: aiReducer,
+    rating: ratingReducer,
 })
 
 

@@ -123,7 +123,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         <View 
           style={{
             backgroundColor: "#f6f6f6",
-            padding: 15,
+            padding: 20,
             borderTopStartRadius: 30,
             borderTopEndRadius: 30,
             flexDirection: "row",
