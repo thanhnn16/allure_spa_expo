@@ -2,14 +2,16 @@ import {Image, Text, TouchableOpacity, View} from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
 import { useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
-import React, {useState, useEffect} from "react"; // Add useEffect
+import React, { useState, useEffect } from "react";
+import { useWindowDimensions } from "react-native";
 import AppButton from "@/components/buttons/AppButton";
-import {SafeAreaView, ScrollView, TextInput, Alert} from "react-native";
-import AxiosInstance from "@/utils/services/helper/AxiosInstance";
+import { SafeAreaView, ScrollView, TextInput, Alert } from "react-native";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance from "@/utils/services/helper/axiosInstance";
 
 export const addAddress = async (data: AddressRequest, token: string) => {
-    return AxiosInstance().post('/user/addresses', data, {  // Remove duplicate 'api' prefix
+    return axiosInstance().post('/user/addresses', data, {  // Sửa lại tên import để khớp với tên file
         headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -22,9 +24,10 @@ export interface AddressRequest {
   province: string; 
   district: string;
   address: string;
-  address_type: 'home' | 'company' | 'other';
+  address_type: 'home' | 'work' | 'others';
   is_default: boolean;
   is_temporary: boolean;
+  note?: string;
 }
 
 // Update interface to match actual API response
@@ -33,39 +36,69 @@ interface UserResponse {
     status_code: number;
     success: boolean;
     data: {
+        id: string;
         phone_number: string;
         full_name: string;
     }
 }
 
 // Fix API endpoint functions
-const getUserInfo = async (token: string): Promise<UserResponse> => {
+const getUserInfo = async () => {
     try {
-        // Add prefix Bearer to token
-        const bearerToken = token.startsWith('Bearer') ? token : `Bearer ${token}`;
-        console.log('Calling API with token:', bearerToken);
+        const token = await AsyncStorage.getItem('userToken');
+        
+        if (!token) {
+            throw new Error('Token not found');
+        }
 
-        // Fix: Remove duplicate 'api' prefix
-        const response = await AxiosInstance().get<UserResponse>('/user/info', {
+        const response = await AxiosInstance().get('/api/user/info', {
             headers: {
-                'Authorization': bearerToken,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
             }
         });
 
-        console.log('User API Response:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('API Error:', error);
+        console.log('User Response:', response.data);
+
+        if (response.data?.success) {
+            return response.data;
+        }
+        
+        throw new Error('Invalid response format');
+
+    } catch (error: any) {
+        console.error('Error getting user info:', error);
         throw error;
     }
 };
 
+// Tách TextInput component ra ngoài function component chính
+const AddressInput = ({ value, placeholder, onChangeText, editable = true }: { value: string; placeholder: string; onChangeText: (text: string) => void; editable?: boolean }) => (
+  <TextInput
+    value={value}
+    placeholder={placeholder}
+    onChangeText={onChangeText}
+    editable={editable}
+    style={{ 
+      fontSize: 14, 
+      color: "#555555", 
+      height: 55, 
+      width: "100%", 
+      paddingHorizontal: 20,
+      backgroundColor: editable ? '#ffffff' : '#f5f5f5'
+    }}
+  />
+);
+
+// Thêm interface cho loại địa chỉ
+type AddressType = 'home' | 'work' | 'others';
+
 const Add = () => {
     const navigation = useNavigation();
-    const [selectedItem, setSelectedItem] = useState<number | null>(null);
+    const window = useWindowDimensions();
+    const [selectedItem, setSelectedItem] = useState<number | null>(1);
     const [loading, setLoading] = useState(false);
+    const [selectedAddressType, setSelectedAddressType] = useState<AddressType>('home');
     const [formData, setFormData] = useState({
         province: '',
         district: '', 
@@ -74,35 +107,28 @@ const Add = () => {
         phone: '',
         note: '',
         is_default: false,
-        is_temporary: false
+        is_temporary: false,
+        user_id: ''
     });
 
     useEffect(() => {
         const loadUserData = async () => {
             try {
-                const token = await AsyncStorage.getItem('userToken');
-                console.log('Token from storage:', token);
-
-                if (!token) {
-                    Alert.alert('Error', 'Please login first');
-                    return;
-                }
-
-                const userData = await getUserInfo(token);
-                console.log('User data:', userData);
-
-                if (userData?.data) {  // Remove one level of nesting
+                const userProfileStr = await AsyncStorage.getItem('userProfile');
+                if (userProfileStr) {
+                    const userProfile = JSON.parse(userProfileStr);
                     setFormData(prev => ({
                         ...prev,
-                        name: userData.data.full_name,
-                        phone: userData.data.phone_number
+                        name: userProfile.full_name || '',
+                        phone: userProfile.phone_number || '',
+                        user_id: userProfile.id || ''
                     }));
                 }
             } catch (error) {
-                console.error('Error loading user:', error);
+                console.error('Error loading user data:', error);
                 Alert.alert(
-                    'Error',
-                    'Could not load user information. Please try again.'
+                    'Lỗi',
+                    'Không thể tải thông tin người dùng. Vui lòng thử lại sau.'
                 );
             }
         };
@@ -114,175 +140,245 @@ const Add = () => {
         setFormData(prev => ({...prev, [field]: value}));
     };
 
-    const getAddressType = (id: number | null) => {
+    // Sửa lại hàm getAddressType
+    const getAddressType = (id: number | null): AddressType => {
         switch(id) {
             case 1: return 'home';
-            case 2: return 'company';
-            case 3: return 'other';
+            case 2: return 'work';
+            case 3: return 'others';
             default: return 'home';
         }
     };
 
+    // Trong hàm handleSubmit, thêm xử lý lỗi chi tiết hơn
     const handleSubmit = async () => {
         try {
             setLoading(true);
-            const [userIdValue, tokenValue] = await AsyncStorage.multiGet(['userId', 'userToken']);
-            const userId = userIdValue[1];
-            const token = tokenValue[1];
+            const token = await AsyncStorage.getItem('userToken');
             
-            if (!userId || !token) {
-                Alert.alert('Error', 'Please login to add address');
+            if (!token) {
+                Alert.alert('Lỗi', 'Vui lòng đăng nhập để thêm địa chỉ');
                 return;
             }
 
             const payload: AddressRequest = {
-                user_id: userId,
+                user_id: formData.user_id,
                 province: formData.province,
                 district: formData.district,
                 address: formData.address,
-                address_type: getAddressType(selectedItem),
+                address_type: selectedAddressType,
                 is_default: formData.is_default,
-                is_temporary: formData.is_temporary
+                is_temporary: formData.is_temporary,
+                note: formData.note
             };
 
             const response = await addAddress(payload, token);
             
             if (response.status === 200 || response.status === 201) {
-                Alert.alert('Success', 'Address added successfully');
-                navigation.goBack();
+                Alert.alert('Thành công', 'Thêm địa chỉ thành công', [
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            // Reset form data
+                            setFormData({
+                                province: '',
+                                district: '', 
+                                address: '',
+                                name: formData.name, // Giữ lại thông tin người dùng
+                                phone: formData.phone,
+                                note: '',
+                                is_default: false,
+                                is_temporary: false,
+                                user_id: formData.user_id
+                            });
+                            // Reset loại địa chỉ về mặc định
+                            setSelectedItem(1);
+                            setSelectedAddressType('home');
+
+                            navigation.goBack();
+                        }
+                    }
+                ]);
             }
         } catch (error: any) {
-            console.error('Failed to add address:', error);
+            console.error('Lỗi khi thêm địa chỉ:', error);
             Alert.alert(
-                'Error',
-                error.response?.data?.message || 'Failed to add address'
+                'Lỗi',
+                error.response?.data?.message || 'Không thể thêm địa chỉ'
             );
         } finally {
             setLoading(false);
         }
     };
 
+    // Cập nhật lại mảng items
     const items = [
-        { id: 1, name: i18n.t("address.home") },
-        { id: 2, name: i18n.t("address.company") },
-        { id: 3, name: i18n.t("address.other") },
+        { id: 1, name: i18n.t("address.home"), type: 'home' as AddressType },
+        { id: 2, name: i18n.t("address.work"), type: 'work' as AddressType },
+        { id: 3, name: i18n.t("address.others"), type: 'others' as AddressType }
     ];
 
-    const renderItem = (item: { id: number; name: string }, index: number) => {
-        const isSelected = item.id === selectedItem;
-        return (
-            <TouchableOpacity key={item.id} onPress={() => setSelectedItem(item.id)}>
-                <View style={[styles.itemContainer, isSelected ? styles.selectedItem : styles.unselectedItem]}>
-                    <Text style={[styles.itemText, isSelected ? styles.selectedItemText : styles.unselectedItemText]}>
-                        {item.name}
-                    </Text>
-                </View>
-            </TouchableOpacity>
-        );
-    };
-
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#F4F4F4" }}>
-        <View flex marginT-20>
-            <View row centerV  bg-white>
-                <TouchableOpacity
-                    onPress={() => {
-                        navigation.goBack();
-                        console.log("Back");
-                    }}
-                >
-                    <Image width={30} height={30} source={BackButton} />
-                </TouchableOpacity>
-                <View flex center>
-                    <Text text60 bold marginR-30 style={{ color: "#717658" }}>
-                        {i18n.t("address.add_new_address")}
-                    </Text>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#F5F7FA" }}>
+            <View flex>
+                <View row centerV backgroundColor="#ffffff" padding-15 
+                    style={{
+                        shadowColor: "#000",
+                        shadowOffset: {width: 0, height: 2},
+                        shadowOpacity: 0.1,
+                        shadowRadius: 3,
+                        elevation: 3,
+                    }}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Image width={30} height={30} source={BackButton} />
+                    </TouchableOpacity>
+                    <View flex center>
+                        <Text text60 bold marginR-30 style={{color: "#717658", fontSize: 18}}>
+                            {i18n.t("address.add_new_address")}
+                        </Text>
+                    </View>
+                </View>
+
+                <ScrollView style={{ flex: 1, padding: 15 }}>
+                    <View style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: 12,
+                        padding: 15,
+                        marginBottom: 15,
+                        shadowColor: "#000",
+                        shadowOffset: {width: 0, height: 1},
+                        shadowOpacity: 0.1,
+                        shadowRadius: 2,
+                        elevation: 3,
+                    }}>
+                        <Text style={{color: '#717658', fontWeight: '600', marginBottom: 10}}>
+                            {i18n.t("auth.login.personal_info")}
+                        </Text>
+                        <AddressInput
+                            value={formData.name}
+                            placeholder={i18n.t("auth.login.fullname")}
+                            onChangeText={() => {}}
+                            editable={false}
+                        />
+                        <AddressInput
+                            value={formData.phone}
+                            placeholder={i18n.t("address.phone")}
+                            onChangeText={(value) => handleChange('phone', value)}
+                        />
+                    </View>
+
+                    <View style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: 12,
+                        padding: 15,
+                        marginBottom: 15,
+                        shadowColor: "#000",
+                        shadowOffset: {width: 0, height: 1},
+                        shadowOpacity: 0.1,
+                        shadowRadius: 2,
+                        elevation: 3,
+                    }}>
+                        <Text style={{color: '#717658', fontWeight: '600', marginBottom: 10}}>
+                            {i18n.t("address.address")}
+                        </Text>
+                        <AddressInput
+                            value={formData.province}
+                            placeholder={i18n.t("address.province")}
+                            onChangeText={(value) => handleChange('province', value)}
+                        />
+                        <AddressInput
+                            value={formData.district}
+                            placeholder={i18n.t("address.district")}
+                            onChangeText={(value) => handleChange('district', value)}
+                        />
+                        <AddressInput
+                            value={formData.address}
+                            placeholder={i18n.t("address.address")}
+                            onChangeText={(value) => handleChange('address', value)}
+                        />
+                        
+                        <TextInput
+                            value={formData.note}
+                            placeholder={i18n.t("address.note")}
+                            onChangeText={(value) => handleChange('note', value)}
+                            multiline={true}
+                            numberOfLines={3}
+                            style={{ 
+                                fontSize: 14,
+                                minHeight: 80,
+                                width: "100%",
+                                padding: 15,
+                                backgroundColor: '#ffffff',
+                                borderRadius: 8,
+                                textAlignVertical: 'top',
+                                borderWidth: 1,
+                                borderColor: '#E5E7EB'
+                            }}
+                        />
+                    </View>
+
+                    <View style={{
+                        backgroundColor: '#ffffff',
+                        borderRadius: 12,
+                        padding: 15,
+                        marginBottom: 80,
+                        shadowColor: "#000",
+                        shadowOffset: {width: 0, height: 1},
+                        shadowOpacity: 0.1,
+                        shadowRadius: 2,
+                        elevation: 3,
+                    }}>
+                        <Text style={{color: '#717658', fontWeight: '600', marginBottom: 10}}>
+                            {i18n.t("address.type")}
+                        </Text>
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                            {items.map(item => (
+                                <TouchableOpacity 
+                                    key={item.id}
+                                    onPress={() => {
+                                        setSelectedItem(item.id);
+                                        setSelectedAddressType(item.type);
+                                    }}
+                                    style={{
+                                        padding: 12,
+                                        paddingHorizontal: 25,
+                                        borderRadius: 8,
+                                        marginRight: 12,
+                                        backgroundColor: selectedItem === item.id ? '#717658' : '#F4F4F4',
+                                        borderWidth: 1,
+                                        borderColor: selectedItem === item.id ? '#717658' : '#E5E7EB'
+                                    }}
+                                >
+                                    <Text style={{
+                                        color: selectedItem === item.id ? '#FFFFFF' : '#717658',
+                                        fontWeight: '500'
+                                    }}>
+                                        {item.name}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                </ScrollView>
+
+                <View style={{
+                    padding: 20,
+                    backgroundColor: '#ffffff',
+                    borderTopWidth: 1,
+                    borderTopColor: '#E5E7EB',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                }}>
+                    <AppButton 
+                        title={i18n.t('address.save')} 
+                        type="primary" 
+                        onPress={handleSubmit}
+                        disabled={loading}
+                    />
                 </View>
             </View>
-
-            <View flex marginT-10>
-                <View bg-white>
-                    <TextInput
-                        value={formData.name}
-                        placeholder={i18n.t("address.name")}
-                        editable={false} // Disable editing
-                        style={{ 
-                            fontSize: 14, 
-                            color: "#555555", 
-                            height: 55, 
-                            width: "100%", 
-                            paddingHorizontal: 20,
-                            backgroundColor: '#f5f5f5' // Add background to show it's disabled
-                        }}
-                    />
-                </View>
-                <View marginT-2 bg-white>
-                    <TextInput
-                        value={formData.phone}
-                        placeholder={i18n.t("address.phone")}
-                        editable={false} // Disable editing
-                        style={{ 
-                            fontSize: 14, 
-                            color: "#555555", 
-                            height: 55, 
-                            width: "100%", 
-                            paddingHorizontal: 20,
-                            backgroundColor: '#f5f5f5' // Add background to show it's disabled
-                        }}
-                    />
-                </View>
-                <View marginT-20 bg-white>
-                    <TextInput
-                        value={formData.province}
-                        placeholder={i18n.t("address.province") || "Province"} // Add fallback text
-                        onChangeText={(value) => handleChange('province', value)}
-                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
-                    />
-                </View>
-                <View  marginT-2 bg-white>
-                    <TextInput
-                        value={formData.district}
-                        placeholder={i18n.t("address.district") || "District"} // Add fallback text
-                        onChangeText={(value) => handleChange('district', value)}
-                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
-                    />
-                </View>
-                <View marginT-2 bg-white>
-                    <TextInput
-                        value={formData.address}
-                        placeholder={i18n.t("address.address")}
-                        onChangeText={(value) => handleChange('address', value)}
-                        style={{ fontSize: 14, color: "#555555", height: 55, width: "100%", paddingHorizontal: 20 }}
-                    />
-                </View>
-
-                <View  marginT-2 bg-white>
-                    <ScrollView horizontal style={styles.scrollView} showsHorizontalScrollIndicator={false}>
-                        {items.map((item, index) => renderItem(item, index))}
-                    </ScrollView>
-                </View>
-
-                <View marginT-20 bg-white>
-                    <TextInput
-                        value={formData.note}
-                        placeholder={i18n.t("address.note") as string} 
-                        onChangeText={(value: string) => handleChange('note', value)}
-                        multiline
-                        style={{ fontSize: 14, color: "#555555", height: 100, width: "100%", paddingHorizontal: 20, backgroundColor: "#ffffff", textAlignVertical: 'top' }}
-                    />
-                </View>
-            </View>
-
-            <View flex padding-20 style={{ position: "absolute", bottom: 0, width: "100%" }}>
-                <AppButton 
-                    title={i18n.t('address.save')} 
-                    type="primary" 
-                    marginT-12 
-                    onPress={handleSubmit}
-                    disabled={loading}
-                />
-            </View>
-        </View>
         </SafeAreaView>
     );
 };

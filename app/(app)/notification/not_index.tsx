@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, SafeAreaView, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-ui-lib";
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NavigationProp } from '@react-navigation/native';
 
 type NotNotificationPageProps = {
-    navigation: StackNavigationProp<any, any>;
+    navigation: NavigationProp<any, any>;
 };
 
 const styles = StyleSheet.create({

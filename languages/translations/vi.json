@@ -59,7 +59,8 @@
       "login_notification": "Bạn cần đăng nhập để truy cập vào thông báo",
       "login_now": "Đăng nhập ngay",
       "invalid_email": "Email không hợp lệ",
-      "password_mismatch": "Mật khẩu không khớp"
+      "password_mismatch": "Mật khẩu không khớp",
+      "personal_info": "Thông tin cá nhân"
     },
     "art": {
       "title": "Nghệ thuật chăm sóc da",
@@ -356,9 +357,9 @@
     "add": "Thêm",
     "address": "Địa chỉ",
     "phone": "Điện thoại",
-    "home": "Nhà",
-    "company": "Công Ty",
-    "other": "Khác",
+    "home": "Nhà riêng",
+    "work": "Nơi làm việc",
+    "others": "Khác",
     "save": "Lưu",
     "cancel": "Hủy",
     "add_new_address": "Thêm địa chỉ mới",
@@ -370,7 +371,9 @@
     "edit_address_success": "Sửa địa chỉ thành công",
     "edit_address_fail": "Sửa địa chỉ thất bại",
     "province": "Tỉnh/Thành phố",
-    "district": "Quận/Huyện"
+    "district": "Quận/Huyện",
+    "update_address": "Sửa địa chỉ",
+    "type": "Loại địa chỉ"
   },
   "date": {
     "formats": {

@@ -59,7 +59,8 @@
       "login_notification": "You need to login to access your notification",
       "login_now": "Login now",
       "invalid_email": "Invalid email format",
-      "password_mismatch": "Passwords do not match"
+      "password_mismatch": "Passwords do not match",
+      "personal_info": "Personal Information"
     },
     "art": {
       "title": "The Art of Skincare",
@@ -282,6 +283,8 @@
     "edit_address_success": "Edit address successfully",
     "edit_address_fail": "Edit address failed",
     "province": "Province",
-    "district": "District"
+    "district": "District",
+    "update_address": "Update Address",
+    "type": "Address Type"
   }
 }

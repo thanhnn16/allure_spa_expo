@@ -18,6 +18,7 @@ import "react-native-reanimated";
 import { Button } from "react-native-ui-lib";
 
 SplashScreen.preventAutoHideAsync();
+
 interface ErrorFallbackProps {
   error: Error;
 }
@@ -42,6 +43,22 @@ export default function RootLayout() {
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
 
+  useEffect(() => {
+    const initializeFirebase = async () => {
+      try {
+        await FirebaseService.requestUserPermission();
+        const unsubscribe = FirebaseService.setupMessageHandlers();
+        return () => {
+          unsubscribe();
+        };
+      } catch (error) {
+        console.error("Failed to initialize Firebase:", error);
+      }
+    };
+
+    initializeFirebase();
+  }, []);
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
@@ -51,26 +68,6 @@ export default function RootLayout() {
   if (!fontsLoaded) {
     return null;
   }
-
-  useEffect(() => {
-    const initializeFirebase = async () => {
-      try {
-        // Request permission and get initial token
-        await FirebaseService.requestUserPermission();
-
-        // Setup message handlers
-        const unsubscribe = FirebaseService.setupMessageHandlers();
-
-        return () => {
-          unsubscribe();
-        };
-      } catch (error) {
-        console.error("Failed to initialize Firebase:", error);
-      }
-    };
-
-    initializeFirebase().then(() => console.log("Firebase initialized"));
-  }, []);
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>

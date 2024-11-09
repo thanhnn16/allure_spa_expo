@@ -4,6 +4,7 @@ import { Product } from '@/types/product.type';
 import { update } from 'lodash';
 
 export interface CartItem extends Product {
+  [x: string]: any;
   quantity: number;
 }
 
