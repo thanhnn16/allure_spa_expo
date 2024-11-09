@@ -9,10 +9,9 @@ const AppLayout = () => {
   );
 
   useEffect(() => {
-    const checkAuthAndNavigate = async () => {
+    const checkAuthAndNavigate = () => {
       try {
         if (!isAuthenticated && !isGuest) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
           router.replace("/(auth)");
         }
       } catch (err) {
