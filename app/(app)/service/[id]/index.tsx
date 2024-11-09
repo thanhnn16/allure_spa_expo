@@ -160,7 +160,14 @@ const ServiceDetailPage = () => {
     };
 
     const handleBooking = () => {
-        router.push(`/(app)/booking/${service?.id}` as Href);
+        router.push({
+            pathname: `/(app)/booking`,
+            params: {
+                service_id: service?.id,
+                service_name: service?.service_name,
+                combo_id: combo
+            }
+        });
     };
 
     // Components

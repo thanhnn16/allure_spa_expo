@@ -314,7 +314,15 @@
     "book": "Book",
     "plase_select_date": "日付を選択してください。",
     "plase_select_time": "時間を選択してください。",
-    "appointment_successful": "無事にスケジュールが決まりました！"
+    "appointment_successful": "無事にスケジュールが決まりました！",
+    "confirm_information": "情報を確認する",
+    "customer_name": "顧客名",
+    "service_name": "サービス名",
+    "time": "時間",
+    "date": "日付",
+    "agree": "同意する",
+    "cancel": "キャンセル",
+    "no_notes": "メモはありません"
   },
   "system": {
     "fud": "機能は開発中です!",
