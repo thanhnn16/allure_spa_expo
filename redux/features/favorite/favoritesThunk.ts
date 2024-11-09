@@ -1,56 +1,33 @@
-import axios from 'axios';
-import { Dispatch } from 'redux';
-import { fetchFavorites, setFavorites, fetchFavoritesByType, setFavoritesByType, toggleFavorite } from './favoritesActions';
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const fetchFavoritesThunk = () => async (dispatch: Dispatch) => {
-    dispatch(fetchFavorites());
+export const fetchFavoritesThunk = createAsyncThunk('favorite/fetchFavorites', async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.get('/api/favorites');
-        dispatch(setFavorites(response.data.data));
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios error:', error.message);
-        } else {
-            console.error('Unexpected error:', error);
-        }
-        dispatch(setFavorites([]));
+        const response = await AxiosInstance().get('/favorites');
+        return response.data.data;
+    } catch (error: any) {
+        console.error('Unexpected error:', error.response.data);
+        return rejectWithValue(error.response.data);
     }
-};
+});
 
-export const fetchFavoritesByTypeThunk = (type: string) => async (dispatch: Dispatch) => {
-    dispatch(fetchFavoritesByType(type));
-    try {
-        const response = await axios.get(`/api/favorites/${type}`);
-        dispatch(setFavoritesByType(response.data.data));
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios error:', error.message);
-        } else {
-            console.error('Unexpected error:', error);
-        }
-        dispatch(setFavoritesByType([]));
-    }
-};
-
-export const toggleFavoriteThunk = (type: 'product' | 'service', itemId: number) => async (
-    dispatch: Dispatch
-) => {
-    try {
-        const response = await axios.post('/api/favorites/toggle', {
-            type,
-            item_id: itemId,
-        });
-        if (response.status === 200) {
-            dispatch(toggleFavorite(type, itemId.toString()));
-            // Fetch updated favorites list
-            // @ts-ignore
-            dispatch(fetchFavoritesThunk());
-        }
-    } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Axios error:', error.message);
-        } else {
-            console.error('Unexpected error:', error);
+export const toggleFavoriteThunk = createAsyncThunk(
+    'favorite/toggleFavorite',
+    async ({ type, itemId }: { type: 'product' | 'service'; itemId: number }, { rejectWithValue }) => {
+        try {
+            console.log('type', type);
+            console.log('itemId', itemId);
+            const response = await AxiosInstance().post('/favorites/toggle', {
+                type,
+                item_id: itemId,
+            });
+            console.log('response', response.data.data);
+            if (response.status === 200) {
+                return response.data.data.status;
+            }
+        } catch (error: any) {
+            console.error('Unexpected error:', error.data.data);
+            return rejectWithValue(error.response.data.message);
         }
     }
-};
+);

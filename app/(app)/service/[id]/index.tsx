@@ -1,7 +1,5 @@
-import AppBar from "@/components/app-bar/AppBar";
-import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Dimensions } from "react-native";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import {Animated, Pressable, ScrollView, Dimensions, SafeAreaView} from "react-native";
 import {
     AnimatedImage,
     Carousel,
@@ -13,29 +11,22 @@ import {
     ActionSheet,
     SkeletonView,
 } from "react-native-ui-lib";
-import Feather from "@expo/vector-icons/Feather";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import i18n from "@/languages/i18n";
-import ImageView from "react-native-image-viewing";
 import AntDesign from "@expo/vector-icons/AntDesign";
-
-import CommentIcon from "@/assets/icons/comment.svg";
-import TicketIcon from "@/assets/icons/ticket.svg";
-import SunIcon from "@/assets/icons/sun.svg";
-import {
-    MediaResponeModelParams,
-    ServiceDetailResponeModel,
-    ServiceDetailResponeParams,
-} from "@/types/service.type";
-import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import AppButton from "@/components/buttons/AppButton";
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { toggleFavoriteThunk } from '@/redux/features/favorite/favoritesThunk';
+import {router, useLocalSearchParams} from "expo-router";
+import {MediaResponeModelParams, ServiceDetailResponeModel, ServiceDetailResponeParams} from "@/types/service.type";
+import AxiosInstance from "@/utils/services/helper/axiosInstance";
+import i18n from "@/languages/i18n";
+import AppBar from "@/components/app-bar/AppBar";
+import ImageView from "react-native-image-viewing";
+import {Feather, SimpleLineIcons} from "@expo/vector-icons";
+import AppButton from "@/components/buttons/AppButton";
 
-const screenWidth = Dimensions.get("window").width;
+import CommentIcon from "@/assets/icons/comment.svg";
+import SunIcon from "@/assets/icons/sun.svg";
+import TicketIcon from "@/assets/icons/ticket.svg";
 
 const ServiceDetailPage = () => {
     const { id } = useLocalSearchParams();
@@ -52,6 +43,10 @@ const ServiceDetailPage = () => {
     const [comboName, setComboName] = useState<string>("");
     const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
     const windowWidth = Dimensions.get("window").width;
+
+    const { status } = useSelector((state: RootState) => state.favorite);
+
+    const scaleValue = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         const getServiceDetail = async () => {
@@ -164,10 +159,27 @@ const ServiceDetailPage = () => {
 
     const isFavorite = favorites.some((fav: { item_id: number | undefined; type: string; }) => fav.item_id === service?.id && fav.type === 'service');
 
-    const handleToggleFavorite = () => {
+    const handleToggleFavorite = async () => {
         if (service) {
-            dispatch(toggleFavoriteThunk('service', service.id));
+            console.log('service', service);
+            await dispatch(toggleFavoriteThunk({
+                type: 'service',
+                itemId: service.id,
+            }));
+            Animated.sequence([
+                Animated.timing(scaleValue, {
+                    toValue: 1.5,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scaleValue, {
+                    toValue: 1,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
         }
+        console.log('status', status);
     };
 
     return (
@@ -229,11 +241,13 @@ const ServiceDetailPage = () => {
                                         </Text>
                                         <View flex right>
                                             <TouchableOpacity onPress={handleToggleFavorite}>
-                                                {isFavorite ? (
-                                                    <AntDesign name="heart" size={24} color="black" />
-                                                ) : (
-                                                    <AntDesign name="hearto" size={24} color="black" />
-                                                )}
+                                                <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+                                                    {isFavorite ? (
+                                                        <AntDesign name="heart" size={24} color={status === 'added' ? 'black' : 'black'} />
+                                                    ) : (
+                                                        <AntDesign name="hearto" size={24} color={status === 'added' ? 'black' : 'red'} />
+                                                    )}
+                                                </Animated.View>
                                             </TouchableOpacity>
                                         </View>
                                     </View>

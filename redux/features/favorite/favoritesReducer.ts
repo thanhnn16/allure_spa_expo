@@ -1,10 +1,12 @@
-import { FETCH_FAVORITES, SET_FAVORITES, FETCH_FAVORITES_BY_TYPE, SET_FAVORITES_BY_TYPE, TOGGLE_FAVORITE } from './favoritesActions';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { fetchFavoritesThunk, toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
+
 interface FavoriteState {
     favorites: any[];
     favoritesByType: any[];
     loading: boolean;
     error: string | null;
+    status: string | null;
 }
 
 const initialState: FavoriteState = {
@@ -12,32 +14,30 @@ const initialState: FavoriteState = {
     favoritesByType: [],
     loading: false,
     error: null,
+    status: null,
 };
 
 const favoriteSlice = createSlice({
     name: 'favorite',
     initialState,
-    reducers: {},
-    extraReducers: (builder) => {
-        // @ts-ignore
+    extraReducers: (builder: any) => {
         builder
-            .addCase(FETCH_FAVORITES, (state: FavoriteState) => {
+            .addCase(fetchFavoritesThunk.pending, (state: FavoriteState) => {
                 state.loading = true;
             })
-            .addCase(SET_FAVORITES, (state: FavoriteState, action: PayloadAction<any[]>) => {
+            .addCase(fetchFavoritesThunk.fulfilled, (state: FavoriteState, action: PayloadAction<any[]>) => {
                 state.favorites = action.payload;
                 state.loading = false;
                 state.error = null;
             })
-            .addCase(FETCH_FAVORITES_BY_TYPE, (state: FavoriteState) => {
+            .addCase(fetchFavoritesThunk.rejected, (state: FavoriteState) => {
                 state.loading = true;
             })
-            .addCase(SET_FAVORITES_BY_TYPE, (state: FavoriteState, action: PayloadAction<any[]>) => {
-                state.favoritesByType = action.payload;
+            .addCase(toggleFavoriteThunk.fulfilled, (state: FavoriteState, action: any) => {
                 state.loading = false;
-                state.error = null;
+                state.status = action.payload;
             })
-            .addCase(TOGGLE_FAVORITE, (state: FavoriteState, action: PayloadAction<{ type: string; itemId: string }>) => {
+            .addCase(toggleFavoriteThunk.rejected, (state: FavoriteState, action: any) => {
                 const { type, itemId } = action.payload;
                 const isFavorite = state.favorites.some((fav: any) => fav.item_id === itemId && fav.type === type);
                 if (isFavorite) {
