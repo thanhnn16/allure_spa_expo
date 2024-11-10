@@ -38,6 +38,8 @@ const BookingPage = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [timeSlots, setTimeSlots] = useState([]);
   const [timeString, setTimeString] = useState<string>('');
+  const [slot, setSlot] = useState<number>(0);
+  const [success, setSuccess] = useState<boolean>(false);
 
   const handleDayPress = (day: any) => {
     setSelectedDate(day.dateString);
@@ -79,6 +81,7 @@ const BookingPage = () => {
         user_id: user?.id,
         service_id: service_id,
         staff_id: null,
+        slot: slot,
         appointment_date: selectedDate,
         time_slot_id: selectedTime,
         appointment_type: "consultation",
@@ -89,8 +92,7 @@ const BookingPage = () => {
       const res = await AxiosInstance().post("/appointments", body);
       if (res.status === 200 || res.status === 201) {
         setShowModal(false);
-        alert(i18n.t("service.appointment_successful"));
-        router.replace("/(tabs)");
+        setSuccess(true);
       }
     } catch (error: any) {
       console.log("Booking error", error);
@@ -224,7 +226,35 @@ const BookingPage = () => {
                 </View>
               </View>}
 
-            {selectedTime &&
+            {selectedTime && <View gap-10>
+              <Text style={styles.sectionTitle}>
+                {i18n.t("service.select_seat")}
+              </Text>
+              <View gap-12 row flex>
+                <TouchableOpacity
+                  onPress={() => setSlot(1)}
+                  style={styles.timeSlotContainer}>
+                  <View
+                    center
+                    backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
+                    style={styles.timeSlot}>
+                    <Text color={slot == 1 ? "#FFFFFF" : "#000000"} >{i18n.t("service.1_seat")}</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setSlot(2)}
+                  style={styles.timeSlotContainer}>
+                  <View
+                    center
+                    backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
+                    style={styles.timeSlot}>
+                    <Text color={slot == 2 ? "#FFFFFF" : "#000000"} >{i18n.t("service.2_seat")}</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>}
+
+            {slot != 0 &&
               <View>
                 <Text h2_bold>{i18n.t("service.note")}</Text>
                 <TextField
@@ -298,6 +328,32 @@ const BookingPage = () => {
                 type="outline"
                 onPress={() => {
                   setShowModal(false)
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        visible={success}
+        transparent
+        style={styles.modal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View flex gap-12>
+              <Text h1_bold center>{i18n.t("service.appointment_successful")}</Text>
+              <View center>
+                <MaterialIcons name="done" size={64} color="black" />
+              </View>
+
+            </View>
+            <View gap-12 marginT-20>
+              <AppButton
+                title={i18n.t("service.back_to_home")}
+                type="primary"
+                onPress={() => {
+                  router.replace("/(tabs)");
                 }}
               />
             </View>
