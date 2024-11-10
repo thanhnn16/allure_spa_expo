@@ -321,7 +321,12 @@
     "date": "日付",
     "agree": "同意する",
     "cancel": "キャンセル",
-    "no_notes": "メモはありません"
+    "no_notes": "メモはありません",
+    "select_seat": "座席を選択してください",
+    "1_seat": "1席",
+    "2_seat": "2席",
+    "back_to_home": "ホームページに戻る",
+    "scheduled_successfully": "正常にスケジュールされました"
   },
   "system": {
     "fud": "機能は開発中です!",

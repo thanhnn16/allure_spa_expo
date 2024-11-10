@@ -346,7 +346,12 @@
     "date": "Ngày",
     "agree": "Đồng ý",
     "cancel": "Huỷ",
-    "no_notes": "Không có ghi chú"
+    "no_notes": "Không có ghi chú",
+    "select_seat": "Chọn chỗ",
+    "1_seat": "1 chỗ",
+    "2_seat": "2 chỗ",
+    "back_to_home": "Quay về trang chủ",
+    "scheduled_successfully": "Đặt lịch thành công"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",

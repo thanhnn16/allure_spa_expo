@@ -256,7 +256,12 @@
     "date": "Date",
     "agree": "Agree",
     "cancel": "Cancel",
-    "no_notes": "No notes"
+    "no_notes": "No notes",
+    "select_seat": "Select seat",
+    "1_seat": "1 seat",
+    "2_seat": "2 seat",
+    "back_to_home": "Back to home page",
+    "scheduled_successfully": "Scheduled successfully"
   },
   "system": {
     "fud": "Feature under development!"
