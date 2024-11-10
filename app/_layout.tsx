@@ -14,6 +14,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
+import { useSegments } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 interface ErrorFallbackProps {
@@ -21,6 +22,8 @@ interface ErrorFallbackProps {
 }
 
 export default function RootLayout() {
+  const segments = useSegments();
+
   useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
@@ -56,10 +59,14 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <PersistGate loading={null} persistor={persistor}>
           <LanguageManager>
-            <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "white" }}>
-              <StatusBar backgroundColor="transparent" />
+            {segments[0] === '(auth)' ? (
               <Slot />
-            </SafeAreaView>
+            ) : (
+              <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "white" }}>
+                <StatusBar backgroundColor="transparent" />
+                <Slot />
+              </SafeAreaView>
+            )}
           </LanguageManager>
         </PersistGate>
       </SafeAreaProvider>

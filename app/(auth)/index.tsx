@@ -6,6 +6,7 @@ import {
   Keyboard,
   Animated,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import {
   View,
@@ -19,12 +20,12 @@ import LoginZaloForm from "../../components/authentication/LoginZaloForm";
 import OTP from "./otp";
 import AppButton from "@/components/buttons/AppButton";
 import Brand from "@/assets/images/common/logo-brand.svg";
-import { router } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { setLanguage } from "@/redux/features/language/languageSlice";
 import { RootState } from "@/redux/store";
 import LanguageModal from "@/components/modals/LanguageModal";
 import { useAuth } from '@/hooks/useAuth';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
 
@@ -118,106 +119,108 @@ const Onboarding: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ flex: 1 }}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <Image
-            source={require("@/assets/images/authen/img_bg_authen.png")}
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              opacity: 0.5,
-            }}
-          />
-          <View paddingT-48 centerH marginB-16>
+    <View flex>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ flex: 1 }}>
             <Image
-              source={Brand}
-              style={{ width: width * 0.6, height: height * 0.1 }}
+              source={require("@/assets/images/authen/img_bg_authen.png")}
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                opacity: 0.5,
+              }}
             />
-            <View width={"80%"}>
-              <Text
-                onboarding_title={currentLanguage !== "ja"}
-                onboarding_title_ja={currentLanguage === "ja"}
-              >
-                {i18n.t("auth.art.title")}
-              </Text>
-              <View right>
+            <View paddingT-48 centerH marginB-16>
+              <Image
+                source={Brand}
+                style={{ width: width * 0.6, height: height * 0.1 }}
+              />
+              <View width={"80%"}>
                 <Text
                   onboarding_title={currentLanguage !== "ja"}
                   onboarding_title_ja={currentLanguage === "ja"}
                 >
-                  {i18n.t("auth.art.subtitle")}
+                  {i18n.t("auth.art.title")}
                 </Text>
+                <View right>
+                  <Text
+                    onboarding_title={currentLanguage !== "ja"}
+                    onboarding_title_ja={currentLanguage === "ja"}
+                  >
+                    {i18n.t("auth.art.subtitle")}
+                  </Text>
+                </View>
               </View>
             </View>
+            <Animated.View
+              style={{
+                opacity: fadeAnim,
+                transform: [{ translateY: translateYAnim }],
+                backgroundColor: "white",
+                width: "100%",
+                paddingHorizontal: 24,
+                paddingTop: 32,
+                paddingBottom: 20,
+                position: "absolute",
+                bottom: 0,
+                borderTopLeftRadius: 30,
+                borderTopRightRadius: 30,
+              }}
+            >
+              {activeView === "default" ? (
+                <View gap-12>
+                  <AppButton
+                    title={i18n.t("auth.register.title")}
+                    type="primary"
+                    onPress={() => handleViewChange("register")}
+                  />
+                  <AppButton
+                    title={i18n.t("auth.login.title")}
+                    type="primary"
+                    onPress={() => handleViewChange("login")}
+                  />
+                  <AppButton
+                    title={i18n.t("auth.login.zalo")}
+                    type="outline"
+                    onPress={() => handleViewChange("zalo")}
+                  />
+                  <AppButton
+                    title={i18n.t("change_language")}
+                    type="outline"
+                    onPress={toggleLanguageModal}
+                  />
+                  <AppButton
+                    title={i18n.t("auth.login.skip")}
+                    type="text"
+                    onPress={handleSkip}
+                  />
+                </View>
+              ) : (
+                renderForm()
+              )}
+              <Text center text80>
+                {i18n.t("auth.login.by_continue")}
+                <Text text80H> {i18n.t("auth.login.terms")} </Text>
+                {i18n.t("auth.login.and")}
+                <Text text80H> {i18n.t("auth.login.privacy")} </Text>
+                {i18n.t("auth.login.of_us")}
+              </Text>
+            </Animated.View>
+            <LanguageModal
+              isVisible={modalVisible}
+              onClose={toggleLanguageModal}
+              onSelectLanguage={updateLanguage}
+              currentLanguage={currentLanguage}
+            />
           </View>
-          <Animated.View
-            style={{
-              opacity: fadeAnim,
-              transform: [{ translateY: translateYAnim }],
-              backgroundColor: "white",
-              width: "100%",
-              paddingHorizontal: 24,
-              paddingTop: 32,
-              paddingBottom: 20,
-              position: "absolute",
-              bottom: 0,
-              borderTopLeftRadius: 30,
-              borderTopRightRadius: 30,
-            }}
-          >
-            {activeView === "default" ? (
-              <View gap-12>
-                <AppButton
-                  title={i18n.t("auth.register.title")}
-                  type="primary"
-                  onPress={() => handleViewChange("register")}
-                />
-                <AppButton
-                  title={i18n.t("auth.login.title")}
-                  type="primary"
-                  onPress={() => handleViewChange("login")}
-                />
-                <AppButton
-                  title={i18n.t("auth.login.zalo")}
-                  type="outline"
-                  onPress={() => handleViewChange("zalo")}
-                />
-                <AppButton
-                  title={i18n.t("change_language")}
-                  type="outline"
-                  onPress={toggleLanguageModal}
-                />
-                <AppButton
-                  title={i18n.t("auth.login.skip")}
-                  type="text"
-                  onPress={handleSkip}
-                />
-              </View>
-            ) : (
-              renderForm()
-            )}
-            <Text center text80>
-              {i18n.t("auth.login.by_continue")}
-              <Text text80H> {i18n.t("auth.login.terms")} </Text>
-              {i18n.t("auth.login.and")}
-              <Text text80H> {i18n.t("auth.login.privacy")} </Text>
-              {i18n.t("auth.login.of_us")}
-            </Text>
-          </Animated.View>
-          <LanguageModal
-            isVisible={modalVisible}
-            onClose={toggleLanguageModal}
-            onSelectLanguage={updateLanguage}
-            currentLanguage={currentLanguage}
-          />
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
