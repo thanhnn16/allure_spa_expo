@@ -4,16 +4,14 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  Keyboard,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Colors, Image, Text, View } from "react-native-ui-lib";
+import { Colors, Image, Text, View, Keyboard } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
 import KeyboardIcon from "@/assets/icons/keyboard.svg";
@@ -51,6 +49,7 @@ const AIChatScreen = () => {
   const [recordingUri, setRecordingUri] = useState<string | undefined>();
   const [waveCount, setWaveCount] = useState<number[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
+
 
   const hasValidContent = (msg: any) => {
     return (
@@ -153,7 +152,7 @@ const AIChatScreen = () => {
     if (!hasMessages) return null;
 
     return (
-      <View style={styles.statusContainer}>
+      <View row centerV right paddingH-10>
         <Text>{messageStatus}</Text>
         {messageStatus === "Đang gửi" && (
           <ActivityIndicator
@@ -165,19 +164,6 @@ const AIChatScreen = () => {
       </View>
     );
   };
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-    };
-  }, []);
 
   async function startRecording() {
     try {
@@ -263,19 +249,20 @@ const AIChatScreen = () => {
           );
         }}
         ref={scrollRef}
-        onContentSizeChange={() =>
-          scrollRef.current?.scrollToEnd({ animated: true })
-        }
+        onContentSizeChange={() => {
+          requestAnimationFrame(() => {
+            scrollRef.current?.scrollToEnd({ animated: true });
+          });
+        }}
         keyExtractor={(item, index) => item.id || `msg-${index}`}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 16,
+        }}
         ListFooterComponent={handleRead}
         refreshing={refreshing}
         onRefresh={onRefresh}
-        onEndReached={() => {
-          // Load more messages if needed
-        }}
-        onEndReachedThreshold={0.5}
       />
 
       {selectedImages.length > 0 && (
@@ -302,35 +289,69 @@ const AIChatScreen = () => {
   );
 
   const renderVoiceUI = () => (
-    <View style={styles.voiceContainer}>
-      <View style={styles.circle} />
-      <Text style={styles.startText}>
-        {recording ? "Nói đã chưa?" : "Nhấn núi r nói i"}
+    <View flex center>
+      <View
+        width={200}
+        height={200}
+        br100
+        backgroundColor="ghostwhite"
+        marginB-20
+      />
+      <Text text70 grey30 marginB-30>
+        {recording ? "Đang ghi âm..." : "Nhấn để bắt đầu ghi âm"}
       </Text>
 
-      <View style={styles.buttonContainer}>
+      <View row spread paddingH-20 width="100%" centerV>
         <TouchableOpacity
-          style={styles.button}
           onPress={() => setIsVoiceMode(false)}
         >
-          <Image source={KeyboardIcon} />
+          <View
+            width={60}
+            height={60}
+            br30
+            backgroundColor="ghostwhite"
+            center
+          >
+            <KeyboardIcon />
+          </View>
         </TouchableOpacity>
 
-        <View style={styles.waveContainer}>
+        <View
+          row
+          centerV
+          style={{ gap: 5 }}
+          width={Dimensions.get("screen").width / 2}
+          paddingH-20
+          backgroundColor="ghostwhite"
+          height={50}
+          br20
+        >
           {waveCount.map((waveHeight, index) => (
             <Animated.View
               layout={LinearTransition}
               key={index.toString()}
-              style={[styles.wave, { height: waveHeight }]}
+              style={{
+                width: 4,
+                height: waveHeight,
+                backgroundColor: 'black',
+                borderRadius: 10,
+              }}
             />
           ))}
         </View>
 
         <TouchableOpacity
-          style={styles.button}
           onPress={() => (recording ? stopRecording() : startRecording())}
         >
-          <Image source={recording ? StopIcon : MicIcon} />
+          <View
+            width={60}
+            height={60}
+            br30
+            backgroundColor="ghostwhite"
+            center
+          >
+            {recording ? <StopIcon /> : <MicIcon />}
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -357,89 +378,18 @@ const AIChatScreen = () => {
     dispatch(fetchAiConfigs()).finally(() => setRefreshing(false));
   }, []);
 
+  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
+
   return (
-    <View flex>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={{ flex: 1, backgroundColor: "#ffffff" }}
-        >
-          <AppBar back title={i18n.t("chat.chat_with_ai")} />
-          {isVoiceMode ? renderVoiceUI() : renderChatUI()}
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-    </View>
+    <KeyboardTrackingView
+      style={{ flex: 1, backgroundColor: Colors.white }}
+      trackInteractive
+      useSafeArea
+    >
+      <AppBar back title={i18n.t("chat.chat_with_ai")} />
+      {isVoiceMode ? renderVoiceUI() : renderChatUI()}
+    </KeyboardTrackingView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingHorizontal: 16,
-  },
-
-  statusContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    paddingHorizontal: 10,
-  },
-
-  voiceContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  circle: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: "ghostwhite",
-    borderWidth: 2,
-    borderColor: "gainsboro",
-    marginBottom: 20,
-  },
-  startText: {
-    fontSize: 18,
-    marginBottom: 30,
-    color: "gray",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingHorizontal: 20,
-  },
-  button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "ghostwhite",
-    borderWidth: 2,
-    borderColor: "gainsboro",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  waveContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    width: Dimensions.get("screen").width / 2,
-    paddingHorizontal: 20,
-    backgroundColor: "ghostwhite",
-    borderWidth: 2,
-    borderColor: "gainsboro",
-    height: 50,
-    overflow: "hidden",
-    borderRadius: 20,
-  },
-  wave: {
-    width: 4,
-    backgroundColor: "black",
-    borderRadius: 10,
-  },
-});
 
 export default AIChatScreen;
