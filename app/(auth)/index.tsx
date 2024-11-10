@@ -138,22 +138,22 @@ const Onboarding: React.FC = () => {
               source={Brand}
               style={{ width: width * 0.6, height: height * 0.1 }}
             />
-            <Text
-              center
-              marginR-85
-              onboarding_title={currentLanguage !== "ja"}
-              onboarding_title_ja={currentLanguage === "ja"}
-            >
-              {i18n.t("auth.art.title")}
-            </Text>
-            <Text
-              center
-              marginL-65
-              onboarding_title={currentLanguage !== "ja"}
-              onboarding_title_ja={currentLanguage === "ja"}
-            >
-              {i18n.t("auth.art.subtitle")}
-            </Text>
+            <View width={"80%"}>
+              <Text
+                onboarding_title={currentLanguage !== "ja"}
+                onboarding_title_ja={currentLanguage === "ja"}
+              >
+                {i18n.t("auth.art.title")}
+              </Text>
+              <View right>
+                <Text
+                  onboarding_title={currentLanguage !== "ja"}
+                  onboarding_title_ja={currentLanguage === "ja"}
+                >
+                  {i18n.t("auth.art.subtitle")}
+                </Text>
+              </View>
+            </View>
           </View>
           <Animated.View
             style={{

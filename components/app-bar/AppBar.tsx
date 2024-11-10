@@ -14,31 +14,29 @@ interface AppBarProps {
 
 const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
   return (
-    <BlurView intensity={200}>
-      <View paddingH-16 row centerV spread>
-        {back ? (
-          <Pressable onPress={router.back}>
-            <View width={48} height={48} centerV>
-              <Image source={BackIcon} />
-            </View>
-          </Pressable>
-        ) : (
-          <View width={48} height={48} />
-        )}
-        <Text h2_bold primary flex center>
-          {title}
-        </Text>
-        {rightComponent ? (
-            <Pressable onPress={() => router.push('/(app)/cart' as Href)}>
-              <View width={48} height={48} centerV right>
-                <Image source={ShoppingBagIcon} />
-              </View>
-            </Pressable>
-        ) : (
-          <View width={48} height={48} />
-        )}
-      </View>
-    </BlurView>
+    <View paddingH-16 row centerV spread>
+      {back ? (
+        <Pressable onPress={router.back}>
+          <View width={48} height={48} centerV>
+            <Image source={BackIcon} />
+          </View>
+        </Pressable>
+      ) : (
+        <View width={48} height={48} />
+      )}
+      <Text h2_bold primary flex center>
+        {title}
+      </Text>
+      {rightComponent ? (
+        <Pressable onPress={() => router.push('/(app)/cart' as Href)}>
+          <View width={48} height={48} centerV right>
+            <Image source={ShoppingBagIcon} />
+          </View>
+        </Pressable>
+      ) : (
+        <View width={48} height={48} />
+      )}
+    </View>
   );
 };
 

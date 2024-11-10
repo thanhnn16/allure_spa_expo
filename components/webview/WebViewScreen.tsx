@@ -8,6 +8,8 @@ import { LoaderScreen } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppDialog from "@/components/dialog/AppDialog";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AppBar from "../app-bar/AppBar";
 
 interface WebViewScreenProps {
   url: string;
@@ -143,10 +145,11 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <AppBar back title="" />
       <WebView
         source={{ uri: url }}
-        style={styles.webview}
+        style={{ flex: 1 }}
         onNavigationStateChange={handleNavigationStateChange}
         incognito={type === WebViewType.ZALO_LOGIN}
         javaScriptEnabled={true}
@@ -164,18 +167,8 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         confirmButton={false}
         closeButtonLabel="Đóng"
       />
-    </View>
+    </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: Constants.statusBarHeight,
-  },
-  webview: {
-    flex: 1,
-  },
-});
 
 export default WebViewScreen;

@@ -10,6 +10,7 @@
   "sendOTP": "Send OTP",
   "close": "Close",
   "common": {
+    "guest": "Guest",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "ok": "OK",
@@ -226,9 +227,9 @@
     "placeholder_search": "Search for cosmetics, treatments..."
   },
   "greeting": {
-    "morning": "Allure Spa wishes you a good morning!",
-    "afternoon": "Allure Spa wishes you a happy afternoon!",
-    "evening": "Allure Spa wishes you a good evening!"
+    "morning": "Good morning!",
+    "afternoon": "Good afternoon!",
+    "evening": "Good evening!"
   },
   "package": {
     "single": "Single package",

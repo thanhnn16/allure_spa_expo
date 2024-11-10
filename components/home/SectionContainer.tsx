@@ -17,7 +17,7 @@ const RenderSection: React.FC<RenderSectionProps> = ({
   onPressMore,
 }) => {
   return (
-    <View gap-10 marginV-15>
+    <View gap-10 marginV-10>
       <View row spread marginH-20>
         <Text text60BO>{title}</Text>
         <TouchableOpacity onPress={onPressMore}>
@@ -32,7 +32,7 @@ const RenderSection: React.FC<RenderSectionProps> = ({
         keyExtractor={(item) => item.id.toString()}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 10, paddingStart: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 10 }}
       />
     </View>
   );

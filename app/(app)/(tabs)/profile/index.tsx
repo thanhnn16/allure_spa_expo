@@ -13,11 +13,7 @@ const ProfilePage = () => {
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
 
   const handleSignOut = () => {
-    if (user) {
-      signOut();
-    } else {
-      setLoginDialogVisible(true);
-    }
+    signOut();
   };
 
   const handleLoginConfirm = () => {

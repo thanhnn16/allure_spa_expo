@@ -9,7 +9,7 @@ import { useFonts } from "expo-font";
 import { router, Slot, Stack } from "expo-router";
 import { useEffect, useCallback } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Text, View } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -65,7 +65,7 @@ export default function RootLayout() {
           unsubscribe();
         };
       } catch (error) {
-        console.error("Failed to initialize Firebase:", error);
+        console.log("Failed to initialize Firebase:", error);
       }
     };
 
@@ -73,8 +73,9 @@ export default function RootLayout() {
   }, []);
 
   return (
-      <Provider store={store}>
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
+    <Provider store={store}>
+      <StatusBar backgroundColor="transparent" />
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
         <PersistGate loading={null} persistor={persistor}>
           <SafeAreaProvider>
             <LanguageManager>
@@ -82,7 +83,7 @@ export default function RootLayout() {
             </LanguageManager>
           </SafeAreaProvider>
         </PersistGate>
-    </ErrorBoundary>
-      </Provider>
+      </ErrorBoundary>
+    </Provider>
   );
 }
