@@ -150,7 +150,7 @@ export default function Payment() {
         })),
       };
 
-      const invoiceResponse = await OrderService.createInvoice(invoiceData);
+      const invoiceResponse = await OrderService.createOrder(invoiceData);
 
       if (!invoiceResponse.success || !invoiceResponse.data?.id) {
         throw new Error(invoiceResponse.message || "Không thể tạo hóa đơn");
@@ -176,8 +176,7 @@ export default function Payment() {
         const cancelUrl = `${scheme}://payment?status=cancel&invoice_id=${invoice.id}`;
 
         try {
-          const paymentResponse = await OrderService.createPaymentLink({
-            invoice_id: invoice.id,
+          const paymentResponse = await OrderService.createOrder({
             returnUrl,
             cancelUrl,
           });
@@ -317,7 +316,7 @@ export default function Payment() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
+      <View flex>
         <View style={styles.header}>
           <Button
             iconSource={require("@/assets/images/home/arrow_ios.png")}
@@ -530,7 +529,7 @@ export default function Payment() {
             closeButtonLabel="Đóng"
           />
         </View>
-      </SafeAreaView>
+      </View>
     </GestureHandlerRootView>
   );
 }

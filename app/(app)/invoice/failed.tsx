@@ -32,7 +32,7 @@ export default function InvoiceFailed() {
   const content = getContent();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
+    <View flex bg-$background>
       <AppBar title={content.title} />
 
       <View flex padding-20 center>
@@ -61,6 +61,6 @@ export default function InvoiceFailed() {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

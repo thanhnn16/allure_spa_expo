@@ -69,7 +69,7 @@ const ScheduledPage = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View>
         <Text h1_bold primary>Lịch đã đặt</Text>
       </View>
@@ -81,7 +81,7 @@ const ScheduledPage = () => {
         renderItem={renderFlatListItem}
         keyExtractor={(item) => item.id.toString()}
       />
-    </SafeAreaView>
+    </View>
   )
 }
 

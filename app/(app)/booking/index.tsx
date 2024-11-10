@@ -128,7 +128,7 @@ const BookingPage = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <View flex bg-$white>
         <AppBar back title={i18n.t("service.make_appointment")} />
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -360,7 +360,7 @@ const BookingPage = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

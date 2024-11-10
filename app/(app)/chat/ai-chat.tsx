@@ -54,9 +54,9 @@ const AIChatScreen = () => {
 
   const hasValidContent = (msg: any) => {
     return (
-      !msg.isSystemMessage && 
+      !msg.isSystemMessage &&
       (
-        msg.parts?.[0]?.text?.trim() !== '' || 
+        msg.parts?.[0]?.text?.trim() !== '' ||
         msg.parts?.some((part: any) => part.image)
       )
     );
@@ -238,9 +238,9 @@ const AIChatScreen = () => {
         renderItem={({ item, index }) => {
           const messageText = item.parts?.[0]?.text || "";
           const hasImages = item.parts?.some((p: any) => p.image);
-          
+
           if (!messageText.trim() && !hasImages) return null;
-          
+
           return (
             <MessageBubble
               key={`message-${item.id || index}`}
@@ -358,7 +358,7 @@ const AIChatScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View flex>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -368,7 +368,7 @@ const AIChatScreen = () => {
           {isVoiceMode ? renderVoiceUI() : renderChatUI()}
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
-    </SafeAreaView>
+    </View>
   );
 };
 

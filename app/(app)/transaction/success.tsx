@@ -482,7 +482,7 @@ export default function Success() {
   }
   return (
     <GestureHandlerRootView>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <View flex bg-$white>
         <View style={styles.headerWrapper}>
           <Button
             iconSource={require("@/assets/images/home/arrow_ios.png")}
@@ -746,7 +746,7 @@ export default function Success() {
             </View>
           </View>
 
-          <Link href="/Transaction" asChild>
+          <Link href="/transaction" asChild>
             <Button
               label="Mua lại"
               labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
@@ -828,7 +828,7 @@ export default function Success() {
             </View>
           </BottomSheetView>
         </BottomSheet>
-      </SafeAreaView>
+      </View>
     </GestureHandlerRootView>
   );
 }

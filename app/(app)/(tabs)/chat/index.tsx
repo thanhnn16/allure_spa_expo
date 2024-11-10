@@ -42,10 +42,10 @@ const ChatListScreen = () => {
           };
 
           dispatch(
-              updateChatLastMessage({
-                chatId: remoteMessage.data.chat_id,
-                message: newMessage,
-              })
+            updateChatLastMessage({
+              chatId: remoteMessage.data.chat_id,
+              message: newMessage,
+            })
           );
         }
       });
@@ -76,46 +76,46 @@ const ChatListScreen = () => {
     // Nếu là chat AI
     if (item.id === "ai") {
       return (
-          <TouchableOpacity
-              onPress={() => handleChatScreen("ai")}
-              style={styles.chatItem}
-          >
-            <Image source={IconCskh} style={styles.avatar} />
-            <View style={styles.messageContainer}>
-              <Text h3_bold>{i18n.t("chat.chat_with_ai")}</Text>
-              <Text h3 numberOfLines={1}>
-                {i18n.t("chat.ai_description")}
-              </Text>
-            </View>
-          </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleChatScreen("ai")}
+          style={styles.chatItem}
+        >
+          <Image source={IconCskh} style={styles.avatar} />
+          <View style={styles.messageContainer}>
+            <Text h3_bold>{i18n.t("chat.chat_with_ai")}</Text>
+            <Text h3 numberOfLines={1}>
+              {i18n.t("chat.ai_description")}
+            </Text>
+          </View>
+        </TouchableOpacity>
       );
     }
 
     // Nếu là chat với admin/staff
     const lastMessage =
-        item.messages?.[0]?.message || i18n.t("chat.no_messages");
+      item.messages?.[0]?.message || i18n.t("chat.no_messages");
     const lastMessageTime = item.messages?.[0]?.created_at;
 
     return (
-        <TouchableOpacity
-            onPress={() => handleChatScreen(item.id)}
-            style={styles.chatItem}
-        >
-          <Image source={IconCskh} style={styles.avatar} />
-          <View style={styles.messageContainer}>
-            <Text h3_bold>{i18n.t("chat.customer_care")}</Text>
-            <Text h3 numberOfLines={1}>
-              {lastMessage}
-            </Text>
-          </View>
-          {lastMessageTime && (
-              <Text h3>
-                {formatDistanceToNow(new Date(lastMessageTime), {
-                  locale: vi,
-                })}
-              </Text>
-          )}
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleChatScreen(item.id)}
+        style={styles.chatItem}
+      >
+        <Image source={IconCskh} style={styles.avatar} />
+        <View style={styles.messageContainer}>
+          <Text h3_bold>{i18n.t("chat.customer_care")}</Text>
+          <Text h3 numberOfLines={1}>
+            {lastMessage}
+          </Text>
+        </View>
+        {lastMessageTime && (
+          <Text h3>
+            {formatDistanceToNow(new Date(lastMessageTime), {
+              locale: vi,
+            })}
+          </Text>
+        )}
+      </TouchableOpacity>
     );
   };
 
@@ -125,32 +125,30 @@ const ChatListScreen = () => {
   };
 
   return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <View flex bg-$backgroundDefault>
-          <AppBar title={i18n.t("pageTitle.chat")} />
-          {isGuest ? (
-              <AppDialog
-                  visible={loginDialogVisible}
-                  title={i18n.t("auth.login.login_required")}
-                  description={i18n.t("auth.login.login_chat")}
-                  closeButtonLabel={i18n.t("common.cancel")}
-                  confirmButtonLabel={i18n.t("auth.login.login_now")}
-                  severity="info"
-                  onClose={() => setLoginDialogVisible(false)}
-                  onConfirm={handleLoginConfirm}
-              />
-          ) : (
-              <FlatList
-                  data={chatDataWithAI}
-                  renderItem={renderItem}
-                  keyExtractor={(item) => item.id}
-                  contentContainerStyle={styles.listContainer}
-                  refreshing={isLoading}
-                  onRefresh={() => dispatch(fetchChatsThunk())}
-              />
-          )}
-        </View>
-      </SafeAreaView>
+    <View flex bg-$backgroundDefault>
+      <AppBar title={i18n.t("pageTitle.chat")} />
+      {isGuest ? (
+        <AppDialog
+          visible={loginDialogVisible}
+          title={i18n.t("auth.login.login_required")}
+          description={i18n.t("auth.login.login_chat")}
+          closeButtonLabel={i18n.t("common.cancel")}
+          confirmButtonLabel={i18n.t("auth.login.login_now")}
+          severity="info"
+          onClose={() => setLoginDialogVisible(false)}
+          onConfirm={handleLoginConfirm}
+        />
+      ) : (
+        <FlatList
+          data={chatDataWithAI}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          refreshing={isLoading}
+          onRefresh={() => dispatch(fetchChatsThunk())}
+        />
+      )}
+    </View>
   );
 };
 

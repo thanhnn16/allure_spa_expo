@@ -1,10 +1,9 @@
+import { router } from "expo-router";
 import React from "react";
 import { View, Text, SafeAreaView, StyleSheet, Image } from "react-native";
 import { Button } from "react-native-ui-lib";
-import { StackNavigationProp } from '@react-navigation/stack';
 
 type NotNotificationPageProps = {
-    navigation: StackNavigationProp<any, any>;
 };
 
 const styles = StyleSheet.create({
@@ -51,13 +50,13 @@ const styles = StyleSheet.create({
     },
 });
 
-const NotNotificationPage: React.FC<NotNotificationPageProps> = ({ navigation }) => {
+const NotNotificationPage: React.FC<NotNotificationPageProps> = () => {
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <Button
                     iconSource={() => <Image source={require('@/assets/images/home/arrow_ios.png')} style={styles.backIcon} />}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => router.back()}
                     link style={styles.backButton}
                 />
                 <Text style={styles.headerText}>Thông báo</Text>
@@ -68,7 +67,7 @@ const NotNotificationPage: React.FC<NotNotificationPageProps> = ({ navigation })
                     <Image source={require('@/assets/images/home/icons/notification.png')} style={styles.image} />
                 </View>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

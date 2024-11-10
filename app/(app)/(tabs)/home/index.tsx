@@ -4,7 +4,6 @@ import CategoryItem from "@/components/home/CategoryItem";
 import ProductItem from "@/components/home/ProductItem";
 import SectionContainer from "@/components/home/SectionContainer";
 import AppSearch from "@/components/inputs/AppSearch";
-import { AppStyles } from "@/constants/AppStyles";
 import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
 import {
   hideStyle,
@@ -97,7 +96,7 @@ const HomePage = () => {
           renderItem={({ item }: { item: ServiceResponeModel }) =>
             item && item.service_name ? <ServiceItem item={item} /> : null
           }
-          onPressMore={() => {}}
+          onPressMore={() => { }}
         />
       )}
       {products && products.length > 0 && (
@@ -182,109 +181,106 @@ const HomePage = () => {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View bg-$white flex>
-        <Animated.View
-          style={[
-            {
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1,
-              height: HEADER_HEIGHT,
-              backgroundColor: "white",
-            },
-          ]}
-        >
-          <View bg-white paddingH-20>
-            <Animated.View
-              style={[
-                hideStyle(
-                  scrollOffset,
-                  HEADER_HEIGHT,
-                  SCROLL_THRESHOLD,
-                  OPACITY_THRESHOLD
-                ),
-              ]}
-            >
-              <View row spread centerV marginB-10>
-                <View row>
-                  <Image
-                    width={32}
-                    height={32}
-                    borderRadius={30}
-                    source={require("@/assets/images/logo/logo.png")}
-                  />
-                  <View centerV marginL-10>
-                    <Text h2_bold>{user?.full_name || "Guest"}</Text>
-                    <Text h4>{greeting}</Text>
-                  </View>
+    <View bg-$white flex>
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1,
+            height: HEADER_HEIGHT,
+            backgroundColor: "white",
+          },
+        ]}
+      >
+        <View bg-white paddingH-20>
+          <Animated.View
+            style={[
+              hideStyle(
+                scrollOffset,
+                HEADER_HEIGHT,
+                SCROLL_THRESHOLD,
+                OPACITY_THRESHOLD
+              ),
+            ]}
+          >
+            <View row spread centerV marginB-10>
+              <View row>
+                <Image
+                  width={32}
+                  height={32}
+                  borderRadius={30}
+                  source={require("@/assets/images/logo/logo.png")}
+                />
+                <View centerV marginL-10>
+                  <Text h2_bold>{user?.full_name || "Guest"}</Text>
+                  <Text h4>{greeting}</Text>
                 </View>
               </View>
-              <WeatherView />
-            </Animated.View>
-
-            <View
-              row
-              gap-15
-              style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                zIndex: 1,
-                paddingEnd: 20,
-                paddingVertical: 5,
-              }}
-            >
-              <HomeHeaderButton
-                onPress={() => {
-                  router.push("notification" as Href<string>);
-                }}
-                source={NotificationIcon}
-              />
-              <HomeHeaderButton
-                onPress={() => {
-                  router.push("cart" as Href<string>);
-                }}
-                source={CartIcon}
-              />
             </View>
-
-            <Animated.View
-              style={[
-                showStyle(scrollOffset, HEADER_HEIGHT, SCROLL_THRESHOLD),
-                {
-                  position: "absolute",
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  backgroundColor: "rgba(255, 255, 255, 0.9)",
-                  paddingHorizontal: 24,
-                },
-              ]}
-            >
-              <Text h0_bold color="#717658" marginB-10>
-                {i18n.t("home.discover")}
-              </Text>
-              <AppSearch isHome  />
-            </Animated.View>
+            <WeatherView />
+          </Animated.View>
+          <View
+            row
+            gap-15
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              zIndex: 1,
+              paddingEnd: 20,
+              paddingVertical: 5,
+            }}
+          >
+            <HomeHeaderButton
+              onPress={() => {
+                router.push("notification" as Href<string>);
+              }}
+              source={NotificationIcon}
+            />
+            <HomeHeaderButton
+              onPress={() => {
+                router.push("cart" as Href<string>);
+              }}
+              source={CartIcon}
+            />
           </View>
-        </Animated.View>
 
-        <Animated.ScrollView
-          style={{ flex: 1 }}
-          showsVerticalScrollIndicator={false}
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
-          contentContainerStyle={{
-            paddingTop: HEADER_HEIGHT,
-          }}
-        >
-          {isLoading ? renderSkeletonContent() : renderContent()}
-        </Animated.ScrollView>
-      </View>
-    </SafeAreaView>
+          <Animated.View
+            style={[
+              showStyle(scrollOffset, HEADER_HEIGHT, SCROLL_THRESHOLD),
+              {
+                position: "absolute",
+                bottom: 10,
+                left: 0,
+                right: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                paddingHorizontal: 24,
+              },
+            ]}
+          >
+            <Text h0_bold color="#717658" marginB-10>
+              {i18n.t("home.discover")}
+            </Text>
+            <AppSearch isHome />
+          </Animated.View>
+        </View>
+      </Animated.View>
+
+      <Animated.ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
+        contentContainerStyle={{
+          paddingTop: HEADER_HEIGHT,
+        }}
+      >
+        {isLoading ? renderSkeletonContent() : renderContent()}
+      </Animated.ScrollView>
+    </View>
   );
 };
 

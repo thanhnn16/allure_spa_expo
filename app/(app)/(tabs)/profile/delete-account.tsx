@@ -10,8 +10,7 @@ import i18n from "@/languages/i18n";
 const DeleteAccountScreen: React.FC = () => {
   const [value, onChangeText] = useState("");
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 40 }}>
+      <View flex paddingH-20 paddingV-40>
         <View row marginB-20>
           <Button
             iconSource={require("@/assets/images/home/arrow_ios.png")}
@@ -58,7 +57,6 @@ const DeleteAccountScreen: React.FC = () => {
           <Text white text70H>{i18n.t("deleteaccount.next")}</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
   );
 };
 export default DeleteAccountScreen;

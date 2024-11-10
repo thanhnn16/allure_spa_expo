@@ -76,7 +76,7 @@ export default function InvoiceSuccess() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
+    <View flex bg-$background>
       <AppBar title={i18n.t("invoice.payment_success")} />
 
       <View flex padding-20>
@@ -144,6 +144,6 @@ export default function InvoiceSuccess() {
         confirmButtonLabel={i18n.t("common.ok")}
         onConfirm={() => setShowDialog(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 }

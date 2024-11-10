@@ -6,34 +6,22 @@ import { persistor } from "@/redux/store";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import "expo-dev-client";
 import { useFonts } from "expo-font";
-import { router, Slot, Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { useEffect, useCallback } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import { StatusBar, Text, View } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StatusBar } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
-import { Button } from "react-native-ui-lib";
 
 SplashScreen.preventAutoHideAsync();
 interface ErrorFallbackProps {
   error: Error;
 }
 
-function ErrorFallback({ error }: ErrorFallbackProps) {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Something went wrong:</Text>
-      <Text>{error.message}</Text>
-      <Button label="Go back" onPress={() => router.back()} />
-    </View>
-  );
-}
-
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
     "SFProText-Medium": require("@/assets/fonts/SFProText-Medium.otf"),
@@ -42,15 +30,6 @@ export default function RootLayout() {
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -74,16 +53,16 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <StatusBar backgroundColor="transparent" />
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <SafeAreaProvider>
         <PersistGate loading={null} persistor={persistor}>
-          <SafeAreaProvider>
-            <LanguageManager>
+          <LanguageManager>
+            <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "white" }}>
+              <StatusBar backgroundColor="transparent" />
               <Slot />
-            </LanguageManager>
-          </SafeAreaProvider>
+            </SafeAreaView>
+          </LanguageManager>
         </PersistGate>
-      </ErrorBoundary>
+      </SafeAreaProvider>
     </Provider>
   );
 }

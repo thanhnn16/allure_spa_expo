@@ -153,174 +153,172 @@ export default function DetailsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View flex bg-$white>
-        <AppBar back rightComponent title="Chi tiết sản phẩm" />
-        <View flex>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {isLoading ? (
-              <SkeletonView
-                height={200}
-                width={windowWidth * 0.9}
-                style={{
-                  borderRadius: 20,
-                  alignSelf: "center",
-                  marginTop: 10,
-                }}
-              />
-            ) : (
-              <View
-                style={{
-                  width: "90%",
-                  height: 200,
-                  borderRadius: 20,
-                  overflow: "hidden",
-                  marginTop: 10,
-                  alignSelf: "center",
+    <View flex bg-$white>
+      <AppBar back rightComponent title="Chi tiết sản phẩm" />
+      <View flex>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {isLoading ? (
+            <SkeletonView
+              height={200}
+              width={windowWidth * 0.9}
+              style={{
+                borderRadius: 20,
+                alignSelf: "center",
+                marginTop: 10,
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                width: "90%",
+                height: 200,
+                borderRadius: 20,
+                overflow: "hidden",
+                marginTop: 10,
+                alignSelf: "center",
+              }}
+            >
+              <Carousel
+                onChangePage={(index: number) => setIndex(index)}
+                pageControlPosition={PageControlPosition.OVER}
+                pageControlProps={{
+                  size: 10,
+                  color: "#ffffff",
+                  inactiveColor: "#c4c4c4",
                 }}
               >
-                <Carousel
-                  onChangePage={(index: number) => setIndex(index)}
-                  pageControlPosition={PageControlPosition.OVER}
-                  pageControlProps={{
-                    size: 10,
-                    color: "#ffffff",
-                    inactiveColor: "#c4c4c4",
-                  }}
-                >
-                  {images.map((item, index) => (
-                    <Pressable
-                      onPress={() => handleOpenImage(index)}
+                {images.map((item, index) => (
+                  <Pressable
+                    onPress={() => handleOpenImage(index)}
+                    key={index}
+                  >
+                    <AnimatedImage
+                      animationDuration={1000}
+                      source={{ uri: item.uri }}
+                      aspectRatio={16 / 9}
+                      cover
                       key={index}
-                    >
-                      <AnimatedImage
-                        animationDuration={1000}
-                        source={{ uri: item.uri }}
-                        aspectRatio={16 / 9}
-                        cover
-                        key={index}
-                      />
-                    </Pressable>
-                  ))}
-                </Carousel>
-              </View>
-            )}
-            <ImageView
-              images={images}
-              imageIndex={imageViewIndex}
-              visible={visible}
-              onRequestClose={() => setIsVisible(false)}
-              onImageIndexChange={(index) => setImageViewIndex(index)}
-              swipeToCloseEnabled={true}
-              doubleTapToZoomEnabled={true}
-              FooterComponent={ImageViewFooterComponent}
-            />
-            {isLoading ? (
-              <View padding-20 gap-10>
-                <SkeletonView height={24} width={windowWidth * 0.7} />
-                <SkeletonView
-                  height={20}
-                  width={windowWidth * 0.4}
-                  marginT-10
-                />
-                <SkeletonView
-                  height={20}
-                  width={windowWidth * 0.6}
-                  marginT-10
-                />
-              </View>
-            ) : (
-              <View padding-20 gap-10>
-                <Text h2_bold marginB-10>
-                  {product?.name}
-                </Text>
-                <View row marginB-10>
-                  <Image source={TagIcon} size={24} />
-                  <Text h2_medium secondary marginL-5>
-                    {formatCurrency({ price: Number(product?.price) })}
-                  </Text>
-
-                  <View flex centerV row gap-15 right>
-                    <TouchableOpacity onPress={handleShare}>
-                      <Image source={LinkIcon} size={24} />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleFavorite}>
-                      {isFavorite ? (
-                        <Image source={HeartFullIcon} size={24} />
-                      ) : (
-                        <Image source={HeartIcon} size={24} />
-                      )}
-                    </TouchableOpacity>
-                  </View>
-                </View>
-
-                <View row centerV>
-                  <View row gap-5>
-                    <RatingStar rating={4.5} />
-                    <Text h3_medium>4.5</Text>
-                  </View>
-                  <View flex row right>
-                    <Text h3_medium>
-                      {" "}
-                      +99 {i18n.t("productDetail.purchases")}
-                    </Text>
-                  </View>
-                </View>
-
-                <View row paddingR-20>
-                  <View>
-                    <Image source={SunIcon} size={24} />
-                  </View>
-                  <View>{createBulletPoints(filteredShortText)}</View>
-                </View>
-              </View>
-            )}
-
-            <View marginT-10 marginH-20 paddingR-10>
-              {isLoading ? (
-                <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
-              ) : (
-                <Text h2_medium>
-                  {i18n.t("productDetail.product_description")}
-                </Text>
-              )}
-              <ProductDescription product={product} isLoading={isLoading} />
+                    />
+                  </Pressable>
+                ))}
+              </Carousel>
             </View>
-            <ProductQuantity
-              isLoading={isLoading}
-              quantity={quantity}
-              setQuantity={setQuantity}
-            />
-          </ScrollView>
-          <ProductBottomComponent
-            isLoading={isLoading}
-            product={product}
-            onPurchase={isGuest ? handleGuestPurchase : undefined}
-            quantity={quantity}
+          )}
+          <ImageView
+            images={images}
+            imageIndex={imageViewIndex}
+            visible={visible}
+            onRequestClose={() => setIsVisible(false)}
+            onImageIndexChange={(index) => setImageViewIndex(index)}
+            swipeToCloseEnabled={true}
+            doubleTapToZoomEnabled={true}
+            FooterComponent={ImageViewFooterComponent}
           />
+          {isLoading ? (
+            <View padding-20 gap-10>
+              <SkeletonView height={24} width={windowWidth * 0.7} />
+              <SkeletonView
+                height={20}
+                width={windowWidth * 0.4}
+                marginT-10
+              />
+              <SkeletonView
+                height={20}
+                width={windowWidth * 0.6}
+                marginT-10
+              />
+            </View>
+          ) : (
+            <View padding-20 gap-10>
+              <Text h2_bold marginB-10>
+                {product?.name}
+              </Text>
+              <View row marginB-10>
+                <Image source={TagIcon} size={24} />
+                <Text h2_medium secondary marginL-5>
+                  {formatCurrency({ price: Number(product?.price) })}
+                </Text>
 
-          <AppDialog
-            visible={buyProductDialog}
-            title={i18n.t("auth.login.login_required")}
-            description={i18n.t("auth.login.login_buy_product")}
-            closeButtonLabel={i18n.t("common.cancel")}
-            confirmButtonLabel={i18n.t("auth.login.login_now")}
-            severity="info"
-            onClose={() => setBuyProductDialog(false)}
-            onConfirm={handleLoginConfirm}
+                <View flex centerV row gap-15 right>
+                  <TouchableOpacity onPress={handleShare}>
+                    <Image source={LinkIcon} size={24} />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleFavorite}>
+                    {isFavorite ? (
+                      <Image source={HeartFullIcon} size={24} />
+                    ) : (
+                      <Image source={HeartIcon} size={24} />
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <View row centerV>
+                <View row gap-5>
+                  <RatingStar rating={4.5} />
+                  <Text h3_medium>4.5</Text>
+                </View>
+                <View flex row right>
+                  <Text h3_medium>
+                    {" "}
+                    +99 {i18n.t("productDetail.purchases")}
+                  </Text>
+                </View>
+              </View>
+
+              <View row paddingR-20>
+                <View>
+                  <Image source={SunIcon} size={24} />
+                </View>
+                <View>{createBulletPoints(filteredShortText)}</View>
+              </View>
+            </View>
+          )}
+
+          <View marginT-10 marginH-20 paddingR-10>
+            {isLoading ? (
+              <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
+            ) : (
+              <Text h2_medium>
+                {i18n.t("productDetail.product_description")}
+              </Text>
+            )}
+            <ProductDescription product={product} isLoading={isLoading} />
+          </View>
+          <ProductQuantity
+            isLoading={isLoading}
+            quantity={quantity}
+            setQuantity={setQuantity}
           />
-          <AppDialog
-            visible={favoriteDialog}
-            title={i18n.t("auth.login.login_required")}
-            description={i18n.t("auth.login.login_favorite")}
-            closeButtonLabel={i18n.t("common.cancel")}
-            confirmButtonLabel={i18n.t("auth.login.login_now")}
-            severity="info"
-            onClose={() => setFavoriteDialog(false)}
-            onConfirm={handleLoginConfirm}
-          />
-        </View>
+        </ScrollView>
+        <ProductBottomComponent
+          isLoading={isLoading}
+          product={product}
+          onPurchase={isGuest ? handleGuestPurchase : undefined}
+          quantity={quantity}
+        />
+
+        <AppDialog
+          visible={buyProductDialog}
+          title={i18n.t("auth.login.login_required")}
+          description={i18n.t("auth.login.login_buy_product")}
+          closeButtonLabel={i18n.t("common.cancel")}
+          confirmButtonLabel={i18n.t("auth.login.login_now")}
+          severity="info"
+          onClose={() => setBuyProductDialog(false)}
+          onConfirm={handleLoginConfirm}
+        />
+        <AppDialog
+          visible={favoriteDialog}
+          title={i18n.t("auth.login.login_required")}
+          description={i18n.t("auth.login.login_favorite")}
+          closeButtonLabel={i18n.t("common.cancel")}
+          confirmButtonLabel={i18n.t("auth.login.login_now")}
+          severity="info"
+          onClose={() => setFavoriteDialog(false)}
+          onConfirm={handleLoginConfirm}
+        />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

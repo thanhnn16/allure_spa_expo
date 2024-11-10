@@ -18,7 +18,7 @@ const AboutApp = () => {
   const buildVersion = Application.nativeBuildVersion;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <View flex bg-white>
       <AppBar back title={i18n.t("aboutapp.title")} />
       <ScrollView>
         <View paddingH-24 paddingV-20 flex>
@@ -51,7 +51,7 @@ const AboutApp = () => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -28,9 +28,8 @@ const RatingPage = () => {
   }, [dispatch]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View bg-$backgroundDefault flex>
-        <AppBar back title="Đánh giá" />
+    <View flex bg-$backgroundDefault>
+      <AppBar back title="Đánh giá" />
         <View padding-20 row centerV>
           <View>
             <Text h2_bold>4.9/5</Text>
@@ -61,8 +60,7 @@ const RatingPage = () => {
             ListFooterComponent={<View height={90} />}
           />
         </View>
-      </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

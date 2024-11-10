@@ -348,7 +348,7 @@ export default function DetailTransaction() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View flex>
       <View style={styles.header}>
         <Button
           iconSource={require("@/assets/images/home/arrow_ios.png")}
@@ -651,6 +651,6 @@ export default function DetailTransaction() {
           />
         </Link>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

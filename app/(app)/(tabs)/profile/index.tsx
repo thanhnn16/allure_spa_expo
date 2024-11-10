@@ -31,9 +31,9 @@ const ProfilePage = () => {
   };
 
   return (
-    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
+    <View flex bg-$white>
       <ScrollView>
-        <View flex paddingH-24 marginT-10>
+        <View flex paddingH-24 marginV-10>
           <Card
             width={"100%"}
             height={100}
@@ -54,12 +54,12 @@ const ProfilePage = () => {
                 source={
                   user?.avatar_url
                     ? { uri: user.avatar_url }
-                    : require("@/assets/images/avt.png")
+                    : require("@/assets/images/logo/logo.png")
                 }
               />
               <View>
                 <Text text60>
-                  {user?.full_name || i18n.t("profile.username")}
+                  {user?.full_name || i18n.t("common.guest")}
                 </Text>
                 <Text>{user?.phone_number || ""}</Text>
               </View>
@@ -211,7 +211,7 @@ const ProfilePage = () => {
         onClose={() => setLoginDialogVisible(false)}
         onConfirm={handleLoginConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

@@ -237,7 +237,7 @@ const Transaction = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View flex>
       <View style={styles.header}>
         <Button
           iconSource={require("@/assets/images/home/arrow_ios.png")}
@@ -307,7 +307,7 @@ const Transaction = () => {
         confirmButton={false}
         closeButtonLabel="Đóng"
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
