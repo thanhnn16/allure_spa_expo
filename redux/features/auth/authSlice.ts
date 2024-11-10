@@ -50,7 +50,7 @@ export const authSlice = createSlice({
       state.zaloAccessToken = null;
       state.zaloRefreshToken = null;
       state.zaloExpiresIn = null;
-      AsyncStorage.multiRemove(['userToken', 'user', 'zaloTokens']);
+      AsyncStorage.multiRemove(['userToken', 'user', 'zaloTokens', 'isGuest']);
     },
     setZaloTokens: (state: AuthState, action: any) => {
       state.zaloAccessToken = action.payload.access_token;
@@ -76,6 +76,7 @@ export const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
+        state.isGuest = false;
       })
       .addCase(loginThunk.rejected, (state: AuthState, action: any) => {
         state.isLoading = false;
@@ -94,6 +95,7 @@ export const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
+        state.isGuest = false;
       })
       .addCase(registerThunk.rejected, (state: AuthState, action: any) => {
         state.isLoading = false;

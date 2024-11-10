@@ -57,7 +57,6 @@ export const useAuth = () => {
     try {
       const result = await dispatch(loginThunk(credentials)).unwrap();
       if (result) {
-        await new Promise(resolve => setTimeout(resolve, 100));
         router.replace('/(app)/(tabs)/home');
         return result;
       }
@@ -71,7 +70,6 @@ export const useAuth = () => {
     try {
       const result = await dispatch(registerThunk(credentials)).unwrap();
       if (result) {
-        await new Promise(resolve => setTimeout(resolve, 100));
         router.replace('/(app)/(tabs)/home');
         return result;
       }
@@ -93,7 +91,6 @@ export const useAuth = () => {
   const signOut = async () => {
     try {
       await dispatch(logoutThunk()).unwrap();
-      await new Promise(resolve => setTimeout(resolve, 100));
       router.replace('/(auth)');
     } catch (error: any) {
       console.error('Sign out failed:', error);
@@ -105,7 +102,6 @@ export const useAuth = () => {
     try {
       await AuthService.loginAsGuest();
       dispatch(setGuestUser());
-      await new Promise(resolve => setTimeout(resolve, 100));
       router.replace('/(app)/(tabs)/home');
     } catch (error: any) {
       console.error('Sign in as guest failed:', error);

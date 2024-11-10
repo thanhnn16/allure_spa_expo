@@ -9,11 +9,11 @@ import AppDialog from "@/components/dialog/AppDialog";
 import { ScrollView } from "react-native";
 
 const ProfilePage = () => {
-  const { user, signOut, isGuest } = useAuth();
+  const { user, signOut, signOutGuest, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
 
   const handleSignOut = () => {
-    signOut();
+    isGuest ? signOutGuest() : signOut();
   };
 
   const handleLoginConfirm = () => {

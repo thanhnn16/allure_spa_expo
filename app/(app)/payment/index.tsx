@@ -7,6 +7,7 @@ import { WebViewType } from "@/utils/constants/webview";
 import {
   Ionicons as ExpoIonicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BottomSheet, {
@@ -16,7 +17,7 @@ import BottomSheet, {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Image, ScrollView, StyleSheet } from "react-native";
+import { Image, ScrollView, StyleSheet, ImageSourcePropType } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -33,17 +34,32 @@ interface Product {
   id: number;
   name: string;
   price: string;
+  priceValue: number;
   quantity: number;
   image: any;
+}
+
+interface Voucher {
+  label: string;
+  value: string;
+  discountPercentage: number;
 }
 
 interface PaymentMethod {
   id: number;
   name: string;
-  code: string;
-  icon: string;
-  iconType: "Ionicons" | "MaterialCommunityIcons";
+  icon?: ImageSourcePropType;
+  iconType?: 'MaterialCommunityIcons' | 'MaterialIcons';
+  iconName?: string;
+  code?: string;
+  children?: PaymentMethod[];
 }
+
+const calculateTotalPrice = (products: Product[]) => {
+  return products.reduce((total, product) => {
+    return total + product.priceValue * product.quantity;
+  }, 0);
+};
 
 export default function Payment() {
   const params = useLocalSearchParams();
@@ -57,21 +73,29 @@ export default function Payment() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const { showDialog, dialogConfig, hideDialog } = useDialog();
   const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const [selectedVoucher, setSelectedVoucher] = useState('Không có');
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(() => calculateTotalPrice(products));
+  const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
   const paymentMethods: PaymentMethod[] = [
     {
       id: 1,
-      name: "Thanh toán khi nhận hàng",
-      code: "cod",
-      icon: "cash",
-      iconType: "Ionicons",
+      name: 'Thanh toán khi nhận hàng',
+      iconType: 'MaterialCommunityIcons',
+      iconName: 'cash',
+      children: []
     },
     {
       id: 2,
-      name: "Chuyển khoản ngân hàng",
-      code: "bank_transfer",
-      icon: "bank",
-      iconType: "MaterialCommunityIcons",
-    },
+      name: 'Thanh toán online',
+      iconType: 'MaterialIcons',
+      iconName: 'credit-card',
+      children: [
+        { id: 21, name: 'VISA / MasterCard', icon: require('@/assets/images/visa.png') },
+        { id: 22, name: 'ZaloPay', icon: require('@/assets/images/zalopay.png') },
+        { id: 23, name: 'Apple Pay', icon: require('@/assets/images/apple.png') }
+      ]
+    }
   ];
 
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -216,7 +240,7 @@ export default function Payment() {
           showDialog(
             "Lỗi Thanh Toán",
             paymentError.message ||
-              "Không thể tạo link thanh toán. Vui lòng thử lại sau.",
+            "Không thể tạo link thanh toán. Vui lòng thử lại sau.",
             "error"
           );
         }
@@ -226,8 +250,8 @@ export default function Payment() {
       showDialog(
         "Lỗi Thanh Toán",
         error.response?.data?.message ||
-          error.message ||
-          "Không thể xử lý thanh toán",
+        error.message ||
+        "Không thể xử lý thanh toán",
         "error"
       );
     } finally {
@@ -237,22 +261,33 @@ export default function Payment() {
   };
 
   const renderPaymentIcon = (method: PaymentMethod) => {
-    if (method.iconType === "Ionicons") {
+    if (method.iconType === 'MaterialCommunityIcons' && method.iconName) {
       return (
-        <ExpoIonicons
-          name={method.icon as any}
+        <MaterialCommunityIcons
+          name={method.iconName as any}
           size={24}
-          color={Colors.primary}
+          color="#000000"
         />
       );
     }
-    return (
-      <MaterialCommunityIcons
-        name={method.icon as any}
-        size={24}
-        color={Colors.primary}
-      />
-    );
+    if (method.iconType === 'MaterialIcons' && method.iconName) {
+      return (
+        <MaterialIcons
+          name={method.iconName as any}
+          size={24}
+          color="#000000"
+        />
+      );
+    }
+    if (method.icon) {
+      return (
+        <Image
+          source={method.icon}
+          style={styles.paymentIcon}
+        />
+      );
+    }
+    return null;
   };
 
   const handleSelectPayment = (payment: PaymentMethod) => {
@@ -275,15 +310,15 @@ export default function Payment() {
             >
               <View row spread centerV>
                 <View row centerV>
-                  {method.iconType === "Ionicons" ? (
-                    <ExpoIonicons
-                      name={method.icon as any}
+                  {method.iconType === "MaterialCommunityIcons" ? (
+                    <MaterialCommunityIcons
+                      name={method.iconName as any}
                       size={24}
                       color={Colors.grey10}
                     />
                   ) : (
-                    <MaterialCommunityIcons
-                      name={method.icon as any}
+                    <MaterialIcons
+                      name={method.iconName as any}
                       size={24}
                       color={Colors.grey10}
                     />
@@ -313,6 +348,17 @@ export default function Payment() {
       setLoadingMessage("");
     };
   }, []);
+
+  const calculateDiscountedPrice = (originalPrice: number, discountPercentage: number) => {
+    const discount = originalPrice * (discountPercentage / 100);
+    return originalPrice - discount;
+  };
+
+  const handleVoucherSelect = (voucher: Voucher) => {
+    setSelectedVoucher(voucher.label);
+    const newPrice = calculateDiscountedPrice(totalPrice, voucher.discountPercentage);
+    setDiscountedPrice(newPrice);
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
