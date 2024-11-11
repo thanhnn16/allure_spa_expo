@@ -15,8 +15,7 @@ import i18n from "@/languages/i18n";
 const DeleteAccountVerifyScreen: React.FC = () => {
   const [verify, setVerify] = useState("Có , gửi dữ liệu của tôi tới email");
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 40 }}>
+      <View flex paddingH-20 paddingV-40>
         <View row marginB-20>
           <Button
             iconSource={require("@/assets/images/home/arrow_ios.png")}
@@ -77,7 +76,6 @@ const DeleteAccountVerifyScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
   );
 };
 export default DeleteAccountVerifyScreen;

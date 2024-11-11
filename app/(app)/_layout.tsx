@@ -9,10 +9,9 @@ const AppLayout = () => {
   );
 
   useEffect(() => {
-    const checkAuthAndNavigate = async () => {
+    const checkAuthAndNavigate = () => {
       try {
         if (!isAuthenticated && !isGuest) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
           router.replace("/(auth)");
         }
       } catch (err) {
@@ -42,6 +41,9 @@ const AppLayout = () => {
       <Stack.Screen name="booking/index" />
       <Stack.Screen name="invoice/failed" />
       <Stack.Screen name="invoice/success" />
+      <Stack.Screen name="address/update" />
+      <Stack.Screen name="address/add" />
+      <Stack.Screen name="address/index" />
     </Stack>
   );
 };

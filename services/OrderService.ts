@@ -66,20 +66,17 @@ interface CreateInvoiceResponse {
 }
 
 class OrderService {
-    async createInvoice(data: any): Promise<CreateInvoiceResponse> {
-        const response = await AxiosInstance().post("/invoices", data);
-        console.log("OrderService createInvoice", response.data);
+    async createOrder(data: any): Promise<any> {
+        const response = await AxiosInstance().post("/orders", data);
         return response.data;
     }
 
-    async createPaymentLink(data: { invoice_id: string; returnUrl: string; cancelUrl: string }): Promise<PaymentLinkResponse> {
+    async processPayment(orderId: string, paymentData: { 
+        returnUrl: string; 
+        cancelUrl: string; 
+    }): Promise<PaymentLinkResponse> {
         try {
-            const response = await AxiosInstance().post(`/invoices/${data.invoice_id}/payos`, {
-                returnUrl: data.returnUrl,
-                cancelUrl: data.cancelUrl,
-            });
-
-            console.log("OrderService createPaymentLink response:", response.data);
+            const response = await AxiosInstance().post(`/orders/${orderId}/payment`, paymentData);
 
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Không thể tạo link thanh toán');
@@ -87,21 +84,7 @@ class OrderService {
 
             return response.data;
         } catch (error: any) {
-            console.error("OrderService createPaymentLink error:", error);
             throw new Error(error.response?.data?.message || 'Không thể tạo link thanh toán');
-        }
-    }
-
-    async verifyPayment(orderCode: string) {
-        try {
-            const response = await AxiosInstance().post("/payos/verify", {
-                orderCode,
-            });
-            console.log("OrderService verifyPayment", response.data);
-            return response.data;
-        } catch (error: any) {
-            console.log("OrderService verifyPayment", error.response?.data);
-            throw new Error(error.response?.data?.message || "Không thể xác thực thanh toán");
         }
     }
 }

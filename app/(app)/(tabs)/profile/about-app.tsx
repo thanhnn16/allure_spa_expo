@@ -1,74 +1,57 @@
 import react from "react";
-import { Redirect } from "expo-router";
 import { useFonts } from "expo-font";
 import i18n from "@/languages/i18n";
 
-import {
-  View,
-  Text,
-  Card,
-  Image,
-  TouchableOpacity,
-  ScrollBar,
-} from "react-native-ui-lib";
-import { Href, Link } from "expo-router";
-import colors from "@/constants/Colors";
+import { View, Text, Image, TouchableOpacity } from "react-native-ui-lib";
 import BackButton from "@/assets/icons/back.svg";
 import { router, useNavigation } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AppBar from "@/components/app-bar/AppBar";
+import * as Application from "expo-application";
+import { ScrollView } from "react-native";
 
 interface AboutAppProps {}
 
 const AboutApp = () => {
-  return (
-    <View flex marginH-20 marginT-40 useSafeArea>
-      <View row centerV>
-        <TouchableOpacity
-          onPress={() => {
-            router.back();
-          }}
-        >
-          <Image width={30} height={30} source={BackButton} />
-        </TouchableOpacity>
-        <View flex center>
-          <Text
-            text60BO
-            marginR-30
-            style={{ color: "#717658", letterSpacing: 0.75 }}
-          >
-           {i18n.t("aboutapp.title")}
-          </Text>
-        </View>
-      </View>
-      <View center marginT-40>
-        <Image
-          width={300}
-          height={300}
-          borderRadius={50}
-          source={require("@/assets/images/logo/logo.png")}
-        />
-      </View>
+  const appName = Application.applicationName;
+  const appVersion = Application.nativeApplicationVersion;
+  const buildVersion = Application.nativeBuildVersion;
 
-      <View width={"100%"} height={"100%"}>
-        <Text text80BL>
-         {i18n.t("aboutapp.title1")}
-        </Text>
-        <Text marginT-20 text70BL>
-          {i18n.t("aboutapp.title2")}
-        </Text>
-        <Text marginT-20 text70BL>
-          - {i18n.t("aboutapp.name_app")}
-        </Text>
-        <Text marginT-20 text70BL>
-          - {i18n.t("aboutapp.version")}
-        </Text>
-        <Text marginT-20 text70BL>
-          - {i18n.t("aboutapp.developer")}
-        </Text>
-        <Text marginT-20 text70BL>
-          - {i18n.t("aboutapp.date_release")}
-        </Text>
-      </View>
-    </View>           
+  return (
+    <View flex bg-white>
+      <AppBar back title={i18n.t("aboutapp.title")} />
+      <ScrollView>
+        <View paddingH-24 paddingV-20 flex>
+          <View center>
+            <Image
+              width={128}
+              height={128}
+              borderRadius={50}
+              source={require("@/assets/images/logo/logo.png")}
+            />
+          </View>
+
+          <View>
+            <Text text80BL>{i18n.t("aboutapp.title1")}</Text>
+            <Text marginT-20 text70BL>
+              {i18n.t("aboutapp.title2")}
+            </Text>
+            <Text marginT-20 text70BL>
+              - {i18n.t("aboutapp.name_app")}: {appName}
+            </Text>
+            <Text marginT-20 text70BL>
+              - {i18n.t("aboutapp.version")}: {appVersion} ({buildVersion})
+            </Text>
+            <Text marginT-20 text70BL>
+              - {i18n.t("aboutapp.developer")}: Ong Lười
+            </Text>
+            <Text marginT-20 text70BL>
+              - {i18n.t("aboutapp.date_release")}: 2024
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 

@@ -14,7 +14,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
   const { user } = useAuth();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <View flex bg-white>
       <AppBar back title={i18n.t("profile.title")} />
       <View flex paddingH-24>
         <View center marginT-30 gap-7>
@@ -94,7 +94,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
           ))}
         </Card>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

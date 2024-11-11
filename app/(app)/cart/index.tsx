@@ -94,10 +94,10 @@ export default function Cart() {
 
     return (
         <GestureHandlerRootView>
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <AppBar title="Giỏ Hàng" back />
                 {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
-            </SafeAreaView>
+            </View>
         </GestureHandlerRootView>
     );
 }

@@ -64,7 +64,7 @@ const PagerViewPage = () => {
     );
   };
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View flex>
       <PagerView style={styles.container}>
         {item && item.video && (
           // <VideoPlayer
@@ -109,7 +109,7 @@ const PagerViewPage = () => {
           </View>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

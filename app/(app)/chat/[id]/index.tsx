@@ -133,7 +133,7 @@ const ChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <AppBar title={i18n.t("chat.customer_care")} back />
       {isLoading ? (
         <View style={styles.centerContainer}>
@@ -179,11 +179,11 @@ const ChatScreen = () => {
             isAI={false}
             isCamera={true}
             selectedImages={[]}
-            setSelectedImages={() => {}}
+            setSelectedImages={() => { }}
           />
         </KeyboardAvoidingView>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

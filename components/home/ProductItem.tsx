@@ -22,25 +22,31 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
 
   return (
     <TouchableOpacity
-      marginH-12
-      style={[
-        AppStyles.shadowItem,
-        { borderRadius: 22, width: 200, height: "auto" },
+      marginH-10
+      marginB-10
+      style={[{ width: 200, borderRadius: 12 },
+      AppStyles.shadowItem
       ]}
       onPress={() => router.push(`/product/${item.id}`)}
     >
       <View
-        style={{ borderRadius: 22, overflow: "hidden" }}
+        br50
+        width={200}
+        gap-5
       >
         <Image
           source={productImage}
           width={"100%"}
+          resizeMode="cover"
           height={170}
-          style={{ resizeMode: "cover" }}
+          style={{
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+          }}
         />
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
-        <Text text70H numberOfLines={2}>
+        <Text text70H numberOfLines={2} ellipsizeMode="tail">
           {item?.name}
         </Text>
 

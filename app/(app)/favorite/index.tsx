@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, Text } from 'react-native';
 import AppBar from '@/components/app-bar/AppBar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { TabController, Colors } from 'react-native-ui-lib';
+import { TabController, Colors, View } from 'react-native-ui-lib';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import FavoriteItem from './FavoriteItem';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,7 +44,7 @@ const FavoritePage = () => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+            <View flex>
                 <AppBar title='Yêu thích' />
                 <TabController
                     items={[
@@ -70,7 +69,7 @@ const FavoritePage = () => {
                         </TabController.TabPage>
                     </View>
                 </TabController>
-            </SafeAreaView>
+            </View>
         </GestureHandlerRootView>
     );
 };

@@ -10,6 +10,7 @@
   "sendOTP": "Gửi OTP",
   "close": "Đóng",
   "common": {
+    "guest": "Khách",
     "cancel": "Hủy",
     "confirm": "Xác nhận",
     "ok": "OK",
@@ -146,10 +147,10 @@
       "title": "Giới thiệu về ứng dụng",
       "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
       "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
-      "name_app": "Tên ứng dụng: Allure Spa",
-      "developer": "Nhà phát triển: Allure Spa",
-      "version": "Phiên bản: 1.0.0",
-      "date_release": "Ngày phát hành: 01/01/2021"
+      "name_app": "Tên ứng dụng: ",
+      "developer": "Nhà phát triển: ",
+      "version": "Phiên bản: ",
+      "date_release": "Ngày phát hành: "
     },
     "deleteaccount": {
       "title": "Xóa tài khoản",
@@ -315,9 +316,9 @@
     "placeholder_search": "Tìm kiếm mỹ phẩm, liệu trình ..."
   },
   "greeting": {
-    "morning": "Allure Spa chúc bạn buổi sáng vui vẻ!",
-    "afternoon": "Allure Spa chúc bạn buổi trưa vui vẻ!",
-    "evening": "Allure Spa chúc bạn buổi tối vui vẻ!"
+    "morning": "Chúc bạn buổi sáng vui vẻ!",
+    "afternoon": "Chúc bạn buổi trưa vui vẻ!",
+    "evening": "Chúc bạn buổi tối vui vẻ!"
   },
   "package": {
     "single": "Gói đơn",
@@ -338,7 +339,20 @@
     "book": "Book",
     "plase_select_date": "Vui lòng chọn ngày!",
     "plase_select_time": "Vui lòng chọn giờ!",
-    "appointment_successful": "Đặt lịch thành công!"
+    "appointment_successful": "Đặt lịch thành công!",
+    "confirm_information": "Xác nhận thông tin",
+    "customer_name": "Tên khách hàng",
+    "service_name": "Tên dịch vụ",
+    "time": "Thời gian",
+    "date": "Ngày",
+    "agree": "Đồng ý",
+    "cancel": "Huỷ",
+    "no_notes": "Không có ghi chú",
+    "select_seat": "Chọn chỗ",
+    "1_seat": "1 chỗ",
+    "2_seat": "2 chỗ",
+    "back_to_home": "Quay về trang chủ",
+    "scheduled_successfully": "Đặt lịch thành công"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",

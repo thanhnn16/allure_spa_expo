@@ -42,7 +42,7 @@ class FirebaseService {
       console.log('FCM token:', fcmToken);
       return fcmToken;
     } catch (error) {
-      console.error('Failed to get FCM token:', error);
+      console.log('Failed to get FCM token:', error);
       return null;
     }
   }

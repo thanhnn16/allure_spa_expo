@@ -51,11 +51,10 @@ const AppSearch = ({
         },
       ]}
     >
-      <BlurView
-        intensity={190}
+      <View
         style={{
           width: "100%",
-          height: 55,
+          height: 48,
           paddingHorizontal: 10,
           alignSelf: "center",
           alignItems: "center",
@@ -94,7 +93,7 @@ const AppSearch = ({
           </View>
         )}
         <Image source={MicIcon} />
-      </BlurView>
+      </View>
     </View>
   );
 };

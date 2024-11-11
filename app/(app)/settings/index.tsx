@@ -36,7 +36,7 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} bg-white>
+    <View flex bg-$white>
       <AppBar title={i18n.t("settings.title")} back />
       <View flex paddingH-20 paddingT-12>
         {/* Language Section */}
@@ -122,7 +122,7 @@ const SettingsScreen: React.FC = () => {
           />
         </Card>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

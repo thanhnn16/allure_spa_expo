@@ -8,11 +8,10 @@ export default function AuthLayout() {
   const { initializing, user, error } = useAuth();
 
   useEffect(() => {
-    const checkAuthAndNavigate = async () => {
+    const checkAuthAndNavigate = () => {
       try {
         if (initializing) return;
         if (user) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
           router.replace("/(app)");
         }
       } catch (err) {
@@ -23,7 +22,5 @@ export default function AuthLayout() {
     checkAuthAndNavigate();
   }, [initializing, user]);
 
-  return (
-    <Stack screenOptions={{ headerShown: false }} />
-  );
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

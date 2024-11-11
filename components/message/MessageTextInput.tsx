@@ -22,7 +22,7 @@ interface MessageTextInputProps {
 }
 
 const MessageTextInput = ({
-    placeholder, message, setMessage, handleSend, isAI, isCamera, selectedImages, setSelectedImages
+    placeholder, message, setMessage, handleSend, isAI, isCamera, selectedImages, setSelectedImages, onVoicePress
 }: MessageTextInputProps) => {
 
     const handleSelectImages = async () => {
@@ -39,7 +39,9 @@ const MessageTextInput = ({
     };
 
     const handleAI = () => {
-        router.push('/(app)/(chat)/AIVoiceScreen' as Href<string>)
+        if (onVoicePress) {
+            onVoicePress();
+        }
     };
 
     return (

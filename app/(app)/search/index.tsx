@@ -143,7 +143,7 @@ const SearchScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
+      <View flex>
         <View flex marginH-20>
           <AppBar back title="Search" />
           <AppSearch
@@ -173,7 +173,7 @@ const SearchScreen = () => {
             )}
           </ScrollView>
         </View>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

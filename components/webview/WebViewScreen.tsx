@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { WebView } from "react-native-webview";
-import { View, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 import { Href, router } from "expo-router";
 import axios from "axios";
-import { LoaderScreen } from "react-native-ui-lib";
+import { LoaderScreen, View } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppDialog from "@/components/dialog/AppDialog";
-
+import { SafeAreaView } from "react-native-safe-area-context";
+import AppBar from "../app-bar/AppBar";
+import i18n from "@/languages/i18n";
 interface WebViewScreenProps {
   url: string;
   type: WebViewType;
@@ -143,10 +144,11 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View flex bg-$white>
+      <AppBar back title={i18n.t("common.back_to_home")} />
       <WebView
         source={{ uri: url }}
-        style={styles.webview}
+        style={{ flex: 1 }}
         onNavigationStateChange={handleNavigationStateChange}
         incognito={type === WebViewType.ZALO_LOGIN}
         javaScriptEnabled={true}
@@ -162,20 +164,10 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         onClose={() => setDialogVisible(false)}
         closeButton={true}
         confirmButton={false}
-        closeButtonLabel="Đóng"
+        closeButtonLabel={i18n.t("close")}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: Constants.statusBarHeight,
-  },
-  webview: {
-    flex: 1,
-  },
-});
 
 export default WebViewScreen;

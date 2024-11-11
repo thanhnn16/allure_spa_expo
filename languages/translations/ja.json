@@ -9,6 +9,7 @@
   "sendOTP": "OTPを送信",
   "close": "閉じる",
   "common": {
+    "guest": "ゲスト",
     "cancel": "キャンセル",
     "confirm": "確認",
     "ok": "OK",
@@ -97,7 +98,6 @@
     },
     "profile": {
       "title": "プロフィール",
-      "username": "Nguyen Van Teo",
       "my_account": "マイアカウント",
       "edit_personal_info": "個人情報を編集",
       "purchase_policy": "購入と返品ポリシー",
@@ -138,10 +138,10 @@
       "title": "アプリについて",
       "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
       "title2": "Allure Spaアプリケーションの基本情報:",
-      "name_app": "アプリ名: Allure Spa",
-      "developer": "開発者: Allure Spa",
-      "version": "バージョン: 1.0.0",
-      "date_release": "発売日: 01/01/2021"
+      "name_app": "アプリ名: ",
+      "developer": "開発者: ",
+      "version": "バージョン: ",
+      "date_release": "発売日: "
     },
     "deleteaccount": {
       "title": "アカウントを削除",
@@ -206,7 +206,6 @@
   },
   "profile": {
     "title": "プロフィール",
-    "username": "Nguyen Van Teo",
     "my_account": "マイアカウント",
     "edit_personal_info": "個人情報を編集",
     "purchase_policy": "購入と返品ポリシー",
@@ -291,9 +290,9 @@
     "placeholder_search": "化粧品、トリートメントを検索..."
   },
   "greeting": {
-    "morning": "Allure Spa はあなたの幸せな朝を願っています。",
-    "afternoon": "アリュール スパでは、楽しい午後のひとときをお過ごしいただけますよう願っております。",
-    "evening": "Allure Spa では素敵な夜をお過ごしいただけますようお願いいたします。"
+    "morning": "おはようございます！",
+    "afternoon": "こんにちは！", 
+    "evening": "こんばんは！"
   },
   "package": {
     "single": "単一パッケージ",
@@ -314,7 +313,20 @@
     "book": "Book",
     "plase_select_date": "日付を選択してください。",
     "plase_select_time": "時間を選択してください。",
-    "appointment_successful": "無事にスケジュールが決まりました！"
+    "appointment_successful": "無事にスケジュールが決まりました！",
+    "confirm_information": "情報を確認する",
+    "customer_name": "顧客名",
+    "service_name": "サービス名",
+    "time": "時間",
+    "date": "日付",
+    "agree": "同意する",
+    "cancel": "キャンセル",
+    "no_notes": "メモはありません",
+    "select_seat": "座席を選択してください",
+    "1_seat": "1席",
+    "2_seat": "2席",
+    "back_to_home": "ホームページに戻る",
+    "scheduled_successfully": "正常にスケジュールされました"
   },
   "system": {
     "fud": "機能は開発中です!",

@@ -66,25 +66,23 @@ const NotificationPage: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View flex bg-white>
-        <AppBar back title="Thông báo" />
-        <View flex>
-          <View row spread centerV padding-8 paddingH-24>
-            <Text h3 color={Colors.gray}>
-              Hôm nay
-            </Text>
-            <Text h3>Đánh dấu tất cả là đã đọc</Text>
-          </View>
-          <FlatList
-            data={notificationData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingVertical: 8 }}
-          />
+    <View flex bg-white>
+      <AppBar back title="Thông báo" />
+      <View flex>
+        <View row spread centerV padding-8 paddingH-24>
+          <Text h3 color={Colors.gray}>
+            Hôm nay
+          </Text>
+          <Text h3>Đánh dấu tất cả là đã đọc</Text>
         </View>
+        <FlatList
+          data={notificationData}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingVertical: 8 }}
+        />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

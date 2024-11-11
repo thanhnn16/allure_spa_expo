@@ -74,55 +74,44 @@ const WeatherView = () => {
   return (
     <View
       row
-      height={60}
       centerV
+      paddingV-8
+      br30
       style={{
-        borderRadius: 8,
         borderColor: "#C9C9C9",
         borderWidth: 1,
       }}
-      marginB-15
     >
-      <BlurView
-        style={{
-          width: "100%",
-          height: "100%",
-          flexDirection: "row",
-          alignItems: "center",
-          paddingHorizontal: 15,
-        }}
-      >
-        <View row centerV>
-          <Image
-            source={{
-              uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
-            }}
-            width={40}
-            height={40}
-          />
-          <Text marginL-5 text60>
-            {temperature.toFixed(0)}°C
-          </Text>
-        </View>
-        <View
-          height={30}
-          width={2}
-          backgroundColor="#717658"
-          marginL-15
-          marginR-15
+      <View row centerV paddingH-10 >
+        <Image
+          source={{
+            uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
+          }}
+          width={40}
+          height={40}
         />
-        <View>
-          <Text h3_bold>
-            {weekday}, {i18n.t("days.day")} {currentDate}
+        <Text text60>
+          {temperature.toFixed(0)}°C
+        </Text>
+      </View>
+      <View
+        height={30}
+        width={2}
+        backgroundColor="#717658"
+        marginL-15
+        marginR-15
+      />
+      <View>
+        <Text h3_bold>
+          {weekday}, {i18n.t("days.day")} {currentDate}
+        </Text>
+        <View row centerV>
+          <FontAwesome6 name="location-dot" size={16} color="black" />
+          <Text marginL-5 h3_medium>
+            {location?.name}
           </Text>
-          <View row centerV>
-            <FontAwesome6 name="location-dot" size={16} color="black" />
-            <Text marginL-5 h3_medium>
-              {location?.name}
-            </Text>
-          </View>
         </View>
-      </BlurView>
+      </View>
     </View>
   );
 };
