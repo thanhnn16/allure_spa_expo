@@ -65,7 +65,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
                     {isPayment && (
                         <View centerV>
                             <Ionicons
-                                name="chevron-forward"
+                                name="chevron-down"
                                 size={24}
                                 color={Colors.primary}
                             />

@@ -79,6 +79,7 @@ export default function Payment() {
   const [loadingMessage, setLoadingMessage] = useState("");
   const { showDialog, dialogConfig, hideDialog } = useDialog();
   const [showBottomSheet, setShowBottomSheet] = useState(false);
+  const [currentBottomSheetIndex, setCurrentBottomSheetIndex] = useState(-1);
   const [selectedVoucher, setSelectedVoucher] = useState('Không có');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(() => calculateTotalPrice(products));
@@ -120,7 +121,9 @@ export default function Payment() {
         disappearsOnIndex={-1}
         appearsOnIndex={0}
         pressBehavior="close"
-      />
+      >
+        {renderContent()}
+      </BottomSheetBackdrop>
     ),
     []
   );
@@ -266,44 +269,17 @@ export default function Payment() {
     }
   };
 
-  const renderPaymentIcon = (method: PaymentMethod) => {
-    if (method.iconType === 'MaterialCommunityIcons' && method.iconName) {
-      return (
-        <MaterialCommunityIcons
-          name={method.iconName as any}
-          size={24}
-          color="#000000"
-        />
-      );
-    }
-    if (method.iconType === 'MaterialIcons' && method.iconName) {
-      return (
-        <MaterialIcons
-          name={method.iconName as any}
-          size={24}
-          color="#000000"
-        />
-      );
-    }
-    if (method.icon) {
-      return (
-        <Image
-          source={method.icon}
-          style={styles.paymentIcon}
-        />
-      );
-    }
-    return null;
-  };
-
   const handleSelectPayment = (payment: PaymentMethod) => {
     setSelectedPayment(payment);
-    setShowBottomSheet(false);
+    bottomSheetRef.current?.close();
   };
 
   const renderPaymentMethods = () => {
     return (
       <BottomSheetView>
+        <View style={styles.bottomSheetHeader}>
+          <Text text60BO>Chọn phương thức thanh toán</Text>
+        </View>
         <View flex padding-16>
           {paymentMethods.map((method) => (
             <TouchableOpacity
@@ -348,6 +324,56 @@ export default function Payment() {
     );
   };
 
+  const renderVoucher = () => {
+    return (
+      <BottomSheetView>
+        <View style={styles.bottomSheetHeader}>
+          <Text text60BO>Chọn voucher</Text>
+        </View>
+        <View flex padding-16>
+          <Text>Chưa có voucher</Text>
+        </View>
+      </BottomSheetView>
+    );
+  }
+
+  const renderAddress = () => {
+    return (
+      <BottomSheetView>
+        <View style={styles.bottomSheetHeader}>
+          <Text text60BO>Chọn địa chỉ</Text>
+        </View>
+        <View flex padding-16>
+          <Text>Chưa có địa chỉ</Text>
+        </View>
+      </BottomSheetView>
+    );
+  }
+
+  const renderContent = () => {
+    if (currentBottomSheetIndex === 1) {
+      return renderVoucher();
+    } else if (currentBottomSheetIndex === 2) {
+      return renderAddress();
+    }
+    return renderPaymentMethods();
+  };
+
+  const handlePayment = () => {
+    setCurrentBottomSheetIndex(1);
+    bottomSheetRef.current?.expand();
+  };
+
+  const handleVoucher = () => {
+    setCurrentBottomSheetIndex(2);
+    bottomSheetRef.current?.expand();
+  };
+
+  const handleAddress = () => {
+    setCurrentBottomSheetIndex(3);
+    bottomSheetRef.current?.expand();
+  };
+
   useEffect(() => {
     return () => {
       setLoading(false);
@@ -375,31 +401,36 @@ export default function Payment() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.productListContainer}
         >
-          <PaymentAddress isPayment />
+          <PaymentAddress
+            isPayment
+            onPress={() => handleAddress()}
+          />
 
-          <View gap-10 marginB-20>
-            <Text h2_bold>Voucher</Text>
-            <View
-              row paddingH-15 paddingV-20 centerV spread
-              style={{
-                borderWidth: 1,
-                borderColor: "#E0E0E0",
-                borderRadius: 10,
-                backgroundColor: "#FCFCFC",
-              }}
-            >
-              <Text h3>Chưa có voucher</Text>
-              <Ionicons
-                name="chevron-down"
-                size={24}
-                color={Colors.grey30}
-              />
+          <TouchableOpacity onPress={() => handleVoucher()}>
+            <View gap-10 marginB-20>
+              <Text h2_bold>Voucher</Text>
+              <View
+                row paddingH-15 paddingV-20 centerV spread
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#E0E0E0",
+                  borderRadius: 10,
+                  backgroundColor: "#FCFCFC",
+                }}
+              >
+                <Text h3>Chưa có voucher</Text>
+                <Ionicons
+                  name="chevron-down"
+                  size={24}
+                  color={Colors.grey30}
+                />
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
 
           <PaymentMethodSelect
             isPayment
-            onPress={() => setShowBottomSheet(true)}
+            onPress={() => handlePayment()}
             selectedPayment={selectedPayment}
           />
 
@@ -465,13 +496,7 @@ export default function Payment() {
           backdropComponent={renderBackdrop}
           backgroundStyle={styles.bottomSheet}
         >
-          <View style={styles.bottomSheetHeader}>
-            <Text text60BO>Chọn phương thức thanh toán</Text>
-            <TouchableOpacity onPress={() => setShowBottomSheet(false)}>
-              <ExpoIonicons name="close" size={24} color={Colors.grey30} />
-            </TouchableOpacity>
-          </View>
-          <View flex>{renderPaymentMethods()}</View>
+          {renderContent()}
         </BottomSheet>
 
         <LoadingOverlay visible={loading} message={loadingMessage} />
@@ -490,161 +515,6 @@ export default function Payment() {
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  },
-  header: {
-    backgroundColor: "#FFFFFF",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-  },
-  section: {
-    backgroundColor: "#FFFFFF",
-    padding: 10,
-    paddingHorizontal: 20,
-    marginTop: -15,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 4,
-    alignItems: "center",
-  },
-  totalSection: {
-    padding: 16,
-    paddingHorizontal: 20,
-    backgroundColor: "#f8f8f8",
-    marginHorizontal: 20,
-    borderRadius: 8,
-  },
-  productCard: {
-    marginVertical: 8,
-    width: "100%",
-    height: 91.03,
-    paddingRight: 10,
-    backgroundColor: "transparent",
-  },
-  cardRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: "100%",
-  },
-  productImage: {
-    width: 96,
-    height: 89,
-    borderRadius: 10,
-  },
-  customerInfoCard: {
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f8f8f8",
-    borderRadius: 8,
-    justifyContent: "space-between",
-  },
-  customerInfo: {
-    flex: 1,
-  },
-  arrowIcon: {
-    width: 24,
-    height: 24,
-    transform: [{ rotate: "180deg" }],
-    tintColor: "black",
-  },
-  inputField: {
-    width: 335,
-    height: 44,
-    borderWidth: 0,
-    padding: 8,
-    borderRadius: 8,
-  },
-  textFieldContainer: {
-    padding: 10,
-    width: "100%",
-  },
-  placeholderStyle: {
-    color: "#000000",
-    fontWeight: "500",
-    fontSize: 14,
-    marginLeft: 0,
-  },
-  productInfo: {
-    marginLeft: 12,
-    flex: 1,
-    justifyContent: "space-between",
-    paddingVertical: 8,
-  },
-  productRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 4,
-  },
-  categoryText: {
-    color: "#B0ACAC",
-  },
-  productDetails: {
-    marginLeft: "auto",
-  },
-  quantityText: {
-    marginTop: 4,
-    color: "#666666",
-  },
-  productDivider: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "rgba(176, 172, 172, 0.5)",
-    marginVertical: 8,
-  },
-  paymentSelector: {
-    width: "100%",
-    height: 44,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 0,
-    marginHorizontal: 0,
-    borderRadius: 8,
-  },
-  icon: {
-    fontSize: 20,
-    color: "gray",
-    marginRight: 10,
-  },
-  modalContent: {
-    width: "100%",
-    height: 413,
-    backgroundColor: "#fff",
-    paddingTop: 20,
-    paddingHorizontal: 20,
-    alignItems: "center",
-  },
-  modalTitleContainer: {
-    width: "100%",
-    alignItems: "flex-start",
-    marginBottom: 15,
-  },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  paymentIconContainer: {
-    width: 90,
-    height: 38,
-    justifyContent: "center",
-  },
-  paymentIcon: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
-  },
   paymentOption: {
     paddingVertical: 16,
     borderBottomWidth: 1,
@@ -652,28 +522,6 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: Colors.grey70,
-  },
-  optionLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  optionContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  paymentMethodName: {
-    fontSize: 16,
-    marginLeft: 8,
-  },
-  selectedPaymentContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  placeholderText: {
-    color: Colors.grey30,
-    fontSize: 16,
   },
   bottomSheet: {
     backgroundColor: Colors.white,
@@ -705,46 +553,5 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 10,
     paddingHorizontal: 20
-  },
-  productGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 10,
-  },
-  productCardGrid: {
-    width: "48%",
-    marginBottom: 15,
-    height: 200,
-    backgroundColor: "white",
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionNoBorder: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    paddingHorizontal: 20,
-  },
-  sectionDarkBorder: {
-    padding: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: "#E0E0E0",
-    marginHorizontal: 20,
-  },
-  borderInset: {
-    width: 370,
-    height: 2,
-    backgroundColor: "#717658",
-    alignSelf: "center",
-    marginTop: 20,
-    marginBottom: 10,
   },
 });
