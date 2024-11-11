@@ -1,8 +1,14 @@
+import AppBar from "@/components/app-bar/AppBar";
 import AppDialog from "@/components/dialog/AppDialog";
 import LoadingOverlay from "@/components/loading/LoadingOverlay";
+import PaymentAddress from "@/components/payment/PaymentAddress";
+import PaymentHeader from "@/components/payment/PaymentAddress";
+import PaymentMethodSelect from "@/components/payment/PaymentMethodSelect";
+import PaymentProductItem from "@/components/payment/PaymentProductItem";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
 import OrderService from "@/services/OrderService";
+import { Product } from "@/types/product.type";
 import { WebViewType } from "@/utils/constants/webview";
 import {
   Ionicons as ExpoIonicons,
@@ -30,7 +36,7 @@ import {
   View,
 } from "react-native-ui-lib";
 
-interface Product {
+export interface PaymentProduct {
   id: number;
   name: string;
   price: string;
@@ -57,7 +63,7 @@ interface PaymentMethod {
 
 const calculateTotalPrice = (products: Product[]) => {
   return products.reduce((total, product) => {
-    return total + product.priceValue * product.quantity;
+    return total + product.price * product.quantity;
   }, 0);
 };
 
@@ -184,7 +190,7 @@ export default function Payment() {
 
       if (selectedPayment.code === "cod") {
         router.push({
-          pathname: "/transaction/success",
+          pathname: "/(app)/transaction",
           params: {
             invoice_id: invoice.id,
             order_id: invoice.order.id.toString(),
@@ -362,220 +368,124 @@ export default function Payment() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View flex>
-        <View style={styles.header}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <AppBar back title="Thanh toán" />
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.productListContainer}
+        >
+          <PaymentAddress isPayment />
+
+          <View gap-10 marginB-20>
+            <Text h2_bold>Voucher</Text>
+            <View
+              row paddingH-15 paddingV-20 centerV spread
+              style={{
+                borderWidth: 1,
+                borderColor: "#E0E0E0",
+                borderRadius: 10,
+                backgroundColor: "#FCFCFC",
+              }}
+            >
+              <Text h3>Chưa có voucher</Text>
+              <Ionicons
+                name="chevron-down"
+                size={24}
+                color={Colors.grey30}
+              />
+            </View>
+          </View>
+
+          <PaymentMethodSelect
+            isPayment
+            onPress={() => setShowBottomSheet(true)}
+            selectedPayment={selectedPayment}
+          />
+
+          <View gap-10>
+            <Text h2_bold>Sản phẩm</Text>
+            {products.map((product: PaymentProduct) => (
+              <PaymentProductItem key={product.id} product={product} />
+            ))}
+          </View>
+
+        </ScrollView>
+
+        <View paddingH-20
+          style={{
+            borderTopWidth: 1,
+            borderLeftWidth: 1,
+            borderRightWidth: 1,
+            borderTopColor: "#E0E0E0",
+            borderLeftColor: "#E0E0E0",
+            borderRightColor: "#E0E0E0",
+            borderTopLeftRadius: 13,
+            borderTopRightRadius: 13,
+            backgroundColor: "#FFFFFF",
+            paddingTop: 10,
+          }}
+        >
+          <View gap-10 marginB-5>
+            <View row spread>
+              <Text h3_bold >Voucher</Text>
+              <Text h3>Không có</Text>
+            </View>
+            <View row spread>
+              <Text h3_bold>Tổng thanh toán</Text>
+              <Text h3_bold secondary>
+                {totalAmount.toLocaleString("vi-VN")} VNĐ
+              </Text>
+            </View>
+          </View>
+
           <Button
-            iconSource={require("@/assets/images/home/arrow_ios.png")}
-            onPress={() => router.back()}
-            link
-            iconStyle={{ tintColor: "black" }}
-          />
-          <Text
+            label="Thanh toán"
+            labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+            backgroundColor={Colors.primary}
+            padding-20
+            borderRadius={10}
             style={{
-              flex: 1,
-              textAlign: "center",
-              fontSize: 18,
-              fontWeight: "bold",
+              width: '100%',
+              height: 50,
+              alignSelf: "center",
+              marginVertical: 10,
             }}
-          >
-            Thanh toán
-          </Text>
-        </View>
-
-        <View flex>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.productListContainer}
-          >
-            <View style={styles.sectionNoBorder}>
-              <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
-              <Card>
-                <TouchableOpacity
-                  onPress={() => console.log("Cập nhật sau")}
-                  style={[
-                    styles.customerInfoCard,
-                    { backgroundColor: "#f8f8f8" },
-                  ]}
-                >
-                  <View style={styles.customerInfo}>
-                    <Text style={{ fontSize: 14 }}>Lộc Nè Con</Text>
-                    <Text style={{ fontSize: 14 }}>+84 123 456 789</Text>
-                    <Text style={{ fontSize: 14 }}>
-                      123 acb, phường Tân Thới Hiệp, Quận 12, TP.HCM
-                    </Text>
-                  </View>
-                  <Image
-                    source={require("@/assets/images/home/arrow_ios.png")}
-                    style={styles.arrowIcon}
-                  />
-                </TouchableOpacity>
-              </Card>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Voucher</Text>
-              <Card>
-                <View
-                  style={[
-                    styles.textFieldContainer,
-                    { backgroundColor: "#f8f8f8" },
-                  ]}
-                >
-                  <Incubator.TextField
-                    placeholder="Không có"
-                    value=""
-                    editable={false}
-                    style={[styles.inputField, styles.placeholderStyle]}
-                    placeholderTextColor="#000000"
-                  />
-                </View>
-              </Card>
-              <View style={styles.borderInset} />
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Hình thức thanh toán</Text>
-              <TouchableOpacity
-                onPress={() => setShowBottomSheet(true)}
-                style={styles.paymentSelector}
-              >
-                <View style={styles.selectedPaymentContent}>
-                  {selectedPayment && (
-                    <View style={styles.optionLeft}>
-                      {renderPaymentIcon(selectedPayment)}
-                      <Text style={styles.paymentMethodName}>
-                        {selectedPayment.name}
-                      </Text>
-                    </View>
-                  )}
-                  {!selectedPayment && (
-                    <Text style={styles.placeholderText}>
-                      Chọn phương thức thanh toán
-                    </Text>
-                  )}
-                  <Ionicons
-                    name="chevron-down"
-                    size={24}
-                    color={Colors.grey30}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Sản phẩm</Text>
-              {products.map((product: Product) => (
-                <Card
-                  key={product.id}
-                  style={styles.productCard}
-                  enableShadow={false}
-                  backgroundColor="transparent"
-                >
-                  <View style={styles.cardRow}>
-                    <Card.Image
-                      source={product.image}
-                      style={styles.productImage}
-                    />
-                    <View style={styles.productInfo}>
-                      <View style={{ marginBottom: 8 }}>
-                        <Text style={{ fontWeight: "bold", fontSize: 15 }}>
-                          {product.name}
-                        </Text>
-                      </View>
-
-                      <View style={{ marginBottom: 8 }}>
-                        <Text style={{ fontSize: 16 }}>{product.price}</Text>
-                      </View>
-
-                      <View style={styles.productRow}>
-                        <Text style={{ fontSize: 12 }}>
-                          Số lượng: {product.quantity}
-                        </Text>
-                        <Text style={[styles.categoryText, { fontSize: 12 }]}>
-                          Dưỡng ẩm
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                  <View style={styles.productDivider} />
-                </Card>
-              ))}
-            </View>
-
-            <View style={styles.totalSection}>
-              <View style={styles.row}>
-                <Text style={{ fontWeight: "bold" }}>Voucher</Text>
-                <Text>Không có</Text>
-              </View>
-              <View style={[styles.row, { marginTop: 8 }]}>
-                <Text style={{ fontWeight: "bold" }}>Tổng thanh toán</Text>
-                <Text style={{ fontWeight: "bold", color: Colors.red30 }}>
-                  {totalAmount.toLocaleString("vi-VN")} VNĐ
-                </Text>
-              </View>
-            </View>
-            <Button
-              label="Thanh toán"
-              labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-              backgroundColor={Colors.primary}
-              padding-20
-              borderRadius={10}
-              style={{
-                width: 338,
-                height: 47,
-                alignSelf: "center",
-                marginVertical: 10,
-              }}
-              onPress={handleCheckout}
-              disabled={loading}
-            />
-            <Button
-              label="Detail Transaction"
-              labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-              backgroundColor={Colors.primary}
-              padding-20
-              borderRadius={10}
-              style={{
-                width: 338,
-                height: 47,
-                alignSelf: "center",
-                marginVertical: 10,
-              }}
-              onPress={() => router.push("/transaction/detail")}
-            />
-          </ScrollView>
-
-          <BottomSheet
-            ref={bottomSheetRef}
-            index={-1}
-            snapPoints={snapPoints}
-            enablePanDownToClose={true}
-            onChange={handleSheetChanges}
-            backdropComponent={renderBackdrop}
-            backgroundStyle={styles.bottomSheet}
-          >
-            <View style={styles.bottomSheetHeader}>
-              <Text text60BO>Chọn phương thức thanh toán</Text>
-              <TouchableOpacity onPress={() => setShowBottomSheet(false)}>
-                <ExpoIonicons name="close" size={24} color={Colors.grey30} />
-              </TouchableOpacity>
-            </View>
-            <View flex>{renderPaymentMethods()}</View>
-          </BottomSheet>
-
-          <LoadingOverlay visible={loading} message={loadingMessage} />
-          <AppDialog
-            visible={dialogConfig.visible}
-            title={dialogConfig.title}
-            description={dialogConfig.description}
-            severity={dialogConfig.severity}
-            onClose={hideDialog}
-            closeButton={true}
-            confirmButton={false}
-            closeButtonLabel="Đóng"
+            onPress={handleCheckout}
+            disabled={loading}
           />
         </View>
-      </View>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          enablePanDownToClose={true}
+          onChange={handleSheetChanges}
+          backdropComponent={renderBackdrop}
+          backgroundStyle={styles.bottomSheet}
+        >
+          <View style={styles.bottomSheetHeader}>
+            <Text text60BO>Chọn phương thức thanh toán</Text>
+            <TouchableOpacity onPress={() => setShowBottomSheet(false)}>
+              <ExpoIonicons name="close" size={24} color={Colors.grey30} />
+            </TouchableOpacity>
+          </View>
+          <View flex>{renderPaymentMethods()}</View>
+        </BottomSheet>
+
+        <LoadingOverlay visible={loading} message={loadingMessage} />
+        <AppDialog
+          visible={dialogConfig.visible}
+          title={dialogConfig.title}
+          description={dialogConfig.description}
+          severity={dialogConfig.severity}
+          onClose={hideDialog}
+          closeButton={true}
+          confirmButton={false}
+          closeButtonLabel="Đóng"
+        />
+      </SafeAreaView>
     </GestureHandlerRootView>
   );
 }
@@ -794,6 +704,7 @@ const styles = StyleSheet.create({
   productListContainer: {
     flexGrow: 1,
     paddingBottom: 10,
+    paddingHorizontal: 20
   },
   productGrid: {
     flexDirection: "row",
