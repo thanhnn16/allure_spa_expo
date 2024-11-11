@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   Text,
@@ -17,12 +17,18 @@ import EmailIcon from "@/assets/icons/sms.svg";
 import AddressIcon from "@/assets/icons/location.svg";
 import GenderIcon from "@/assets/icons/gender.svg";
 import BirthdayIcon from "@/assets/icons/birthday.svg";
+import { useDispatch,useSelector } from "react-redux";
+import { getUserThunk,updateAvatarUrlThunk,updateUserThunk } from "@/redux";
+import { RootState } from "@/redux/store";
 // import RNPickerSelect from "react-native-picker-select";
 // import DateTimePicker from "@react-native-community/datetimepicker";
 interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
+  
   const [name, setName] = React.useState("Nguyễn Văn Tèo");
   const [phone, setPhone] = React.useState("0346 542 636");
   const [email, setEmail] = React.useState("example@gmail.com");
@@ -31,9 +37,11 @@ const ProfileEdit = (props: ProfileEditProps) => {
   const [birthday, setBirthday] = React.useState("01/01/2000");
   const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
   const [avatar, setAvatar] = React.useState<{ uri: string }>({
-    uri: "@/assets/images/avt.png",
+    uri:user?.avatar || "@/assets/images/avt.png",
   });
 
+ 
+  
   const showDatePicker = () => {
     setDatePickerVisible(true);
   };
@@ -69,8 +77,32 @@ const ProfileEdit = (props: ProfileEditProps) => {
     });
     if (!result.canceled) {
       setAvatar({ uri: result.assets[0].uri });
+      dispatch(updateAvatarUrlThunk(result.assets[0].uri));
     }
   };
+  const handleUpdateProfile = async () => {
+    const updateUser = {
+      ...user,
+      name,
+      phone,
+      email,
+      address,
+      gender,
+      birthday,
+    };
+    dispatch(updateUserThunk(updateUser));
+  };
+  useEffect(() => {
+    dispatch(getUserThunk());
+  }, [dispatch]);
+
+  // const handleGetUser = async () => {
+  //  const res = await dispatch(getUserThunk());
+  //   console.log(res);
+  // }
+
+
+
   return (
     <View flex marginH-20 marginT-20>
       <View row centerV>
@@ -214,6 +246,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
       <View centerH marginT-30>
         <TouchableOpacity
           center
+          onPress={handleUpdateProfile}
           style={{
             width: "80%",
             height: 50,
