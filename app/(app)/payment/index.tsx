@@ -360,17 +360,17 @@ export default function Payment() {
   };
 
   const handlePayment = () => {
-    setCurrentBottomSheetIndex(1);
+    setCurrentBottomSheetIndex(0);
     bottomSheetRef.current?.expand();
   };
 
   const handleVoucher = () => {
-    setCurrentBottomSheetIndex(2);
+    setCurrentBottomSheetIndex(1);
     bottomSheetRef.current?.expand();
   };
 
   const handleAddress = () => {
-    setCurrentBottomSheetIndex(3);
+    setCurrentBottomSheetIndex(2);
     bottomSheetRef.current?.expand();
   };
 
@@ -482,7 +482,8 @@ export default function Payment() {
               alignSelf: "center",
               marginVertical: 10,
             }}
-            onPress={handleCheckout}
+            // onPress={handleCheckout}
+            onPress={() => router.push("/(app)/transaction")}
             disabled={loading}
           />
         </View>

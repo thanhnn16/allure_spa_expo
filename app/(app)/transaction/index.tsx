@@ -1,125 +1,83 @@
 import { router } from "expo-router";
-import { SafeAreaView, FlatList } from "react-native";
+import { SafeAreaView } from "react-native";
 import { View, Text, Colors, Button, Image } from "react-native-ui-lib";
-import AppDialog from "@/components/dialog/AppDialog";
-import { useState } from "react";
+
+import SuccessIcon from "@/assets/icons/star.svg";
+import FailIcon from "@/assets/icons/star_half.svg";
 
 const Transaction = () => {
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogConfig, setDialogConfig] = useState({
-    title: "",
-    description: "",
-    severity: "info"
-  });
+  const isSuccess = true;
 
-  const transactions = [
-    {
-      orderNumber: "123456",
-      status: "pending",
-      totalAmount: 1500000,
-      date: "20/03/2024"
+  const renderIcon = () => {
+    if (isSuccess) {
+      return SuccessIcon;
     }
-  ];
-
-  const getStatusPrefix = (status: string) => {
-    switch (status) {
-      case "pending":
-        return " đang ";
-      default:
-        return " đã ";
-    }
+    return FailIcon;
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "chờ xử lý";
-      case "confirmed":
-        return "xác nhận";
-      case "delivering":
-        return "giao hàng";
-      case "completed":
-        return "hoàn thành";
-      default:
-        return status;
+  const renderButton = () => {
+    if (isSuccess) {
+      return (
+        <Button
+          label="Chi tiết đơn hàng"
+          labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          padding-20
+          borderRadius={13}
+          onPress={() => router.push("/(app)/transaction/detail")}
+        />
+      );
     }
-  };
-
-  const handlePayment = () => {
-    router.push("/(app)/transaction/detail");
+    return (
+      <Button
+        label="Liên hệ hỗ trợ"
+        labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+        backgroundColor={Colors.primary}
+        padding-20
+        borderRadius={13}
+        onPress={() => router.dismissAll()}
+      />
+    );
   };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
-      <View style={styles.header}>
-        <Button
-          iconSource={require("@/assets/images/home/arrow_ios.png")}
-          onPress={() => router.back()}
-          link
-          iconStyle={{ tintColor: "black" }}
+      <View flex centerV centerH gap-10 paddingH-20>
+        <Image
+          source={renderIcon()}
+          width={200}
+          height={200}
         />
-        <Text style={styles.headerTitle}>Giao dịch</Text>
-      </View>
-
-      <FlatList
-        data={transactions}
-        renderItem={({ item }) => (
-          <View style={styles.transactionItem}>
-            <View style={styles.row}>
-              <Image
-                source={require("@/assets/images/sp2.png")}
-                style={styles.productImage}
-              />
-              <View style={styles.contentContainer}>
-                <View style={styles.statusContainer}>
-                  <Text style={styles.status} numberOfLines={2}>
-                    <Text style={styles.normalText}>Đơn hàng số </Text>
-                    <Text style={styles.orderNumber}>{item.orderNumber}</Text>
-                    <Text style={styles.normalText}>
-                      {getStatusPrefix(item.status)}
-                    </Text>
-                    {getStatusText(item.status)}
-                  </Text>
-                </View>
-
-                <View style={styles.footer}>
-                  <Text style={styles.amount}>
-                    Tổng: {item.totalAmount?.toLocaleString()} VNĐ
-                  </Text>
-                  <Text style={styles.date}>{item.date}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
+        {isSuccess ? (
+          <Text h2_bold color={Colors.primary}>
+            Thanh toán thành công
+          </Text>
+        ) : (
+          <Text h2_bold>
+            Thanh toán thất bại
+          </Text>
         )}
-        keyExtractor={(item) => item.orderNumber}
-      />
-
-      <Button
-        label="Thanh toán test"
-        labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-        backgroundColor={Colors.primary}
-        padding-20
-        borderRadius={10}
-        style={{
-          width: 338,
-          height: 47,
-          alignSelf: "center",
-          marginVertical: 10,
-        }}
-        onPress={handlePayment}
-      />
-
-      <AppDialog
-        visible={dialogVisible}
-        title={dialogConfig.title}
-        description={dialogConfig.description}
-        severity={dialogConfig.severity}
-        onClose={() => setDialogVisible(false)}
-        closeButton={true}
-        confirmButton={false}
-        closeButtonLabel="Đóng"
-      />
+        {isSuccess ? (
+          <Text h3 center color={Colors.grey40}>
+            Đơn hàng #123456 của bạn đã được xác nhận
+          </Text>
+        ) : (
+          <Text h3 center color={Colors.grey40}>
+            Đơn hàng #123456 của bạn đang gặp sự cố, liên hệ để biết thêm chi tiết
+          </Text>
+        )}
+      </View>
+      <View bottom gap-10 marginB-10 paddingH-20>
+        {renderButton()}
+        <Button
+          label="Quay lại trang chủ"
+          labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          padding-20
+          borderRadius={13}
+          onPress={() => router.dismissAll()}
+        />
+      </View>
     </SafeAreaView>
   );
 };

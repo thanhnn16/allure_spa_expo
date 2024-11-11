@@ -91,27 +91,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  // Header styles
-  headerWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    marginBottom: 20, // Thêm khoảng cách 20 cho header
-  },
-  headerBackButton: {
-    marginRight: 16,
-  },
-  headerBackIcon: {
-    width: 24,
-    height: 24,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: "bold",
-    marginLeft: 65,
-  },
-
   // Text styles
   textTitle: {
     fontSize: 16,
