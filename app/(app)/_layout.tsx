@@ -44,6 +44,7 @@ const AppLayout = () => {
       <Stack.Screen name="address/update" />
       <Stack.Screen name="address/add" />
       <Stack.Screen name="address/index" />
+      <Stack.Screen name="list_page/index" />
     </Stack>
   );
 };
