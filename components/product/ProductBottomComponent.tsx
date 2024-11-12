@@ -61,7 +61,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       };
 
       router.push({
-        pathname: "/payment",
+        pathname: "/(app)/check-out",
         params: {
           products: JSON.stringify([productData]),
           total_amount: Number(product?.price || 0) * quantity,
@@ -120,7 +120,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         autoDismiss={1500}
         onDismiss={() => setToastIsVisible(false)}
       >
-        <View 
+        <View
           style={{
             backgroundColor: "#f6f6f6",
             padding: 20,
@@ -132,7 +132,9 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         >
           <Text h3_medium>Thêm giỏ hàng thành công</Text>
           <TouchableOpacity onPress={() => router.push("/(app)/cart")}>
-            <Text h3_medium color={Colors.primary}>Xem giỏ hàng</Text>
+            <Text h3_medium color={Colors.primary}>
+              Xem giỏ hàng
+            </Text>
           </TouchableOpacity>
         </View>
       </Incubator.Toast>

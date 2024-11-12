@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchFavoritesThunk, toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
+import { fetchFavoritesThunkByType, toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
 
 interface FavoriteState {
     favorites: any[];
     favoritesByType: any[];
     loading: boolean;
     error: string | null;
-    status: string | null;
+    status: string | "added" | "removed" | null;
 }
 
 const initialState: FavoriteState = {
@@ -22,15 +22,15 @@ const favoriteSlice = createSlice({
     initialState,
     extraReducers: (builder: any) => {
         builder
-            .addCase(fetchFavoritesThunk.pending, (state: FavoriteState) => {
+            .addCase(fetchFavoritesThunkByType.pending, (state: FavoriteState) => {
                 state.loading = true;
             })
-            .addCase(fetchFavoritesThunk.fulfilled, (state: FavoriteState, action: PayloadAction<any[]>) => {
-                state.favorites = action.payload;
+            .addCase(fetchFavoritesThunkByType.fulfilled, (state: FavoriteState, action: any) => {
+                state.favoritesByType = action.payload;
                 state.loading = false;
                 state.error = null;
             })
-            .addCase(fetchFavoritesThunk.rejected, (state: FavoriteState) => {
+            .addCase(fetchFavoritesThunkByType.rejected, (state: FavoriteState) => {
                 state.loading = true;
             })
             .addCase(toggleFavoriteThunk.fulfilled, (state: FavoriteState, action: any) => {
