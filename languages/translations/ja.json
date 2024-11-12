@@ -183,7 +183,8 @@
       "directions": "使用方法",
       "storage": "保管方法",
       "product_notes": "商品の注意事項"
-    }
+    },
+    "no_info": "情報がありません"
   },
   "rating": {
     "add_review": "レビューを追加",

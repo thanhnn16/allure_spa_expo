@@ -10,6 +10,7 @@ import { useDialog } from "@/hooks/useDialog";
 import OrderService from "@/services/OrderService";
 import { Product } from "@/types/product.type";
 import { WebViewType } from "@/utils/constants/webview";
+import formatCurrency from "@/utils/price/formatCurrency";
 import {
   Ionicons as ExpoIonicons,
   MaterialCommunityIcons,
@@ -63,7 +64,7 @@ interface PaymentMethod {
 
 const calculateTotalPrice = (products: Product[]) => {
   return products.reduce((total, product) => {
-    return total + product.price * product.quantity;
+    return total + Number(product?.price) * product.quantity;
   }, 0);
 };
 
@@ -465,7 +466,7 @@ export default function Payment() {
             <View row spread>
               <Text h3_bold>Tổng thanh toán</Text>
               <Text h3_bold secondary>
-                {totalAmount.toLocaleString("vi-VN")} VNĐ
+                {formatCurrency({ price: totalAmount })}
               </Text>
             </View>
           </View>

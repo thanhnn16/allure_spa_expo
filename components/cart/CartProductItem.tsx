@@ -49,7 +49,7 @@ const CartProductItem = (product: CartItem) => {
                         borderTopEndRadius: 13,
                         padding: 10,
                         borderWidth: 1,
-                        borderColor: '#rgba(113, 118, 88, 0.2)',
+                        borderColor: '#e3e4de',
                     }}
                 >
                     <View style={styles.imageContainer}>
@@ -95,7 +95,7 @@ const CartProductItem = (product: CartItem) => {
                         justifyContent: 'space-between',
                         borderBottomStartRadius: 13,
                         borderBottomEndRadius: 13,
-                        backgroundColor: '#rgba(113, 118, 88, 0.2)',
+                        backgroundColor: '#e3e4de',
                         paddingHorizontal: 10,
                         paddingVertical: 5,
                     }}
@@ -140,8 +140,8 @@ const styles = StyleSheet.create({
     },
     quantityButtonContainer: {
         borderWidth: 1,
-        backgroundColor: '#rgba(113, 118, 88, 0.2)',
-        borderColor: '#rgba(113, 118, 88, 0.2)',
+        backgroundColor: '#e3e4de',
+        borderColor: '#e3e4de',
         borderRadius: 10,
         width: 30,
         height: 30,

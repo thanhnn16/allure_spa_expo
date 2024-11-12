@@ -214,7 +214,8 @@
       "directions": "Hướng dẫn sử dụng",
       "storage": "Bảo quản",
       "product_notes": "Lưu ý sản phẩm"
-    }
+    },
+    "no_info": "Không có thông tin"
   },
   "rating": {
     "add_review": "Thêm đánh giá",

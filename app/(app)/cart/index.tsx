@@ -17,9 +17,11 @@ import i18n from "@/languages/i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FormatNumberOptions } from "i18n-js";
 import formatCurrency from "@/utils/price/formatCurrency";
+import AppDialog from "@/components/dialog/AppDialog";
 
 export default function Cart() {
     const dispatch = useDispatch();
+    const [cartDialog, setCartDialog] = useState(false);
     const { items, totalAmount } = useSelector(
         (state: RootState) => state.cart
     );
@@ -98,7 +100,19 @@ export default function Cart() {
                 <AppBar title="Giỏ Hàng" back />
                 {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
             </View>
+
+            {/* <AppDialog
+                visible={cartDialog}
+                title={i18n.t("auth.login.login_required")}
+                description={i18n.t("auth.login.login_buy_product")}
+                closeButtonLabel={i18n.t("common.cancel")}
+                confirmButtonLabel={i18n.t("auth.login.login_now")}
+                severity="info"
+                onClose={() => setCartDialog(false)}
+                onConfirm={handleDeleteConfirm}
+            /> */}
         </GestureHandlerRootView>
+
     );
 }
 

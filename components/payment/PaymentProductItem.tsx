@@ -10,6 +10,7 @@ interface PaymentProductItemProps {
 
 const PaymentProductItem = ({product} : PaymentProductItemProps) => {
     const windowWidth = Dimensions.get("window").width;
+    const total = parseFloat(product.price) * product.quantity;
     return (
         <View key={product.id} marginB-10>
             <View
@@ -34,7 +35,7 @@ const PaymentProductItem = ({product} : PaymentProductItemProps) => {
                         <Text h3_bold secondary>{formatCurrency({ price: Number(product?.price) })}</Text>
                     </View>
                     <View>
-                        <Text>Số lượng: 1</Text>
+                        <Text>Số lượng: {product?.quantity}</Text>
                     </View>
                 </View>
             </View>
@@ -50,8 +51,7 @@ const PaymentProductItem = ({product} : PaymentProductItemProps) => {
                 }}
             >
                 <Text h3_bold>Tổng tiền:</Text>
-                {/* <Text h3_bold secondary>{formatCurrency({ price: total })}</Text> */}
-                <Text h3_bold secondary>123 đ</Text>
+                <Text h3_bold secondary>{formatCurrency({ price: total })}</Text>
             </View>
         </View>
     )

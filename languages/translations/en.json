@@ -120,7 +120,8 @@
       "directions": "Directions",
       "storage": "Storage instructions",
       "product_notes": "Product notes"
-    }
+    },
+    "no_info": "No information"
   },
   "rating": {
     "add_review": "Add review",

@@ -127,19 +127,14 @@ export default function DetailsScreen() {
     );
   };
 
-  const createBulletPoints = (lines: string[]) => {
-    return lines.map((line, index) => (
+  const createBulletPoints = (line: string[]) => {
+    return (
       <View key={index} row>
         <Text h3>• </Text>
         <Text h3>{line}</Text>
       </View>
-    ));
+    );
   };
-
-  const shortText = [product?.benefits, product?.product_notes];
-  const filteredShortText = shortText.filter(
-    (text): text is string => text !== undefined
-  );
 
   const handleGuestPurchase = () => {
     if (isGuest) {
@@ -255,8 +250,8 @@ export default function DetailsScreen() {
 
               <View row centerV>
                 <View row gap-5>
-                  <RatingStar rating={4.5} />
-                  <Text h3_medium>4.5</Text>
+                  <RatingStar rating={product?.rating_summary.average_rating ?? 0} />
+                  <Text h3_medium>{product?.rating_summary.average_rating}</Text>
                 </View>
                 <View flex row right>
                   <Text h3_medium>
@@ -270,7 +265,10 @@ export default function DetailsScreen() {
                 <View>
                   <Image source={SunIcon} size={24} />
                 </View>
-                <View>{createBulletPoints(filteredShortText)}</View>
+                <View>
+                {product?.benefits ? createBulletPoints(product.benefits.split("\n")) : createBulletPoints([i18n.t("productDetail.no_info")])}
+                {product?.benefits ? createBulletPoints(product?.product_notes?.split("\n")) : createBulletPoints([i18n.t("productDetail.no_info")])}
+                </View>
               </View>
             </View>
           )}

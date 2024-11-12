@@ -37,38 +37,38 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
     <View marginT-10>
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.brand")}
-        childrenText={product?.brand_description || "N/A"}
+        childrenText={product?.brand_description || i18n.t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.usage")}
-        childrenText={product?.usage || "N/A"}
+        childrenText={product?.usage || i18n.t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.benefit")}
-        childrenText={product?.benefits || "N/A"}
+        childrenText={product?.benefits || i18n.t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.directions")}
-        childrenText={product?.directions || "N/A"}
+        childrenText={product?.directions || i18n.t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.storage")}
-        childrenText={product?.storage_instructions || "N/A"}
+        childrenText={product?.storage_instructions || i18n.t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.product_notes")}
-        childrenText={product?.product_notes || "N/A"}
+        childrenText={product?.product_notes || i18n.t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.ingredient")}
-        childrenText={product?.ingredients || "N/A"}
-        keyText={product?.key_ingredients || "N/A"}
+        childrenText={product?.ingredients || i18n.t("productDetail.no_info")}
+        keyText={product?.key_ingredients || ""}
       />
     </View>
   );
