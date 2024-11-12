@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Incubator,
+  Button,
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
@@ -36,6 +37,7 @@ import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import RatingStar from "@/components/rating/RatingStar";
 import formatCurrency from "@/utils/price/formatCurrency";
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 interface MediaItem {
   full_url: string;
@@ -128,12 +130,12 @@ export default function DetailsScreen() {
   };
 
   const createBulletPoints = (line: string[]) => {
-    return (
+    return line.map((index) => (
       <View key={index} row>
         <Text h3>• </Text>
         <Text h3>{line}</Text>
       </View>
-    );
+    ));
   };
 
   const handleGuestPurchase = () => {
@@ -145,6 +147,57 @@ export default function DetailsScreen() {
   const handleLoginConfirm = () => {
     setBuyProductDialog(false);
     router.replace("/(auth)");
+  };
+
+  const [showAnimatedImage, setShowAnimatedImage] = useState(false);
+  const translateY = useSharedValue(0);
+  const translateX = useSharedValue(0);
+  const opacity = useSharedValue(1);
+  const scale = useSharedValue(2);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: translateY.value },
+        { translateX: translateX.value },
+      ],
+      opacity: opacity.value,
+    };
+  });
+
+  const handlePressAnim = () => {
+    'worklet';
+    runOnJS(setShowAnimatedImage)(true);
+    translateY.value = withTiming(-Dimensions.get('window').height / 2, {
+      duration: 1500,
+      easing: Easing.inOut(Easing.ease),
+    });
+    translateX.value = withTiming(Dimensions.get('window').width / 5, {
+      duration: 1500,
+      easing: Easing.inOut(Easing.ease),
+    });
+    scale.value = withTiming(0.01, {
+      duration: 1500,
+      easing: Easing.inOut(Easing.ease),
+    });
+    opacity.value = withTiming(0, {
+      duration: 1500,
+      easing: Easing.inOut(Easing.ease),
+    }, () => {
+      runOnJS(setShowAnimatedImage)(false);
+      translateY.value = withTiming(0, {
+        duration: 0,
+      });
+      translateX.value = withTiming(0, {
+        duration: 0,
+      });
+      scale.value = withTiming(2, {
+        duration: 0,
+      });
+      opacity.value = withTiming(1, {
+        duration: 0,
+      });
+    });
   };
 
   return (
@@ -197,6 +250,12 @@ export default function DetailsScreen() {
                   </Pressable>
                 ))}
               </Carousel>
+              {showAnimatedImage && (
+                <Animated.Image
+                  source={{ uri: images[0].uri }}
+                  style={[{ width: 150, height: 75, alignSelf: 'flex-end' }, animatedStyle]}
+                />
+              )}
             </View>
           )}
           <ImageView
@@ -266,8 +325,8 @@ export default function DetailsScreen() {
                   <Image source={SunIcon} size={24} />
                 </View>
                 <View>
-                {product?.benefits ? createBulletPoints(product.benefits.split("\n")) : createBulletPoints([i18n.t("productDetail.no_info")])}
-                {product?.benefits ? createBulletPoints(product?.product_notes?.split("\n")) : createBulletPoints([i18n.t("productDetail.no_info")])}
+                  {product?.benefits ? createBulletPoints(product.benefits.split("\n")) : createBulletPoints([i18n.t("productDetail.no_info")])}
+                  {product?.benefits ? createBulletPoints(product?.product_notes?.split("\n")) : createBulletPoints([i18n.t("productDetail.no_info")])}
                 </View>
               </View>
             </View>
@@ -294,6 +353,7 @@ export default function DetailsScreen() {
           product={product}
           onPurchase={isGuest ? handleGuestPurchase : undefined}
           quantity={quantity}
+          onAddToCart={() => {handlePressAnim()}}
         />
 
         <AppDialog

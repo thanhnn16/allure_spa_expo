@@ -57,7 +57,7 @@ export interface PaymentMethod {
   id: number;
   name: string;
   icon?: ImageSourcePropType;
-  iconType?: 'MaterialCommunityIcons' | 'MaterialIcons' | 'Ionicons';
+  iconType?: 'MaterialCommunityIcons' | 'Ionicons';
   iconName?: string;
   code?: string;
   children?: PaymentMethod[];
@@ -97,7 +97,7 @@ export default function Payment() {
     {
       id: 2,
       name: i18n.t("payment.pay_online"),
-      iconType: 'MaterialIcons',
+      iconType: 'Ionicons',
       iconName: 'credit-card',
       children: [
         { id: 21, name: 'VISA / MasterCard', icon: require('@/assets/images/visa.png') },
@@ -280,7 +280,7 @@ export default function Payment() {
     return (
       <BottomSheetView>
         <View style={styles.bottomSheetHeader}>
-          <Text text60BO>Chọn phương thức thanh toán</Text>
+          <Text h2_bold>Chọn phương thức thanh toán</Text>
         </View>
         <View flex padding-16>
           {paymentMethods.map((method) => (
@@ -330,7 +330,7 @@ export default function Payment() {
     return (
       <BottomSheetView>
         <View style={styles.bottomSheetHeader}>
-          <Text text60BO>Chọn voucher</Text>
+          <Text h2_bold>Chọn voucher</Text>
         </View>
         <View flex padding-16>
           <Text>Chưa có voucher</Text>
@@ -343,7 +343,7 @@ export default function Payment() {
     return (
       <BottomSheetView>
         <View style={styles.bottomSheetHeader}>
-          <Text text60BO>Chọn địa chỉ</Text>
+          <Text h2_bold>Chọn địa chỉ</Text>
         </View>
         <View flex padding-16>
           <Text>Chưa có địa chỉ</Text>
@@ -484,8 +484,8 @@ export default function Payment() {
               alignSelf: "center",
               marginVertical: 10,
             }}
-            // onPress={handleCheckout}
-            onPress={() => router.push("/(app)/transaction")}
+            onPress={handleCheckout}
+            // onPress={() => router.push("/(app)/transaction")}
             disabled={loading}
           />
         </View>

@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     clearCart,
+    removeCartItem,
     setCartItems
 } from "@/redux/features/cart/cartSlice";
 import CartProductItem from "@/components/cart/CartProductItem";
@@ -22,6 +23,7 @@ import AppDialog from "@/components/dialog/AppDialog";
 export default function Cart() {
     const dispatch = useDispatch();
     const [cartDialog, setCartDialog] = useState(false);
+    const [setItemDelete, setsetItemDelete] = useState<Number>();
     const { items, totalAmount } = useSelector(
         (state: RootState) => state.cart
     );
@@ -45,36 +47,18 @@ export default function Cart() {
         dispatch(clearCart())
     };
 
-    const formattedPrice = formatCurrency({ price: totalAmount });
-
-    const CartHaveItems = () => {
-        return <View flex paddingH-20>
-            <View right paddingB-5>
-                <TouchableOpacity onPress={handleClearCart}>
-                    <Text h3_bold secondary>Xóa tất cả</Text>
-                </TouchableOpacity>
-            </View>
-            <FlatList
-                data={items}
-                renderItem={({ item }) => <CartProductItem {...item} />}
-                keyExtractor={(item) => item.id.toString()}
-            />
-            <View style={styles.totalContainer}>
-                <Text h3_bold>Tổng cộng: </Text>
-                <Text h3_bold secondary>{formattedPrice}</Text>
-            </View>
-            <Link href="/payment" asChild>
-                <Button
-                    label='Tiếp Tục'
-                    labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-                    backgroundColor={Colors.primary}
-                    padding-20
-                    borderRadius={10}
-                    style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
-                />
-            </Link>
-        </View>
+    const handleDelete = (id: number) => {
+        dispatch(removeCartItem(id));
     }
+
+    const handleDeleteConfirm = () => {
+        setCartDialog(false);
+        if (setItemDelete !== null) {
+            handleDelete(Number(setItemDelete));
+        }
+    };
+
+    const formattedPrice = formatCurrency({ price: totalAmount });
 
     const CartEmpty = () => {
         return <View flex center>
@@ -94,6 +78,41 @@ export default function Cart() {
         </View>
     }
 
+    const CartHaveItems = () => {
+        return <View flex paddingH-20>
+            <View right paddingB-5>
+                <TouchableOpacity onPress={handleClearCart}>
+                    <Text h3_bold secondary>Xóa tất cả</Text>
+                </TouchableOpacity>
+            </View>
+            <FlatList
+                data={items}
+                renderItem={({ item }) =>
+                    <CartProductItem
+                        product={item}
+                        dialogVisible={setCartDialog}
+                        setItemDelete={setsetItemDelete}
+                    />
+                }
+                keyExtractor={(item) => item.id.toString()}
+            />
+            <View style={styles.totalContainer}>
+                <Text h3_bold>Tổng cộng: </Text>
+                <Text h3_bold secondary>{formattedPrice}</Text>
+            </View>
+            <Link href="/payment" asChild>
+                <Button
+                    label='Tiếp Tục'
+                    labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
+                    backgroundColor={Colors.primary}
+                    padding-20
+                    borderRadius={10}
+                    style={{ width: 338, height: 47, alignSelf: 'center', marginVertical: 10 }}
+                />
+            </Link>
+        </View>
+    }
+
     return (
         <GestureHandlerRootView>
             <View style={styles.container}>
@@ -101,16 +120,16 @@ export default function Cart() {
                 {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
             </View>
 
-            {/* <AppDialog
+            <AppDialog
                 visible={cartDialog}
-                title={i18n.t("auth.login.login_required")}
-                description={i18n.t("auth.login.login_buy_product")}
+                title={"Xác nhận xóa sản phẩm"}
+                description={"Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"}
                 closeButtonLabel={i18n.t("common.cancel")}
-                confirmButtonLabel={i18n.t("auth.login.login_now")}
+                confirmButtonLabel={"Xóa"}
                 severity="info"
                 onClose={() => setCartDialog(false)}
-                onConfirm={handleDeleteConfirm}
-            /> */}
+                onConfirm={() => handleDeleteConfirm()}
+            />
         </GestureHandlerRootView>
 
     );
