@@ -54,6 +54,7 @@
       "@react-native-firebase/app",
       "@react-native-firebase/messaging",
       "expo-router",
+      "@react-native-voice/voice",
       [
         "expo-font",
         {

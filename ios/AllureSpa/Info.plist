@@ -102,5 +102,7 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>This app needs access to speech recognition.</string>
   </dict>
 </plist>

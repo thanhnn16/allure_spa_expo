@@ -26,14 +26,13 @@ const RecentSearches = ({
           <Text h3 red30>Xóa tất cả</Text>
         </TouchableOpacity>
       </View>
-      
+
       <View style={styles.container}>
         {searches.map((search, index) => (
           <View key={index} style={styles.searchItem}>
             <TouchableOpacity
               style={styles.searchContent}
-              onPress={() => onSearchPress(search)}
-            >
+              onPress={() => onSearchPress(search)}>
               <AntDesign name="clockcircleo" size={16} color="#666" />
               <Text h3 marginL-8 numberOfLines={1}>{search}</Text>
             </TouchableOpacity>
@@ -76,4 +75,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RecentSearches; 
+export default RecentSearches;
