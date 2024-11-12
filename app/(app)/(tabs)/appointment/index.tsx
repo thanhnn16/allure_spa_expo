@@ -1,7 +1,6 @@
 import { StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native'
 import { Text, View, } from 'react-native-ui-lib'
 import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 const ScheduledPage = () => {
   const [selectedItem, setSelectedItem] = useState<number | null>(null);

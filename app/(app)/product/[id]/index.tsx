@@ -1,14 +1,19 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
+import {
+  Alert,
+  Dimensions,
+  Pressable,
+  ScrollView,
+  Animated,
+} from "react-native";
 import {
   Text,
   AnimatedImage,
   Image,
   TouchableOpacity,
   View,
-  Incubator,
-  Button,
+
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
@@ -24,7 +29,6 @@ import LinkIcon from "@/assets/icons/link.svg";
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { getProductThunk } from "@/redux/features/products/productThunk";
@@ -37,7 +41,8 @@ import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import RatingStar from "@/components/rating/RatingStar";
 import formatCurrency from "@/utils/price/formatCurrency";
-import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
 
 interface MediaItem {
   full_url: string;
@@ -58,6 +63,7 @@ export default function DetailsScreen() {
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const cartButtonRef = useRef<HTMLDivElement>(null);
+  const scaleValue = useRef(new Animated.Value(1)).current;
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -99,11 +105,60 @@ export default function DetailsScreen() {
     setIsVisible(true);
   };
 
-  const handleFavorite = () => {
+  const animateHeart = () => {
+    Animated.sequence([
+      Animated.timing(scaleValue, {
+        toValue: 1.2,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleValue, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handleFavorite = async () => {
     if (isGuest) {
       setFavoriteDialog(true);
+      return;
+    }
+
+    try {
+      if (!product) return;
+      const result = await dispatch(
+        toggleFavoriteThunk({
+          type: "product",
+          itemId: product.id,
+        })
+      );
+      const response = unwrapResult(result);
+
+      console.log("response status", response.status);
+
+      if (response.status === "added") {
+        setFavorite(true);
+        animateHeart();
+      } else {
+        setFavorite(false);
+      }
+    } catch (error) {
+      
+      console.error("Error toggling favorite:", error);
     }
   };
+
+  const renderHeartIcon = () => (
+    <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+      {isFavorite ? (
+        <Image source={HeartFullIcon} size={24} tintColor="#FF4646" />
+      ) : (
+        <Image source={HeartIcon} size={24} tintColor="#8C8585" />
+      )}
+    </Animated.View>
+  );
 
   const handleShare = async () => {
     if (!product) return;
@@ -236,10 +291,7 @@ export default function DetailsScreen() {
                 }}
               >
                 {images.map((item, index) => (
-                  <Pressable
-                    onPress={() => handleOpenImage(index)}
-                    key={index}
-                  >
+                  <Pressable onPress={() => handleOpenImage(index)} key={index}>
                     <AnimatedImage
                       animationDuration={1000}
                       source={{ uri: item.uri }}
@@ -271,16 +323,8 @@ export default function DetailsScreen() {
           {isLoading ? (
             <View padding-20 gap-10>
               <SkeletonView height={24} width={windowWidth * 0.7} />
-              <SkeletonView
-                height={20}
-                width={windowWidth * 0.4}
-                marginT-10
-              />
-              <SkeletonView
-                height={20}
-                width={windowWidth * 0.6}
-                marginT-10
-              />
+              <SkeletonView height={20} width={windowWidth * 0.4} marginT-10 />
+              <SkeletonView height={20} width={windowWidth * 0.6} marginT-10 />
             </View>
           ) : (
             <View padding-20 gap-10>
@@ -298,11 +342,7 @@ export default function DetailsScreen() {
                     <Image source={LinkIcon} size={24} />
                   </TouchableOpacity>
                   <TouchableOpacity onPress={handleFavorite}>
-                    {isFavorite ? (
-                      <Image source={HeartFullIcon} size={24} />
-                    ) : (
-                      <Image source={HeartIcon} size={24} />
-                    )}
+                    {renderHeartIcon()}
                   </TouchableOpacity>
                 </View>
               </View>

@@ -485,7 +485,6 @@ export default function Payment() {
               marginVertical: 10,
             }}
             onPress={handleCheckout}
-            // onPress={() => router.push("/(app)/transaction")}
             disabled={loading}
           />
         </View>

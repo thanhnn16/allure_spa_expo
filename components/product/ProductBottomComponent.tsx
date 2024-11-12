@@ -62,7 +62,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       };
 
       router.push({
-        pathname: "/payment",
+        pathname: "/(app)/payment",
         params: {
           products: JSON.stringify([productData]),
           total_amount: Number(product?.price || 0) * quantity,
@@ -115,6 +115,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           backgroundColor={Colors.primary}
         />
       </View>
+
     </View>
   );
 };

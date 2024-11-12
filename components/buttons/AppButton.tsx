@@ -63,7 +63,7 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
 const styles = StyleSheet.create({
     button: {
         height: 48,
-        borderRadius: 8,
+        borderRadius: 10,
     },
 });
 

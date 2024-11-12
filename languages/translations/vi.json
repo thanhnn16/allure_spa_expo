@@ -73,7 +73,8 @@
       "cart": "Giỏ hàng",
       "order": "Đơn hàng",
       "notification": "Thông báo",
-      "profile": "Hồ sơ"
+      "profile": "Hồ sơ",
+      "order_description": "Lịch sử đơn hàng"
     },
     "productDetail": {
       "quantity": "SỐ LƯỢNG",
@@ -373,9 +374,9 @@
     "add": "Thêm",
     "address": "Địa chỉ",
     "phone": "Điện thoại",
-    "home": "Nhà",
-    "company": "Công Ty",
-    "other": "Khác",
+    "home": "Nhà riêng",
+    "work": "Nơi làm việc",
+    "others": "Khác",
     "save": "Lưu",
     "cancel": "Hủy",
     "add_new_address": "Thêm địa chỉ mới",
@@ -385,7 +386,11 @@
     "add_address_success": "Thêm địa chỉ thành công",
     "add_address_fail": "Thêm địa chỉ thất bại",
     "edit_address_success": "Sửa địa chỉ thành công",
-    "edit_address_fail": "Sửa địa chỉ thất bại"
+    "edit_address_fail": "Sửa địa chỉ thất bại",
+    "province": "Tỉnh/Thành phố",
+    "district": "Quận/Huyện",
+    "update_address": "Sửa địa chỉ",
+    "type": "Loại địa chỉ"
   },
   "date": {
     "formats": {
