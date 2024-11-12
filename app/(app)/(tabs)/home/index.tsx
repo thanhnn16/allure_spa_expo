@@ -32,6 +32,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
+import { Product } from "@/types/product.type";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -56,8 +57,7 @@ const HomePage = () => {
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
 
-  const { width: WINDOW_WIDTH } = Dimensions.get("window");
-
+  const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get("window");
   const { products } = useSelector(
     (state: RootState) => state.product
   );
@@ -94,17 +94,45 @@ const HomePage = () => {
           title={i18n.t("home.featured_services")}
           data={servicesList.data}
           renderItem={({ item }: { item: ServiceResponeModel }) =>
-            item && item.service_name ? <ServiceItem item={item} /> : null
+            item && item.service_name
+              ? <ServiceItem
+                item={item}
+                widthItem={WINDOW_WIDTH * 0.537}
+                heightItem={WINDOW_HEIGHT * 0.378}
+                heightImage={WINDOW_HEIGHT * 0.24} />
+              : null
           }
-          onPressMore={() => { }}
+          onPressMore={() => {
+            router.push({
+              pathname: '/(app)/list_page',
+              params: {
+                type: 'service'
+              }
+            });
+          }}
         />
       )}
       {products && products.length > 0 && (
         <SectionContainer
           title={i18n.t("home.featured_products")}
           data={products}
-          renderItem={ProductItem}
-          onPressMore={() => router.push("/(app)/products" as Href<string>)}
+          renderItem={({ item }: { item: Product }) =>
+            item && item.name
+              ? <ProductItem
+                item={item}
+                widthItem={WINDOW_WIDTH * 0.468}
+                heightItem={WINDOW_HEIGHT * 0.378}
+                heightImage={WINDOW_HEIGHT * 0.19} />
+              : null
+          }
+          onPressMore={() => {
+            router.push({
+              pathname: '/(app)/list_page',
+              params: {
+                type: 'product'
+              }
+            });
+          }}
         />
       )}
     </View>

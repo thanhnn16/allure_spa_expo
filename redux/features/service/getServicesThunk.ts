@@ -9,6 +9,7 @@ export const getServicesThunk: any = createAsyncThunk(
             const response = await AxiosInstance().get(`services?page=${page}`);
             const res: ServicesResponeParams = response.data;
             if (res.status_code === 200 && res.data) {
+                console.log('Get services success:', res.data);
                 return res.data;
             }
             console.log('Lỗi: Get services failed. Message:', res.message);
