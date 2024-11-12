@@ -4,6 +4,7 @@ import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import StarIcon from "@/assets/icons/star.svg";
 import formatCurrency from "@/utils/price/formatCurrency";
+import FavoriteButton from "@/components/buttons/FavoriteButton";
 
 interface RenderProductItemProps {
   item: any;
@@ -24,16 +25,10 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
     <TouchableOpacity
       marginH-10
       marginB-10
-      style={[{ width: 200, borderRadius: 12 },
-      AppStyles.shadowItem
-      ]}
+      style={[{ width: 200, borderRadius: 12 }, AppStyles.shadowItem]}
       onPress={() => router.push(`/product/${item.id}`)}
     >
-      <View
-        br50
-        width={200}
-        gap-5
-      >
+      <View br50 width={200} gap-5>
         <Image
           source={productImage}
           width={"100%"}
@@ -44,6 +39,13 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
             borderTopRightRadius: 12,
           }}
         />
+        <View absT top-10 right-10>
+          <FavoriteButton
+            itemId={item.id}
+            type="product"
+            initialFavorited={item.is_favorited}
+          />
+        </View>
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
         <Text text70H numberOfLines={2} ellipsizeMode="tail">
@@ -51,11 +53,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({ item }) => {
         </Text>
 
         <View flex-1 gap-5 row centerV>
-          <Image
-            source={StarIcon}
-            width={15}
-            height={15}
-          />
+          <Image source={StarIcon} width={15} height={15} />
           <Text style={{ color: "#8C8585" }}>
             5.0 | {item?.quantity} có sẵn
           </Text>

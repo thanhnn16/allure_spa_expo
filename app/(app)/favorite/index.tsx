@@ -1,77 +1,79 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, Text } from 'react-native';
-import AppBar from '@/components/app-bar/AppBar';
-import { TabController, Colors, View } from 'react-native-ui-lib';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import FavoriteItem from './FavoriteItem';
-import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/redux/store';
-import { fetchFavoritesThunk } from '@/redux/features/favorite/favoritesThunk';
+import React, { useEffect, useState } from "react";
+import { View, Text, TabController } from "react-native-ui-lib";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { fetchFavoritesThunkByType } from "@/redux/features/favorite/favoritesThunk";
+import { FlatList } from "react-native";
+import FavoriteItem from "./FavoriteItem";
+import AppBar from "@/components/app-bar/AppBar";
+import i18n from "@/languages/i18n";
 
-const FavoritePage = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const favorites = useSelector((state: RootState) => state.favorite.favorites);
-    const [loading, setLoading] = useState(true);
+export default function FavoriteScreen() {
+  const [selectedTab, setSelectedTab] = useState<"product" | "service">(
+    "product"
+  );
+  const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            await dispatch(fetchFavoritesThunk());
-            setLoading(false);
-        };
+  const fetchFavorites = async (type: "product" | "service") => {
+    try {
+      setIsLoading(true);
+      const result = await dispatch(
+        fetchFavoritesThunkByType({ type })
+      ).unwrap();
+      setFavorites(result);
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        fetchData();
-    }, [dispatch]);
+  useEffect(() => {
+    fetchFavorites(selectedTab);
+  }, [selectedTab]);
 
-    const renderPageContent = (pageData: any[]) => {
-        return (
-            <FlatList
-                data={pageData}
-                renderItem={({ item }) => <FavoriteItem item={item} />}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-between' }}
-                style={{ padding: 10 }}
-                contentContainerStyle={{ gap: 10 }}
-                showsVerticalScrollIndicator={false}
-            />
-        );
-    };
+  return (
+    <View flex bg-$white>
+      <AppBar title={i18n.t("favorite.title")} />
 
-    const secondPage = () => {
-        return renderPageContent(favorites.filter((item: { on_sale: any; }) => item.on_sale));
-    };
+      <TabController
+        initialIndex={selectedTabIndex}
+        onChangeIndex={setSelectedTabIndex}
+        items={[
+          { label: i18n.t("favorite.products") },
+          { label: i18n.t("favorite.services") },
+        ]}
+      >
+        <TabController.TabBar
+          height={48}
+          items={[
+            { label: i18n.t("favorite.products") },
+            { label: i18n.t("favorite.services") },
+          ]}
+        />
+      </TabController>
 
-    return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <View flex>
-                <AppBar title='Yêu thích' />
-                <TabController
-                    items={[
-                        { label: 'Tất cả' },
-                        { label: 'Giảm giá' }
-                    ]}
-                >
-                    <TabController.TabBar
-                        enableShadow
-                        backgroundColor={Colors.white}
-                        labelColor={Colors.$textDefault}
-                        selectedLabelColor={Colors.$textPrimary}
-                        indicatorStyle={{ backgroundColor: Colors.$textPrimary, height: 2 }}
-                        containerStyle={{ height: 48 }}
-                    />
-                    <View>
-                        <TabController.TabPage index={0}>
-                            {loading ? <Text>Loading...</Text> : renderPageContent(favorites)}
-                        </TabController.TabPage>
-                        <TabController.TabPage index={1}>
-                            {loading ? <Text>Loading...</Text> : secondPage()}
-                        </TabController.TabPage>
-                    </View>
-                </TabController>
-            </View>
-        </GestureHandlerRootView>
-    );
-};
-
-export default FavoritePage;
+      <FlatList
+        data={favorites}
+        renderItem={({ item }) => (
+          <FavoriteItem item={item} type={selectedTab} />
+        )}
+        numColumns={2}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          paddingHorizontal: 20,
+          marginTop: 10,
+        }}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View center padding-20>
+            <Text>{i18n.t("favorite.empty")}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+}

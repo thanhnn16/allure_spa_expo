@@ -1,63 +1,72 @@
-import React from 'react';
-import { View, Text, Image, Card } from 'react-native-ui-lib';
-
-interface ItemDetails {
-    service_name: string;
-    single_price?: number;
-    media: { full_url: string }[];
-    description: string;
-    category: { service_category_name: string };
-    duration?: number;
-}
+import React from "react";
+import { AppStyles } from "@/constants/AppStyles";
+import { router } from "expo-router";
+import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
+import StarIcon from "@/assets/icons/star.svg";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 interface FavoriteItemProps {
-    id: number;
-    item_details: ItemDetails;
+  item: any;
+  type: 'product' | 'service';
 }
 
-const FavoriteItem = ({ item }: { item: FavoriteItemProps }) => {
-    if (!item) {
-        return null;
-    }
+const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
+  const itemData = type === 'product' ? item.product : item.service;
+  const itemImage =
+    itemData.media && itemData.media.length > 0
+      ? { uri: itemData.media[0].full_url }
+      : require("@/assets/images/home/product1.png");
 
-    const {
-        service_name = '',
-        single_price = 0,
-        media = [],
-        description = '',
-        category = { service_category_name: '' },
-        duration = 0,
-    } = item.item_details;
+  const handlePress = () => {
+    router.push(`/${type}/${itemData.id}`);
+  };
 
-    console.log('service_name:', service_name);
-    console.log('single_price:', single_price);
-    console.log('media:', media);
-    console.log('description:', description);
-    console.log('category:', category);
-    console.log('duration:', duration);
+  return (
+    <TouchableOpacity
+      marginB-10
+      style={[{ width: "48%", borderRadius: 12 }, AppStyles.shadowItem]}
+      onPress={handlePress}
+    >
+      <View br50 width="100%" gap-5>
+        <Image
+          source={itemImage}
+          width={"100%"}
+          resizeMode="cover"
+          height={170}
+          style={{
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+          }}
+        />
+      </View>
+      <View flex paddingH-10 paddingV-5 gap-2>
+        <Text text70H numberOfLines={2} ellipsizeMode="tail">
+          {type === 'product' ? itemData.name : itemData.service_name}
+        </Text>
 
-    return (
-        <Card borderRadius={10} elevation={23} style={{ width: '100%', height: '100%', marginBottom: 10 }}>
-            <View>
-                {media.length > 0 && (
-                    <Image
-                        borderTopLeftRadius={10}
-                        borderTopRightRadius={10}
-                        width="100%"
-                        height={150}
-                        source={{ uri: media[0].full_url }}
-                    />
-                )}
-                <View padding-8>
-                    <Text h3>{service_name}</Text>
-                    <Text>{single_price ? single_price.toLocaleString('vi-VN') : 'N/A'} VNĐ</Text>
-                    <Text>{description}</Text>
-                    <Text>{category.service_category_name}</Text>
-                    <Text>{duration ? `${duration} minutes` : 'N/A'}</Text>
-                </View>
-            </View>
-        </Card>
-    );
+        {type === 'product' ? (
+          <View flex-1 gap-5 row centerV>
+            <Image source={StarIcon} width={15} height={15} />
+            <Text style={{ color: "#8C8585" }}>
+              5.0 | {itemData?.quantity} có sẵn
+            </Text>
+          </View>
+        ) : (
+          <Text style={{ color: "#8C8585" }} numberOfLines={2} ellipsizeMode="tail">
+            {itemData.description}
+          </Text>
+        )}
+
+        <View bottom paddingB-5>
+          <Text text70H style={{ color: "#A85A29" }}>
+            {formatCurrency({ 
+              price: type === 'product' ? itemData.price : itemData.single_price 
+            })}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 };
 
 export default FavoriteItem;

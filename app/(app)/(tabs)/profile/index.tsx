@@ -58,9 +58,7 @@ const ProfilePage = () => {
                 }
               />
               <View>
-                <Text text60>
-                  {user?.full_name || i18n.t("common.guest")}
-                </Text>
+                <Text text60>{user?.full_name || i18n.t("common.guest")}</Text>
                 <Text>{user?.phone_number || ""}</Text>
               </View>
             </View>
@@ -84,7 +82,7 @@ const ProfilePage = () => {
                   elevation: 5,
                 }}
                 onPress={() => {
-                  router.push("/(app)/reward/rewardItem");
+                  router.push("/(app)/reward");
                 }}
               >
                 <Image
@@ -103,11 +101,16 @@ const ProfilePage = () => {
                 icon: require("@/assets/images/people.png"),
                 onPress: () => handleNavigation("/profile/detail"),
               },
-              //favorite
+              {
+                title: i18n.t("pageTitle.order"),
+                description: i18n.t("pageTitle.order_description"),
+                icon: require("@/assets/images/ic_favorite.png"),
+                onPress: () => handleNavigation("/transaction"),
+              },
               {
                 title: i18n.t("pageTitle.favorite"),
                 description: i18n.t("pageTitle.favorite_description"),
-                icon: require("@/assets/images/ic_favorite.png"),
+                icon: require("@/assets/images/heart.png"),
                 onPress: () => handleNavigation("/favorite"),
               },
               {
@@ -120,7 +123,7 @@ const ProfilePage = () => {
                 title: i18n.t("profile.order_address"),
                 description: i18n.t("profile.address_list"),
                 icon: require("@/assets/images/location.png"),
-                onPress: () => handleNavigation("/profile/address"),
+                onPress: () => handleNavigation("/(app)/address"),
               },
               {
                 title: isGuest

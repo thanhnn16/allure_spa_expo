@@ -71,7 +71,8 @@
       "cart": "カート",
       "order": "注文",
       "notification": "通知",
-      "profile": "プロフィール"
+      "profile": "プロフィール",
+      "order_description": "注文履歴"
     },
     "productDetail": {
       "quantity": "数量",
@@ -291,7 +292,7 @@
   },
   "greeting": {
     "morning": "おはようございます！",
-    "afternoon": "こんにちは！", 
+    "afternoon": "こんにちは！",
     "evening": "こんばんは！"
   },
   "package": {
@@ -360,7 +361,11 @@
     "add_address_success": "住所の追加に成功しました",
     "add_address_fail": "住所の追加に失敗しました",
     "edit_address_success": "住所の編集に成功しました",
-    "edit_address_fail": "住所の編集に失敗しました"
+    "edit_address_fail": "住所の編集に失敗しました",
+    "province": "都道府県",
+    "district": "区市町村",
+    "update_address": "住所を更新",
+    "type": "住所タイプ"
   },
   "date": {
     "formats": {
