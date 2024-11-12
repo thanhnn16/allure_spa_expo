@@ -4,7 +4,7 @@ import {
     MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { PaymentMethod } from '@/app/(app)/payment';
+import { PaymentMethod } from '@/app/(app)/check-out';
 import { useEffect, useState } from 'react';
 
 

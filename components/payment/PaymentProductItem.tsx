@@ -1,4 +1,4 @@
-import { PaymentProduct } from '@/app/(app)/payment';
+import { PaymentProduct } from '@/app/(app)/check-out';
 import { Product } from '@/types/product.type';
 import formatCurrency from '@/utils/price/formatCurrency';
 import { Dimensions, StyleSheet } from 'react-native'

@@ -215,7 +215,7 @@ const HomePage = () => {
                   source={require("@/assets/images/logo/logo.png")}
                 />
                 <View centerV marginL-10>
-                  <Text h2_bold>{user?.full_name || "Guest"}</Text>
+                  <Text h2_bold>{user?.full_name || i18n.t("common.guest")}</Text>
                   <Text h4>{greeting}</Text>
                 </View>
               </View>
