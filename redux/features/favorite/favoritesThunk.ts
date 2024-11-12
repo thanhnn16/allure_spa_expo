@@ -18,8 +18,6 @@ export const toggleFavoriteThunk = createAsyncThunk(
         { type, itemId }: { type: "product" | "service"; itemId: number },
         { rejectWithValue }: { rejectWithValue: any }
     ) => {
-        console.log("type", type);
-        console.log("itemId", itemId);
         try {
             const response = await AxiosInstance().post("/favorites/toggle", {
                 type,

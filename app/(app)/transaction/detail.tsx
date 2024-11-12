@@ -33,8 +33,9 @@ import AppBar from "@/components/app-bar/AppBar";
 import PaymentAddress from "@/components/payment/PaymentAddress";
 import TimelineList from "@/components/payment/TimelineList";
 import PaymentMethodSelect from "@/components/payment/PaymentMethodSelect";
-import { PaymentProduct } from "../check-out";
+
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
+import { PaymentProduct } from "../payment";
 
 interface Product {
   id: number;

@@ -62,7 +62,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       };
 
       router.push({
-        pathname: "/(app)/payment",
+        pathname: "/check-out",
         params: {
           products: JSON.stringify([productData]),
           total_amount: Number(product?.price || 0) * quantity,
