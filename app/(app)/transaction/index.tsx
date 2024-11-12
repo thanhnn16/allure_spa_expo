@@ -4,6 +4,7 @@ import { View, Text, Colors, Button, Image } from "react-native-ui-lib";
 
 import SuccessIcon from "@/assets/icons/star.svg";
 import FailIcon from "@/assets/icons/star_half.svg";
+import i18n from "@/languages/i18n";
 
 const Transaction = () => {
   const isSuccess = true;
@@ -19,10 +20,11 @@ const Transaction = () => {
     if (isSuccess) {
       return (
         <Button
-          label="Chi tiết đơn hàng"
+          label={i18n.t("transaction.detail_order").toString()}
           labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
           backgroundColor={Colors.primary}
           padding-20
+          style={{ height: 50 }}
           borderRadius={13}
           onPress={() => router.push("/(app)/transaction/detail")}
         />
@@ -30,10 +32,11 @@ const Transaction = () => {
     }
     return (
       <Button
-        label="Liên hệ hỗ trợ"
+        label={i18n.t("transaction.contact_support").toString()}
         labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
         backgroundColor={Colors.primary}
         padding-20
+        style={{ height: 50 }}
         borderRadius={13}
         onPress={() => router.dismissAll()}
       />
@@ -50,30 +53,31 @@ const Transaction = () => {
         />
         {isSuccess ? (
           <Text h2_bold color={Colors.primary}>
-            Thanh toán thành công
+            {i18n.t("transaction.payment_success")}
           </Text>
         ) : (
           <Text h2_bold>
-            Thanh toán thất bại
+            {i18n.t("transaction.payment_fail")}
           </Text>
         )}
         {isSuccess ? (
           <Text h3 center color={Colors.grey40}>
-            Đơn hàng #123456 của bạn đã được xác nhận
+            {i18n.t("transaction.your_order")} #123456 {i18n.t("transaction.has_been_confirmed")}
           </Text>
         ) : (
           <Text h3 center color={Colors.grey40}>
-            Đơn hàng #123456 của bạn đang gặp sự cố, liên hệ để biết thêm chi tiết
+            {i18n.t("transaction.your_order")} #123456 {i18n.t("transaction.has_been_failed")}
           </Text>
         )}
       </View>
       <View bottom gap-10 marginB-10 paddingH-20>
         {renderButton()}
         <Button
-          label="Quay lại trang chủ"
+          label={i18n.t("transaction.back_home").toString()}
           labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
           backgroundColor={Colors.primary}
           padding-20
+          style={{ height: 50 }}
           borderRadius={13}
           onPress={() => router.dismissAll()}
         />

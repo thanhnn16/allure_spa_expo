@@ -4,6 +4,7 @@ import React from 'react'
 
 import BackIcon from '@/assets/icons/arrow_left.svg'
 import { Ionicons } from '@expo/vector-icons';
+import i18n from '@/languages/i18n';
 
 interface PaymentAddressProps {
     isPayment?: boolean;
@@ -13,7 +14,7 @@ interface PaymentAddressProps {
 const PaymentAddress = ({isPayment, onPress} : PaymentAddressProps) => {
     return (
         <View marginV-10>
-            <Text h2_bold>Thông tin khách hàng</Text>
+            <Text h2_bold>{i18n.t("payment.customer_info")}</Text>
             <TouchableOpacity
                 onPress={onPress}
             >
@@ -38,7 +39,7 @@ const PaymentAddress = ({isPayment, onPress} : PaymentAddressProps) => {
                                 marginBottom: 5,
                             }}
                         >
-                            <Text h3_bold>Mặc định</Text>
+                            <Text h3_bold>{i18n.t("payment.default")}</Text>
                         </View>
                         <Text h3>Lộc Nè Con</Text>
                         <Text h3>+84 123 456 789</Text>

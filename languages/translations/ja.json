@@ -61,6 +61,29 @@
       "invalid_email": "無効なメール形式",
       "password_mismatch": "パスワードが一致しません"
     },
+    "register": {
+      "title": "登録",
+      "phone_number": "電話番号",
+      "fullname": "氏名",
+      "password": "パスワード",
+      "confirm_password": "パスワードを確認",
+      "agree_terms": "利用規約に同意する",
+      "register_button": "登録",
+      "back_button": "戻る",
+      "password_mismatch": "パスワードが一致しません",
+      "check_password": "パスワードを確認してください",
+      "error": "登録失敗",
+      "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください",
+      "success": "登録成功",
+      "register_fail": "登録失敗",
+      "invalid_phone_number": "無効な電話番号",
+      "empty_phone_number": "電話番号が入力されていません",
+      "empty_full_name": "氏名が入力されていません",
+      "invalid_full_name": "無効な氏名",
+      "empty_password": "パスワードが入力されていません",
+      "invalid_password_special_char": "パスワードに特殊文字を含めることはできません",
+      "invalid_password_length": "パスワードは8文字以上でないといけません"
+    },
     "art": {
       "title": "スキンケアのアート",
       "subtitle": "日本の職人から"
@@ -184,7 +207,8 @@
       "storage": "保管方法",
       "product_notes": "商品の注意事項"
     },
-    "no_info": "情報がありません"
+    "no_info": "情報がありません",
+    "title": "製品の詳細"
   },
   "rating": {
     "add_review": "レビューを追加",
@@ -382,5 +406,50 @@
     "amount": "金額",
     "payment_time": "支払い時間",
     "order_code": "注文コード"
+  },
+  "payment": {
+    "title": "支払い",
+    "customer_info": "顧客情報",
+    "default": "デフォルト",
+    "voucher": "バウチャー",
+    "no_voucher": "バウチャーなし",
+    "payment_method": "支払い方法",
+    "select_payment_method": "支払い方法を選択してください",
+    "pay_when_receive": "受け取り時に支払う",
+    "pay_online": "オンラインで支払う",
+    "product": "製品",
+    "amount": "数量",
+    "total": "合計",
+    "no_discount": "割引なし",
+    "total_payment": "合計支払い",
+    "payment": "支払い"
+  },
+  "transaction": {
+    "payment_success": "支払い成功",
+    "payment_fail": "支払い失敗",
+    "your_order": "あなたの注文",
+    "has_been_confirmed": "が確認されました",
+    "has_been_failed": "失敗しました、詳細についてはお問い合わせください",
+    "detail_order": "注文の詳細",
+    "contact_support": "サポートに連絡する",
+    "back_home": "ホームに戻る"
+  },
+  "transaction_detail": {
+    "title": "取引の詳細",
+    "review": {
+      "title": "レビュー",
+      "content": "コンテンツ",
+      "button": "レビューを追加"
+    },
+    "timeline": {
+      "pending": "保留中",
+      "confirmed": "確認済み",
+      "delivering": "配信中",
+      "completes": "完了",
+      "canceled": "キャンセル",
+      "date_delivery": "配達日",
+      "date_delivered": "配達日"
+    },
+    "buy_again": "もう一度購入"
   }
 }

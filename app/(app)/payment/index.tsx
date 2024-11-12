@@ -7,6 +7,7 @@ import PaymentMethodSelect from "@/components/payment/PaymentMethodSelect";
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
+import i18n from "@/languages/i18n";
 import OrderService from "@/services/OrderService";
 import { Product } from "@/types/product.type";
 import { WebViewType } from "@/utils/constants/webview";
@@ -52,11 +53,11 @@ interface Voucher {
   discountPercentage: number;
 }
 
-interface PaymentMethod {
+export interface PaymentMethod {
   id: number;
   name: string;
   icon?: ImageSourcePropType;
-  iconType?: 'MaterialCommunityIcons' | 'MaterialIcons';
+  iconType?: 'MaterialCommunityIcons' | 'MaterialIcons' | 'Ionicons';
   iconName?: string;
   code?: string;
   children?: PaymentMethod[];
@@ -88,14 +89,14 @@ export default function Payment() {
   const paymentMethods: PaymentMethod[] = [
     {
       id: 1,
-      name: 'Thanh toán khi nhận hàng',
+      name: i18n.t("payment.pay_when_receive"),
       iconType: 'MaterialCommunityIcons',
       iconName: 'cash',
       children: []
     },
     {
       id: 2,
-      name: 'Thanh toán online',
+      name: i18n.t("payment.pay_online"),
       iconType: 'MaterialIcons',
       iconName: 'credit-card',
       children: [
@@ -396,7 +397,7 @@ export default function Payment() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-        <AppBar back title="Thanh toán" />
+        <AppBar back title={i18n.t("payment.title")} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -409,7 +410,7 @@ export default function Payment() {
 
           <TouchableOpacity onPress={() => handleVoucher()}>
             <View gap-10 marginB-20>
-              <Text h2_bold>Voucher</Text>
+              <Text h2_bold>{i18n.t("payment.voucher")}</Text>
               <View
                 row paddingH-15 paddingV-20 centerV spread
                 style={{
@@ -419,7 +420,7 @@ export default function Payment() {
                   backgroundColor: "#FCFCFC",
                 }}
               >
-                <Text h3>Chưa có voucher</Text>
+                <Text h3>{i18n.t("payment.no_voucher")}</Text>
                 <Ionicons
                   name="chevron-down"
                   size={24}
@@ -436,7 +437,7 @@ export default function Payment() {
           />
 
           <View gap-10>
-            <Text h2_bold>Sản phẩm</Text>
+            <Text h2_bold>{i18n.t("payment.product")}</Text>
             {products.map((product: PaymentProduct) => (
               <PaymentProductItem key={product.id} product={product} />
             ))}
@@ -460,11 +461,11 @@ export default function Payment() {
         >
           <View gap-10 marginB-5>
             <View row spread>
-              <Text h3_bold >Voucher</Text>
-              <Text h3>Không có</Text>
+              <Text h3_bold >{i18n.t("payment.amount")}</Text>
+              <Text h3>{i18n.t("payment.no_discount")}</Text>
             </View>
             <View row spread>
-              <Text h3_bold>Tổng thanh toán</Text>
+              <Text h3_bold>{i18n.t("payment.total_payment")}</Text>
               <Text h3_bold secondary>
                 {formatCurrency({ price: totalAmount })}
               </Text>
@@ -472,7 +473,7 @@ export default function Payment() {
           </View>
 
           <Button
-            label="Thanh toán"
+            label={i18n.t("payment.payment").toString()}
             labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
             backgroundColor={Colors.primary}
             padding-20

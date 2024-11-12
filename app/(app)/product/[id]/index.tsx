@@ -149,7 +149,7 @@ export default function DetailsScreen() {
 
   return (
     <View flex bg-$white>
-      <AppBar back rightComponent title="Chi tiết sản phẩm" />
+      <AppBar back rightComponent title={i18n.t("productDetail.title")} />
       <View flex>
         <ScrollView showsVerticalScrollIndicator={false}>
           {isLoading ? (

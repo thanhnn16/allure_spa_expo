@@ -121,7 +121,8 @@
       "storage": "Storage instructions",
       "product_notes": "Product notes"
     },
-    "no_info": "No information"
+    "no_info": "No information",
+    "title": "Product details"
   },
   "rating": {
     "add_review": "Add review",
@@ -316,5 +317,50 @@
     "amount": "Amount",
     "payment_time": "Payment Time",
     "order_code": "Order Code"
+  },
+  "payment": {
+    "title": "Payment",
+    "customer_info": "Customer Information",
+    "default": "Default",
+    "voucher": "Voucher",
+    "no_voucher": "No Voucher",
+    "payment_method": "Payment Method",
+    "pay_when_receive": "Pay when receive",
+    "pay_online": "Pay online",
+    "select_payment_method": "Select payment method",
+    "product": "Product",
+    "amount": "Amount",
+    "total": "Total",
+    "no_discount": "No discount",
+    "total_payment": "Total Payment",
+    "payment": "Payment"
+  },
+  "transaction": {
+    "payment_success": "Payment Success",
+    "payment_fail": "Payment Fail",
+    "your_order": "Your order",
+    "has_been_confirmed": "has been confirmed",
+    "has_been_failed": "has been failed, contact us for more information",
+    "detail_order": "Detail order",
+    "contact_support": "Contact support",
+    "back_home": "Back to home page"
+  },
+  "transaction_detail": {
+    "title": "Transaction Detail",
+    "review": {
+      "title": "Review",
+      "content": "Sent review for more point",
+      "button": "Review now"
+    },
+    "timeline": {
+      "pending": "Pending",
+      "confirmed": "確認済み",
+      "delivering": "配信中",
+      "completes": "完了",
+      "canceled": "キャンセル",
+      "date_delivery": "配達日",
+      "date_delivered": "配達日"
+    },
+    "buy_again": "Buy again"
   }
 }
