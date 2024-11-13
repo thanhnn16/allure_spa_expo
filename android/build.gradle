@@ -19,10 +19,14 @@ buildscript {
         classpath('com.android.tools.build:gradle')
         classpath('com.facebook.react:react-native-gradle-plugin')
         classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+        compile project(':@react-native-voice_voice')
+
     }
 }
 
 apply plugin: "com.facebook.react.rootproject"
+apply plugin: "com.android.application"
+
 
 allprojects {
     repositories {

@@ -25,91 +25,90 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
     });
   };
 
-  // Kiểm tra và đảm bảo message là string
   const messageText = typeof message.message === 'string' ? message.message : '';
 
   return (
-    <View
-      style={[
-        styles.container,
-        isOwn ? styles.ownContainer : styles.otherContainer,
-      ]}
-    >
-      <View style={[styles.bubbleWrapper]}>
-        <View
-          style={[styles.bubble, isOwn ? styles.ownBubble : styles.otherBubble]}
-        >
-          {!isThinking && (
-            <>
-              {messageText && (
-                <Markdown
-                  style={{
-                    body: StyleSheet.compose(
-                      styles.text,
-                      isOwn ? styles.ownText : styles.otherText
-                    ) as TextStyle,
-                    paragraph: { marginVertical: 0 } as TextStyle,
-                    link: {
-                      color: isOwn ? Colors.grey50 : Colors.primary,
-                    } as TextStyle,
-                    code_block: {
-                      backgroundColor: isOwn
-                        ? Colors.rgba(Colors.white, 0.1)
-                        : Colors.grey70,
-                      padding: 8,
-                      borderRadius: 4,
-                    } as TextStyle,
-                    code_inline: {
-                      backgroundColor: isOwn
-                        ? Colors.rgba(Colors.white, 0.1)
-                        : Colors.grey70,
-                      padding: 4,
-                      borderRadius: 2,
-                    } as TextStyle,
-                  }}
-                >
-                  {messageText}
-                </Markdown>
-              )}
+      <View
+          style={[
+            styles.container,
+            isOwn ? styles.ownContainer : styles.otherContainer,
+          ]}
+      >
+        <View style={[styles.bubbleWrapper]}>
+          <View
+              style={[styles.bubble, isOwn ? styles.ownBubble : styles.otherBubble]}
+          >
+            {!isThinking && (
+                <>
+                  {messageText && (
+                      <Markdown
+                          style={{
+                            body: StyleSheet.compose(
+                                styles.text,
+                                isOwn ? styles.ownText : styles.otherText
+                            ) as TextStyle,
+                            paragraph: { marginVertical: 0 } as TextStyle,
+                            link: {
+                              color: isOwn ? Colors.grey50 : Colors.primary,
+                            } as TextStyle,
+                            code_block: {
+                              backgroundColor: isOwn
+                                  ? Colors.rgba(Colors.white, 0.1)
+                                  : Colors.grey70,
+                              padding: 8,
+                              borderRadius: 4,
+                            } as TextStyle,
+                            code_inline: {
+                              backgroundColor: isOwn
+                                  ? Colors.rgba(Colors.white, 0.1)
+                                  : Colors.grey70,
+                              padding: 4,
+                              borderRadius: 2,
+                            } as TextStyle,
+                          }}
+                      >
+                        {messageText}
+                      </Markdown>
+                  )}
 
-              {message.attachments?.map((attachment, index) => (
-                <Image
-                  key={index}
-                  source={{ 
-                    uri: attachment.startsWith('data:') 
-                      ? attachment 
-                      : `data:image/jpeg;base64,${attachment}`
-                  }}
-                  style={styles.attachmentImage}
-                />
-              ))}
+                  {message.attachments?.map((attachment, index) => (
+                      <Image
+                          key={index}
+                          source={{
+                            uri: attachment.startsWith('data:')
+                                ? attachment
+                                : `data:image/jpeg;base64,${attachment}`
+                          }}
+                          style={styles.attachmentImage}
+                      />
+                  ))}
 
-              <Text
-                style={[styles.time, isOwn ? styles.ownTime : styles.otherTime]}
-              >
-                {formatTime(message.created_at)}
-              </Text>
-            </>
-          )}
+                  <Text
+                      style={[styles.time, isOwn ? styles.ownTime : styles.otherTime]}
+                  >
+                    {formatTime(message.created_at)}
+                  </Text>
+                </>
+            )}
 
-          {isThinking && (
-            <View style={styles.thinkingContainer}>
-              <View style={styles.thinkingDot} />
-              <View style={styles.thinkingDot} />
-              <View style={styles.thinkingDot} />
-            </View>
+            {isThinking && (
+                <View style={styles.thinkingContainer}>
+                  <View style={styles.thinkingDot} />
+                  <View style={styles.thinkingDot} />
+                  <View style={styles.thinkingDot} />
+                </View>
+            )}
+          </View>
+
+          {message.sending && (
+              <ActivityIndicator
+                  size="small"
+                  color={Colors.grey40}
+                  style={styles.loadingIndicator}
+              />
           )}
         </View>
-
-        {message.sending && (
-          <ActivityIndicator
-            size="small"
-            color={Colors.grey40}
-            style={styles.loadingIndicator}
-          />
-        )}
       </View>
-    </View>
   );
 };
 

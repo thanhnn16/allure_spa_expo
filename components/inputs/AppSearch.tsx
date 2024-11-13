@@ -17,6 +17,8 @@ import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { Href, router } from "expo-router";
 import i18n from "@/languages/i18n";
 
+import { Animated } from "react-native";
+
 type AppSearchProps = {
     value?: string;
     onChangeText?: (text: string) => void;
@@ -35,6 +37,7 @@ const AppSearch = ({
     const [searchText, setSearchText] = useState(value || "");
     const [isListening, setIsListening] = useState(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [buttonScale] = useState(new Animated.Value(1));
     const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -47,10 +50,12 @@ const AppSearch = ({
 
     const onSpeechResults = (e: any) => {
         const recognizedText = e.value[0];
-        setSearchText(recognizedText); // Set recognized text in TextField
+        setSearchText(recognizedText);
         onChangeText && onChangeText(recognizedText);
 
-        resetSilenceTimeout(); // Reset silence timeout on new results
+        console.log("Reco text:", recognizedText);
+
+        resetSilenceTimeout();
 
         Toast.show({
             type: 'success',
@@ -70,6 +75,7 @@ const AppSearch = ({
     };
 
     const stopListening = async () => {
+        // @ts-ignore
         clearTimeout(silenceTimeout.current);
         try {
             await Voice.stop();
@@ -82,6 +88,7 @@ const AppSearch = ({
                 type: 'info',
                 text1: 'Stopped Listening',
             });
+            animateButton(1);
         }
     };
 
@@ -99,6 +106,7 @@ const AppSearch = ({
                 text1: 'Listening...',
             });
             startSilenceTimeout();
+            animateButton(1.2);
         } catch (error) {
             console.error(error);
             setIsButtonDisabled(false);
@@ -119,6 +127,7 @@ const AppSearch = ({
     };
 
     const resetSilenceTimeout = () => {
+        // @ts-ignore
         clearTimeout(silenceTimeout.current);
         startSilenceTimeout();
     };
@@ -127,6 +136,13 @@ const AppSearch = ({
         silenceTimeout.current = setTimeout(() => {
             stopListening();
         }, 2000);
+    };
+
+    const animateButton = (toValue: number) => {
+        Animated.spring(buttonScale, {
+            toValue,
+            useNativeDriver: true,
+        }).start();
     };
 
     return (
@@ -186,12 +202,12 @@ const AppSearch = ({
                         )}
                     </View>
                 )}
-                <TouchableOpacity onPress={() => handleMicPress("vi-VN")} disabled={isButtonDisabled}>
-                    <Image source={MicIcon} style={{ tintColor: isListening ? 'red' : 'black' }} />
-                    <Text style={{ color: isListening ? 'red' : 'gray', fontSize: 12 }}>
-                        {isListening ? "on" : "off"}
-                    </Text>
-                </TouchableOpacity>
+                <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+                    <TouchableOpacity onPress={() => handleMicPress("vi-VN")} disabled={isButtonDisabled}
+                                      style={{ backgroundColor: isListening ? 'red' : 'white', borderRadius: 24, padding: 5 }}>
+                        <Image source={MicIcon} style={{ tintColor: isListening ? 'white' : 'black' }} />
+                    </TouchableOpacity>
+                </Animated.View>
             </View>
         </View>
     );

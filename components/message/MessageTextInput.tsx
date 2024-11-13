@@ -7,6 +7,7 @@ import { Href, router } from 'expo-router';
 import MicIcon from '@/assets/icons/mic.svg';
 import CameraIcon from '@/assets/icons/camera.svg';
 import i18n from '@/languages/i18n';
+import {push} from "expo-router/build/global-state/routing";
 
 
 interface MessageTextInputProps {
@@ -39,9 +40,7 @@ const MessageTextInput = ({
     };
 
     const handleAI = () => {
-        if (onVoicePress) {
-            onVoicePress();
-        }
+        router.push("/(app)/chat/voice-chat" as Href<string>);
     };
 
     return (
