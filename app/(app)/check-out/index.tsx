@@ -210,22 +210,7 @@ export default function Payment() {
     return () => {
       dispatch(clearOrder());
     };
-  }, []);
-
-  // Replace products state with orderSlice data
-  useEffect(() => {
-    if (!products.length) {
-      router.back();
-      return;
-    }
-
-    setTotalPrice(totalAmount);
-    setDiscountedPrice(totalAmount);
-
-    return () => {
-      dispatch(clearOrder());
-    };
-  }, []);
+  }, [products, totalAmount, dispatch]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
