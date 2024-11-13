@@ -10,6 +10,7 @@ interface SearchState {
   recentSearches: string[];
   loading: boolean;
   error: string | null;
+  currentSearchText: string;
 }
 
 const initialState: SearchState = {
@@ -19,7 +20,8 @@ const initialState: SearchState = {
   },
   recentSearches: [],
   loading: false,
-  error: null
+  error: null,
+  currentSearchText: ''
 };
 
 const RECENT_SEARCHES_KEY = '@recent_searches';
@@ -38,13 +40,13 @@ export const searchSlice = createSlice({
     addRecentSearch: (state: SearchState, action: any) => {
       const search = action.payload.trim();
       if (!search) return;
-      
+
       // Remove if exists and add to front
       state.recentSearches = [
         search,
         ...state.recentSearches.filter(item => item !== search)
       ].slice(0, MAX_RECENT_SEARCHES);
-      
+
       // Save to AsyncStorage
       AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(state.recentSearches));
     },
@@ -52,13 +54,16 @@ export const searchSlice = createSlice({
       state.recentSearches = state.recentSearches.filter(
         item => item !== action.payload
       );
-      
+
       // Save to AsyncStorage
       AsyncStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(state.recentSearches));
     },
     clearRecentSearches: (state: SearchState) => {
       state.recentSearches = [];
       AsyncStorage.removeItem(RECENT_SEARCHES_KEY);
+    },
+    setCurrentSearchText: (state: SearchState, action: PayloadAction<string>) => {
+      state.currentSearchText = action.payload;
     }
   },
   extraReducers: (builder: any) => {
@@ -78,12 +83,13 @@ export const searchSlice = createSlice({
   }
 });
 
-export const { 
-  clearSearch, 
-  setRecentSearches, 
+export const {
+  clearSearch,
+  setRecentSearches,
   addRecentSearch,
   removeRecentSearch,
-  clearRecentSearches 
+  clearRecentSearches,
+  setCurrentSearchText
 } = searchSlice.actions;
 
 export default searchSlice.reducer;

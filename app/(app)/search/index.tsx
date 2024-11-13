@@ -6,10 +6,10 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Text, View, SkeletonView } from "react-native-ui-lib";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
-import AppSearch from "@/components/inputs/AppSearch";
+import AppSearch, { AppSearchRef } from "@/components/inputs/AppSearch";
 import SearchListItem from "@/components/list/SearchListItem";
 import { searchItems } from "@/redux/features/search/searchThunk";
 import { RootState } from "@/redux/store";
@@ -37,6 +37,7 @@ const SearchScreen = () => {
   );
 
   const RECENT_SEARCHES_KEY = "@recent_searches";
+  const searchInputRef = useRef<AppSearchRef>(null);
 
   useEffect(() => {
     const loadRecentSearches = async () => {
@@ -77,6 +78,7 @@ const SearchScreen = () => {
   const handleRecentSearchPress = (search: string) => {
     setSearchQuery(search);
     dispatch(searchItems({ query: search }));
+    searchInputRef.current?.focus();
   };
 
   const renderSkeletonLoading = () => {
@@ -150,6 +152,7 @@ const SearchScreen = () => {
             value={searchQuery}
             onChangeText={handleSearch}
             onClear={handleClear}
+            ref={searchInputRef}
           />
 
           <ScrollView

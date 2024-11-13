@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import {
   Colors,
   TextField,
@@ -10,12 +16,15 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Voice from "@react-native-voice/voice";
 import Toast from "react-native-toast-message";
+import { useSelector, useDispatch } from "react-redux";
 
 import SearchIcon from "@/assets/icons/search.svg";
 import MicIcon from "@/assets/icons/mic.svg";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { Href, router } from "expo-router";
 import i18n from "@/languages/i18n";
+import { RootState } from "@/redux/store";
+import { setCurrentSearchText } from "@/redux/features/search/searchSlice";
 
 import { Animated } from "react-native";
 
@@ -25,195 +34,239 @@ type AppSearchProps = {
   onClear?: () => void;
   isHome?: boolean;
   style?: StyleProp<ViewStyle>;
+  onFocus?: () => void;
+  defaultSearchText?: string;
 };
 
-const AppSearch = ({
-  value,
-  onChangeText,
-  onClear,
-  isHome,
-  style,
-}: AppSearchProps) => {
-  const [searchText, setSearchText] = useState(value || "");
-  const [isListening, setIsListening] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [buttonScale] = useState(new Animated.Value(1));
-  const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
+export type AppSearchRef = {
+  focus: () => void;
+};
 
-  useEffect(() => {
-    Voice.onSpeechResults = onSpeechResults;
-    Voice.onSpeechError = onSpeechError;
-    return () => {
-      Voice.destroy().then(Voice.removeAllListeners);
+const AppSearch = forwardRef<AppSearchRef, AppSearchProps>(
+  (
+    { value, onChangeText, onClear, isHome, style, onFocus, defaultSearchText },
+    ref
+  ) => {
+    const dispatch = useDispatch();
+    const currentSearchText = useSelector(
+      (state: RootState) => state.search.currentSearchText
+    );
+    const [searchText, setSearchText] = useState(
+      defaultSearchText || currentSearchText || value || ""
+    );
+    const [isListening, setIsListening] = useState(false);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [buttonScale] = useState(new Animated.Value(1));
+    const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
+    const inputRef = useRef<any>(null);
+
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current?.focus();
+      },
+    }));
+
+    useEffect(() => {
+      Voice.onSpeechResults = onSpeechResults;
+      Voice.onSpeechError = onSpeechError;
+      return () => {
+        Voice.destroy().then(Voice.removeAllListeners);
+      };
+    }, []);
+
+    useEffect(() => {
+      if (defaultSearchText) {
+        setSearchText(defaultSearchText);
+        dispatch(setCurrentSearchText(defaultSearchText));
+        onChangeText && onChangeText(defaultSearchText);
+      }
+    }, [defaultSearchText]);
+
+    useEffect(() => {
+      if (currentSearchText !== searchText) {
+        setSearchText(currentSearchText || "");
+      }
+    }, [currentSearchText]);
+
+    const onSpeechResults = (e: any) => {
+      const recognizedText = e.value[0];
+      setSearchText(recognizedText);
+      dispatch(setCurrentSearchText(recognizedText));
+      onChangeText && onChangeText(recognizedText);
+
+      console.log("Reco text:", recognizedText);
+
+      resetSilenceTimeout();
+
+      Toast.show({
+        type: "success",
+        text1: "Recognized:",
+        text2: recognizedText,
+      });
     };
-  }, []);
 
-  const onSpeechResults = (e: any) => {
-    const recognizedText = e.value[0];
-    setSearchText(recognizedText);
-    onChangeText && onChangeText(recognizedText);
-
-    console.log("Reco text:", recognizedText);
-
-    resetSilenceTimeout();
-
-    Toast.show({
-      type: 'success',
-      text1: 'Recognized:',
-      text2: recognizedText,
-    });
-  };
-
-  const onSpeechError = (e: any) => {
-    console.error(e);
-    Toast.show({
-      type: 'error',
-      text1: 'Speech recognition error',
-      text2: e.error.message || "Please try again.",
-    });
-    stopListening(); // Reset state on error
-  };
-
-  const stopListening = async () => {
-    // @ts-ignore
-    clearTimeout(silenceTimeout.current);
-    try {
-      await Voice.stop();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsListening(false);
-      setIsButtonDisabled(false);
+    const onSpeechError = (e: any) => {
+      console.error(e);
       Toast.show({
-        type: 'info',
-        text1: 'Stopped Listening',
+        type: "error",
+        text1: "Speech recognition error",
+        text2: e.error.message || "Please try again.",
       });
-      animateButton(1);
-    }
-  };
+      stopListening(); // Reset state on error
+    };
 
-  const startListening = async (language: string) => {
-    if (isListening) {
-      stopListening(); // Manually stop if already listening
-      return;
-    }
-    try {
-      await Voice.start(language);
-      setIsListening(true);
-      setIsButtonDisabled(true);
-      Toast.show({
-        type: 'info',
-        text1: 'Listening...',
-      });
+    const stopListening = async () => {
+      // @ts-ignore
+      clearTimeout(silenceTimeout.current);
+      try {
+        await Voice.stop();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsListening(false);
+        setIsButtonDisabled(false);
+        Toast.show({
+          type: "info",
+          text1: "Stopped Listening",
+        });
+        animateButton(1);
+      }
+    };
+
+    const startListening = async (language: string) => {
+      if (isListening) {
+        stopListening(); // Manually stop if already listening
+        return;
+      }
+      try {
+        await Voice.start(language);
+        setIsListening(true);
+        setIsButtonDisabled(true);
+        Toast.show({
+          type: "info",
+          text1: "Listening...",
+        });
+        startSilenceTimeout();
+        animateButton(1.2);
+      } catch (error) {
+        console.error(error);
+        setIsButtonDisabled(false);
+      }
+    };
+
+    const handleMicPress = (language: string) => {
+      if (isListening) {
+        stopListening();
+      } else {
+        startListening(language);
+      }
+    };
+
+    const handleClear = () => {
+      setSearchText("");
+      dispatch(setCurrentSearchText(""));
+      onClear && onClear();
+    };
+
+    const resetSilenceTimeout = () => {
+      // @ts-ignore
+      clearTimeout(silenceTimeout.current);
       startSilenceTimeout();
-      animateButton(1.2);
-    } catch (error) {
-      console.error(error);
-      setIsButtonDisabled(false);
-    }
-  };
+    };
 
-  const handleMicPress = (language: string) => {
-    if (isListening) {
-      stopListening();
-    } else {
-      startListening(language);
-    }
-  };
+    const startSilenceTimeout = () => {
+      silenceTimeout.current = setTimeout(() => {
+        stopListening();
+      }, 2000);
+    };
 
-  const handleClear = () => {
-    setSearchText("");
-    onClear && onClear();
-  };
+    const animateButton = (toValue: number) => {
+      Animated.spring(buttonScale, {
+        toValue,
+        useNativeDriver: true,
+      }).start();
+    };
 
-  const resetSilenceTimeout = () => {
-    // @ts-ignore
-    clearTimeout(silenceTimeout.current);
-    startSilenceTimeout();
-  };
-
-  const startSilenceTimeout = () => {
-    silenceTimeout.current = setTimeout(() => {
-      stopListening();
-    }, 2000);
-  };
-
-  const animateButton = (toValue: number) => {
-    Animated.spring(buttonScale, {
-      toValue,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  return (
-    <View
-      width={"100%"}
-      style={[
-        style,
-        {
-          borderRadius: 8,
-          borderColor: "#C9C9C9",
-          borderWidth: 1,
-          overflow: "hidden",
-        },
-      ]}
-    >
+    return (
       <View
-        style={{
-          width: "100%",
-          height: 48,
-          paddingHorizontal: 10,
-          alignSelf: "center",
-          alignItems: "center",
-          flexDirection: "row",
-        }}
+        width={"100%"}
+        style={[
+          style,
+          {
+            borderRadius: 8,
+            borderColor: "#C9C9C9",
+            borderWidth: 1,
+            overflow: "hidden",
+          },
+        ]}
       >
-        <Image source={SearchIcon} />
-        {isHome ? (
-          <Pressable
-            style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-            onPress={() => router.push("search" as Href<string>)}
-          >
-            <View flex marginL-10>
-              <Text h3 gray>
-                {i18n.t("home.placeholder_search")}
-              </Text>
+        <View
+          style={{
+            width: "100%",
+            height: 48,
+            paddingHorizontal: 10,
+            alignSelf: "center",
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Image source={SearchIcon} />
+          {isHome ? (
+            <Pressable
+              style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+              onPress={() => router.push("search" as Href<string>)}
+            >
+              <View flex marginL-10>
+                <Text h3 gray>
+                  {i18n.t("home.placeholder_search")}
+                </Text>
+              </View>
+            </Pressable>
+          ) : (
+            <View flex row centerV>
+              <TextField
+                ref={inputRef}
+                value={searchText}
+                onChangeText={(text) => {
+                  setSearchText(text);
+                  dispatch(setCurrentSearchText(text));
+                  onChangeText && onChangeText(text);
+                }}
+                onFocus={onFocus}
+                placeholder="Tìm kiếm mỹ phẩm, liệu trình ..."
+                placeholderTextColor={Colors.gray}
+                containerStyle={{
+                  flex: 1,
+                  marginStart: 10,
+                }}
+              />
+              {searchText.length > 0 && (
+                <TouchableOpacity onPress={handleClear} style={{ padding: 5 }}>
+                  <AntDesign name="close" size={20} color={Colors.gray} />
+                </TouchableOpacity>
+              )}
             </View>
-          </Pressable>
-        ) : (
-          <View flex row centerV>
-            <TextField
-              value={searchText}
-              onChangeText={(text) => {
-                setSearchText(text);
-                onChangeText && onChangeText(text);
+          )}
+          <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+            <TouchableOpacity
+              onPress={() => handleMicPress("vi-VN")}
+              disabled={isButtonDisabled}
+              style={{
+                backgroundColor: isListening ? "red" : "white",
+                borderRadius: 24,
+                padding: 5,
               }}
-              placeholder="Tìm kiếm mỹ phẩm, liệu trình ..."
-              placeholderTextColor={Colors.gray}
-              containerStyle={{
-                flex: 1,
-                marginStart: 10,
-              }}
-            />
-            {searchText.length > 0 && (
-              <TouchableOpacity onPress={handleClear} style={{ padding: 5 }}>
-                <AntDesign name="close" size={20} color={Colors.gray} />
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
-        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-          <TouchableOpacity 
-            onPress={() => handleMicPress("vi-VN")} 
-            disabled={isButtonDisabled}
-            style={{ backgroundColor: isListening ? 'red' : 'white', borderRadius: 24, padding: 5 }}
-          >
-            <Image source={MicIcon} style={{ tintColor: isListening ? 'white' : 'black' }} />
-          </TouchableOpacity>
-        </Animated.View>
+            >
+              <Image
+                source={MicIcon}
+                style={{ tintColor: isListening ? "white" : "black" }}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+);
 
 export default AppSearch;

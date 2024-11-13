@@ -4,13 +4,17 @@ import { View, Text, Image, TouchableOpacity } from "react-native-ui-lib";
 import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
 import { router } from "expo-router";
+import { useDispatch } from "react-redux";
+import { setCurrentSearchText } from "@/redux/features/search/searchSlice";
 
 interface SearchListItemProps {
-  item: Product | ServiceResponeModel;
+  item: Product | ServiceResponeModel | string;
   type: "product" | "service";
 }
 
 const SearchListItem = ({ item, type }: SearchListItemProps) => {
+  const dispatch = useDispatch();
+
   const getTitle = () => {
     return type === "product"
       ? (item as Product).name
@@ -24,14 +28,20 @@ const SearchListItem = ({ item, type }: SearchListItemProps) => {
   };
 
   const getImage = () => {
-    return item.media?.[0]?.full_url;
+    return type === "product"
+      ? (item as Product).media?.[0]?.full_url
+      : (item as ServiceResponeModel).media?.[0]?.full_url;
   };
 
   const handlePress = () => {
-    if (type === "product") {
-      router.push(`/product/${item.id}`);
+    if (typeof item === "string") {
+      dispatch(setCurrentSearchText(item));
     } else {
-      router.push(`/service/${item.id}`);
+      if (type === "product") {
+        router.push(`/product/${item.id}`);
+      } else {
+        router.push(`/service/${item.id}`);
+      }
     }
   };
 
