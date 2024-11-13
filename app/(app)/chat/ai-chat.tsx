@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList, Keyboard,
-  TouchableOpacity,
-} from "react-native";
-import { Colors, Text, View } from "react-native-ui-lib";
+import { ActivityIndicator, FlatList } from "react-native";
+import { Colors, Keyboard, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
 import AppBar from "@/components/app-bar/AppBar";
@@ -20,14 +15,12 @@ import {
 } from "@/redux/features/ai/aiSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useAuth } from "@/hooks/useAuth";
-import {convertImageToBase64} from "@/utils/helpers/imageHelper";
-import KeyboardTrackingView
-  from "react-native-ui-lib/lib/components/Keyboard/KeyboardTracking/KeyboardTrackingView/KeyboardTrackingView.ios";
+import { convertImageToBase64 } from "@/utils/helpers/imageHelper";
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { messages, isLoading, isThinking, error, configs } = useSelector(
-      (state: RootState) => state.ai
+    (state: RootState) => state.ai
   );
   const [message, setMessage] = useState("");
   const [messageStatus, setMessageStatus] = useState("Đã gửi");
@@ -36,11 +29,9 @@ const AIChatScreen = () => {
 
   const hasValidContent = (msg: any) => {
     return (
-        !msg.isSystemMessage &&
-        (
-            msg.parts?.[0]?.text?.trim() !== '' ||
-            msg.parts?.some((part: any) => part.image)
-        )
+      !msg.isSystemMessage &&
+      (msg.parts?.[0]?.text?.trim() !== "" ||
+        msg.parts?.some((part: any) => part.image))
     );
   };
 
@@ -50,10 +41,10 @@ const AIChatScreen = () => {
 
   useEffect(() => {
     dispatch(fetchAiConfigs())
-        .unwrap()
-        .catch((error: any) => {
-          console.error("Error fetching configs:", error);
-        });
+      .unwrap()
+      .catch((error: any) => {
+        console.error("Error fetching configs:", error);
+      });
   }, [dispatch]);
 
   useEffect(() => {
@@ -69,10 +60,10 @@ const AIChatScreen = () => {
         };
 
         await dispatch(
-            sendTextMessage({
-              text: JSON.stringify(userContext),
-              isSystemMessage: true,
-            })
+          sendTextMessage({
+            text: JSON.stringify(userContext),
+            isSystemMessage: true,
+          })
         ).unwrap();
       } catch (error) {
         console.error("Failed to send user context:", error);
@@ -108,19 +99,19 @@ const AIChatScreen = () => {
           }
 
           await dispatch(
-              sendImageMessage({
-                text: currentMessage,
-                images: imageData,
-              })
+            sendImageMessage({
+              text: currentMessage,
+              images: imageData,
+            })
           ).unwrap();
         } catch (error: any) {
           throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
         }
       } else {
         await dispatch(
-            sendTextMessage({
-              text: currentMessage,
-            })
+          sendTextMessage({
+            text: currentMessage,
+          })
         ).unwrap();
       }
 
@@ -135,85 +126,86 @@ const AIChatScreen = () => {
     if (!hasMessages) return null;
 
     return (
-        <View row centerV right paddingH-10>
-          <Text>{messageStatus}</Text>
-          {messageStatus === "Đang gửi" && (
-              <ActivityIndicator
-                  size="small"
-                  color={Colors.primary}
-                  style={{ marginLeft: 5 }}
-              />
-          )}
-        </View>
+      <View row centerV right paddingH-10>
+        <Text>{messageStatus}</Text>
+        {messageStatus === "Đang gửi" && (
+          <ActivityIndicator
+            size="small"
+            color={Colors.primary}
+            style={{ marginLeft: 5 }}
+          />
+        )}
+      </View>
     );
   };
 
   const renderChatUI = () => (
-      <>
-        <FlatList
-            data={messages.filter(hasValidContent)}
-            renderItem={({ item, index }) => {
-              const messageText = item.parts?.[0]?.text || "";
-              const hasImages = item.parts?.some((p: any) => p.image);
+    <>
+      <FlatList
+        data={messages.filter(hasValidContent)}
+        renderItem={({ item, index }) => {
+          const messageText = item.parts?.[0]?.text || "";
+          const hasImages = item.parts?.some((p: any) => p.image);
 
-              if (!messageText.trim() && !hasImages) return null;
+          if (!messageText.trim() && !hasImages) return null;
 
-              return (
-                  <MessageBubble
-                      key={`message-${item.id || index}`}
-                      message={{
-                        id: item.id || `msg-${index}`,
-                        message: messageText,
-                        sender_id: item.role === "user" ? "user" : "ai",
-                        created_at: new Date().toISOString(),
-                        attachments: item.parts
-                            ?.filter((p: any) => p.image)
-                            ?.map((p: any) => p.image.data) || [],
-                      }}
-                      isOwn={item.role === "user"}
-                      isThinking={
-                          item.role === "model" &&
-                          isThinking &&
-                          index === messages.length - 1
-                      }
-                  />
-              );
-            }}
-            ref={scrollRef}
-            onContentSizeChange={() => {
-              requestAnimationFrame(() => {
-                scrollRef.current?.scrollToEnd({ animated: true });
-              });
-            }}
-            keyExtractor={(item, index) => item.id || `msg-${index}`}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingHorizontal: 16,
-              paddingBottom: 16,
-            }}
-            ListFooterComponent={handleRead}
-        />
-
-        {selectedImages.length > 0 && (
-            <SelectImagesBar
-                selectedImages={selectedImages}
-                setSelectedImages={setSelectedImages}
+          return (
+            <MessageBubble
+              key={`message-${item.id || index}`}
+              message={{
+                id: item.id || `msg-${index}`,
+                message: messageText,
+                sender_id: item.role === "user" ? "user" : "ai",
+                created_at: new Date().toISOString(),
+                attachments:
+                  item.parts
+                    ?.filter((p: any) => p.image)
+                    ?.map((p: any) => p.image.data) || [],
+              }}
+              isOwn={item.role === "user"}
+              isThinking={
+                item.role === "model" &&
+                isThinking &&
+                index === messages.length - 1
+              }
             />
-        )}
+          );
+        }}
+        ref={scrollRef}
+        onContentSizeChange={() => {
+          requestAnimationFrame(() => {
+            scrollRef.current?.scrollToEnd({ animated: true });
+          });
+        }}
+        keyExtractor={(item, index) => item.id || `msg-${index}`}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 16,
+        }}
+        ListFooterComponent={handleRead}
+      />
 
-        <MessageTextInput
-            placeholder={
-                i18n.t("chat.chat_with") + " " + i18n.t("chat.chat_with_ai") + ".."
-            }
-            message={message}
-            setMessage={setMessage}
-            handleSend={handleSend}
-            isCamera={true}
-            isAI={true}
-            selectedImages={selectedImages}
-            setSelectedImages={setSelectedImages}
+      {selectedImages.length > 0 && (
+        <SelectImagesBar
+          selectedImages={selectedImages}
+          setSelectedImages={setSelectedImages}
         />
-      </>
+      )}
+
+      <MessageTextInput
+        placeholder={
+          i18n.t("chat.chat_with") + " " + i18n.t("chat.chat_with_ai") + ".."
+        }
+        message={message}
+        setMessage={setMessage}
+        handleSend={handleSend}
+        isCamera={true}
+        isAI={true}
+        selectedImages={selectedImages}
+        setSelectedImages={setSelectedImages}
+      />
+    </>
   );
 
   useEffect(() => {
@@ -232,21 +224,22 @@ const AIChatScreen = () => {
 
   const [refreshing, setRefreshing] = useState(false);
 
+  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     dispatch(fetchAiConfigs()).finally(() => setRefreshing(false));
   }, []);
 
-
   return (
-      <KeyboardTrackingView
-          style={{ flex: 1, backgroundColor: Colors.white }}
-          trackInteractive
-          useSafeArea
-      >
-        <AppBar back title={i18n.t("chat.chat_with_ai")} />
-        {renderChatUI()}
-      </KeyboardTrackingView>
+    <KeyboardTrackingView
+      style={{ flex: 1, backgroundColor: Colors.white }}
+      trackInteractive
+      useSafeArea
+    >
+      <AppBar back title={i18n.t("chat.chat_with_ai")} />
+      {renderChatUI()}
+    </KeyboardTrackingView>
   );
 };
 

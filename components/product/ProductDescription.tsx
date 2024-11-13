@@ -37,7 +37,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
     <View marginT-10>
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.brand")}
-        childrenText={product?.brand_description || i18n.t("productDetail.no_info")}
+        childrenText={
+          product?.brand_description || i18n.t("productDetail.no_info")
+        }
       />
 
       <ProductDescriptionColapable
@@ -57,7 +59,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
 
       <ProductDescriptionColapable
         headerText={i18n.t("productDetail.description.storage")}
-        childrenText={product?.storage_instructions || i18n.t("productDetail.no_info")}
+        childrenText={
+          product?.storage_instructions || i18n.t("productDetail.no_info")
+        }
       />
 
       <ProductDescriptionColapable
