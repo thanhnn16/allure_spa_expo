@@ -412,7 +412,7 @@
     "payment_time": "支払い時間",
     "order_code": "注文コード"
   },
-  "payment": {
+  "checkout": {
     "title": "支払い",
     "customer_info": "顧客情報",
     "default": "デフォルト",
@@ -427,7 +427,8 @@
     "total": "合計",
     "no_discount": "割引なし",
     "total_payment": "合計支払い",
-    "payment": "支払い"
+    "payment": "支払い",
+    "subtotal": "小計"
   },
   "transaction": {
     "payment_success": "支払い成功",

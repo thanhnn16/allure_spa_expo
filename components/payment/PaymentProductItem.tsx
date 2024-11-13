@@ -1,12 +1,11 @@
-import { PaymentProduct } from '@/app/(app)/payment';
+import { Product } from '@/app/(app)/check-out';
 import i18n from '@/languages/i18n';
-import { Product } from '@/types/product.type';
 import formatCurrency from '@/utils/price/formatCurrency';
 import { Dimensions, StyleSheet } from 'react-native'
 import { Text, View, Image } from 'react-native-ui-lib'
 
 interface PaymentProductItemProps {
-    product: PaymentProduct;
+    product: Product;
 }
 
 const PaymentProductItem = ({product} : PaymentProductItemProps) => {
@@ -36,7 +35,7 @@ const PaymentProductItem = ({product} : PaymentProductItemProps) => {
                         <Text h3_bold secondary>{formatCurrency({ price: Number(product?.price) })}</Text>
                     </View>
                     <View>
-                        <Text>{i18n.t("payment.amount")}: {product?.quantity}</Text>
+                        <Text>{i18n.t("checkout.amount")}: {product?.quantity}</Text>
                     </View>
                 </View>
             </View>
@@ -51,7 +50,7 @@ const PaymentProductItem = ({product} : PaymentProductItemProps) => {
                     paddingVertical: 5,
                 }}
             >
-                <Text h3_bold>{i18n.t("payment.total")}:</Text>
+                <Text h3_bold>{i18n.t("checkout.total")}:</Text>
                 <Text h3_bold secondary>{formatCurrency({ price: total })}</Text>
             </View>
         </View>
