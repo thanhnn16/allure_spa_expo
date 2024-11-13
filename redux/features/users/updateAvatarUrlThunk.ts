@@ -9,7 +9,7 @@ export const updateAvatarUrlThunk = createAsyncThunk(
       const res: any = await AxiosInstance().get<User>("user/avatar");
 
       if (res.data.success) {
-        return res.data.data.data;
+        return res.data.data;
       }
 
       console.log('Update avatar failed:', res.data.message);
@@ -19,4 +19,3 @@ export const updateAvatarUrlThunk = createAsyncThunk(
       return rejectWithValue(error.response?.data?.message || "Update avatar failed");
     }
   });
-

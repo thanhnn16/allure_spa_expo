@@ -8,6 +8,7 @@ import {
 } from "react-native-ui-lib";
 import { useNavigation } from "expo-router";
 import i18n from "@/languages/i18n";
+import AppDialog from "@/components/dialog/AppDialog";
 import BackButton from "@/assets/icons/back.svg";
 import { TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +22,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { updateUserThunk } from "@/redux/features/users/updateUserThunk";
 import { updateAvatarUrlThunk } from "@/redux/features/users/updateAvatarUrlThunk";
+import { uploadAvatarUrlThunk } from "@/redux/features/users/uploadAvatarUrlThunk";
+import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -43,9 +46,39 @@ const ProfileEdit = (props: ProfileEditProps) => {
     uri: user?.avatar_url || "",
   });
   const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
+  const [isDialogVisible, setDialogVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = await dispatch(getUserThunk()).unwrap();
+        setName(user.full_name);
+        setPhone(user.phone_number);
+        setEmail(user.email);
+        setGender(user.gender);
+        setBirthday(new Date(user.date_of_birth));
+        setAvatar({ uri: user.avatar_url });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
+  }, [dispatch]);
 
   const handleSaveChanges = async () => {
     try {
+      //validate email format
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!emailRegex.test(email)) {
+        console.log("Invalid email format");
+        return;
+      }
+      //validate phone number format
+      const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+      if (!phoneRegex.test(phone)) {
+        console.log("Invalid phone number format");
+        return;
+      }
       // Update user info
       await dispatch(
         updateUserThunk({
@@ -53,20 +86,22 @@ const ProfileEdit = (props: ProfileEditProps) => {
           phone_number: phone,
           email,
           gender,
-          date_of_birth: birthday,
+          date_of_birth: birthday.toISOString().split("T")[0], // dòng này là để format ngày sinh thành YYYY-MM-DD
         })
       ).unwrap();
 
-      // If avatar was changed, update it separately
-      if (avatar.uri !== user?.avatar_url) {
-        const formData = new FormData();
-        const response = await fetch(avatar.uri);
-        const blob = await response.blob();
-        formData.append("avatar", blob, "avatar.jpg");
-        await dispatch(updateAvatarUrlThunk(formData)).unwrap();
-      }
+      //fetch user info after update
+      const updatedUser = await dispatch(getUserThunk()).unwrap();
+      setName(updatedUser.full_name);
+      setPhone(updatedUser.phone_number);
+      setEmail(updatedUser.email);
+      setGender(updatedUser.gender);
+      setBirthday(new Date(updatedUser.date_of_birth));
+      setAvatar({ uri: updatedUser.avatar_url });
 
-      navigation.goBack();
+      //hiển thị thông khi update thành công
+      console.log("Update profile successfully");
+      setDialogVisible(true);
     } catch (error) {
       console.error("Failed to update profile:", error);
       // Handle error (show error message)
@@ -80,8 +115,19 @@ const ProfileEdit = (props: ProfileEditProps) => {
       aspect: [4, 3],
       quality: 0.5,
     });
-    if (!result.canceled) {
+    console.log("Image picked:", result.assets[0].uri);
+
+    if (!result || !result.assets || !result.assets[0].uri) return;
+    try {
+      const response = await fetch(result.assets[0].uri);
+      const blob = await response.blob();
+      const formData = new FormData();
+      formData.append("avatar", blob, "avatar.jpg");
+      await dispatch(uploadAvatarUrlThunk(formData)).unwrap();
+
       setAvatar({ uri: result.assets[0].uri });
+    } catch (error) {
+      console.error("Failed to upload avatar:", error);
     }
   };
 
@@ -195,22 +241,25 @@ const ProfileEdit = (props: ProfileEditProps) => {
           </View>
         ))}
         <View marginT-20>
-          <View row centerV gap-10>
+          <View row centerV gap-20>
             <Image width={24} height={24} source={GenderIcon} />
-            <Picker
-              value={gender}
-              onChange={(value: any) => setGender(value)}
-              style={{
-                borderBottomWidth: 0.5,
-                flex: 1,
-                height: 40,
-                borderColor: "#D5D6CD",
-              }}
-            >
-              <Picker.Item label="Nam" value="Nam" />
-              <Picker.Item label="Nữ" value="Nữ" />
-              <Picker.Item label="Khác" value="Khác" />
-            </Picker>
+            <View style={{ flex: 1 }}>
+              <Picker
+                value={gender}
+                onChange={(value: any) => setGender(value)}
+                style={{
+                  borderBottomWidth: 0.5,
+                  width: "100%",
+                  height: 40,
+                  borderColor: "#D5D6CD",
+                  // backgroundColor: "red",
+                }}
+              >
+                <Picker.Item label="Nam" value="male" />
+                <Picker.Item label="Nữ" value="female" />
+                <Picker.Item label="Khác" value="other" />
+              </Picker>
+            </View>
           </View>
         </View>
         <View marginT-20>
@@ -259,6 +308,19 @@ const ProfileEdit = (props: ProfileEditProps) => {
           </Text>
         </TouchableOpacity>
       </View>
+      <AppDialog
+        visible={isDialogVisible}
+        onClose={() => setDialogVisible(false)}
+        confirmButton
+        confirmButtonLabel="OK"
+        severity="success"
+        title="Cập nhật thông tin thành công"
+        description="Thông tin của bạn đã được cập nhật thành công"
+        onConfirm={() => {
+          setDialogVisible(false);
+          navigation.goBack();
+        }}
+      />
     </View>
   );
 };

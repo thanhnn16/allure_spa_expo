@@ -6,10 +6,12 @@ import { User } from "@/types/user.type";
     "user/updateUser",
     async (data: any, { rejectWithValue }: any) => {
       try {
-        const res: any = await AxiosInstance().put<User>(`user/${data.id}`, data);
+        const res: any = await AxiosInstance().put<User>(`user/profile`, data);
   
+        console.log('Update user response:', res.data.data);
+        
         if (res.data.success) {
-          return res.data.data.data;
+          return res.data.data;
       }
   
         console.log('Update user failed:', res.data.message);
