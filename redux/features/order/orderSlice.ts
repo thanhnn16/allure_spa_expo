@@ -26,7 +26,7 @@ export const orderSlice = createSlice({
   name: 'order',
   initialState,
   reducers: {
-    setOrderProducts: (state, action: PayloadAction<{
+    setOrderProducts: (state: any, action: PayloadAction<{
       products: OrderProduct[];
       totalAmount: number;
       fromCart: boolean;
@@ -35,7 +35,7 @@ export const orderSlice = createSlice({
       state.totalAmount = action.payload.totalAmount;
       state.fromCart = action.payload.fromCart;
     },
-    clearOrder: (state) => {
+    clearOrder: (state: any) => {
       state.products = [];
       state.totalAmount = 0;
       state.fromCart = false;

@@ -15,7 +15,7 @@ import aiReducer from './features/ai/aiSlice';
 import ratingReducer from './features/rating/ratingSlice';
 import favoriteReducer from './features/favorite/favoritesReducer';
 import addressReducer from './features/address/addressSlice';
-
+import orderReducer from './features/order/orderSlice';
 
 const persistConfig = {
     key: 'root',
@@ -39,6 +39,7 @@ const rootReducer: any = combineReducers({
     rating: ratingReducer,
     favorite: favoriteReducer,
     address: addressReducer,
+    order: orderReducer,
 })
 
 

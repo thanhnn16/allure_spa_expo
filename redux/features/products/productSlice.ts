@@ -17,6 +17,7 @@ const initialState: ProductState = {
   products: [],
   isLoading: false,
   error: null,
+  status: null,
 };
 
 export const productSlice = createSlice({
