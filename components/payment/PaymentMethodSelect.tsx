@@ -6,6 +6,7 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { PaymentMethod } from '@/app/(app)/check-out';
 import { useEffect, useState } from 'react';
+import i18n from '@/languages/i18n';
 
 
 interface PaymentMethodSelectProps {
@@ -36,7 +37,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
 
     return (
         <View gap-10 marginB-20>
-            <Text h2_bold>Hình thức thanh toán</Text>
+            <Text h2_bold>{i18n.t("payment.payment_method")}</Text>
             <TouchableOpacity
                 onPress={isPayment ? onPress : undefined}
             >
@@ -59,13 +60,13 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
                     )}
                     {!selectedPayment && (
                         <Text h3>
-                            Chọn phương thức thanh toán
+                            {i18n.t("payment.select_payment_method")}
                         </Text>
                     )}
                     {isPayment && (
                         <View centerV>
                             <Ionicons
-                                name="chevron-forward"
+                                name="chevron-down"
                                 size={24}
                                 color={Colors.primary}
                             />

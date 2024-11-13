@@ -27,6 +27,7 @@ interface ProductBottomComponentProps {
   product: Product | null;
   onPurchase?: () => void;
   quantity: number;
+  onAddToCart?: () => void;
 }
 
 const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
@@ -34,9 +35,9 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   product,
   onPurchase,
   quantity,
+  onAddToCart
 }) => {
   const dispatch = useDispatch();
-  const [isToastVisible, setToastIsVisible] = useState(false);
 
   const handleAddToCart = () => {
     const cartItem = {
@@ -44,7 +45,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       quantity: 1,
     };
     dispatch(addItemToCart({ product: cartItem, quantity: quantity }));
-    setToastIsVisible(true);
+    onAddToCart && onAddToCart();
   };
 
   const handlePurchase = () => {
@@ -61,7 +62,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       };
 
       router.push({
-        pathname: "/(app)/check-out",
+        pathname: "/check-out",
         params: {
           products: JSON.stringify([productData]),
           total_amount: Number(product?.price || 0) * quantity,
@@ -114,30 +115,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           backgroundColor={Colors.primary}
         />
       </View>
-      <Incubator.Toast
-        visible={isToastVisible}
-        position={"bottom"}
-        autoDismiss={1500}
-        onDismiss={() => setToastIsVisible(false)}
-      >
-        <View
-          style={{
-            backgroundColor: "#f6f6f6",
-            padding: 20,
-            borderTopStartRadius: 30,
-            borderTopEndRadius: 30,
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text h3_medium>Thêm giỏ hàng thành công</Text>
-          <TouchableOpacity onPress={() => router.push("/(app)/cart")}>
-            <Text h3_medium color={Colors.primary}>
-              Xem giỏ hàng
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Incubator.Toast>
+
     </View>
   );
 };

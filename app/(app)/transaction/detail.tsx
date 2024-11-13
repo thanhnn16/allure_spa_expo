@@ -33,8 +33,9 @@ import AppBar from "@/components/app-bar/AppBar";
 import PaymentAddress from "@/components/payment/PaymentAddress";
 import TimelineList from "@/components/payment/TimelineList";
 import PaymentMethodSelect from "@/components/payment/PaymentMethodSelect";
-import { PaymentProduct } from "../check-out";
+
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
+import { PaymentProduct } from "../payment";
 
 interface Product {
   id: number;
@@ -53,11 +54,12 @@ interface DeliveryStatusState {
   toastMessage?: string;
 }
 
-const products: Product[] = [
+const products: PaymentProduct[] = [
   {
     id: 1,
     name: "Lamellar Lipocollage",
     price: "1.170.000 VNĐ",
+    priceValue: 1170000,
     quantity: 1,
     image: require("@/assets/images/sp2.png"),
   },
@@ -65,6 +67,7 @@ const products: Product[] = [
     id: 2,
     name: "Lamellar Lipocollage",
     price: "1.170.000 VNĐ",
+    priceValue: 1170000,
     quantity: 1,
     image: require("@/assets/images/sp2.png"),
   },
@@ -89,27 +92,6 @@ const styles = StyleSheet.create({
     width: 380,
     height: 140,
     alignSelf: "center",
-  },
-
-  // Header styles
-  headerWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    marginBottom: 20, // Thêm khoảng cách 20 cho header
-  },
-  headerBackButton: {
-    marginRight: 16,
-  },
-  headerBackIcon: {
-    width: 24,
-    height: 24,
-  },
-  headerTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: "bold",
-    marginLeft: 65,
   },
 
   // Text styles
@@ -497,7 +479,7 @@ export default function Detail() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-        <AppBar back title="Chi tiết đơn hàng" />
+        <AppBar back title={i18n.t("transaction_detail.title")} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -510,13 +492,13 @@ export default function Detail() {
           <View style={styles.ratingContainer}>
             <View>
               <View>
-                <Text style={styles.textTitle}>Đánh giá sản phẩm</Text>
+                <Text style={styles.textTitle}>{i18n.t("transaction_detail.review.title")}</Text>
                 <Text style={styles.textSubtitle}>
-                  Đánh giá sản phẩm này để nhận thêm coin
+                {i18n.t("transaction_detail.review.content")}
                 </Text>
               </View>
               <TouchableOpacity style={styles.btnRate} onPress={() => handleOpenBottomSheet()}>
-                <Text style={styles.btnRateText}>Đánh giá ngay</Text>
+                <Text style={styles.btnRateText}>{i18n.t("transaction_detail.review.button")}</Text>
               </TouchableOpacity>
             </View>
             <Image
@@ -534,7 +516,7 @@ export default function Detail() {
           <PaymentMethodSelect />
 
           <View gap-10>
-            <Text h2_bold>Sản phẩm</Text>
+            <Text h2_bold>{i18n.t("payment.product")}</Text>
             {products.map((product: PaymentProduct) => (
               <PaymentProductItem key={product.id} product={product} />
             ))}
@@ -559,15 +541,11 @@ export default function Detail() {
 
           <View gap-10 marginV-5>
             <View row spread>
-              <Text h3_bold >Tổng tiền sản phẩm:</Text>
+              <Text h3_bold >{i18n.t("payment.voucher")}</Text>
               <Text h3>50k</Text>
             </View>
             <View row spread>
-              <Text h3_bold >Voucher</Text>
-              <Text h3>50k</Text>
-            </View>
-            <View row spread>
-              <Text h3_bold>Thành tiền:</Text>
+              <Text h3_bold>{i18n.t("payment.total_payment")}:</Text>
               <Text h3_bold secondary>
                 123.456 VNĐ
               </Text>
@@ -575,7 +553,7 @@ export default function Detail() {
           </View>
 
           <Button
-            label="Mua lại"
+            label={i18n.t("transaction_detail.buy_again").toString()}
             labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
             backgroundColor={Colors.primary}
             padding-20

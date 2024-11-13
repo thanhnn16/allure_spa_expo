@@ -1,19 +1,22 @@
 import { StyleSheet } from 'react-native'
-import { Card, Text, TouchableOpacity, View, Image } from 'react-native-ui-lib'
+import { Card, Text, TouchableOpacity, View, Image, Colors } from 'react-native-ui-lib'
 import React from 'react'
 
 import BackIcon from '@/assets/icons/arrow_left.svg'
+import { Ionicons } from '@expo/vector-icons';
+import i18n from '@/languages/i18n';
 
 interface PaymentAddressProps {
-    isPayment?: boolean;       
+    isPayment?: boolean;
+    onPress?: () => void;     
 }
 
-const PaymentAddress = ({isPayment} : PaymentAddressProps) => {
+const PaymentAddress = ({isPayment, onPress} : PaymentAddressProps) => {
     return (
         <View marginV-10>
-            <Text h2_bold>Thông tin khách hàng</Text>
+            <Text h2_bold>{i18n.t("payment.customer_info")}</Text>
             <TouchableOpacity
-                onPress={() => console.log("Cập nhật sau")}
+                onPress={onPress}
             >
                 <View 
                 row centerV padding-15
@@ -36,7 +39,7 @@ const PaymentAddress = ({isPayment} : PaymentAddressProps) => {
                                 marginBottom: 5,
                             }}
                         >
-                            <Text h3_bold>Mặc định</Text>
+                            <Text h3_bold>{i18n.t("payment.default")}</Text>
                         </View>
                         <Text h3>Lộc Nè Con</Text>
                         <Text h3>+84 123 456 789</Text>
@@ -46,7 +49,11 @@ const PaymentAddress = ({isPayment} : PaymentAddressProps) => {
                     </View>
                     {isPayment && (
                         <View centerV>
-                            <Image source={BackIcon} />
+                            <Ionicons
+                                name="chevron-down"
+                                size={24}
+                                color={Colors.primary}
+                            />
                         </View>
                     )
                     }

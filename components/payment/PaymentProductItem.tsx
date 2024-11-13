@@ -1,4 +1,5 @@
-import { PaymentProduct } from '@/app/(app)/check-out';
+import { PaymentProduct } from '@/app/(app)/payment';
+import i18n from '@/languages/i18n';
 import { Product } from '@/types/product.type';
 import formatCurrency from '@/utils/price/formatCurrency';
 import { Dimensions, StyleSheet } from 'react-native'
@@ -10,6 +11,7 @@ interface PaymentProductItemProps {
 
 const PaymentProductItem = ({product} : PaymentProductItemProps) => {
     const windowWidth = Dimensions.get("window").width;
+    const total = parseFloat(product.price) * product.quantity;
     return (
         <View key={product.id} marginB-10>
             <View
@@ -34,7 +36,7 @@ const PaymentProductItem = ({product} : PaymentProductItemProps) => {
                         <Text h3_bold secondary>{formatCurrency({ price: Number(product?.price) })}</Text>
                     </View>
                     <View>
-                        <Text>Số lượng: 1</Text>
+                        <Text>{i18n.t("payment.amount")}: {product?.quantity}</Text>
                     </View>
                 </View>
             </View>
@@ -49,9 +51,8 @@ const PaymentProductItem = ({product} : PaymentProductItemProps) => {
                     paddingVertical: 5,
                 }}
             >
-                <Text h3_bold>Tổng tiền:</Text>
-                {/* <Text h3_bold secondary>{formatCurrency({ price: total })}</Text> */}
-                <Text h3_bold secondary>123 đ</Text>
+                <Text h3_bold>{i18n.t("payment.total")}:</Text>
+                <Text h3_bold secondary>{formatCurrency({ price: total })}</Text>
             </View>
         </View>
     )
