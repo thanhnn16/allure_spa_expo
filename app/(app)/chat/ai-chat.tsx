@@ -194,9 +194,7 @@ const AIChatScreen = () => {
       )}
 
       <MessageTextInput
-        placeholder={
-          i18n.t("chat.chat_with") + " " + i18n.t("chat.chat_with_ai") + ".."
-        }
+        placeholder={i18n.t("chat.chat_with_ai") + "..."}
         message={message}
         setMessage={setMessage}
         handleSend={handleSend}
