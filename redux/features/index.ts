@@ -7,6 +7,8 @@ export { zaloSlice } from "./zalo/zaloSlice";
 export { loginThunk } from "./auth/loginThunk";
 export { registerThunk } from "./auth/registerThunk";
 export { userSlice } from "./users/userSlice";
-export {getUserThunk} from "./users/getUserThunk";
-export {updateUserThunk} from "./users/updateUserThunk";
-export {updateAvatarUrlThunk} from "./users/updateAvatarUrlThunk";
+export { getUserThunk } from "./users/getUserThunk";
+export { updateUserThunk } from "./users/updateUserThunk";
+export { updateAvatarUrlThunk } from "./users/updateAvatarUrlThunk";
+export { fetchAddresses, addAddress, updateAddress, deleteAddress } from "./address/addressThunk";
+
