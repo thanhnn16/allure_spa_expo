@@ -3,16 +3,16 @@ import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { AppStyles } from "@/constants/AppStyles";
+import { ServiceResponeModel } from "@/types/service.type";
 
 interface RenderServiceItemProps {
-  item: any;
+  item: ServiceResponeModel;
   widthItem: number;
   heightItem: number;
   heightImage: number;
 }
 
 const ServiceItem: React.FC<RenderServiceItemProps> = ({ item, widthItem, heightItem, heightImage }) => {
-  console.log(item.id)
   const serviceImage =
     item.media && item.media.length > 0
       ? { uri: item.media[0].full_url }

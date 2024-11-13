@@ -35,7 +35,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   product,
   onPurchase,
   quantity,
-  onAddToCart
+  onAddToCart,
 }) => {
   const dispatch = useDispatch();
 
@@ -115,7 +115,6 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           backgroundColor={Colors.primary}
         />
       </View>
-
     </View>
   );
 };

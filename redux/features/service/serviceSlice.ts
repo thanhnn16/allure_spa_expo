@@ -7,7 +7,8 @@ import { RootState } from "../../store";
 interface initialStateType {
     serviceCategories: ServiceCategoriesResponeParams | null;
     servicesList: ServicesResponeParams | null;
-    current_page: number;
+    currentPage: number;
+    hasMore: boolean;
     isLoading: boolean;
     error: any;
 }
@@ -15,7 +16,8 @@ interface initialStateType {
 const initialState: initialStateType = {
     serviceCategories: null,
     servicesList: null,
-    current_page: 0,
+    currentPage: 1,
+    hasMore: true,
     isLoading: false,
     error: null
 }
@@ -31,7 +33,7 @@ export const serviceSlice = createSlice({
             state.servicesList = action.payload;
         },
         setPage(state: RootState, action: PayloadAction<number>) {
-            state.current_page = action.payload;
+            state.currentPage = action.payload;
         }
     },
     extraReducers: (builder: any) => {
@@ -50,9 +52,13 @@ export const serviceSlice = createSlice({
             .addCase(getServicesThunk.pending, (state: RootState) => {
                 state.isLoading = true;
             })
-            .addCase(getServicesThunk.fulfilled, (state: RootState, action: PayloadAction<ServicesResponeParams>) => {
+            .addCase(getServicesThunk.fulfilled, (state: RootState, action: PayloadAction<any>) => {
                 state.isLoading = false;
-                state.servicesList = action.payload;
+                const { data } = action.payload;
+
+                state.servicesList = {
+                    data: data
+                };
             })
             .addCase(getServicesThunk.rejected, (state: RootState, action: any) => {
                 state.isLoading = false;

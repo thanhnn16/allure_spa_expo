@@ -54,13 +54,18 @@ const HomePage = () => {
   const { servicesList, isLoading } = useSelector(
     (state: RootState) => state.service
   );
+  const services = servicesList?.data?.data || [];
+
+  console.log('ServicesList:', servicesList);
+  console.log('Services:', services);
+
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
 
-  const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get("window");
-  const { products } = useSelector(
-    (state: RootState) => state.product
-  );
+  const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
+    Dimensions.get("window");
+  const { products } = useSelector((state: RootState) => state.product);
+
   useMemo(() => {
     if (hours < 12) {
       setGreeting(i18n.t("greeting.morning"));
@@ -72,7 +77,7 @@ const HomePage = () => {
   }, [hours]);
 
   useEffect(() => {
-    dispatch(getServicesThunk(1));
+    dispatch(getServicesThunk({ page: 1, limit: 5 }));
   }, [dispatch]);
 
   useEffect(() => {
@@ -89,48 +94,44 @@ const HomePage = () => {
     <View flex>
       <CarouselBanner banner={banner} />
       <CategoryItem cateData={cateArr} />
-      {servicesList && servicesList.data && servicesList.data.length > 0 && (
+
+      {services && Array.isArray(services) && services.length > 0 && (
         <SectionContainer
           title={i18n.t("home.featured_services")}
-          data={servicesList.data}
-          renderItem={({ item }: { item: ServiceResponeModel }) =>
-            item && item.service_name
-              ? <ServiceItem
-                item={item}
-                widthItem={WINDOW_WIDTH * 0.537}
-                heightItem={WINDOW_HEIGHT * 0.378}
-                heightImage={WINDOW_HEIGHT * 0.24} />
-              : null
-          }
+          data={services}
+          renderItem={({ item }: { item: ServiceResponeModel }) => (
+            <ServiceItem
+              item={item}
+              widthItem={WINDOW_WIDTH * 0.537}
+              heightItem={WINDOW_HEIGHT * 0.378}
+              heightImage={WINDOW_HEIGHT * 0.24}
+            />
+          )}
           onPressMore={() => {
             router.push({
-              pathname: '/(app)/list_page',
-              params: {
-                type: 'service'
-              }
+              pathname: "/(app)/see-more",
+              params: { type: "service" },
             });
           }}
         />
       )}
+
       {products && products.length > 0 && (
         <SectionContainer
           title={i18n.t("home.featured_products")}
           data={products}
-          renderItem={({ item }: { item: Product }) =>
-            item && item.name
-              ? <ProductItem
-                item={item}
-                widthItem={WINDOW_WIDTH * 0.468}
-                heightItem={WINDOW_HEIGHT * 0.378}
-                heightImage={WINDOW_HEIGHT * 0.19} />
-              : null
-          }
+          renderItem={({ item }: { item: Product }) => (
+            <ProductItem
+              item={item}
+              widthItem={WINDOW_WIDTH * 0.468}
+              heightItem={WINDOW_HEIGHT * 0.378}
+              heightImage={WINDOW_HEIGHT * 0.19}
+            />
+          )}
           onPressMore={() => {
             router.push({
-              pathname: '/(app)/list_page',
-              params: {
-                type: 'product'
-              }
+              pathname: "/(app)/see-more",
+              params: { type: "product" },
             });
           }}
         />
@@ -243,7 +244,9 @@ const HomePage = () => {
                   source={require("@/assets/images/logo/logo.png")}
                 />
                 <View centerV marginL-10>
-                  <Text h2_bold>{user?.full_name || i18n.t("common.guest")}</Text>
+                  <Text h2_bold>
+                    {user?.full_name || i18n.t("common.guest")}
+                  </Text>
                   <Text h4>{greeting}</Text>
                 </View>
               </View>

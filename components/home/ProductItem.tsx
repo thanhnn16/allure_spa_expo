@@ -17,28 +17,26 @@ const formatPrice = (price: number): string => {
   return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ₫";
 };
 
-const RenderProductItem: React.FC<RenderProductItemProps> = ({ item, widthItem, heightItem, heightImage }) => {
+const RenderProductItem: React.FC<RenderProductItemProps> = ({
+  item,
+  widthItem,
+  heightItem,
+  heightImage,
+}) => {
   // Get first image from media array
   const productImage =
     item.media && item.media.length > 0
       ? { uri: item.media[0].full_url }
       : require("@/assets/images/home/product1.png");
 
-      console.log(heightImage)
+  console.log(heightImage);
   return (
     <TouchableOpacity
-      marginH-10
       marginB-10
-      style={[{ width: widthItem, borderRadius: 12 },
-      AppStyles.shadowItem
-      ]}
+      style={[{ width: widthItem, borderRadius: 12 }, AppStyles.shadowItem]}
       onPress={() => router.push(`/product/${item.id}`)}
     >
-      <View
-        br50
-        width={widthItem}
-        gap-5
-      >
+      <View br50 width={widthItem} gap-5>
         <Image
           source={productImage}
           width={"100%"}
