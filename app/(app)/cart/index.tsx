@@ -31,6 +31,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { FormatNumberOptions } from "i18n-js";
 import formatCurrency from "@/utils/price/formatCurrency";
 import AppDialog from "@/components/dialog/AppDialog";
+import { setOrderProducts } from '@/redux/features/order/orderSlice';
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -120,11 +121,31 @@ export default function Cart() {
         padding-20
         borderRadius={10}
         style={{ width: 338, height: 50, alignSelf: 'center', marginVertical: 10 }}
-        onPress={() => { () => router.push("/payment") }}
+        onPress={handleCheckout}
       />
 
     </View>
   }
+
+  const handleCheckout = () => {
+    const checkoutProducts = items.map(item => ({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      priceValue: parseFloat(item.price),
+      quantity: item.quantity,
+      image: item.media?.[0]?.full_url || item.image,
+      type: "product"
+    }));
+
+    dispatch(setOrderProducts({
+      products: checkoutProducts,
+      totalAmount: totalAmount,
+      fromCart: true
+    }));
+
+    router.push("/check-out");
+  };
 
   return (
     <GestureHandlerRootView>

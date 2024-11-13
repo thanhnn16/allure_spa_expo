@@ -29,7 +29,6 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
       ? { uri: item.media[0].full_url }
       : require("@/assets/images/home/product1.png");
 
-  console.log(heightImage);
   return (
     <TouchableOpacity
       marginB-10

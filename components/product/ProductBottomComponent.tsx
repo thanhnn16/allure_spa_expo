@@ -19,6 +19,7 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
 import { useState } from "react";
+import { setOrderProducts } from '@/redux/features/order/orderSlice';
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -56,18 +57,19 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         id: product?.id,
         name: product?.name,
         price: product?.price,
+        priceValue: parseFloat(product?.price || "0"),
         quantity: quantity,
-        image: product?.media?.[0]?.full_url,
-        type: "product",
+        image: product?.media?.[0]?.full_url || "",
+        type: "product"
       };
 
-      router.push({
-        pathname: "/check-out",
-        params: {
-          products: JSON.stringify([productData]),
-          total_amount: Number(product?.price || 0) * quantity,
-        },
-      });
+      dispatch(setOrderProducts({
+        products: [productData],
+        totalAmount: Number(product?.price || 0) * quantity,
+        fromCart: false
+      }));
+
+      router.push("/check-out");
     }
   };
 

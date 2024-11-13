@@ -104,7 +104,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
   };
 
   return (
-    <View flex marginH-20 marginT-20>
+    <View flex bg-white paddingH-24>
       <View row centerV>
         <TouchableOpacity
           onPress={() => {

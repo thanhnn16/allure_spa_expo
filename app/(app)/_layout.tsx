@@ -44,7 +44,12 @@ const AppLayout = () => {
       <Stack.Screen name="address/update" />
       <Stack.Screen name="address/add" />
       <Stack.Screen name="address/index" />
-      <Stack.Screen name="list_page/index" />
+      <Stack.Screen name="see-more/index" />
+      <Stack.Screen name="profile/about-app" />
+      <Stack.Screen name="profile/detail" />
+      <Stack.Screen name="profile/edit" />
+      <Stack.Screen name="profile/delete-account" />
+      <Stack.Screen name="profile/delete-account-verify" />
     </Stack>
   );
 };

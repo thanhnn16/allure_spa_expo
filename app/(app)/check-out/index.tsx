@@ -16,6 +16,9 @@ import PaymentPicker from "@/components/payment/PaymentPicker";
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
 import i18n from "@/languages/i18n";
 import formatCurrency from "@/utils/price/formatCurrency";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { clearOrder } from "@/redux/features/order/orderSlice";
 
 export interface Product {
   id: number;
@@ -112,6 +115,11 @@ const calculateDiscountedPrice = (giaGoc: number, phanTramGiamGia: number) => {
 };
 
 export default function Payment() {
+  const { products, totalAmount } = useSelector(
+    (state: RootState) => state.order
+  );
+  const dispatch = useDispatch();
+
   const [isModalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const [selectedAddress, setSelectedAddress] = useState<PaymentAddressProps | null>(null);
@@ -141,7 +149,7 @@ export default function Payment() {
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
     let total = 0;
-    products.forEach((product) => {
+    products.forEach((product: any) => {
       total += product.priceValue * product.quantity;
     });
     return total;
@@ -188,6 +196,36 @@ export default function Payment() {
       console.error("Lỗi khi lấy địa chỉ:", error);
     }
   };
+
+  // Replace products state with orderSlice data
+  useEffect(() => {
+    if (!products.length) {
+      router.back();
+      return;
+    }
+
+    setTotalPrice(totalAmount);
+    setDiscountedPrice(totalAmount);
+
+    return () => {
+      dispatch(clearOrder());
+    };
+  }, []);
+
+  // Replace products state with orderSlice data
+  useEffect(() => {
+    if (!products.length) {
+      router.back();
+      return;
+    }
+
+    setTotalPrice(totalAmount);
+    setDiscountedPrice(totalAmount);
+
+    return () => {
+      dispatch(clearOrder());
+    };
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
