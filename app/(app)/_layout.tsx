@@ -32,7 +32,7 @@ const AppLayout = () => {
       <Stack.Screen name="cart/index" />
       <Stack.Screen name="notification/index" />
       <Stack.Screen name="voucher/index" />
-      <Stack.Screen name="payment/index" />
+      <Stack.Screen name="check-out/index" />
       <Stack.Screen name="reward/index" />
       <Stack.Screen name="settings/index" />
       <Stack.Screen name="chat/ai-chat" />
@@ -44,6 +44,7 @@ const AppLayout = () => {
       <Stack.Screen name="address/update" />
       <Stack.Screen name="address/add" />
       <Stack.Screen name="address/index" />
+      <Stack.Screen name="list_page/index" />
     </Stack>
   );
 };

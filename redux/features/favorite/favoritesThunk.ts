@@ -1,9 +1,10 @@
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const fetchFavoritesThunk = createAsyncThunk('favorite/fetchFavorites', async (_, { rejectWithValue }) => {
+export const fetchFavoritesThunkByType = createAsyncThunk('favorite/fetchFavoritesByType', async ({ type }: { type: 'product' | 'service' }, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
-        const response = await AxiosInstance().get('/favorites');
+        const response = await AxiosInstance().get(`/favorites/${type}`);
+        console.log('response', response.data.data);
         return response.data.data;
     } catch (error: any) {
         console.error('Unexpected error:', error.response.data);
@@ -12,18 +13,19 @@ export const fetchFavoritesThunk = createAsyncThunk('favorite/fetchFavorites', a
 });
 
 export const toggleFavoriteThunk = createAsyncThunk(
-    'favorite/toggleFavorite',
-    async ({ type, itemId }: { type: 'product' | 'service'; itemId: number }, { rejectWithValue }) => {
+    "favorite/toggleFavorite",
+    async (
+        { type, itemId }: { type: "product" | "service"; itemId: number },
+        { rejectWithValue }: { rejectWithValue: any }
+    ) => {
         try {
-            console.log('type', type);
-            console.log('itemId', itemId);
-            const response = await AxiosInstance().post('/favorites/toggle', {
+            const response = await AxiosInstance().post("/favorites/toggle", {
                 type,
                 item_id: itemId,
             });
             console.log('response', response.data.data);
-            if (response.status === 200) {
-                return response.data.data.status;
+            if (response.data.status === true) {
+                return { status: response.data.data.status };
             }
         } catch (error: any) {
             console.error('Unexpected error:', error.data.data);

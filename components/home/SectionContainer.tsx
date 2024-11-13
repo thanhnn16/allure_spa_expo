@@ -2,15 +2,18 @@ import i18n from "@/languages/i18n";
 import React from "react";
 import { FlatList } from "react-native";
 import { View, Text, TouchableOpacity } from "react-native-ui-lib";
+import { ServiceResponeModel } from "@/types/service.type";
 
 interface RenderSectionProps {
   title: string;
-  data: any;
-  renderItem: any;
-  onPressMore: any;
+  data: ServiceResponeModel[] | any[];
+  renderItem: (props: {
+    item: ServiceResponeModel | any;
+  }) => React.ReactElement;
+  onPressMore: () => void;
 }
 
-const RenderSection: React.FC<RenderSectionProps> = ({
+const SectionContainer: React.FC<RenderSectionProps> = ({
   title,
   data,
   renderItem,
@@ -29,7 +32,7 @@ const RenderSection: React.FC<RenderSectionProps> = ({
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => `${item.id}`}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 10 }}
@@ -38,4 +41,4 @@ const RenderSection: React.FC<RenderSectionProps> = ({
   );
 };
 
-export default RenderSection;
+export default SectionContainer;

@@ -1,19 +1,33 @@
 import { Text, View, Image, TouchableOpacity, Button, Checkbox } from 'react-native-ui-lib'
 import { Dimensions, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { CartItem, incrementCartItem, decrementCartItem, removeCartItem } from '@/redux/features/cart/cartSlice';
 import { useDispatch } from 'react-redux';
 import { Swipeable } from 'react-native-gesture-handler';
 import formatCurrency from '@/utils/price/formatCurrency';
 
-const CartProductItem = (product: CartItem) => {
+interface CartProductItemProps {
+    product: CartItem;
+    dialogVisible?: (visible: boolean) => void;
+    setItemDelete?: (id: number) => void;
+}
+
+const CartProductItem = ({product, dialogVisible, setItemDelete} : CartProductItemProps) => {
     const dispatch = useDispatch();
     const windowWidth = Dimensions.get("window").width;
+
+    const handleGetId = (id: number) => {
+        setItemDelete && setItemDelete(id);
+    };
 
     const handleIncreaseQuantity = (id: number) => {
         dispatch(incrementCartItem(id));
     };
     const handleDecreaseQuantity = (id: number) => {
+        if (product.quantity == 1) {
+            dialogVisible && dialogVisible(true);
+            return;
+        }
         dispatch(decrementCartItem(id));
     };
     const handleDelete = (id: number) => {
@@ -38,6 +52,10 @@ const CartProductItem = (product: CartItem) => {
         );
     };
 
+    useEffect(() => {
+        handleGetId(product.id);
+    }, [product.id]);
+
     return (
         <Swipeable renderRightActions={renderRightActions}>
             <View marginB-10>
@@ -49,7 +67,7 @@ const CartProductItem = (product: CartItem) => {
                         borderTopEndRadius: 13,
                         padding: 10,
                         borderWidth: 1,
-                        borderColor: '#rgba(113, 118, 88, 0.2)',
+                        borderColor: '#e3e4de',
                     }}
                 >
                     <View style={styles.imageContainer}>
@@ -95,7 +113,7 @@ const CartProductItem = (product: CartItem) => {
                         justifyContent: 'space-between',
                         borderBottomStartRadius: 13,
                         borderBottomEndRadius: 13,
-                        backgroundColor: '#rgba(113, 118, 88, 0.2)',
+                        backgroundColor: '#e3e4de',
                         paddingHorizontal: 10,
                         paddingVertical: 5,
                     }}
@@ -140,8 +158,8 @@ const styles = StyleSheet.create({
     },
     quantityButtonContainer: {
         borderWidth: 1,
-        backgroundColor: '#rgba(113, 118, 88, 0.2)',
-        borderColor: '#rgba(113, 118, 88, 0.2)',
+        backgroundColor: '#e3e4de',
+        borderColor: '#e3e4de',
         borderRadius: 10,
         width: 30,
         height: 30,

@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Pressable, StyleSheet } from 'react-native'
-import { View, Text, ExpandableSection, Image, TouchableOpacity } from 'react-native-ui-lib'
+import { Dimensions, Pressable, StyleSheet } from 'react-native'
+import { View, Text, ExpandableSection, Image, TouchableOpacity, Colors } from 'react-native-ui-lib'
 
 import ArrowDownIcon from '@/assets/icons/arrow_down_sm.svg'
 import ArrowUpIcon from '@/assets/icons/arrow_up_sm.svg'
+import { Ionicons } from '@expo/vector-icons'
 
 interface ProductDescriptionColapableProps {
     headerText: string;
@@ -15,7 +16,17 @@ const ProductDescriptionColapable = ({ headerText, childrenText, keyText }: Prod
     const [expanded, setExpanded] = useState(false);
 
     const handleArrowIcon = () => {
-        return expanded ? ArrowUpIcon : ArrowDownIcon
+        return (expanded ?
+            <Ionicons
+                name="chevron-up"
+                size={20}
+                color={Colors.primary}
+            /> : <Ionicons
+                name="chevron-down"
+                size={20}
+                color={Colors.primary}
+            />
+        );
     };
 
     return (
@@ -31,7 +42,7 @@ const ProductDescriptionColapable = ({ headerText, childrenText, keyText }: Prod
                     >
                         <View row centerV gap-5>
                             <Text h3_bold>{headerText}</Text>
-                            <Image source={handleArrowIcon()} />
+                            {handleArrowIcon()}
                         </View>
                     </TouchableOpacity>
                     :
@@ -40,11 +51,24 @@ const ProductDescriptionColapable = ({ headerText, childrenText, keyText }: Prod
                     </View>
                 }
                 <View row>
-                    <Text h3>• </Text>
-                    <Text h3>
-                        {keyText ? <Text h3_bold>{keyText}, </Text> : null}
-                        {childrenText}
-                    </Text>
+                    <TouchableOpacity
+                        onPress={() => setExpanded(!expanded)}
+                    >
+                        <View row>
+                            <Text h3>• </Text>
+                            {expanded ?
+                                <Text h3>
+                                    {keyText ? <Text h3_bold>{keyText}, </Text> : null}
+                                    {childrenText}
+                                </Text>
+                                :
+                                <Text h3 numberOfLines={2} ellipsizeMode="tail">
+                                    {keyText ? <Text h3_bold>{keyText}, </Text> : null}
+                                    {childrenText}
+                                </Text>
+                            }
+                        </View>
+                    </TouchableOpacity>
                 </View>
             </ExpandableSection>
         </View>

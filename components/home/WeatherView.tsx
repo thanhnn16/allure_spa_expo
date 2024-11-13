@@ -22,8 +22,6 @@ const WeatherView = () => {
   useEffect(() => {
     (async () => {
       try {
-        console.log(currentDate);
-        console.log(i18n.l("date.formats.short", "2009-09-18"));
         const nearestProvince = await getLocation();
         if (!nearestProvince) {
           throw new Error("Failed to get location");
@@ -45,7 +43,6 @@ const WeatherView = () => {
           setTemperature(weatherData["main"]["temp"]);
         }
       } catch (error: any) {
-        console.log("Get weather error: ", error.message);
         setWeatherIcon("01d");
         setTemperature(25);
       }
@@ -82,7 +79,7 @@ const WeatherView = () => {
         borderWidth: 1,
       }}
     >
-      <View row centerV paddingH-10 >
+      <View row centerV paddingH-10>
         <Image
           source={{
             uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
@@ -90,9 +87,7 @@ const WeatherView = () => {
           width={40}
           height={40}
         />
-        <Text text60>
-          {temperature.toFixed(0)}°C
-        </Text>
+        <Text text60>{temperature.toFixed(0)}°C</Text>
       </View>
       <View
         height={30}

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-    Colors,
-    TextField,
-    View,
-    Image,
-    Text,
-    TouchableOpacity,
+  Colors,
+  TextField,
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
 } from "react-native-ui-lib";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Voice from "@react-native-voice/voice";
@@ -20,11 +20,11 @@ import i18n from "@/languages/i18n";
 import { Animated } from "react-native";
 
 type AppSearchProps = {
-    value?: string;
-    onChangeText?: (text: string) => void;
-    onClear?: () => void;
-    isHome?: boolean;
-    style?: StyleProp<ViewStyle>;
+  value?: string;
+  onChangeText?: (text: string) => void;
+  onClear?: () => void;
+  isHome?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
 const AppSearch = ({
@@ -209,8 +209,44 @@ const AppSearch = ({
                     </TouchableOpacity>
                 </Animated.View>
             </View>
-        </View>
-    );
+          </Pressable>
+        ) : (
+          <View flex row centerV>
+            <TextField
+              value={searchText}
+              onChangeText={(text) => {
+                setSearchText(text);
+                onChangeText && onChangeText(text);
+              }}
+              placeholder="Tìm kiếm mỹ phẩm, liệu trình ..."
+              placeholderTextColor={Colors.gray}
+              containerStyle={{
+                flex: 1,
+                marginStart: 10,
+              }}
+            />
+            {searchText.length > 0 && (
+              <TouchableOpacity onPress={handleClear} style={{ padding: 5 }}>
+                <AntDesign name="close" size={20} color={Colors.gray} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        <TouchableOpacity
+          onPress={() => handleMicPress("vi-VN")}
+          disabled={isButtonDisabled}
+        >
+          <Image
+            source={MicIcon}
+            style={{ tintColor: isListening ? "red" : "black" }}
+          />
+          <Text style={{ color: isListening ? "red" : "gray", fontSize: 12 }}>
+            {isListening ? "on" : "off"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 };
 
 export default AppSearch;

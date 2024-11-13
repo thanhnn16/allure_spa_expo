@@ -3,32 +3,35 @@ import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { AppStyles } from "@/constants/AppStyles";
+import { ServiceResponeModel } from "@/types/service.type";
 
 interface RenderServiceItemProps {
-  item: any;
+  item: ServiceResponeModel;
+  widthItem: number;
+  heightItem: number;
+  heightImage: number;
 }
 
-const ServiceItem: React.FC<RenderServiceItemProps> = ({ item }) => {
+const ServiceItem: React.FC<RenderServiceItemProps> = ({ item, widthItem, heightItem, heightImage }) => {
   const serviceImage =
     item.media && item.media.length > 0
       ? { uri: item.media[0].full_url }
       : require("@/assets/images/logo/logo.png");
-
   return (
     <TouchableOpacity
       marginH-10
       marginB-10
-      style={[{ width: 230, height: 350, borderRadius: 12 }, 
+      style={[{ width: widthItem, height: heightItem, borderRadius: 12 }, 
         AppStyles.shadowItem
       ]}
       onPress={() => router.push(`/service/${item.id}`)}
     >
-      <View width={230}>
+      <View width={widthItem}>
         <Image
           source={serviceImage}
           resizeMode="cover"
           width={"100%"}
-          height={225}
+          height={heightImage}
           errorSource={require("@/assets/images/logo/logo.png")}
           style={{
             borderTopLeftRadius: 12,

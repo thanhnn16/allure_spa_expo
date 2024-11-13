@@ -73,7 +73,8 @@
       "cart": "Giỏ hàng",
       "order": "Đơn hàng",
       "notification": "Thông báo",
-      "profile": "Hồ sơ"
+      "profile": "Hồ sơ",
+      "order_description": "Lịch sử đơn hàng"
     },
     "productDetail": {
       "quantity": "SỐ LƯỢNG",
@@ -214,7 +215,9 @@
       "directions": "Hướng dẫn sử dụng",
       "storage": "Bảo quản",
       "product_notes": "Lưu ý sản phẩm"
-    }
+    },
+    "no_info": "Không có thông tin",
+    "title": "Chi tiết sản phẩm"
   },
   "rating": {
     "add_review": "Thêm đánh giá",
@@ -371,9 +374,9 @@
     "add": "Thêm",
     "address": "Địa chỉ",
     "phone": "Điện thoại",
-    "home": "Nhà",
-    "company": "Công Ty",
-    "other": "Khác",
+    "home": "Nhà riêng",
+    "work": "Nơi làm việc",
+    "others": "Khác",
     "save": "Lưu",
     "cancel": "Hủy",
     "add_new_address": "Thêm địa chỉ mới",
@@ -383,7 +386,11 @@
     "add_address_success": "Thêm địa chỉ thành công",
     "add_address_fail": "Thêm địa chỉ thất bại",
     "edit_address_success": "Sửa địa chỉ thành công",
-    "edit_address_fail": "Sửa địa chỉ thất bại"
+    "edit_address_fail": "Sửa địa chỉ thất bại",
+    "province": "Tỉnh/Thành phố",
+    "district": "Quận/Huyện",
+    "update_address": "Sửa địa chỉ",
+    "type": "Loại địa chỉ"
   },
   "date": {
     "formats": {
@@ -404,5 +411,50 @@
     "amount": "Số tiền",
     "payment_time": "Thời gian thanh toán",
     "order_code": "Mã đơn hàng"
+  },
+  "payment": {
+    "title": "Thanh toán",
+    "customer_info": "Thông tin khách hàng",
+    "default": "Mặc định",
+    "voucher": "Voucher",
+    "no_voucher": "Không có voucher",
+    "payment_method": "Phương thức thanh toán",
+    "select_payment_method": "Chọn phương thức thanh toán",
+    "pay_when_receive": "Thanh toán khi nhận hàng",
+    "pay_online": "Thanh toán online",
+    "product": "Sản phẩm",
+    "amount": "Số lượng",
+    "total": "Tổng cộng",
+    "no_discount": "Không có",
+    "total_payment": "Tổng thanh toán",
+    "payment": "Thanh toán"
+  },
+  "transaction": {
+    "payment_success": "Thanh toán thành công",
+    "payment_fail": "Thanh toán thất bại",
+    "your_order": "Đơn hàng của bạn",
+    "has_been_confirmed": "đã được xác nhận",
+    "has_been_failed": "Đã thất bại, vui lòng liên hệ để biết thêm chi tiết",
+    "detail_order": "Chi tiết đơn hàng",
+    "contact_support": "Liên hệ hỗ trợ",
+    "back_home": "Quay về trang chủ"
+  },
+  "transaction_detail": {
+    "title": "Chi tiết đơn hàng",
+    "review": {
+      "title": "Đánh giá sản phẩm",
+      "content": "Đánh giá sản phẩm để nhận điểm thưởng",
+      "button": "Đánh giá ngay"
+    },
+    "timeline": {
+      "pending": "Order is being processed",
+      "confirmed": "Order confirmed",
+      "delivering": "Order is being delivered",
+      "completes": "Order successfully delivered",
+      "canceled": "Order canceled",
+      "date_delivery": "Estimated delivery date",
+      "date_delivered": "Delivery date"
+    },
+    "buy_again": "Mua lại"
   }
 }

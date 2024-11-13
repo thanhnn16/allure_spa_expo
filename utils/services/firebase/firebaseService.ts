@@ -39,10 +39,8 @@ class FirebaseService {
   async getFCMToken() {
     try {
       const fcmToken = await messaging().getToken();
-      console.log('FCM token:', fcmToken);
       return fcmToken;
     } catch (error) {
-      console.log('Failed to get FCM token:', error);
       return null;
     }
   }
@@ -55,11 +53,9 @@ class FirebaseService {
           token: fcmToken,
           device_type: Platform.OS
         });
-        console.log('FCM token registered successfully:', response.data);
         return response.data;
       }
     } catch (error) {
-      console.error('Failed to register token with server:', error);
       throw error;
     }
   }
@@ -97,7 +93,7 @@ class FirebaseService {
   async showChatNotification(remoteMessage: any) {
     try {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       await Notifications.scheduleNotificationAsync({
         content: {
           title: remoteMessage.notification?.title || "Tin nhắn mới",
