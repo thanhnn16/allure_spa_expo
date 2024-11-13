@@ -12,17 +12,22 @@ interface RenderServiceItemProps {
   heightImage: number;
 }
 
-const ServiceItem: React.FC<RenderServiceItemProps> = ({ item, widthItem, heightItem, heightImage }) => {
+const ServiceItem: React.FC<RenderServiceItemProps> = ({
+  item,
+  widthItem,
+  heightItem,
+  heightImage,
+}) => {
   const serviceImage =
     item.media && item.media.length > 0
       ? { uri: item.media[0].full_url }
       : require("@/assets/images/logo/logo.png");
   return (
     <TouchableOpacity
-      marginH-10
       marginB-10
-      style={[{ width: widthItem, height: heightItem, borderRadius: 12 }, 
-        AppStyles.shadowItem
+      style={[
+        { width: widthItem, height: heightItem, borderRadius: 12 },
+        AppStyles.shadowItem,
       ]}
       onPress={() => router.push(`/service/${item.id}`)}
     >
@@ -47,7 +52,11 @@ const ServiceItem: React.FC<RenderServiceItemProps> = ({ item, widthItem, height
         </View>
 
         <View>
-          <Text style={{ color: "#8C8585" }} numberOfLines={2} ellipsizeMode="tail">
+          <Text
+            style={{ color: "#8C8585" }}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
             {item.description}
           </Text>
         </View>
@@ -62,4 +71,4 @@ const ServiceItem: React.FC<RenderServiceItemProps> = ({ item, widthItem, height
   );
 };
 
-export default ServiceItem; 
+export default ServiceItem;

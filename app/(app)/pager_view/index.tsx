@@ -1,14 +1,10 @@
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { View, Image, Text, Colors } from 'react-native-ui-lib';
 import { AnimatedImage } from 'react-native-ui-lib';
-import VideoPlayer from 'expo-video-player';
 import PagerView from 'react-native-pager-view';
-import { ResizeMode, Video } from 'expo-av';
+import { Video } from 'expo-av';
 
 import StarIcon from '@/assets/icons/star.svg';
-import { useEffect, useState } from 'react';
-import { useLocalSearchParams } from 'expo-router';
-import { data as ratingData } from '@/app/(app)/rating/data'; // Import the data correctly
 
 interface RatingItemProps {
   id: number;

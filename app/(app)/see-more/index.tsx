@@ -61,7 +61,7 @@ const SeeMore = () => {
         renderItem={({ item }) => (
           <ItemComponent
             item={item}
-            widthItem={WINDOW_WIDTH * 0.4}
+            widthItem={WINDOW_WIDTH * 0.425}
             heightItem={WINDOW_HEIGHT * 0.35}
             heightImage={WINDOW_HEIGHT * 0.18}
           />
@@ -76,7 +76,6 @@ const SeeMore = () => {
         ListFooterComponent={<View height={32} />}
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}
-        windowSize={10}
       />
     );
   }, [type, serviceList, productList, isLoading]);

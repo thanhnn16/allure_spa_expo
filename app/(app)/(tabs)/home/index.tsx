@@ -56,9 +56,6 @@ const HomePage = () => {
   );
   const services = servicesList?.data?.data || [];
 
-  console.log('ServicesList:', servicesList);
-  console.log('Services:', services);
-
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
 
@@ -104,7 +101,7 @@ const HomePage = () => {
               item={item}
               widthItem={WINDOW_WIDTH * 0.537}
               heightItem={WINDOW_HEIGHT * 0.378}
-              heightImage={WINDOW_HEIGHT * 0.24}
+              heightImage={WINDOW_HEIGHT * 0.21}
             />
           )}
           onPressMore={() => {

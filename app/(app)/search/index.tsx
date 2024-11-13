@@ -143,7 +143,7 @@ const SearchScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View flex>
+      <View flex bg-white>
         <View flex marginH-20>
           <AppBar back title="Search" />
           <AppSearch

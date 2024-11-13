@@ -99,19 +99,19 @@ const ProfilePage = () => {
                 title: i18n.t("profile.my_account"),
                 description: i18n.t("profile.edit_personal_info"),
                 icon: require("@/assets/images/people.png"),
-                onPress: () => handleNavigation("/profile/detail"),
+                onPress: () => handleNavigation("/(app)/profile/detail"),
               },
               {
                 title: i18n.t("pageTitle.order"),
                 description: i18n.t("pageTitle.order_description"),
                 icon: require("@/assets/images/ic_favorite.png"),
-                onPress: () => handleNavigation("/transaction"),
+                onPress: () => handleNavigation("/(app)/orders"),
               },
               {
                 title: i18n.t("pageTitle.favorite"),
                 description: i18n.t("pageTitle.favorite_description"),
                 icon: require("@/assets/images/heart.png"),
-                onPress: () => handleNavigation("/favorite"),
+                onPress: () => handleNavigation("/(app)/favorite"),
               },
               {
                 title: i18n.t("profile.purchase_policy"),

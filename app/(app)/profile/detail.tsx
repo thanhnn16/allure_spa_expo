@@ -38,15 +38,13 @@ const ProfileDetail = (props: ProfileDetailProps) => {
               title: i18n.t("profile.edit_profile"),
               icon: require("@/assets/images/edit.png"),
               onPress: () => {
-                router.push("/(app)/(tabs)/profile/edit");
+                router.push("/(app)/profile/edit");
               },
             },
             {
               title: i18n.t("profile.change_password"),
               icon: require("@/assets/images/key.png"),
-              onPress: () => {
-                console.log("đổi mật khẩu");
-              },
+              onPress: () => {},
             },
             {
               title: i18n.t("profile.history_login"),
@@ -67,7 +65,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
               title: i18n.t("profile.delete_account"),
               icon: require("@/assets/images/deleteacount.png"),
               onPress: () => {
-                console.log("xóa tài khoản");
+                router.push("/(app)/profile/delete-account");
               },
             },
           ].map((item, index) => (
