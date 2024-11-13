@@ -70,10 +70,13 @@ const SeeMore = () => {
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
+        contentContainerStyle={{ gap: 10 }}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={<View height={32} />}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={10}
       />
     );
   }, [type, serviceList, productList, isLoading]);

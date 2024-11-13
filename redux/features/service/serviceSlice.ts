@@ -54,11 +54,23 @@ export const serviceSlice = createSlice({
             })
             .addCase(getServicesThunk.fulfilled, (state: RootState, action: PayloadAction<any>) => {
                 state.isLoading = false;
-                const { data } = action.payload;
-
-                state.servicesList = {
-                    data: data
-                };
+                const { data, page, hasMore } = action.payload;
+                
+                if (page === 1) {
+                    state.servicesList = {
+                        data: data
+                    };
+                } else {
+                    state.servicesList = {
+                        data: {
+                            ...state.servicesList?.data,
+                            data: [...(state.servicesList?.data?.data || []), ...data]
+                        }
+                    };
+                }
+                
+                state.currentPage = page;
+                state.hasMore = hasMore;
             })
             .addCase(getServicesThunk.rejected, (state: RootState, action: any) => {
                 state.isLoading = false;
