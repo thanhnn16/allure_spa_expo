@@ -1,15 +1,15 @@
 import { Animated, StyleSheet, } from 'react-native'
 import { Colors, Text, TouchableOpacity, View } from 'react-native-ui-lib'
 import React, { useRef, useState } from 'react'
-import { Voucher } from '@/app/(app)/check-out';
 import { Ionicons } from '@expo/vector-icons';
+import { Voucher } from '@/types/voucher.type';
 
 const VoucherDropdown = ({
     value,
     items,
     onSelect,
 }: {
-    value: string;
+    value: Voucher | null;
     items: Voucher[];
     onSelect: (voucher: Voucher) => void;
 }) => {
@@ -44,7 +44,7 @@ const VoucherDropdown = ({
                         backgroundColor: "#FCFCFC",
                     }}
                 >
-                    <Text h3>{value || "Không có"}</Text>
+                    <Text h3>{value?.code || "Không có"}</Text>
                     <Animated.View
                         style={[
                             { transform: [{ rotate: rotateIcon }] },
@@ -69,10 +69,10 @@ const VoucherDropdown = ({
                 >
                     {items.map((item) => (
                         <TouchableOpacity
-                            key={item.value}
+                            key={item.id}
                             style={{
                                 ...dropdownStyles.item,
-                                ...(value === item.label ? dropdownStyles.selectedItem : {}),
+                                ...(value?.code === item.code ? dropdownStyles.selectedItem : {}),
                             }}
 
                             onPress={() => {
@@ -81,10 +81,10 @@ const VoucherDropdown = ({
                             }}
                         >
                             <View>
-                                <Text>{item.label}</Text>
+                                <Text>{item.code}</Text>
                             </View>
                             <View row centerV gap-5>
-                                {value === item.label && (
+                                {value?.code === item.code && (
                                     <View>
                                         <Ionicons
                                             name="checkmark-circle"
@@ -94,7 +94,7 @@ const VoucherDropdown = ({
                                     </View>
                                 )}
                                 <Text>
-                                    Giảm {item.discountPercentage}%
+                                    Giảm {item.formatted_discount}
                                 </Text>
 
                             </View>

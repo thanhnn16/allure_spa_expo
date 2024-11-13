@@ -4,9 +4,10 @@ import {
   ScrollView,
   ImageSourcePropType,
   SafeAreaView,
+  Alert,
 } from "react-native";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
@@ -18,21 +19,16 @@ import i18n from "@/languages/i18n";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { clearOrder } from "@/redux/features/order/orderSlice";
-
-export interface Product {
-  id: number;
-  name: string;
-  price: string;
-  priceValue: number;
-  quantity: number;
-  image: any;
-}
-export interface Voucher {
-  label: string;
-  value: string;
-  discountPercentage: number;
-}
+import { clearOrder, OrderProduct } from "@/redux/features/order/orderSlice";
+import { Voucher } from "@/types/voucher.type";
+import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
+import { set } from "lodash";
+import AppDialog from "@/components/dialog/AppDialog";
+import { WebViewType } from "@/utils/constants/webview";
+import axios from "axios";
+import Constants from "expo-constants";
+import OrderService from "@/services/OrderService";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface PaymentAddressProps {
   fullName: string;
@@ -47,105 +43,47 @@ export interface PaymentAddressProps {
   address: string;
 }
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: "Lamellar Lipocollage",
-    price: "1.170.000 VNĐ",
-    priceValue: 1170000,
-    quantity: 1,
-    image: require("@/assets/images/sp2.png"),
-  },
-  {
-    id: 2,
-    name: "Lamellar Lipocollage",
-    price: "1.170.000 VNĐ",
-    priceValue: 1170000,
-    quantity: 1,
-    image: require("@/assets/images/sp2.png"),
-  },
-];
-
 export interface PaymentMethod {
   id: number;
   name: string;
   icon?: ImageSourcePropType;
   iconName: string;
   code?: string;
-  children?: PaymentMethod[];
 }
 
 const paymentMethods: PaymentMethod[] = [
   {
-    id: 1,
+    id: 0,
     name: "Thanh toán khi nhận hàng",
     iconName: "cash-outline",
-    children: [],
   },
   {
-    id: 2,
+    id: 1,
     name: "Thanh toán online",
     iconName: "card-outline",
-    children: [
-      {
-        id: 21,
-        name: "VISA / MasterCard",
-        iconName: "card-outline",
-        icon: require("@/assets/images/visa.png"),
-      },
-      {
-        id: 22,
-        name: "ZaloPay",
-        iconName: "card-outline",
-        icon: require("@/assets/images/zalopay.png"),
-      },
-      {
-        id: 23,
-        name: "Apple Pay",
-        iconName: "card-outline",
-        icon: require("@/assets/images/apple.png"),
-      },
-    ],
   },
 ];
 
-const calculateDiscountedPrice = (giaGoc: number, phanTramGiamGia: number) => {
-  const giamGia = giaGoc * (phanTramGiamGia / 100);
-  return giaGoc - giamGia;
-};
+
 
 export default function Payment() {
+  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [selectedAddress, setSelectedAddress] = useState<PaymentAddressProps | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
+  const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
+  const [voucher, setVoucher] = useState<Voucher | null>(null);
+  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
+  const [paymentDialog, setPaymentDialog] = useState(false);
+
   const { products, totalAmount } = useSelector(
     (state: RootState) => state.order
   );
-  const dispatch = useDispatch();
-
-  const [isModalVisible, setModalVisible] = useState(false);
-  const navigation = useNavigation();
-  const [selectedAddress, setSelectedAddress] = useState<PaymentAddressProps | null>(null);
-  const [selectedPayment, setSelectedPayment] = useState(
-    "Thanh toán khi nhận hàng"
+  const { vouchers, isLoading } = useSelector((
+    state: RootState) => state.voucher
   );
-  const [selectedVoucher, setSelectedVoucher] = useState("Không có");
-
-  const [vouchers] = useState<Voucher[]>([
-    {
-      label: "Giảm 10%",
-      value: "voucher1",
-      discountPercentage: 10,
-    },
-    {
-      label: "Giảm 20%",
-      value: "voucher2",
-      discountPercentage: 20,
-    },
-    {
-      label: "Giảm 30%",
-      value: "voucher3",
-      discountPercentage: 30,
-    },
-  ]);
-
+  
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
     let total = 0;
@@ -154,37 +92,33 @@ export default function Payment() {
     });
     return total;
   };
+
+  const calculateDiscountedPrice = (price: number, voucher: Voucher) => {
+    let priceWithDiscount: number
+    if (voucher && voucher.discount_type === 'percentage') {
+      priceWithDiscount = price - (price * voucher.discount_value) / 100;
+    } else {
+      priceWithDiscount = price - voucher.discount_value;
+    }
+    return priceWithDiscount;
+  };
+
   const [totalPrice, setTotalPrice] = useState(calculateTotalPrice());
   const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
 
-  const handlePaymentSelect = (payment: string) => {
+  const handlePaymentSelect = (payment: PaymentMethod) => {
     setSelectedPayment(payment);
   };
 
   const handleVoucherSelect = (voucher: Voucher) => {
-    setSelectedVoucher(voucher.label);
+    setVoucher(voucher);
+    setSelectedVoucher(voucher);
     const newPrice = calculateDiscountedPrice(
       totalPrice,
-      voucher.discountPercentage
+      voucher
     );
     setDiscountedPrice(newPrice);
   };
-
-  // Thêm useEffect để theo dõi thay đổi totalPrice
-  useEffect(() => {
-    setDiscountedPrice(totalPrice);
-  }, [totalPrice]);
-
-
-
-  // Thêm useEffect để load địa chỉ
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      loadSelectedAddress();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
 
   const loadSelectedAddress = async () => {
     try {
@@ -197,7 +131,86 @@ export default function Payment() {
     }
   };
 
-  // Replace products state with orderSlice data
+  const handlePayment = async () => {
+    try {
+      const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
+
+      const invoiceData = {
+        payment_method_id: selectedPayment.id,
+        total_amount: totalAmount,
+        discount_amount: 0,
+        voucher_id: voucher?.id || null,
+        order_items: products.map((item: any) => ({
+          item_type: item.type || "product",
+          item_id: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      };
+      console.log("Invoice data:", invoiceData);
+
+      const orderResponse = await OrderService.createOrder(invoiceData);
+      const orderId = orderResponse.data.id;
+      console.log("Order created:", orderResponse);
+
+      const paymentData = {
+        returnUrl: `${scheme}://transaction?status=success`,
+        cancelUrl: `${scheme}://transaction?status=cancel`,
+      };
+      const paymentResponse = await OrderService.processPayment(orderId, paymentData);
+
+      if (paymentResponse.success) {
+        // Navigate to the payment URL or show the QR code
+        if (paymentResponse.data?.checkoutUrl) {
+          router.push({
+            pathname: "/webview",
+            params: {
+              url: paymentResponse.data.checkoutUrl,
+              type: WebViewType.PAYMENT,
+            },
+          });
+        } else if (paymentResponse.data?.qrCode) {
+          Alert.alert("QR Code", paymentResponse.data.qrCode);
+        }
+      } else {
+        Alert.alert("Error", paymentResponse.message || "Không thể tạo link thanh toán");
+      }
+
+    } catch (error: any) {
+      console.error("Payment Error:", {
+        message: error.message,
+        response: error.response?.data,
+      });
+
+      setPaymentDialog(false)
+    }
+  };
+
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        await dispatch(getAllVouchersThunk());
+        setactiveVoucher(vouchers.filter((voucher: any) => voucher.is_active));
+      } catch (error) {
+        console.error('Error fetching vouchers:', error);
+      }
+    };
+
+    fetchVouchers();
+  }, [dispatch]);
+
+  useEffect(() => {
+    setDiscountedPrice(totalPrice);
+  }, [totalPrice]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadSelectedAddress();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   useEffect(() => {
     if (!products.length) {
       router.back();
@@ -216,7 +229,7 @@ export default function Payment() {
     <SafeAreaView style={{ flex: 1 }}>
       <AppBar back title={i18n.t("checkout.title")} />
       <View flex backgroundColor={Colors.white}>
-        <ScrollView style={{paddingHorizontal: 20}} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ paddingHorizontal: 20 }} showsVerticalScrollIndicator={false}>
           <PaymentAddress
             isPayment
             onPress={() => router.push('/(app)/address')}
@@ -226,8 +239,8 @@ export default function Payment() {
           <View marginV-10 gap-10>
             <Text h2_bold>{i18n.t("checkout.voucher")}</Text>
             <VoucherDropdown
-              value={selectedVoucher}
-              items={vouchers}
+              value={voucher}
+              items={activeVouchers}
               onSelect={handleVoucherSelect}
             />
           </View>
@@ -247,7 +260,7 @@ export default function Payment() {
 
           <View marginV-10 gap-10>
             <Text h2_bold>{i18n.t("checkout.product")}</Text>
-            {products.map((product: Product) => (
+            {products.map((product: OrderProduct) => (
               <PaymentProductItem
                 key={product.id}
                 product={product}
@@ -281,7 +294,7 @@ export default function Payment() {
             </View>
             <View row centerV spread marginT-10>
               <Text h3_bold>{i18n.t("checkout.voucher")}</Text>
-              <Text h3>{selectedVoucher}</Text>
+              <Text h3>{selectedVoucher ? selectedVoucher.code : ''}</Text>
             </View>
             <View row centerV spread marginV-10>
               <Text h3_bold>{i18n.t("checkout.total_payment")}</Text>
@@ -313,11 +326,20 @@ export default function Payment() {
               padding-20
               style={{ height: 50 }}
               borderRadius={13}
-              onPress={() => router.push("/(app)/transaction")}
+              onPress={() => handlePayment()}
             />
 
           </View>
         </View>
+        <AppDialog
+          visible={paymentDialog}
+          title={"Xác nhận xóa sản phẩm"}
+          description={"Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"}
+          closeButtonLabel={i18n.t("common.cancel")}
+          confirmButtonLabel={"Xóa"}
+          severity="info"
+          onClose={() => setPaymentDialog(false)}
+        />
       </View>
     </SafeAreaView>
   );

@@ -7,6 +7,7 @@ import { Href, router } from "expo-router";
 import { useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
 import { ScrollView } from "react-native";
+import VoucherIcon from "@/assets/icons/discount-shape.svg";
 
 const ProfilePage = () => {
   const { user, signOut, signOutGuest, isGuest } = useAuth();
@@ -58,18 +59,18 @@ const ProfilePage = () => {
                 }
               />
               <View>
-                <Text text60>{user?.full_name || i18n.t("common.guest")}</Text>
-                <Text>{user?.phone_number || ""}</Text>
+                <Text h2_bold>{user?.full_name || i18n.t("common.guest")}</Text>
+                <Text h3>{user?.phone_number || ""}</Text>
               </View>
             </View>
             <View gap-10 center>
-              <View row gap-5>
+              <View row gap-5 centerV>
                 <Image
                   width={20}
                   height={20}
                   source={require("@/assets/images/allureCoin.png")}
                 />
-                <Text white>{user?.loyalty_points || 0}</Text>
+                <Text h3_bold black>{user?.loyalty_points || 0}</Text>
               </View>
 
               <TouchableOpacity
@@ -105,7 +106,7 @@ const ProfilePage = () => {
                 title: i18n.t("pageTitle.order"),
                 description: i18n.t("pageTitle.order_description"),
                 icon: require("@/assets/images/ic_favorite.png"),
-                onPress: () => handleNavigation("/(app)/orders"),
+                onPress: () => handleNavigation("/(app)/order"),
               },
               {
                 title: i18n.t("pageTitle.favorite"),
@@ -114,16 +115,22 @@ const ProfilePage = () => {
                 onPress: () => handleNavigation("/(app)/favorite"),
               },
               {
-                title: i18n.t("profile.purchase_policy"),
-                description: i18n.t("profile.policy_description"),
-                icon: require("@/assets/images/chamhoi.png"),
-                onPress: () => console.log("Purchase Policy"),
+                title: "Voucher",
+                description: "Xem tất cả voucher của tui",
+                icon: VoucherIcon,
+                onPress: () => handleNavigation("/(app)/voucher"),
               },
               {
                 title: i18n.t("profile.order_address"),
                 description: i18n.t("profile.address_list"),
                 icon: require("@/assets/images/location.png"),
                 onPress: () => handleNavigation("/(app)/address"),
+              },
+              {
+                title: i18n.t("profile.purchase_policy"),
+                description: i18n.t("profile.policy_description"),
+                icon: require("@/assets/images/chamhoi.png"),
+                onPress: () => console.log("Purchase Policy"),
               },
               {
                 title: isGuest
@@ -149,9 +156,9 @@ const ProfilePage = () => {
                     <Image source={item.icon} width={24} height={24} />
                   </TouchableOpacity>
                   <View flex gap-5>
-                    <Text text70BL>{item.title}</Text>
+                    <Text h3_bold>{item.title}</Text>
                     {item.description ? (
-                      <Text gray>{item.description}</Text>
+                      <Text h3 gray>{item.description}</Text>
                     ) : null}
                   </View>
                   <Image source={ArrowRight} />

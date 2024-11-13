@@ -9,21 +9,16 @@ const PaymentPicker = ({
     items,
     onSelect,
 }: {
-    value: string;
+    value: PaymentMethod | null;
     items: PaymentMethod[];
-    onSelect: (value: string) => void;
+    onSelect: (value: PaymentMethod) => void;
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [showOnlineMethods, setShowOnlineMethods] = useState(false);
     const animation = useRef(new Animated.Value(0)).current;
 
     const toggleDropdown = () => {
         const toValue = isOpen ? 0 : 1;
         setIsOpen(!isOpen);
-
-        if (!isOpen) {
-            setShowOnlineMethods(false);
-        }
 
         Animated.timing(animation, {
             toValue,
@@ -33,9 +28,8 @@ const PaymentPicker = ({
     };
 
     const handleSelect = (method: PaymentMethod) => {
-        onSelect(method.name);
+        onSelect(method);
         setIsOpen(false);
-        setShowOnlineMethods(false);
     };
 
     const rotateIcon = animation.interpolate({
@@ -56,7 +50,7 @@ const PaymentPicker = ({
                     }}
                 >
                     <Text h3>
-                        {value || "Chọn phương thức thanh toán"}
+                        {value?.name}
                     </Text>
                     <Animated.View
                         style={[
@@ -82,9 +76,10 @@ const PaymentPicker = ({
                 >
                     {items.map((method) => (
                         <TouchableOpacity
+                            key={method.id}
                             style={{
                                 ...dropdownStyles.item,
-                                ...(value === method.name ? dropdownStyles.selectedItem : {}),
+                                ...(value?.name === method.name ? dropdownStyles.selectedItem : {}),
                             }}
                             onPress={() => handleSelect(method)}
                         >
@@ -97,7 +92,7 @@ const PaymentPicker = ({
                                 />
                                 <Text grey10>{method.name}</Text>
                             </View>
-                            {value === method.name && (
+                            {value?.name === method.name && (
                                 <Ionicons
                                     name="checkmark-circle"
                                     size={20}
