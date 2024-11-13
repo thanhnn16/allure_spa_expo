@@ -9,7 +9,7 @@ export const getUserThunk = createAsyncThunk(
       const res: any = await AxiosInstance().get<User>("user/info");
 
       if (res.data.success) {
-        return res.data.data.data;
+        return res.data.data;
       }
 
       console.log('Get all user failed:', res.data.message);
@@ -19,4 +19,3 @@ export const getUserThunk = createAsyncThunk(
       return rejectWithValue(error.response?.data?.message || "Get all user failed");
     }
   });
-
