@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { User } from "@/types/user.type";
-import Octicons from '@expo/vector-icons/Octicons';
+import Octicons from "@expo/vector-icons/Octicons";
 
 const BookingPage = () => {
   const user: User = useSelector((state: RootState) => state.auth.user);
@@ -31,13 +31,13 @@ const BookingPage = () => {
 
   const { service_id, service_name } = useLocalSearchParams();
   const [today] = useState(moment().format("YYYY-MM-DD"));
-  const [maxDate] = useState(moment().add(1, 'year').format("YYYY-MM-DD"));
+  const [maxDate] = useState(moment().add(1, "year").format("YYYY-MM-DD"));
   const [selectedDate, setSelectedDate] = useState<string>(today.toString());
   const [selectedTime, setSelectedTime] = useState<number>();
   const [note, setNote] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [timeSlots, setTimeSlots] = useState([]);
-  const [timeString, setTimeString] = useState<string>('');
+  const [timeString, setTimeString] = useState<string>("");
   const [slot, setSlot] = useState<number>(0);
   const [success, setSuccess] = useState<boolean>(false);
 
@@ -51,51 +51,68 @@ const BookingPage = () => {
         const res = await AxiosInstance().get(
           `time-slots/available?date=${selectedDate}`
         );
-        const data = res?.data.data
+        const data = res?.data.data;
         setTimeSlots(data);
       } catch (error: any) {
-        console.log('Get time slots error', error.data);
+        console.log("Get time slots error", error.data);
       }
     };
     getTimeSlots();
-  }, [selectedDate])
+  }, [selectedDate]);
 
   useMemo(() => {
     timeSlots.filter((item: any) => {
       if (item.id === selectedTime) {
-        return setTimeString(item.start_time + ' - ' + item.end_time);
+        return setTimeString(item.start_time + " - " + item.end_time);
       }
-    })
-  }, [selectedTime])
+    });
+  }, [selectedTime]);
 
   const handleShowModal = () => {
-    if (selectedDate === "")
-      return alert(i18n.t("service.plase_select_date"));
+    if (selectedDate === "") return alert(i18n.t("service.plase_select_date"));
     if (selectedTime === undefined)
       return alert(i18n.t("service.plase_select_time"));
     setShowModal(true);
-  }
+  };
   const handleBooking = async () => {
     try {
       const body = {
         user_id: user?.id,
-        service_id: service_id,
+        service_id: Number(service_id),
         staff_id: null,
-        slot: slot,
+        slots: Number(slot),
         appointment_date: selectedDate,
-        time_slot_id: selectedTime,
+        time_slot_id: Number(selectedTime),
         appointment_type: "consultation",
         status: "pending",
         note: note === "" ? "Không có ghi chú" : note,
       };
-      console.log(body);
+
       const res = await AxiosInstance().post("/appointments", body);
-      if (res.status === 200 || res.status === 201) {
+
+      if (res?.data?.status === 422) {
+        alert(res.data.message);
+        return;
+      }
+
+      if (res?.status === 200 || res?.status === 201) {
         setShowModal(false);
         setSuccess(true);
       }
     } catch (error: any) {
-      console.log("Booking error", error);
+      // Xử lý lỗi chi tiết hơn
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        error.message ||
+        "Có lỗi xảy ra khi đặt lịch";
+
+      console.log("Booking error:", {
+        message: errorMessage,
+        details: error.response?.data,
+      });
+
+      alert(errorMessage);
     }
   };
   const renderTimeSlot = (time: any) => {
@@ -119,9 +136,14 @@ const BookingPage = () => {
             color={selectedTime === time.id ? "#FFFFFF" : "#6B7280"}
             style={styles.timeText}
           >
-            {`${time.start_time.substring(0, 5)} - ${time.end_time.substring(0, 5)}`}
+            {`${time.start_time.substring(0, 5)} - ${time.end_time.substring(
+              0,
+              5
+            )}`}
           </Text>
-          <Text color={selectedTime === time.id ? "#F9FAFB" : "#000000"}>Còn trống {time.max_bookings} chỗ</Text>
+          <Text color={selectedTime === time.id ? "#F9FAFB" : "#000000"}>
+            Còn trống {time.max_bookings} chỗ
+          </Text>
         </View>
       </TouchableOpacity>
     );
@@ -207,7 +229,7 @@ const BookingPage = () => {
               />
             </View>
 
-            {timeSlots.length > 0 &&
+            {timeSlots.length > 0 && (
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>
                   {i18n.t("service.select_time")}
@@ -224,37 +246,48 @@ const BookingPage = () => {
                     nestedScrollEnabled
                   />
                 </View>
-              </View>}
-
-            {selectedTime && <View gap-10>
-              <Text style={styles.sectionTitle}>
-                {i18n.t("service.select_seat")}
-              </Text>
-              <View gap-12 row flex>
-                <TouchableOpacity
-                  onPress={() => setSlot(1)}
-                  style={styles.timeSlotContainer}>
-                  <View
-                    center
-                    backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
-                    style={styles.timeSlot}>
-                    <Text color={slot == 1 ? "#FFFFFF" : "#000000"} >{i18n.t("service.1_seat")}</Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setSlot(2)}
-                  style={styles.timeSlotContainer}>
-                  <View
-                    center
-                    backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
-                    style={styles.timeSlot}>
-                    <Text color={slot == 2 ? "#FFFFFF" : "#000000"} >{i18n.t("service.2_seat")}</Text>
-                  </View>
-                </TouchableOpacity>
               </View>
-            </View>}
+            )}
 
-            {slot != 0 &&
+            {selectedTime && (
+              <View gap-10>
+                <Text style={styles.sectionTitle}>
+                  {i18n.t("service.select_seat")}
+                </Text>
+                <View gap-12 row flex>
+                  <TouchableOpacity
+                    onPress={() => setSlot(1)}
+                    style={styles.timeSlotContainer}
+                  >
+                    <View
+                      center
+                      backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
+                      style={styles.timeSlot}
+                    >
+                      <Text color={slot == 1 ? "#FFFFFF" : "#000000"}>
+                        {i18n.t("service.1_seat")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setSlot(2)}
+                    style={styles.timeSlotContainer}
+                  >
+                    <View
+                      center
+                      backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
+                      style={styles.timeSlot}
+                    >
+                      <Text color={slot == 2 ? "#FFFFFF" : "#000000"}>
+                        {i18n.t("service.2_seat")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {slot != 0 && (
               <View>
                 <Text h2_bold>{i18n.t("service.note")}</Text>
                 <TextField
@@ -275,7 +308,8 @@ const BookingPage = () => {
                     height: 200,
                   }}
                 />
-              </View>}
+              </View>
+            )}
 
             <AppButton
               title={i18n.t("service.continue")}
@@ -286,7 +320,6 @@ const BookingPage = () => {
             />
           </View>
         </ScrollView>
-
       </View>
       <Modal
         visible={showModal}
@@ -297,22 +330,38 @@ const BookingPage = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <View flex gap-12>
-              <Text h1_bold center>{i18n.t("service.confirm_information")}</Text>
+              <Text h1_bold center>
+                {i18n.t("service.confirm_information")}
+              </Text>
               <View center>
                 <Octicons name="checklist" size={44} color="#717658" />
               </View>
               <View gap-5>
-                <Text h2>{i18n.t("service.customer_name")}:
+                <Text h2>
+                  {i18n.t("service.customer_name")}:
                   <Text h2_bold> {user.full_name}</Text>
                 </Text>
-                <Text h2>{i18n.t("service.service_name")}:
+                <Text h2>
+                  {i18n.t("service.service_name")}:
                   <Text h2_bold> {service_name}</Text>
                 </Text>
-                <Text h2>{i18n.t("service.time")}:
-                  <Text h2_bold> {timeString}</Text>
+                <Text h2>
+                  {i18n.t("service.time")}:<Text h2_bold> {timeString}</Text>
                 </Text>
-                <Text h2>{i18n.t("service.date")}: <Text h2_bold> {moment(selectedDate).format("DD/MM/YYYY")}</Text></Text>
-                <Text h2>{i18n.t("service.note")}: <Text h2_bold> {note === "" ? i18n.t("service.no_notes") : note}</Text></Text>
+                <Text h2>
+                  {i18n.t("service.date")}:{" "}
+                  <Text h2_bold>
+                    {" "}
+                    {moment(selectedDate).format("DD/MM/YYYY")}
+                  </Text>
+                </Text>
+                <Text h2>
+                  {i18n.t("service.note")}:{" "}
+                  <Text h2_bold>
+                    {" "}
+                    {note === "" ? i18n.t("service.no_notes") : note}
+                  </Text>
+                </Text>
               </View>
             </View>
             <View gap-12 marginT-20>
@@ -327,26 +376,23 @@ const BookingPage = () => {
                 title={i18n.t("service.cancel")}
                 type="outline"
                 onPress={() => {
-                  setShowModal(false)
+                  setShowModal(false);
                 }}
               />
             </View>
           </View>
         </View>
       </Modal>
-      <Modal
-        visible={success}
-        transparent
-        style={styles.modal}
-      >
+      <Modal visible={success} transparent style={styles.modal}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <View flex gap-12>
-              <Text h1_bold center>{i18n.t("service.appointment_successful")}</Text>
+              <Text h1_bold center>
+                {i18n.t("service.appointment_successful")}
+              </Text>
               <View center>
                 <MaterialIcons name="done" size={64} color="black" />
               </View>
-
             </View>
             <View gap-12 marginT-20>
               <AppButton
@@ -418,7 +464,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2,
     paddingVertical: 5,
-    gap: 5
+    gap: 5,
   },
   selectedTimeSlot: {
     borderColor: "#717658",
@@ -435,18 +481,17 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 10,
-    width: '80%',
-    height: '50%',
+    width: "80%",
+    height: "50%",
   },
 });
-
 
 export default BookingPage;
