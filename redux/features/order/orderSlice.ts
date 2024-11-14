@@ -38,11 +38,11 @@ const orderSlice = createSlice({
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(getAllOrderThunk.fulfilled, (state: any, action: PayloadAction<Orders[]>) => {
+            .addCase(getAllOrderThunk.fulfilled, (state: any, action: any) => {
                 state.orders = action.payload;
                 state.isLoading = false;
             })
-            .addCase(getAllOrderThunk.rejected, (state: any, action: PayloadAction<string>) => {
+            .addCase(getAllOrderThunk.rejected, (state: any, action: any) => {
                 state.isLoading = false;
                 state.error = action.payload;
             })
