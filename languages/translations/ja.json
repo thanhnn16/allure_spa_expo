@@ -104,6 +104,9 @@
       "add_to_cart": "カートに追加",
       "buy_now": "今すぐ購入"
     },
+    "serviceDetail" : {
+      "book_now": "今すぐ予約"
+    },
     "rating": {
       "add_review": "レビューを追加",
       "base_on": "ベース",
@@ -456,6 +459,17 @@
       "date_delivery": "配達日",
       "date_delivered": "配達日"
     },
-    "buy_again": "もう一度購入"
+    "buy_again": "もう一度購入",
+    "cancel_order": "注文をキャンセル"
+  },
+    "appointment": {
+      "scheduled": "予定",
+      "all": "すべて",
+      "upcoming": "今後",
+      "completed": "完了",
+      "cancelled": "キャンセル",
+      "times": "回数",
+      "not_started": "開始されていません",
+      "view_details": "詳細を見る"
+    }
   }
-}

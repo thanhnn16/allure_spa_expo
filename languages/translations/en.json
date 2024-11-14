@@ -122,6 +122,7 @@
       "storage": "Storage instructions",
       "product_notes": "Product notes"
     },
+
     "no_info": "No information",
     "title": "Product details"
   },
@@ -265,7 +266,11 @@
     "1_seat": "1 seat",
     "2_seat": "2 seat",
     "back_to_home": "Back to home page",
-    "scheduled_successfully": "Scheduled successfully"
+    "scheduled_successfully": "Scheduled successfully",
+    "serviceDetail" : {
+      "book_now": "Book now",
+      "make_appointment": "Make an appointment"
+    }
   },
   "system": {
     "fud": "Feature under development!"
@@ -367,6 +372,17 @@
       "date_delivery": "配達日",
       "date_delivered": "配達日"
     },
-    "buy_again": "Buy again"
+    "buy_again": "Buy again",
+    "order_code": "Order Code"
+  },
+    "appointment": {
+      "scheduled": "Scheduled",
+      "all": "All",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "times": "times",
+      "not_started": "Not started",
+      "view_details": "View details"
+    }
   }
-}

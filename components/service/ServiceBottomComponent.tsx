@@ -93,7 +93,7 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
       </View>
       <View flex right>
         <Button
-          label={i18n.t("productDetail.buy_now").toString()}
+          label={i18n.t("service.serviceDetail.book_now").toString()}
           br40
           onPress={handlePurchase}
           backgroundColor={Colors.primary}
