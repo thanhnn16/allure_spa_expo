@@ -51,7 +51,7 @@ export interface PaymentMethod {
   code?: string;
 }
 
-const paymentMethods: PaymentMethod[] = [
+export const paymentMethods: PaymentMethod[] = [
   {
     id: 0,
     name: "Thanh toán khi nhận hàng",

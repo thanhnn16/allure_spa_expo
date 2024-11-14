@@ -36,25 +36,12 @@ export default function FavoriteScreen() {
     fetchFavorites(selectedTab);
   }, [selectedTab]);
 
-  return (
-    <View flex bg-$white>
-      <AppBar back title={i18n.t("favorite.title")} />
-
-      <TabController
-        initialIndex={selectedTabIndex}
-        onChangeIndex={setSelectedTabIndex}
-        items={[
-          { label: i18n.t("favorite.products") },
-          { label: i18n.t("favorite.services") },
-        ]}
-      >
-        <AppTabBar/>
-      </TabController>
-
+  const renderProductsPage = () => {
+    return (
       <FlatList
         data={favorites}
         renderItem={({ item }) => (
-          <FavoriteItem item={item} type={selectedTab} />
+          <FavoriteItem item={item} type={"product"} />
         )}
         numColumns={2}
         columnWrapperStyle={{
@@ -69,6 +56,50 @@ export default function FavoriteScreen() {
           </View>
         )}
       />
+    );
+  };
+
+  const renderServicesPage = () => {
+    return (
+      <FlatList
+        data={favorites}
+        renderItem={({ item }) => (
+          <FavoriteItem item={item} type={"service"} />
+        )}
+        numColumns={2}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          paddingHorizontal: 20,
+          marginTop: 10,
+        }}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View center padding-20>
+            <Text>{i18n.t("favorite.empty")}</Text>
+          </View>
+        )}
+      />
+    );
+  };
+
+  return (
+    <View flex bg-$white>
+      <AppBar back title={i18n.t("favorite.title")} />
+
+      <TabController
+        initialIndex={selectedTabIndex}
+        onChangeIndex={setSelectedTabIndex}
+        items={[
+          { label: i18n.t("favorite.products") },
+          { label: i18n.t("favorite.services") },
+        ]}
+      >
+        <AppTabBar />
+        <View flex>
+          <TabController.TabPage index={0}>{renderProductsPage()}</TabController.TabPage>
+          <TabController.TabPage index={1} lazy>{renderServicesPage()}</TabController.TabPage>
+        </View>
+      </TabController>
     </View>
   );
 }

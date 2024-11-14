@@ -470,7 +470,7 @@
       "pending": "Order is being processed",
       "confirmed": "Order confirmed",
       "delivering": "Order is being delivered",
-      "completes": "Order successfully delivered",
+      "completed": "Order successfully delivered",
       "canceled": "Order canceled",
       "date_delivery": "Estimated delivery date",
       "date_delivered": "Delivery date"

@@ -469,7 +469,7 @@
       "pending": "保留中",
       "confirmed": "確認済み",
       "delivering": "配信中",
-      "completes": "完了",
+      "completed": "完了",
       "canceled": "キャンセル",
       "date_delivery": "配達日",
       "date_delivered": "配達日"

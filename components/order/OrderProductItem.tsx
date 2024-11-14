@@ -46,7 +46,7 @@ const OrderProductItem = ({ order }: OrderProductItemProps) => {
           )}
           {order.status === 'completed' ? (
             <TouchableOpacity
-              onPress={() => router.push('/(app)/transaction/detail')}
+              onPress={() => router.push(`/(app)/transaction/${order.id}`)}
               style={{ padding: 5 }}
             >
               <Text h3_bold

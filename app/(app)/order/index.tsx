@@ -3,7 +3,7 @@ import { View, Text, TabController, Image } from 'react-native-ui-lib'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { getOrderThunk } from '@/redux/features/order/getOrderThunk';
+import { getAllOrderThunk } from '@/redux/features/order/getAllOrderThunk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppBar from '@/components/app-bar/AppBar';
 import VoucherSkeletonView from '@/components/voucher/VoucherSkeletonView';
@@ -29,7 +29,7 @@ const MyOrder = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                await dispatch(getOrderThunk());
+                await dispatch(getAllOrderThunk());
             } catch (error) {
                 console.error('Error fetching orders:', error);
             }
