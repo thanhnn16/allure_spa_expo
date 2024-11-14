@@ -45,7 +45,7 @@ class FirebaseService {
     }
   }
 
-  async registerTokenWithServer(userId: string) {
+  async registerTokenWithServer() {
     try {
       const fcmToken = await this.getFCMToken();
       if (fcmToken) {
@@ -78,6 +78,9 @@ class FirebaseService {
       if (remoteMessage.data?.type === 'chat_message') {
         await this.showChatNotification(remoteMessage);
       }
+      if (remoteMessage.data?.type === 'appointment') {
+        await this.showAppointmentNotification(remoteMessage);
+      }
     });
 
     // Xử lý tin nhắn khi ứng dụng đang mở
@@ -85,28 +88,65 @@ class FirebaseService {
       console.log('Received foreground message:', remoteMessage);
       if (remoteMessage.data?.type === 'chat_message') {
         await this.showChatNotification(remoteMessage);
+      }
+      if (remoteMessage.data?.type === 'appointment') {
+        await this.showAppointmentNotification(remoteMessage);
         return remoteMessage;
       }
     });
   }
 
-  async showChatNotification(remoteMessage: any) {
+  async showAppointmentNotification(remoteMessage: any) {
     try {
-      const uniqueId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
+      // Xử lý thông báo dựa trên loại
+      let title = remoteMessage.notification?.title || "Thông báo mới";
+      let body = remoteMessage.notification?.body;
+
+      // Thêm âm thanh và độ ưu tiên
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: remoteMessage.notification?.title || "Tin nhắn mới",
-          body: remoteMessage.notification?.body || remoteMessage.data?.message,
+          title,
+          body,
           data: {
             ...remoteMessage.data,
             uniqueId,
           },
+          sound: 'default',
+          priority: Notifications.AndroidNotificationPriority.HIGH,
         },
         trigger: null,
       });
     } catch (error) {
-      console.error('Error showing notification:', error);
+      console.error('Error showing appointment notification:', error);
+    }
+  }
+
+  async showChatNotification(remoteMessage: any) {
+    try {
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+      // Xử lý thông báo tin nhắn
+      let title = remoteMessage.notification?.title || "Tin nhắn mới";
+      let body = remoteMessage.notification?.body;
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            ...remoteMessage.data,
+            uniqueId,
+            type: 'chat_message'
+          },
+          sound: 'default',
+          priority: Notifications.AndroidNotificationPriority.HIGH,
+        },
+        trigger: null,
+      });
+    } catch (error) {
+      console.error('Error showing chat notification:', error);
     }
   }
 }
