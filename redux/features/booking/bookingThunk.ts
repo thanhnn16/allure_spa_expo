@@ -51,4 +51,4 @@ export const createBooking = createAsyncThunk(
             return rejectWithValue(errorMessage);
         }
     }
-); 
+);

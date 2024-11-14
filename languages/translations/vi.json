@@ -219,6 +219,10 @@
     "no_info": "Không có thông tin",
     "title": "Chi tiết sản phẩm"
   },
+  "serviceDetail": {
+    "book_now": "Đặt ngay",
+    "make_appointment": "Make an appointment"
+  },
   "rating": {
     "add_review": "Thêm đánh giá",
     "base_on": "Dựa trên",
@@ -456,6 +460,18 @@
       "date_delivery": "Estimated delivery date",
       "date_delivered": "Delivery date"
     },
-    "buy_again": "Mua lại"
+    "buy_again": "Mua lại",
+    "cancel_order": "Huỷ đơn hàng"
+  },
+  "appointment": {
+    "scheduled": "Lịch đã đặt",
+    "all": "Tất cả",
+    "upcoming": "Sắp tới",
+    "completed": "Đã hoàn thành",
+    "cancelled": "Bị hoãn",
+    "times": "Số lần",
+    "not_started": "Chưa tiến hành",
+    "view_details": "Nhấn xem chi tiết"
   }
 }
+

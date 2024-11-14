@@ -1,88 +1,107 @@
-import { StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native'
-import { Text, View, } from 'react-native-ui-lib'
-import React, { useState } from 'react'
+import { StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
+import { Text, View } from 'react-native-ui-lib';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTimeSlots } from '@/redux/features/booking/bookingThunk';
+import { resetBookingState } from '@/redux/features/booking/bookingSlice';
+import i18n from '@/languages/i18n';
 
 const ScheduledPage = () => {
   const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const dispatch = useDispatch();
+  const { timeSlots, loading, error } = useSelector((state: any) => state.booking);
+
+  useEffect(() => {
+    const date = new Date().toISOString().split('T')[0];
+    console.log('Fetching time slots for date:', date);
+    dispatch(getTimeSlots(date));
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log('Component State:', timeSlots);
+  }, [timeSlots]);
 
   const items = [
-    { id: 1, name: 'Tất cả' },
-    { id: 2, name: 'Sắp tới' },
-    { id: 3, name: 'Đã hoàn thành' },
-    { id: 4, name: 'Bị hoãn' },
+    { id: 1, name: i18n.t('appointment.all') },
+    { id: 2, name: i18n.t('appointment.upcoming') },
+    { id: 3, name: i18n.t('appointment.completed') },
+    { id: 4, name: i18n.t('appointment.cancelled') },
   ];
 
-  const flatListItems = [
-    { id: 6, isBanner: true, name: 'Chăm sóc da mặt dành cho nam và nữ', price: '325,000VNĐ', times: 'Số lần: 2/5', time: '15:00, hôm nay', status: 'Chưa tiến hành' },
-    { id: 7, isBanner: true, name: 'Chăm sóc da mặt dành cho nam và nữ', price: '325,000VNĐ', times: 'Số lần: 1/5', time: '15:00, ngày mai', status: 'Đã tiến hành' },
-    { id: 9, isBanner: true, name: 'Chăm sóc da mặt dành cho nam và nữ', price: '325,000VNĐ', times: 'Số lần: 2/5', time: '15:00, hôm nay', status: 'Chưa tiến hành' },
-    { id: 8, isBanner: true, name: 'Chăm sóc da mặt dành cho nam và nữ', price: '325,000VNĐ', times: 'Số lần: 1/5', time: '15:00, ngày mai', status: 'Đã tiến hành' },
-  ];
+  const flatListItems = timeSlots.map((slot: any) => ({
+    id: slot.id,
+    isBanner: true,
+    name: slot.name,
+    price: `${i18n.t('appointment.price')}: ${slot.price}`,
+    times: `${i18n.t('appointment.times')}: ${slot.times}`,
+    time: `${slot.start_time} - ${slot.end_time}`,
+    status: slot.available ? i18n.t('appointment.not_started') : i18n.t('appointment.completed'),
+  }));
 
   const renderItem = (item: { id: number; name: string }, index: number) => {
     const isSelected = item.id === selectedItem;
     return (
-      <TouchableOpacity key={item.id} onPress={() => setSelectedItem(item.id)}>
-        <View style={[styles.itemContainer, isSelected ? styles.selectedItem : styles.unselectedItem]}>
-          <Text style={[styles.itemText, isSelected ? styles.selectedItemText : styles.unselectedItemText]}>
-            {item.name}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity key={item.id} onPress={() => setSelectedItem(item.id)}>
+          <View style={[styles.itemContainer, isSelected ? styles.selectedItem : styles.unselectedItem]}>
+            <Text style={[styles.itemText, isSelected ? styles.selectedItemText : styles.unselectedItemText]}>
+              {item.name}
+            </Text>
+          </View>
+        </TouchableOpacity>
     );
   };
 
   const renderFlatListItem = ({ item }: { item: { id: number; isBanner?: boolean; name?: string; price?: string; times?: string; time?: string; status?: string } }) => {
-    const statusStyle = item.status === 'Đã tiến hành' ? styles.completedStatus : styles.pendingStatus;
+    const statusStyle = item.status === i18n.t('appointment.completed') ? styles.completedStatus : styles.pendingStatus;
     return (
-      <View style={styles.bannerContainer}>
-        <Image source={require('@/assets/images/banner.png')} style={styles.banner} />
-        <View marginT-10>
-          <Text h2_bold>{item.name}</Text>
-        </View>
-        <View centerV style={styles.infoContainer}>
-          <Image source={require('@/assets/images/home/icons/ticket.png')} style={styles.icon} />
-          <View centerV style={styles.priceSpace}>
-            <Text h3_semibold secondary>{item.price}</Text>
-            <Text h3 gray>{item.status}</Text>
+        <View style={styles.bannerContainer}>
+          <Image source={require('@/assets/images/banner.png')} style={styles.banner} />
+          <View marginT-10>
+            <Text h2_bold>{item.name}</Text>
           </View>
-        </View>
-        <View centerV style={styles.infoContainer}>
-          <Image source={require('@/assets/images/home/icons/note.png')} style={styles.icon} />
-          <Text h3_semibold>{item.times}</Text>
-        </View>
-        <View centerV style={styles.infoContainer}>
-          <Image source={require('@/assets/images/home/icons/clock.png')} style={styles.icon} />
-          <View style={styles.priceSpace}>
-            <Text h3_semibold>{item.time}</Text>
-            <View centerV style={styles.infoContainer}>
-              <Text h3_bold primary>Nhấn xem chi tiết</Text>
-              <View style={styles.circleIcon}>
-                <Text style={styles.circleIconText}>!</Text>
+          <View centerV style={styles.infoContainer}>
+            <Image source={require('@/assets/images/home/icons/ticket.png')} style={styles.icon} />
+            <View centerV style={styles.priceSpace}>
+              <Text h3_semibold secondary>{item.price}</Text>
+              <Text h3 gray>{item.status}</Text>
+            </View>
+          </View>
+          <View centerV style={styles.infoContainer}>
+            <Image source={require('@/assets/images/home/icons/note.png')} style={styles.icon} />
+            <Text h3_semibold>{item.times}</Text>
+          </View>
+          <View centerV style={styles.infoContainer}>
+            <Image source={require('@/assets/images/home/icons/clock.png')} style={styles.icon} />
+            <View style={styles.priceSpace}>
+              <Text h3_semibold>{item.time}</Text>
+              <View centerV style={styles.infoContainer}>
+                <Text h3_bold primary>{i18n.t('appointment.view_details')}</Text>
+                <View style={styles.circleIcon}>
+                  <Text style={styles.circleIconText}>!</Text>
+                </View>
               </View>
             </View>
           </View>
         </View>
-      </View>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text h1_bold primary>Lịch đã đặt</Text>
+      <View style={styles.container}>
+        <View>
+          <Text h1_bold primary>{i18n.t('appointment.scheduled')}</Text>
+        </View>
+        <ScrollView horizontal style={styles.scrollView} showsHorizontalScrollIndicator={false}>
+          {items.map((item, index) => renderItem(item, index))}
+        </ScrollView>
+        <FlatList
+            data={flatListItems}
+            renderItem={renderFlatListItem}
+            keyExtractor={(item) => item.id.toString()}
+        />
       </View>
-      <ScrollView horizontal style={styles.scrollView} showsHorizontalScrollIndicator={false}>
-        {items.map((item, index) => renderItem(item, index))}
-      </ScrollView>
-      <FlatList
-        data={flatListItems}
-        renderItem={renderFlatListItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </View>
-  )
-}
+  );
+};
 
 export default ScheduledPage;
 
@@ -95,7 +114,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#717658',
     fontSize: 24,
-    fontFamily: 'Inter-Bold'
+    fontFamily: 'Inter-Bold',
   },
   bannerContainer: {
     alignItems: 'flex-start',
@@ -169,7 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 10,
     borderWidth: 1,
-    marginBottom: 7
+    marginBottom: 7,
   },
   selectedItem: {
     backgroundColor: '#717658',
@@ -189,7 +208,6 @@ const styles = StyleSheet.create({
   unselectedItemText: {
     color: '#717658',
   },
-
   flatListItem: {
     padding: 20,
     borderBottomWidth: 1,
@@ -204,4 +222,4 @@ const styles = StyleSheet.create({
   pendingStatus: {
     color: '#6B7079',
   },
-})
+});
