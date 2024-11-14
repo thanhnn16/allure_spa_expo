@@ -154,7 +154,9 @@
       "history_login": "ログイン履歴",
       "dowload_information": "情報をダウンロード",
       "delete_account": "アカウントを削除",
-      "change_info": "情報を変更"
+      "change_info": "情報を変更",
+      "voucher": "クーポン",
+      "voucher_description": "自分のクーポンを見る"
     },
     "voucher": {
       "title": "クーポン",

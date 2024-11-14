@@ -131,7 +131,9 @@
       "history_login": "Lịch sử đăng nhập",
       "dowload_information": "Tải thông tin xuống",
       "delete_account": "Xóa tài khoản",
-      "change_info": "Đổi thông tin"
+      "change_info": "Đổi thông tin",
+      "voucher": "Voucher",
+      "voucher_description": "Xem tất cả voucher của tôi"
     },
     "settings": {
       "title": "Cài đặt",

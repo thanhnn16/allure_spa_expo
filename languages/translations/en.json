@@ -163,7 +163,9 @@
     "history_login": "Login History",
     "dowload_information": "Download Information",
     "delete_account": "Delete Account",
-    "change_info": "Change Information"
+    "change_info": "Change Information",
+    "voucher": "Voucher",
+    "voucher_description": "View all vouchers of me"
   },
   "settings": {
     "title": "Settings",
