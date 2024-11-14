@@ -5,9 +5,11 @@ import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import StarIcon from "@/assets/icons/star.svg";
 import formatCurrency from "@/utils/price/formatCurrency";
 import FavoriteButton from "@/components/buttons/FavoriteButton";
+import { Product } from "@/types/product.type";
+import i18n from "@/languages/i18n";
 
 interface RenderProductItemProps {
-  item: any;
+  item: Product;
   widthItem: number;
   heightItem: number;
   heightImage: number;
@@ -46,13 +48,6 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
             borderTopRightRadius: 12,
           }}
         />
-        <View absT top-10 right-10>
-          <FavoriteButton
-            itemId={item.id}
-            type="product"
-            initialFavorited={item.is_favorited}
-          />
-        </View>
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
         <Text text70H numberOfLines={2} ellipsizeMode="tail">
@@ -62,7 +57,9 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
         <View flex-1 gap-5 row centerV>
           <Image source={StarIcon} width={15} height={15} />
           <Text style={{ color: "#8C8585" }}>
-            5.0 | {item?.quantity} có sẵn
+            {item?.rating_summary.average_rating} /{" "}
+            {item?.rating_summary.total_ratings} | {item?.quantity}{" "}
+            {i18n.t("productDetail.available")}
           </Text>
         </View>
 

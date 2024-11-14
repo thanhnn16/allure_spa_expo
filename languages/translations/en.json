@@ -113,6 +113,7 @@
     "add_to_cart": "Add to cart",
     "buy_now": "Buy now",
     "purchases": "purchases",
+    "available": "available",
     "description": {
       "brand": "Brand",
       "usage": "Usage",
@@ -122,7 +123,6 @@
       "storage": "Storage instructions",
       "product_notes": "Product notes"
     },
-
     "no_info": "No information",
     "title": "Product details"
   },
@@ -267,7 +267,7 @@
     "2_seat": "2 seat",
     "back_to_home": "Back to home page",
     "scheduled_successfully": "Scheduled successfully",
-    "serviceDetail" : {
+    "serviceDetail": {
       "book_now": "Book now",
       "make_appointment": "Make an appointment"
     }
@@ -375,14 +375,14 @@
     "buy_again": "Buy again",
     "order_code": "Order Code"
   },
-    "appointment": {
-      "scheduled": "Scheduled",
-      "all": "All",
-      "upcoming": "Upcoming",
-      "completed": "Completed",
-      "cancelled": "Cancelled",
-      "times": "times",
-      "not_started": "Not started",
-      "view_details": "View details"
-    }
+  "appointment": {
+    "scheduled": "Scheduled",
+    "all": "All",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "times": "times",
+    "not_started": "Not started",
+    "view_details": "View details"
   }
+}
