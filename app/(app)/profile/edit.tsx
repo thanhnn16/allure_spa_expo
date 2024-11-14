@@ -115,7 +115,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
       aspect: [4, 3],
       quality: 0.5,
     });
-    console.log("Image picked:", result.assets[0].uri);
+    console.log("Image picked:", result?.assets?.[0]?.uri);
 
     if (!result || !result.assets || !result.assets[0].uri) return;
     try {
