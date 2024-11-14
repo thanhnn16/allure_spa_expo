@@ -104,7 +104,7 @@
       "add_to_cart": "カートに追加",
       "buy_now": "今すぐ購入"
     },
-    "serviceDetail" : {
+    "serviceDetail": {
       "book_now": "今すぐ予約"
     },
     "rating": {
@@ -462,14 +462,28 @@
     "buy_again": "もう一度購入",
     "cancel_order": "注文をキャンセル"
   },
-    "appointment": {
-      "scheduled": "予定",
-      "all": "すべて",
-      "upcoming": "今後",
-      "completed": "完了",
-      "cancelled": "キャンセル",
-      "times": "回数",
-      "not_started": "開始されていません",
-      "view_details": "詳細を見る"
-    }
+  "appointment": {
+    "scheduled": "予定",
+    "all": "すべて",
+    "upcoming": "今後",
+    "completed": "完了",
+    "cancelled": "キャンセル",
+    "times": "回数",
+    "not_started": "開始されていません",
+    "view_details": "詳細を見る"
+  },
+  "orders": {
+    "title": "注文",
+    "pending": "保留中",
+    "confirmed": "確認済み",
+    "delivering": "配信中",
+    "completed": "完了",
+    "cancelled": "キャンセル",
+    "repurchase": "再購入",
+    "rate_now": "今すぐ評価",
+    "quantity": "数量",
+    "total": "合計",
+    "no_order": "注文がありません",
+    "buy_more": "もっと見る"
   }
+}

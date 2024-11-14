@@ -7,6 +7,7 @@ import { FlatList } from "react-native";
 import FavoriteItem from "./FavoriteItem";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
+import AppTabBar from "@/components/app-bar/AppTabBar";
 
 export default function FavoriteScreen() {
   const [selectedTab, setSelectedTab] = useState<"product" | "service">(
@@ -37,7 +38,7 @@ export default function FavoriteScreen() {
 
   return (
     <View flex bg-$white>
-      <AppBar title={i18n.t("favorite.title")} />
+      <AppBar back title={i18n.t("favorite.title")} />
 
       <TabController
         initialIndex={selectedTabIndex}
@@ -47,13 +48,7 @@ export default function FavoriteScreen() {
           { label: i18n.t("favorite.services") },
         ]}
       >
-        <TabController.TabBar
-          height={48}
-          items={[
-            { label: i18n.t("favorite.products") },
-            { label: i18n.t("favorite.services") },
-          ]}
-        />
+        <AppTabBar/>
       </TabController>
 
       <FlatList
