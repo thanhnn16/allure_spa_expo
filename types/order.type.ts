@@ -13,7 +13,7 @@ export interface OrderItem {
     created_at: string;
     updated_at: string;
     item_name: string;
-    product: Product;
+    product?: Product;
 }
 
 export interface Orders {
@@ -55,4 +55,10 @@ export interface OrderResponse {
         to: number;
         total: number;
     };
+}
+
+export interface OrderState {
+    orders: OrderItem[];
+    isLoading: boolean;
+    error: string | null;
 }

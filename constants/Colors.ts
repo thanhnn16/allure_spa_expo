@@ -11,6 +11,7 @@ const colorScheme = {
   secondary: '#A85A29',
   gray: '#AAAAAA',
   primary_blur: '#E5E5E5',
+  primary_light: '#e3e4de',
 };
 
 Colors.loadColors(colorScheme);

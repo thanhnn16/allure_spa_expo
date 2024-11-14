@@ -23,6 +23,7 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
                 borderRadius: 10,
                 marginVertical: 10,
                 marginHorizontal: 20,
+                borderColor: '#e3e4de',
             }}
         >
             <View row spread centerV marginB-10 paddingH-15>

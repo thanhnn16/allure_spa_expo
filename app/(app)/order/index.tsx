@@ -1,27 +1,24 @@
 import { FlatList, StyleSheet } from 'react-native'
 import { View, Text, TabController, Image } from 'react-native-ui-lib'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { getAllVouchersThunk } from '@/redux/features/voucher/getAllVoucherThunk';
-import { Voucher as VoucherType } from "@/types/voucher.type";
-import VoucherShape from "@/assets/icons/discount-shape.svg";
-import VoucherItem from '@/components/voucher/VoucherItem';
+import { getOrderThunk } from '@/redux/features/order/getOrderThunk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppBar from '@/components/app-bar/AppBar';
-import i18n from '@/languages/i18n';
 import VoucherSkeletonView from '@/components/voucher/VoucherSkeletonView';
 import AppTabBar from '@/components/app-bar/AppTabBar';
-import { Orders } from '@/types/order.type';
 import OrderProductItem from '@/components/order/OrderProductItem';
+import { OrderItem } from '@/types/order.type';
 
+import ShoppingBagIcon from "@/assets/icons/bag.svg";
 
 const MyOrder = () => {
-    const [pendingOrder, setPendingOrder] = useState<Orders[]>([]);
-    const [confirmedOrder, setConfirmedOrder] = useState<Orders[]>([]);
-    const [deliveringOrder, setDeliveringOrder] = useState<Orders[]>([]);
-    const [completesOrder, setCompletesOrder] = useState<Orders[]>([]);
-    const [canceledOrder, setCanceledOrder] = useState<Orders[]>([]);
+    const [pendingOrder, setPendingOrder] = useState<OrderItem[]>([]);
+    const [confirmedOrder, setConfirmedOrder] = useState<OrderItem[]>([]);
+    const [deliveringOrder, setDeliveringOrder] = useState<OrderItem[]>([]);
+    const [completesOrder, setCompletesOrder] = useState<OrderItem[]>([]);
+    const [canceledOrder, setCanceledOrder] = useState<OrderItem[]>([]);
     const dispatch = useDispatch();
 
     const { orders, isLoading } = useSelector((
@@ -29,32 +26,33 @@ const MyOrder = () => {
     );
 
     useEffect(() => {
-        const fetchOrders = async (
-            status: string,
-            setOrderState: React.Dispatch<React.SetStateAction<Orders[]>>
-        ) => {
+        const fetchOrders = async () => {
             try {
-                await dispatch(getAllVouchersThunk());
-                setOrderState(orders);
+                await dispatch(getOrderThunk());
             } catch (error) {
-                console.error(`Error fetching ${status} order:`, error);
+                console.error('Error fetching orders:', error);
             }
         };
 
-        fetchOrders("pending", setPendingOrder);
-        fetchOrders("confirmed", setConfirmedOrder);
-        fetchOrders("delivering", setDeliveringOrder);
-        fetchOrders("completed", setCompletesOrder);
-        fetchOrders("canceled", setCanceledOrder);
-        console.log('orders:', orders);
-    }, [dispatch, orders]);
+        fetchOrders();
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (orders.length > 0) {
+            setPendingOrder(orders.filter((order: any) => order.status === 'pending').flatMap((order: any) => order.order_items));
+            setConfirmedOrder(orders.filter((order: any) => order.status === 'confirmed').flatMap((order: any) => order.order_items));
+            setDeliveringOrder(orders.filter((order: any) => order.status === 'delivering').flatMap((order: any) => order.order_items));
+            setCompletesOrder(orders.filter((order: any) => order.status === 'completed').flatMap((order: any) => order.order_items));
+            setCanceledOrder(orders.filter((order: any) => order.status === 'cancelled').flatMap((order: any) => order.order_items));
+        }
+    }, [orders]);
 
     const renderPendingPage = () => {
         if (pendingOrder.length === 0) {
             return (
                 <View flex center>
                     <Image
-                        source={VoucherShape}
+                        source={ShoppingBagIcon}
                         width={200}
                         height={200}
                     />
@@ -69,7 +67,13 @@ const MyOrder = () => {
                 <FlatList
                     data={pendingOrder}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => (<OrderProductItem />)}
+                    renderItem={({ item }) => (
+                        <OrderProductItem
+                            key={item.item_id}
+                            order={item}
+                            status='pending'
+                        />
+                    )}
                 />
             );
         };
@@ -80,7 +84,7 @@ const MyOrder = () => {
             return (
                 <View flex center>
                     <Image
-                        source={VoucherShape}
+                        source={ShoppingBagIcon}
                         width={200}
                         height={200}
                     />
@@ -95,7 +99,13 @@ const MyOrder = () => {
                 <FlatList
                     data={confirmedOrder}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => (<OrderProductItem />)}
+                    renderItem={({ item }) => (
+                        <OrderProductItem
+                            key={item.item_id}
+                            order={item}
+                            status='confirmed'
+                        />
+                    )}
                 />
             );
         };
@@ -106,7 +116,7 @@ const MyOrder = () => {
             return (
                 <View flex center>
                     <Image
-                        source={VoucherShape}
+                        source={ShoppingBagIcon}
                         width={200}
                         height={200}
                     />
@@ -121,7 +131,13 @@ const MyOrder = () => {
                 <FlatList
                     data={deliveringOrder}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => (<OrderProductItem />)}
+                    renderItem={({ item }) => (
+                        <OrderProductItem
+                            key={item.item_id}
+                            order={item}
+                            status='delivering'
+                        />
+                    )}
                 />
             );
         };
@@ -132,7 +148,7 @@ const MyOrder = () => {
             return (
                 <View flex center>
                     <Image
-                        source={VoucherShape}
+                        source={ShoppingBagIcon}
                         width={200}
                         height={200}
                     />
@@ -147,7 +163,13 @@ const MyOrder = () => {
                 <FlatList
                     data={completesOrder}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => (<OrderProductItem />)}
+                    renderItem={({ item }) => (
+                        <OrderProductItem
+                            key={item.item_id}
+                            order={item}
+                            status='completed'
+                        />
+                    )}
                 />
             );
         };
@@ -158,7 +180,7 @@ const MyOrder = () => {
             return (
                 <View flex center>
                     <Image
-                        source={VoucherShape}
+                        source={ShoppingBagIcon}
                         width={200}
                         height={200}
                     />
@@ -173,7 +195,13 @@ const MyOrder = () => {
                 <FlatList
                     data={canceledOrder}
                     showsVerticalScrollIndicator={false}
-                    renderItem={({ item }) => (<OrderProductItem />)}
+                    renderItem={({ item }) => (
+                        <OrderProductItem
+                            key={item.item_id}
+                            order={item}
+                            status='cancelled'
+                        />
+                    )}
                 />
             );
         };

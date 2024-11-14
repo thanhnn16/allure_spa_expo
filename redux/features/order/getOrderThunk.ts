@@ -4,11 +4,9 @@ import { OrderResponse } from "@/types/order.type";
 
 export const getOrderThunk = createAsyncThunk(
   'orders/getOrderProducts',
-  async ({status}: any, { rejectWithValue }: any) => {
+  async (_: any, { rejectWithValue }: any) => {
     try {
-      const res = await AxiosInstance().get<OrderResponse>('/orders/my-orders', {
-        params: { status },
-      });
+      const res = await AxiosInstance().get<OrderResponse>('/orders/my-orders');
 
       if (res.data.success) {
         console.log('Get all order success:', res.data.data);
