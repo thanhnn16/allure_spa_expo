@@ -1,6 +1,7 @@
 import { Category } from "./category.type";
 import { ResponePagesParams, ResponeDefaultParams, Timestamps } from "./commons.type";
 import { Media } from "./media.type";
+import { RatingSummary } from "./rating.type";
 export interface Product extends Timestamps {
     id: number;
     name: string;
@@ -21,20 +22,6 @@ export interface Product extends Timestamps {
     price_history: any[];
     attributes: any[];
 }
-
-export interface RatingSummary {
-    average_rating: number;
-    total_ratings: number;
-    rating_distribution: RatingDistribution;
-  }
-
-export interface RatingDistribution {
-    5: number;
-    4: number;
-    3: number;
-    2: number;
-    1: number;
-  }
 
 export interface ProductResponseParams extends ResponeDefaultParams {
     data: Product;

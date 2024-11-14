@@ -323,7 +323,7 @@
     "payment_time": "Payment Time",
     "order_code": "Order Code"
   },
-  "payment": {
+  "checkout": {
     "title": "Payment",
     "customer_info": "Customer Information",
     "default": "Default",
@@ -338,7 +338,8 @@
     "total": "Total",
     "no_discount": "No discount",
     "total_payment": "Total Payment",
-    "payment": "Payment"
+    "payment": "Payment",
+    "subtotal": "Subtotal"
   },
   "transaction": {
     "payment_success": "Payment Success",

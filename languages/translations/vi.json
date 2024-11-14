@@ -412,7 +412,7 @@
     "payment_time": "Thời gian thanh toán",
     "order_code": "Mã đơn hàng"
   },
-  "payment": {
+  "checkout": {
     "title": "Thanh toán",
     "customer_info": "Thông tin khách hàng",
     "default": "Mặc định",
@@ -427,7 +427,8 @@
     "total": "Tổng cộng",
     "no_discount": "Không có",
     "total_payment": "Tổng thanh toán",
-    "payment": "Thanh toán"
+    "payment": "Thanh toán",
+    "subtotal": "Tạm tính"
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",

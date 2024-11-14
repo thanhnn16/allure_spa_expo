@@ -1,47 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface OrderProduct {
-  id: number;
-  name: string;
-  price: string;
-  priceValue: number;
-  quantity: number;
-  image: string;
-  type: string;
-}
-
-interface OrderState {
-  products: OrderProduct[];
-  totalAmount: number;
-  fromCart: boolean;
-}
+import { Orders, OrderState } from '@/types/order.type';
+import { getOrderThunk } from './getOrderThunk';
 
 const initialState: OrderState = {
-  products: [],
-  totalAmount: 0,
-  fromCart: false
+    orders: [],
+    isLoading: false,
+    error: null,
 };
 
-export const orderSlice = createSlice({
-  name: 'order',
-  initialState,
-  reducers: {
-    setOrderProducts: (state, action: PayloadAction<{
-      products: OrderProduct[];
-      totalAmount: number;
-      fromCart: boolean;
-    }>) => {
-      state.products = action.payload.products;
-      state.totalAmount = action.payload.totalAmount;
-      state.fromCart = action.payload.fromCart;
+const orderSlice = createSlice({
+    name: 'order',
+    initialState,
+    reducers: {},
+    extraReducers: (builder: any) => {
+        builder
+            .addCase(getOrderThunk.pending, (state: any) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getOrderThunk.fulfilled, (state: any, action: PayloadAction<Orders[]>) => {
+                state.orders = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(getOrderThunk.rejected, (state: any, action: PayloadAction<string>) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            });
     },
-    clearOrder: (state) => {
-      state.products = [];
-      state.totalAmount = 0;
-      state.fromCart = false;
-    }
-  }
 });
 
-export const { setOrderProducts, clearOrder } = orderSlice.actions;
-export default orderSlice.reducer; 
+export default orderSlice.reducer;

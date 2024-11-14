@@ -1,330 +1,124 @@
 import { useState, useEffect } from "react";
-import { ScrollView, Modal, TouchableOpacity } from "react-native";
 import {
-  Button,
-  Card,
-  Colors,
-  Text,
-  Image,
-  View,
-  ExpandableSection,
-} from "react-native-ui-lib";
-import { Link, router } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
+  StyleSheet,
+  ScrollView,
+  ImageSourcePropType,
+  SafeAreaView,
+  Alert,
+} from "react-native";
+import { Button, Colors, Text, View } from "react-native-ui-lib";
+import { router, useLocalSearchParams } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
-import { useSelector, useDispatch } from "react-redux";
+import AppBar from "@/components/app-bar/AppBar";
+import PaymentAddress from "@/components/payment/PaymentAddress";
+import VoucherDropdown from "@/components/payment/VoucherDropdown";
+import PaymentPicker from "@/components/payment/PaymentPicker";
+import PaymentProductItem from "@/components/payment/PaymentProductItem";
+import i18n from "@/languages/i18n";
+import formatCurrency from "@/utils/price/formatCurrency";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { clearOrder } from "@/redux/features/order/orderSlice";
+import { clearOrder, OrderProduct } from "@/redux/features/order/orderSlice";
+import { Voucher } from "@/types/voucher.type";
+import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
+import { set } from "lodash";
+import AppDialog from "@/components/dialog/AppDialog";
+import { WebViewType } from "@/utils/constants/webview";
+import axios from "axios";
+import Constants from "expo-constants";
+import OrderService from "@/services/OrderService";
+import { useAuth } from "@/hooks/useAuth";
 
-const VoucherExpandable = ({
-  value,
-  items,
-  onSelect,
-}: {
-  value: string;
-  items: Voucher[];
-  onSelect: (voucher: Voucher) => void;
-}) => {
-  const [expanded, setExpanded] = useState(false);
+export interface PaymentAddressProps {
+  fullName: string;
+  phoneNumber: string;
+  fullAddress: string;
+  addressType: string;
+  isDefault: string;
+  note: string;
+  addressId: string;
+  province: string;
+  district: string;
+  address: string;
+}
 
-  return (
-    <ExpandableSection
-      expanded={expanded}
-      sectionHeader={
-        <View row spread centerV padding-s4>
-          <Text text70>{value || "Không có"}</Text>
-          <Ionicons
-            name={expanded ? "chevron-up" : "chevron-down"}
-            size={20}
-            color="#BCBABA"
-          />
-        </View>
-      }
-      onPress={() => setExpanded(!expanded)}
-    >
-      <View bg-white>
-        {items.map((item) => (
-          <TouchableOpacity
-            key={item.value}
-            onPress={() => {
-              onSelect(item);
-              setExpanded(false);
-            }}
-          >
-            <View
-              row
-              spread
-              centerV
-              padding-s4
-              bg-white
-              style={{
-                backgroundColor:
-                  value === item.label ? Colors.grey60 : Colors.white,
-              }}
-            >
-              <Text text70>{item.label}</Text>
-              <View row centerV>
-                <Text text90 primary marginR-s2>
-                  Giảm {item.discountPercentage}%
-                </Text>
-                {value === item.label && (
-                  <View
-                    center
-                    style={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: 12,
-                      borderWidth: 1,
-                      borderColor: Colors.primary,
-                    }}
-                  >
-                    <Ionicons
-                      name="checkmark"
-                      size={14}
-                      color={Colors.primary}
-                    />
-                  </View>
-                )}
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ExpandableSection>
-  );
-};
+export interface PaymentMethod {
+  id: number;
+  name: string;
+  icon?: ImageSourcePropType;
+  iconName: string;
+  code?: string;
+}
 
-// Thay thế PaymentPicker bằng PaymentExpandable
-const PaymentExpandable = ({
-  value,
-  items,
-  onSelect,
-}: {
-  value: string;
-  items: PaymentMethod[];
-  onSelect: (value: string) => void;
-}) => {
-  const [expanded, setExpanded] = useState(false);
-  const [showOnlineMethods, setShowOnlineMethods] = useState(false);
+const paymentMethods: PaymentMethod[] = [
+  {
+    id: 0,
+    name: "Thanh toán khi nhận hàng",
+    iconName: "cash-outline",
+  },
+  {
+    id: 1,
+    name: "Thanh toán online",
+    iconName: "card-outline",
+  },
+];
 
-  return (
-    <ExpandableSection
-      expanded={expanded}
-      sectionHeader={
-        <View row spread centerV padding-s4>
-          <Text text70>{value || "Chọn phương thức thanh toán"}</Text>
-          <Ionicons
-            name={expanded ? "chevron-up" : "chevron-down"}
-            size={20}
-            color="#BCBABA"
-          />
-        </View>
-      }
-      onPress={() => {
-        setExpanded(!expanded);
-        if (!expanded) {
-          setShowOnlineMethods(false);
-        }
-      }}
-    >
-      <View bg-white>
-        {!showOnlineMethods ? (
-          items.map((method) => (
-            <Card
-              key={method.id}
-              row
-              centerV
-              padding-s4
-              marginB-s2
-              backgroundColor={
-                value === method.name ? Colors.grey60 : Colors.white
-              }
-              onPress={() => {
-                if (method.id === 1) {
-                  onSelect(method.name);
-                  setExpanded(false);
-                } else if (method.id === 2) {
-                  setShowOnlineMethods(true);
-                }
-              }}
-            >
-              <View row centerV flex>
-                <Ionicons
-                  name={method.iconName as any}
-                  size={24}
-                  color={Colors.grey10}
-                  marginR-s2
-                />
-                <Text grey10>{method.name}</Text>
-              </View>
-              {value === method.name && (
-                <Ionicons
-                  name="checkmark-circle"
-                  size={20}
-                  color={Colors.primary}
-                />
-              )}
-            </Card>
-          ))
-        ) : (
-          <View>
-            <TouchableOpacity onPress={() => setShowOnlineMethods(false)}>
-              <View row centerV padding-s4 bg-grey60>
-                <Ionicons name="chevron-back" size={20} marginR-s2 />
-                <Text text70>Quay lại</Text>
-              </View>
-            </TouchableOpacity>
-            {items[1].children?.map((method) => (
-              <TouchableOpacity
-                key={method.id}
-                onPress={() => {
-                  onSelect(method.name);
-                  setExpanded(false);
-                  setShowOnlineMethods(false);
-                }}
-              >
-                <View
-                  row
-                  spread
-                  centerV
-                  padding-s4
-                  bg-white
-                  style={{
-                    backgroundColor:
-                      value === method.name ? Colors.grey60 : Colors.white,
-                  }}
-                >
-                  <View row centerV>
-                    {method.icon && (
-                      <Image
-                        source={method.icon}
-                        style={{ width: 100, height: 45, marginRight: 10 }}
-                        resizeMode="contain"
-                      />
-                    )}
-                    <Text text70>{method.name}</Text>
-                  </View>
-                  {value === method.name && (
-                    <View
-                      center
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: 12,
-                        borderWidth: 1,
-                        borderColor: Colors.primary,
-                      }}
-                    >
-                      <Ionicons
-                        name="checkmark"
-                        size={14}
-                        color={Colors.primary}
-                      />
-                    </View>
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-      </View>
-    </ExpandableSection>
-  );
-};
 
-// Thêm tiện ích tính giá
-const calculateDiscountedPrice = (giaGoc: number, phanTramGiamGia: number) => {
-  const giamGia = giaGoc * (phanTramGiamGia / 100);
-  return giaGoc - giamGia;
-};
 
-// In your Payment component
 export default function Payment() {
+  const { user } = useAuth();
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [selectedAddress, setSelectedAddress] = useState<PaymentAddressProps | null>(null);
+  const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
+  const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
+  const [voucher, setVoucher] = useState<Voucher | null>(null);
+  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
+  const [paymentDialog, setPaymentDialog] = useState(false);
+
   const { products, totalAmount } = useSelector(
     (state: RootState) => state.order
   );
-  const dispatch = useDispatch();
-
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState(
-    "Thanh toán khi nhận hàng"
+  const { vouchers, isLoading } = useSelector((
+    state: RootState) => state.voucher
   );
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedVoucher, setSelectedVoucher] = useState("Không có");
-  const [discountAmount, setDiscountAmount] = useState(0);
-  // Update vouchers state
-  const [vouchers] = useState<Voucher[]>([
-    {
-      label: "Giảm 10%",
-      value: "voucher1",
-      discountPercentage: 10,
-    },
-    {
-      label: "Giảm 20%",
-      value: "voucher2",
-      discountPercentage: 20,
-    },
-    {
-      label: "Giảm 30%",
-      value: "voucher3",
-      discountPercentage: 30,
-    },
-  ]);
+  
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
     let total = 0;
-    products.forEach((product) => {
+    products.forEach((product: any) => {
       total += product.priceValue * product.quantity;
     });
     return total;
   };
 
-  // State for total price
+  const calculateDiscountedPrice = (price: number, voucher: Voucher) => {
+    let priceWithDiscount: number
+    if (voucher && voucher.discount_type === 'percentage') {
+      priceWithDiscount = price - (price * voucher.discount_value) / 100;
+    } else {
+      priceWithDiscount = price - voucher.discount_value;
+    }
+    return priceWithDiscount;
+  };
+
   const [totalPrice, setTotalPrice] = useState(calculateTotalPrice());
   const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
 
-  const handlePaymentSelect = (payment: string) => {
+  const handlePaymentSelect = (payment: PaymentMethod) => {
     setSelectedPayment(payment);
-    setModalVisible(false);
   };
-  // Update handleVoucherSelect
+
   const handleVoucherSelect = (voucher: Voucher) => {
-    setSelectedVoucher(voucher.label);
+    setVoucher(voucher);
+    setSelectedVoucher(voucher);
     const newPrice = calculateDiscountedPrice(
       totalPrice,
-      voucher.discountPercentage
+      voucher
     );
     setDiscountedPrice(newPrice);
   };
-
-  // Thêm useEffect để theo dõi thay đổi totalPrice
-  useEffect(() => {
-    setDiscountedPrice(totalPrice);
-  }, [totalPrice]);
-
-  const navigation = useNavigation();
-  const [selectedAddress, setSelectedAddress] = useState<{
-    fullName: string;
-    phoneNumber: string;
-    fullAddress: string;
-    addressType: string;
-    isDefault: string;
-    note: string;
-    addressId: string;
-    province: string;
-    district: string;
-    address: string;
-  } | null>(null);
-
-  // Thêm useEffect để load địa chỉ
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      loadSelectedAddress();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
 
   const loadSelectedAddress = async () => {
     try {
@@ -337,7 +131,86 @@ export default function Payment() {
     }
   };
 
-  // Replace products state with orderSlice data
+  const handlePayment = async () => {
+    try {
+      const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
+
+      const invoiceData = {
+        payment_method_id: selectedPayment.id,
+        total_amount: totalAmount,
+        discount_amount: 0,
+        voucher_id: voucher?.id || null,
+        order_items: products.map((item: any) => ({
+          item_type: item.type || "product",
+          item_id: item.id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      };
+      console.log("Invoice data:", invoiceData);
+
+      const orderResponse = await OrderService.createOrder(invoiceData);
+      const orderId = orderResponse.data.id;
+      console.log("Order created:", orderResponse);
+
+      const paymentData = {
+        returnUrl: `${scheme}://transaction?status=success`,
+        cancelUrl: `${scheme}://transaction?status=cancel`,
+      };
+      const paymentResponse = await OrderService.processPayment(orderId, paymentData);
+
+      if (paymentResponse.success) {
+        // Navigate to the payment URL or show the QR code
+        if (paymentResponse.data?.checkoutUrl) {
+          router.push({
+            pathname: "/webview",
+            params: {
+              url: paymentResponse.data.checkoutUrl,
+              type: WebViewType.PAYMENT,
+            },
+          });
+        } else if (paymentResponse.data?.qrCode) {
+          Alert.alert("QR Code", paymentResponse.data.qrCode);
+        }
+      } else {
+        Alert.alert("Error", paymentResponse.message || "Không thể tạo link thanh toán");
+      }
+
+    } catch (error: any) {
+      console.error("Payment Error:", {
+        message: error.message,
+        response: error.response?.data,
+      });
+
+      setPaymentDialog(false)
+    }
+  };
+
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        await dispatch(getAllVouchersThunk());
+        setactiveVoucher(vouchers.filter((voucher: any) => voucher.is_active));
+      } catch (error) {
+        console.error('Error fetching vouchers:', error);
+      }
+    };
+
+    fetchVouchers();
+  }, [dispatch]);
+
+  useEffect(() => {
+    setDiscountedPrice(totalPrice);
+  }, [totalPrice]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadSelectedAddress();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   useEffect(() => {
     if (!products.length) {
       router.back();
@@ -350,224 +223,145 @@ export default function Payment() {
     return () => {
       dispatch(clearOrder());
     };
-  }, []);
+  }, [products, totalAmount, dispatch]);
 
-  // Update the main render section
   return (
-    <View flex bg-white>
-      <View row centerV padding-s4>
-        <Button
-          iconSource={() => (
-            <Ionicons name="arrow-back" size={24} color={Colors.grey10} />
-          )}
-          onPress={() => router.back()}
-          link
-        />
-        <Text text60 grey10 center flex>
-          Thanh toán
-        </Text>
-      </View>
-
-      <ScrollView>
-        <Card margin-s4>
-          <Card.Section
-            content={[
-              { text: "Thông tin khách hàng", text70BO: true, grey10: true },
-            ]}
-            contentStyle={{ marginBottom: 8 }}
+    <SafeAreaView style={{ flex: 1 }}>
+      <AppBar back title={i18n.t("checkout.title")} />
+      <View flex backgroundColor={Colors.white}>
+        <ScrollView style={{ paddingHorizontal: 20 }} showsVerticalScrollIndicator={false}>
+          <PaymentAddress
+            isPayment
+            onPress={() => router.push('/(app)/address')}
+            selectAddress={selectedAddress}
           />
-          <Link href="/address" asChild>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Card.Section
-                backgroundColor={Colors.grey60}
-                content={[
-                  selectedAddress
-                    ? [
-                        {
-                          text: selectedAddress.fullName,
-                          text70: true,
-                          grey10: true,
-                        },
-                        {
-                          text: selectedAddress.phoneNumber,
-                          text90: true,
-                          grey20: true,
-                        },
-                        {
-                          text: selectedAddress.fullAddress,
-                          text90: true,
-                          grey20: true,
-                          numberOfLines: 2,
-                        },
-                      ]
-                    : [
-                        {
-                          text: "Vui lòng chọn địa chỉ giao hàng",
-                          text90: true,
-                          grey30: true,
-                        },
-                      ],
-                ]}
-                trailingIcon={{
-                  source: () => (
-                    <Ionicons
-                      name="chevron-forward"
-                      size={24}
-                      color={Colors.grey30}
-                    />
-                  ),
-                }}
-              />
-            </TouchableOpacity>
-          </Link>
-        </Card>
-        <View padding-s4>
-          <Text text70BO marginB-s2>
-            Voucher
-          </Text>
-          <Card>
-            <VoucherExpandable
-              value={selectedVoucher}
-              items={vouchers}
+
+          <View marginV-10 gap-10>
+            <Text h2_bold>{i18n.t("checkout.voucher")}</Text>
+            <VoucherDropdown
+              value={voucher}
+              items={activeVouchers}
               onSelect={handleVoucherSelect}
             />
-          </Card>
-          <View height={1} bg-grey60 marginT-s4 marginB-s2 />
-        </View>
+          </View>
 
-        <View padding-s4>
-          <Text text70BO marginB-s2>
-            Hình thức thanh toán
-          </Text>
-          <Card>
-            <PaymentExpandable
+          <View style={styles.borderInset} />
+
+          <View marginV-10 gap-10>
+            <Text h2_bold>{i18n.t("checkout.payment_method")}</Text>
+            <PaymentPicker
               value={selectedPayment}
               items={paymentMethods}
               onSelect={handlePaymentSelect}
             />
-          </Card>
-          <View height={1} bg-grey60 marginT-s4 marginB-s2 />
-        </View>
+          </View>
 
-        <Modal
-          visible={isModalVisible}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setModalVisible(false)}
+          <View style={styles.borderInset} />
+
+          <View marginV-10 gap-10>
+            <Text h2_bold>{i18n.t("checkout.product")}</Text>
+            {products.map((product: OrderProduct) => (
+              <PaymentProductItem
+                key={product.id}
+                product={product}
+              />
+            ))}
+          </View>
+
+
+        </ScrollView>
+
+        <View
+          style={{
+            borderTopWidth: 1,
+            borderLeftWidth: 1,
+            borderRightWidth: 1,
+            borderTopColor: "#E0E0E0",
+            borderLeftColor: "#E0E0E0",
+            borderRightColor: "#E0E0E0",
+            borderTopLeftRadius: 13,
+            borderTopRightRadius: 13,
+            backgroundColor: "#FFFFFF",
+            padding: 20,
+          }}
         >
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => setModalVisible(false)}
-          >
-            <View style={styles.modalContent}>
-              <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>
-                  Chọn phương thức thanh toán
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.productDivider,
-                  { height: 1, backgroundColor: "#E0E0E0" },
-                ]}
-              />
-              {paymentMethods.map((method) => (
-                <TouchableOpacity
-                  key={method.id}
-                  style={styles.paymentOption}
-                  onPress={() => handlePaymentSelect(method.name)}
-                >
-                  <View style={styles.optionLeft}>
-                    <View style={styles.paymentIconContainer}>
-                      <Image source={method.icon} style={styles.paymentIcon} />
-                    </View>
-                  </View>
-                  {selectedPayment === method.name && (
-                    <View style={styles.checkIconContainer}>
-                      <Ionicons
-                        name="checkmark"
-                        size={14}
-                        style={styles.checkIcon}
-                      />
-                    </View>
-                  )}
-                </TouchableOpacity>
-              ))}
-              <Button
-                label="Tiếp tục"
-                backgroundColor={Colors.primary}
-                padding-20
-                borderRadius={10}
-                style={{
-                  width: 338,
-                  height: 47,
-                  alignSelf: "center",
-                  marginVertical: 10,
-                }}
-                onPress={() => setModalVisible(false)}
-              />
-            </View>
-          </TouchableOpacity>
-        </Modal>
-
-        <View padding-s4>
-          <Text text70BO marginB-s2>
-            Sản phẩm
-          </Text>
-          {products.map((product) => (
-            <Card key={product.id} marginV-s2 enableShadow={false}>
-              <Card.Section
-                imageSource={{ uri: product.image }}
-                imageStyle={{ width: 96, height: 89, borderRadius: 10 }}
-                content={[
-                  { text: product.name, text70BO: true },
-                  { text: product.price, text70: true },
-                  {
-                    text: `Số lượng: ${product.quantity}`,
-                    text90: true,
-                    grey20: true,
-                  },
-                ]}
-                contentStyle={{
-                  marginLeft: 12,
-                  justifyContent: "space-between",
-                }}
-              />
-              <View height={1} backgroundColor={Colors.grey60} marginT-s2 />
-            </Card>
-          ))}
-        </View>
-
-        <View margin-s4 bg-grey60 br20 padding-s4>
-          <View row spread marginB-s2>
-            <Text text70BO>Tạm tính</Text>
-            <Text text70BO>{totalPrice.toLocaleString("vi-VN")} VNĐ</Text>
-          </View>
-
-          <View row spread marginB-s2>
-            <Text text70BO>Voucher</Text>
-            <Text text70>{selectedVoucher}</Text>
-          </View>
-
-          <View row spread marginT-s2>
-            <Text text70BO>Tổng thanh toán</Text>
-            <View right>
-              {discountedPrice !== totalPrice && (
-                <Text
-                  text90
-                  grey30
-                  style={{ textDecorationLine: "line-through" }}
-                >
-                  {totalPrice.toLocaleString("vi-VN")} VNĐ
-                </Text>
-              )}
-              <Text text70BO red30>
-                {discountedPrice.toLocaleString("vi-VN")} VNĐ
+          <View>
+            <View row centerV spread >
+              <Text h3_bold>{i18n.t("checkout.subtotal")}</Text>
+              <Text h3_bold>
+                {formatCurrency({ price: totalPrice })}
               </Text>
             </View>
+            <View row centerV spread marginT-10>
+              <Text h3_bold>{i18n.t("checkout.voucher")}</Text>
+              <Text h3>{selectedVoucher ? selectedVoucher.code : ''}</Text>
+            </View>
+            <View row centerV spread marginV-10>
+              <Text h3_bold>{i18n.t("checkout.total_payment")}</Text>
+              <View>
+                {discountedPrice !== totalPrice && (
+                  <Text
+                    h3
+                    style={{
+                      textDecorationLine: "line-through",
+                      color: Colors.grey30,
+                      fontSize: 12,
+                      textAlign: "right",
+                    }}
+                  >
+                    {formatCurrency({ price: totalPrice })}
+                  </Text>
+                )}
+                <Text h3_bold secondary>
+                  {formatCurrency({ price: discountedPrice })}
+                </Text>
+              </View>
+            </View>
+
+
+            <Button
+              label={i18n.t("checkout.payment").toString()}
+              labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+              backgroundColor={Colors.primary}
+              padding-20
+              style={{ height: 50 }}
+              borderRadius={13}
+              onPress={() => handlePayment()}
+            />
+
           </View>
         </View>
-      </ScrollView>
-    </View>
+        <AppDialog
+          visible={paymentDialog}
+          title={"Xác nhận xóa sản phẩm"}
+          description={"Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"}
+          closeButtonLabel={i18n.t("common.cancel")}
+          confirmButtonLabel={"Xóa"}
+          severity="info"
+          onClose={() => setPaymentDialog(false)}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.white,
+  },
+  totalSection: {
+    padding: 10,
+    backgroundColor: "#f8f8f8",
+    marginHorizontal: 20,
+    borderRadius: 8,
+  },
+  borderInset: {
+    width: 370,
+    height: 2,
+    backgroundColor: "#717658",
+    alignSelf: "center",
+    marginTop: 20,
+    marginBottom: 10,
+  }
+});

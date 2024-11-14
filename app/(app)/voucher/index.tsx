@@ -1,100 +1,143 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
-  Image,
-  Card,
-  SortableList,
+  TabController,
+  Image
 } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
-import { Href, Link } from "expo-router";
-import colors from "@/constants/Colors";
-import { useNavigation } from "expo-router";
-import BackButton from "@/assets/icons/back.svg";
-import { OrderChangeInfo } from "react-native-ui-lib/src/components/sortableList/types";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
+import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
+import AppBar from "@/components/app-bar/AppBar";
+import AppTabBar from "@/components/app-bar/AppTabBar";
+import VoucherItem from "@/components/voucher/VoucherItem";
+import { Voucher as VoucherType } from "@/types/voucher.type";
+import VoucherSkeletonView from "@/components/voucher/VoucherSkeletonView";
 
-interface VoucherProps {}
+import VoucherShape from "@/assets/icons/discount-shape.svg";
 
-const Voucher = (props: VoucherProps) => {
-  const navigation = useNavigation();
-  const [selected, setSelected] = useState("all");
-  const data = [
-    { id: "1", label: i18n.t("voucher.all"), value: "all" },
-    { id: "2", label: i18n.t("voucher.birthday"), value: "birthday" },
-    { id: "3", label: i18n.t("voucher.event"), value: "featured" },
-    { id: "4", label: i18n.t("voucher.gift"), value: "gift" },
-  ];
-  return (
-    <View flex marginH-20 marginT-40>
-      <View row centerV>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-            console.log("Back");
-          }}
-        >
-          <Image width={30} height={30} source={BackButton} />
-        </TouchableOpacity>
+const Voucher = () => {
+  const dispatch = useDispatch();
+  const [activeVouchers, setactiveVoucher] = useState<VoucherType[]>([]);
+  const [expiredVouchers, setexpiredVoucher] = useState<VoucherType[]>([]);
+
+  const { vouchers, isLoading } = useSelector((
+    state: RootState) => state.voucher
+  );
+
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      try {
+        await dispatch(getAllVouchersThunk());
+        setactiveVoucher(vouchers.filter((voucher: any) => voucher.is_active));
+        setexpiredVoucher(vouchers.filter((voucher: any) => !voucher.is_active));
+      } catch (error) {
+        console.error('Error fetching vouchers:', error);
+      }
+    };
+
+    fetchVouchers();
+  }, [dispatch]);
+
+  const renderAllPage = () => {
+    if (vouchers.length === 0) {
+      return (
         <View flex center>
-          <Text text60 bold marginR-30 style={{ color: "#717658" }}>
-            {i18n.t("voucher.title")}
-          </Text>
+          <Image
+            source={VoucherShape}
+            width={200}
+            height={200}
+          />
+          <View marginT-20>
+            <Text h3_bold>Không có Voucher nào cả!</Text>
+            <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
+          </View>
         </View>
-        <Image
-          width={30}
-          height={30}
-          source={require("@/assets/images/gift.png")}
+      );
+    } else if (vouchers.length > 0) {
+      return (
+        <FlatList
+          data={vouchers}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (<VoucherItem voucher={item} />)}
         />
-      </View>
-      <View row marginT-20 paddingL-20>
-        <SortableList
-          horizontal
-          data={data}
-          flexMigration
-          contentContainerStyle={{ backgroundColor: "transparent" }}
-          renderItem={({ item }) => (
-            <View style={{ backgroundColor: "transparent" }}>
-              <TouchableOpacity
-                key={item.value}
-                onPress={() => setSelected(item.value)}
-                style={{
-                  padding: 10,
-                  borderRadius: 10,
-                  backgroundColor:
-                    selected === item.value ? "#717658" : "#D5D6CD",
-                  marginRight: 15,
-                }}
-              >
-                <Text
-                  style={{
-                    color: selected === item.value ? "white" : "#717658",
-                  }}
-                >
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
+      );
+    };
+  };
+
+  const renderActivePage = () => {
+    if (activeVouchers.length === 0) {
+      return (
+        <View flex center>
+          <Image
+            source={VoucherShape}
+            width={200}
+            height={200}
+          />
+          <View marginT-20>
+            <Text h3_bold>Không có Voucher nào cả!</Text>
+            <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
+          </View>
+        </View>
+      );
+    } else if (activeVouchers.length > 0) {
+      return (
+        <FlatList
+          data={activeVouchers}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (<VoucherItem voucher={item} />)}
+        />
+      );
+    };
+  };
+
+  const renderExpiredPage = () => {
+    if (expiredVouchers.length === 0) {
+      return (
+        <View flex center>
+          <Image
+            source={VoucherShape}
+            width={200}
+            height={200}
+          />
+          <View marginT-20 centerH>
+            <Text h3_bold>Không có Voucher nào cả!</Text>
+            <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
+          </View>
+        </View>
+      );
+    } else if (expiredVouchers.length > 0) {
+      return (
+        <FlatList
+          data={expiredVouchers}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (<VoucherItem voucher={item} />)}
+        />
+      );
+    };
+  };
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View flex bg-white>
+        <AppBar back title={i18n.t("voucher.title")} />
+        {isLoading ? (
+          <VoucherSkeletonView />
+        ) : (
+          <TabController items={[{ label: 'Tất cả' }, { label: 'Đang hoạt động' }, { label: 'Hết hạn' }]}>
+            <AppTabBar />
+            <View flex>
+              <TabController.TabPage index={0}>{renderAllPage()}</TabController.TabPage>
+              <TabController.TabPage index={1} lazy>{renderActivePage()}</TabController.TabPage>
+              <TabController.TabPage index={2} lazy>{renderExpiredPage()}</TabController.TabPage>
             </View>
-          )}
-          onOrderChange={function (
-            data: { id: string; label: string; value: string }[],
-            info: OrderChangeInfo
-          ): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
+          </TabController>
+        )}
+
       </View>
-      <View center gap-15 space-evenly >
-        <Image
-          with={345}
-          height={345}
-          source={require("@/assets/images/giftbox.png")}
-        />
-        <Text text60 marginT-10>
-          Nhiều ưu đãi sắp ra mắt
-        </Text>
-      </View>
-    </View>
+    </GestureHandlerRootView>
   );
 };
 export default Voucher;

@@ -28,3 +28,17 @@ export interface CreateRatingRequest {
     "comment": string,
     "media_id": number
 }
+
+export interface RatingSummary {
+    average_rating: number;
+    total_ratings: number;
+    rating_distribution: RatingDistribution;
+}
+
+export interface RatingDistribution {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+}
