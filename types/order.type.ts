@@ -56,9 +56,3 @@ export interface OrderResponse {
         total: number;
     };
 }
-
-export interface OrderState {
-    orders: Orders[];
-    isLoading: boolean;
-    error: string | null;
-}

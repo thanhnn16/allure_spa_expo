@@ -19,16 +19,16 @@ import i18n from "@/languages/i18n";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { clearOrder, OrderProduct } from "@/redux/features/order/orderSlice";
 import { Voucher } from "@/types/voucher.type";
 import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
-import { set } from "lodash";
 import AppDialog from "@/components/dialog/AppDialog";
 import { WebViewType } from "@/utils/constants/webview";
-import axios from "axios";
-import Constants from "expo-constants";
 import OrderService from "@/services/OrderService";
 import { useAuth } from "@/hooks/useAuth";
+import { clearOrder } from "@/redux";
+import { OrderItem } from "@/types";
+import { Product } from "@/types/product.type";
+import { useDialog } from "@/hooks/useDialog";
 
 export interface PaymentAddressProps {
   fullName: string;
@@ -50,52 +50,66 @@ export interface PaymentMethod {
   iconName: string;
   code?: string;
 }
-
-export const paymentMethods: PaymentMethod[] = [
+const paymentMethods: PaymentMethod[] = [
   {
-    id: 0,
-    name: "Thanh toán khi nhận hàng",
+    id: 1,
+    name: i18n.t("checkout.cash"),
     iconName: "cash-outline",
   },
   {
-    id: 1,
-    name: "Thanh toán online",
+    id: 2,
+    name: i18n.t("checkout.credit_card"),
+    iconName: "card-outline",
+  },
+  {
+    id: 3,
+    name: i18n.t("checkout.bank_transfer"),
     iconName: "card-outline",
   },
 ];
 
-
-
-export default function Payment() {
+export default function Checkout() {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [selectedAddress, setSelectedAddress] = useState<PaymentAddressProps | null>(null);
+  const [selectedAddress, setSelectedAddress] =
+    useState<PaymentAddressProps | null>(null);
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
   const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
   const [voucher, setVoucher] = useState<Voucher | null>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [paymentDialog, setPaymentDialog] = useState(false);
+  const [createOrderDialog, setCreateOrderDialog] = useState(false);
 
-  const { products, totalAmount } = useSelector(
-    (state: RootState) => state.order
+  const { dialogConfig, showDialog, hideDialog } = useDialog();
+
+  const { products = [], totalAmount = 0 } = useSelector((state: RootState) =>
+    state.order.orders
+      ? {
+          products: state.order.orders,
+          totalAmount: state.order.totalAmount,
+        }
+      : {
+          products: [],
+          totalAmount: 0,
+        }
   );
-  const { vouchers, isLoading } = useSelector((
-    state: RootState) => state.voucher
+  const { vouchers, isLoading } = useSelector(
+    (state: RootState) => state.voucher
   );
-  
+
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
-    let total = 0;
-    products.forEach((product: any) => {
-      total += product.priceValue * product.quantity;
-    });
-    return total;
+    if (!products || products.length === 0) return 0;
+
+    return products.reduce((total: number, product: any) => {
+      return total + product.priceValue * product.quantity;
+    }, 0);
   };
 
   const calculateDiscountedPrice = (price: number, voucher: Voucher) => {
-    let priceWithDiscount: number
-    if (voucher && voucher.discount_type === 'percentage') {
+    let priceWithDiscount: number;
+    if (voucher && voucher.discount_type === "percentage") {
       priceWithDiscount = price - (price * voucher.discount_value) / 100;
     } else {
       priceWithDiscount = price - voucher.discount_value;
@@ -107,16 +121,21 @@ export default function Payment() {
   const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
 
   const handlePaymentSelect = (payment: PaymentMethod) => {
-    setSelectedPayment(payment);
+    if (payment.id === 2) {
+      showDialog(
+        "Thanh toán bằng thẻ tín dụng",
+        "Chức năng thanh toán bằng thẻ tín dụng đang phát triển, vui lòng chọn phương thức thanh toán khác.",
+        "info"
+      );
+    } else {
+      setSelectedPayment(payment);
+    }
   };
 
   const handleVoucherSelect = (voucher: Voucher) => {
     setVoucher(voucher);
     setSelectedVoucher(voucher);
-    const newPrice = calculateDiscountedPrice(
-      totalPrice,
-      voucher
-    );
+    const newPrice = calculateDiscountedPrice(totalPrice, voucher);
     setDiscountedPrice(newPrice);
   };
 
@@ -157,7 +176,10 @@ export default function Payment() {
         returnUrl: `${scheme}://transaction?status=success`,
         cancelUrl: `${scheme}://transaction?status=cancel`,
       };
-      const paymentResponse = await OrderService.processPayment(orderId, paymentData);
+      const paymentResponse = await OrderService.processPayment(
+        orderId,
+        paymentData
+      );
 
       if (paymentResponse.success) {
         // Navigate to the payment URL or show the QR code
@@ -173,16 +195,18 @@ export default function Payment() {
           Alert.alert("QR Code", paymentResponse.data.qrCode);
         }
       } else {
-        Alert.alert("Error", paymentResponse.message || "Không thể tạo link thanh toán");
+        Alert.alert(
+          "Error",
+          paymentResponse.message || "Không thể tạo link thanh toán"
+        );
       }
-
     } catch (error: any) {
       console.error("Payment Error:", {
         message: error.message,
         response: error.response?.data,
       });
 
-      setPaymentDialog(false)
+      setPaymentDialog(false);
     }
   };
 
@@ -192,7 +216,7 @@ export default function Payment() {
         await dispatch(getAllVouchersThunk());
         setactiveVoucher(vouchers.filter((voucher: any) => voucher.is_active));
       } catch (error) {
-        console.error('Error fetching vouchers:', error);
+        console.error("Error fetching vouchers:", error);
       }
     };
 
@@ -212,13 +236,13 @@ export default function Payment() {
   }, [navigation]);
 
   useEffect(() => {
-    if (!products.length) {
+    if (!products || products.length === 0) {
       router.back();
       return;
     }
 
-    setTotalPrice(totalAmount);
-    setDiscountedPrice(totalAmount);
+    setTotalPrice(totalAmount || 0);
+    setDiscountedPrice(totalAmount || 0);
 
     return () => {
       dispatch(clearOrder());
@@ -229,10 +253,13 @@ export default function Payment() {
     <SafeAreaView style={{ flex: 1 }}>
       <AppBar back title={i18n.t("checkout.title")} />
       <View flex backgroundColor={Colors.white}>
-        <ScrollView style={{ paddingHorizontal: 20 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={{ paddingHorizontal: 20 }}
+          showsVerticalScrollIndicator={false}
+        >
           <PaymentAddress
             isPayment
-            onPress={() => router.push('/(app)/address')}
+            onPress={() => router.push("/(app)/address")}
             selectAddress={selectedAddress}
           />
 
@@ -260,15 +287,10 @@ export default function Payment() {
 
           <View marginV-10 gap-10>
             <Text h2_bold>{i18n.t("checkout.product")}</Text>
-            {products.map((product: OrderProduct) => (
-              <PaymentProductItem
-                key={product.id}
-                product={product}
-              />
+            {products.map((product: Product) => (
+              <PaymentProductItem key={product.id} product={product} />
             ))}
           </View>
-
-
         </ScrollView>
 
         <View
@@ -286,15 +308,13 @@ export default function Payment() {
           }}
         >
           <View>
-            <View row centerV spread >
+            <View row centerV spread>
               <Text h3_bold>{i18n.t("checkout.subtotal")}</Text>
-              <Text h3_bold>
-                {formatCurrency({ price: totalPrice })}
-              </Text>
+              <Text h3_bold>{formatCurrency({ price: totalPrice })}</Text>
             </View>
             <View row centerV spread marginT-10>
               <Text h3_bold>{i18n.t("checkout.voucher")}</Text>
-              <Text h3>{selectedVoucher ? selectedVoucher.code : ''}</Text>
+              <Text h3>{selectedVoucher ? selectedVoucher.code : ""}</Text>
             </View>
             <View row centerV spread marginV-10>
               <Text h3_bold>{i18n.t("checkout.total_payment")}</Text>
@@ -318,7 +338,6 @@ export default function Payment() {
               </View>
             </View>
 
-
             <Button
               label={i18n.t("checkout.payment").toString()}
               labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
@@ -328,18 +347,21 @@ export default function Payment() {
               borderRadius={13}
               onPress={() => handlePayment()}
             />
-
           </View>
         </View>
         <AppDialog
           visible={paymentDialog}
           title={"Xác nhận xóa sản phẩm"}
-          description={"Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"}
+          description={
+            "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
+          }
           closeButtonLabel={i18n.t("common.cancel")}
           confirmButtonLabel={"Xóa"}
           severity="info"
           onClose={() => setPaymentDialog(false)}
         />
+
+        <AppDialog {...dialogConfig} onClose={hideDialog} />
       </View>
     </SafeAreaView>
   );
@@ -363,5 +385,5 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 20,
     marginBottom: 10,
-  }
+  },
 });
