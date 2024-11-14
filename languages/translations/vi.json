@@ -479,6 +479,7 @@
     "cancel_order": "Huỷ đơn hàng"
   },
   "appointment": {
+    "title": "Lịch hẹn",
     "scheduled": "Lịch đã đặt",
     "all": "Tất cả",
     "upcoming": "Sắp tới",

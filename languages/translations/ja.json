@@ -478,8 +478,9 @@
     "cancel_order": "注文をキャンセル"
   },
   "appointment": {
+    "title": "予約",
     "scheduled": "予定",
-    "all": "すべて",
+    "all": "すべて", 
     "upcoming": "今後",
     "completed": "完了",
     "cancelled": "キャンセル",

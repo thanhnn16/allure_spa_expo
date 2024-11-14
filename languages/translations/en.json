@@ -378,6 +378,7 @@
     "order_code": "Order Code"
   },
   "appointment": {
+    "title": "Appointment",
     "scheduled": "Scheduled",
     "all": "All",
     "upcoming": "Upcoming",
