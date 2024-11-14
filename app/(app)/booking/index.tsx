@@ -15,13 +15,21 @@ import { Calendar } from "react-native-calendars";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import moment from "moment";
 import AppButton from "@/components/buttons/AppButton";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import { User } from "@/types/user.type";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import {
+  getTimeSlots,
+  createBooking,
+} from "@/redux/features/booking/bookingThunk";
+import { resetBookingState } from "@/redux/features/booking/bookingSlice";
 import Octicons from "@expo/vector-icons/Octicons";
+import { User } from "@/types/user.type";
 
 const BookingPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { timeSlots, loading, error, bookingSuccess } = useSelector(
+    (state: RootState) => state.booking
+  );
   const user: User = useSelector((state: RootState) => state.auth.user);
   const windowWidth = Dimensions.get("window").width;
   const padding = 24;
@@ -36,7 +44,6 @@ const BookingPage = () => {
   const [selectedTime, setSelectedTime] = useState<number>();
   const [note, setNote] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [timeSlots, setTimeSlots] = useState([]);
   const [timeString, setTimeString] = useState<string>("");
   const [slot, setSlot] = useState<number>(0);
   const [success, setSuccess] = useState<boolean>(false);
@@ -46,19 +53,8 @@ const BookingPage = () => {
   };
 
   useEffect(() => {
-    const getTimeSlots = async () => {
-      try {
-        const res = await AxiosInstance().get(
-          `time-slots/available?date=${selectedDate}`
-        );
-        const data = res?.data.data;
-        setTimeSlots(data);
-      } catch (error: any) {
-        console.log("Get time slots error", error.data);
-      }
-    };
-    getTimeSlots();
-  }, [selectedDate]);
+    dispatch(getTimeSlots(selectedDate));
+  }, [selectedDate, dispatch]);
 
   useMemo(() => {
     timeSlots.filter((item: any) => {
@@ -75,46 +71,32 @@ const BookingPage = () => {
     setShowModal(true);
   };
   const handleBooking = async () => {
-    try {
-      const body = {
-        user_id: user?.id,
-        service_id: Number(service_id),
-        staff_id: null,
-        slots: Number(slot),
-        appointment_date: selectedDate,
-        time_slot_id: Number(selectedTime),
-        appointment_type: "consultation",
-        status: "pending",
-        note: note === "" ? "Không có ghi chú" : note,
-      };
+    const bookingData = {
+      service_id: Number(service_id),
+      staff_id: null,
+      slots: Number(slot),
+      appointment_date: selectedDate,
+      time_slot_id: Number(selectedTime),
+      appointment_type: "consultation",
+      status: "pending",
+      note: note === "" ? "Không có ghi chú" : note,
+    };
 
-      const res = await AxiosInstance().post("/appointments", body);
-
-      if (res?.data?.status === 422) {
-        alert(res.data.message);
-        return;
-      }
-
-      if (res?.status === 200 || res?.status === 201) {
-        setShowModal(false);
-        setSuccess(true);
-      }
-    } catch (error: any) {
-      // Xử lý lỗi chi tiết hơn
-      const errorMessage =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        error.message ||
-        "Có lỗi xảy ra khi đặt lịch";
-
-      console.log("Booking error:", {
-        message: errorMessage,
-        details: error.response?.data,
-      });
-
-      alert(errorMessage);
-    }
+    dispatch(createBooking(bookingData));
   };
+
+  useEffect(() => {
+    if (bookingSuccess) {
+      setShowModal(false);
+      setSuccess(true);
+      dispatch(resetBookingState());
+    }
+    if (error) {
+      alert(error);
+      dispatch(resetBookingState());
+    }
+  }, [bookingSuccess, error, dispatch]);
+
   const renderTimeSlot = (time: any) => {
     return (
       <TouchableOpacity
@@ -142,7 +124,7 @@ const BookingPage = () => {
             )}`}
           </Text>
           <Text color={selectedTime === time.id ? "#F9FAFB" : "#000000"}>
-            Còn trống {time.max_bookings} chỗ
+            Còn trống {time.available_slots} chỗ
           </Text>
         </View>
       </TouchableOpacity>
@@ -272,6 +254,7 @@ const BookingPage = () => {
                   <TouchableOpacity
                     onPress={() => setSlot(2)}
                     style={styles.timeSlotContainer}
+                    disabled={selectedTime.available_slots === 1}
                   >
                     <View
                       center

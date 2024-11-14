@@ -17,6 +17,7 @@ import favoriteReducer from './features/favorite/favoritesReducer';
 import addressReducer from './features/address/addressSlice';
 import orderReducer from './features/order/orderSlice';
 import voucherReducer from "./features/voucher/voucherSlice";
+import bookingReducer from './features/booking/bookingSlice';
 
 const persistConfig = {
     key: 'root',
@@ -41,7 +42,8 @@ const rootReducer: any = combineReducers({
     favorite: favoriteReducer,
     address: addressReducer,
     order: orderReducer,
-    voucher: voucherReducer
+    voucher: voucherReducer,
+    booking: bookingReducer,
 })
 
 
