@@ -70,7 +70,9 @@ const ProfilePage = () => {
                   height={20}
                   source={require("@/assets/images/allureCoin.png")}
                 />
-                <Text h3_bold black>{user?.loyalty_points || 0}</Text>
+                <Text h3_bold black>
+                  {user?.loyalty_points || 0}
+                </Text>
               </View>
 
               <TouchableOpacity
@@ -115,8 +117,8 @@ const ProfilePage = () => {
                 onPress: () => handleNavigation("/(app)/favorite"),
               },
               {
-                title: "Voucher",
-                description: "Xem tất cả voucher của tui",
+                title: i18n.t("profile.voucher"),
+                description: i18n.t("profile.voucher_description"),
                 icon: VoucherIcon,
                 onPress: () => handleNavigation("/(app)/voucher"),
               },
@@ -125,12 +127,6 @@ const ProfilePage = () => {
                 description: i18n.t("profile.address_list"),
                 icon: require("@/assets/images/location.png"),
                 onPress: () => handleNavigation("/(app)/address"),
-              },
-              {
-                title: i18n.t("profile.purchase_policy"),
-                description: i18n.t("profile.policy_description"),
-                icon: require("@/assets/images/chamhoi.png"),
-                onPress: () => console.log("Purchase Policy"),
               },
               {
                 title: isGuest
@@ -158,7 +154,9 @@ const ProfilePage = () => {
                   <View flex gap-5>
                     <Text h3_bold>{item.title}</Text>
                     {item.description ? (
-                      <Text h3 gray>{item.description}</Text>
+                      <Text h3 gray>
+                        {item.description}
+                      </Text>
                     ) : null}
                   </View>
                   <Image source={ArrowRight} />
@@ -171,6 +169,11 @@ const ProfilePage = () => {
           </Text>
           <Card width={"100%"} marginT-20>
             {[
+              {
+                title: i18n.t("profile.purchase_policy"),
+                icon: require("@/assets/images/chamhoi.png"),
+                onPress: () => console.log("Purchase Policy"),
+              },
               {
                 title: i18n.t("profile.help_support"),
                 icon: require("@/assets/images/ring.png"),

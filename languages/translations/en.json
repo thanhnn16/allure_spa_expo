@@ -113,6 +113,7 @@
     "add_to_cart": "Add to cart",
     "buy_now": "Buy now",
     "purchases": "purchases",
+    "available": "available",
     "description": {
       "brand": "Brand",
       "usage": "Usage",
@@ -162,7 +163,9 @@
     "history_login": "Login History",
     "dowload_information": "Download Information",
     "delete_account": "Delete Account",
-    "change_info": "Change Information"
+    "change_info": "Change Information",
+    "voucher": "Voucher",
+    "voucher_description": "View all vouchers of me"
   },
   "settings": {
     "title": "Settings",
@@ -375,6 +378,7 @@
     "order_code": "Order Code"
   },
   "appointment": {
+    "title": "Appointment",
     "scheduled": "Scheduled",
     "all": "All",
     "upcoming": "Upcoming",

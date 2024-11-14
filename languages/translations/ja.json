@@ -102,7 +102,20 @@
       "product_description": "商品説明",
       "reviews": "レビュー",
       "add_to_cart": "カートに追加",
-      "buy_now": "今すぐ購入"
+      "buy_now": "今すぐ購入",
+      "purchases": "購入済み",
+      "available": "利用可能",
+      "description": {
+        "brand": "ブランド",
+        "usage": "使用法",
+        "benefit": "利点",
+        "ingredient": "成分",
+        "directions": "使用方法",
+        "storage": "保管方法",
+        "product_notes": "商品の注意事項"
+      },
+      "no_info": "情報がありません",
+      "title": "製品の詳細"
     },
     "serviceDetail": {
       "book_now": "今すぐ予約"
@@ -141,7 +154,9 @@
       "history_login": "ログイン履歴",
       "dowload_information": "情報をダウンロード",
       "delete_account": "アカウントを削除",
-      "change_info": "情報を変更"
+      "change_info": "情報を変更",
+      "voucher": "クーポン",
+      "voucher_description": "自分のクーポンを見る"
     },
     "voucher": {
       "title": "クーポン",
@@ -463,6 +478,7 @@
     "cancel_order": "注文をキャンセル"
   },
   "appointment": {
+    "title": "予約",
     "scheduled": "予定",
     "all": "すべて",
     "upcoming": "今後",
