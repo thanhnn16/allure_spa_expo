@@ -401,5 +401,11 @@
     "total": "Total",
     "no_order": "You have no orders",
     "buy_more": "Explore more products"
+  },
+  "favorite": {
+    "title": "Favorite",
+    "products": "Products",
+    "services": "Services",
+    "empty": "No products in the favorite list"
   }
 }

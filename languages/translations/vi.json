@@ -502,5 +502,11 @@
     "total": "Tổng cộng",
     "no_order": "Không có đơn hàng nào cả!",
     "buy_more": "Khám phá thêm sản phẩm khác nhé"
+  },
+  "favorite": {
+    "title": "Yêu thích",
+    "products": "Sản phẩm",
+    "services": "Dịch vụ",
+    "empty": "Không có sản phẩm nào trong danh sách yêu thích"
   }
 }

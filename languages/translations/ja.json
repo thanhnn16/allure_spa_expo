@@ -501,5 +501,11 @@
     "total": "合計",
     "no_order": "注文がありません",
     "buy_more": "もっと見る"
+  },
+  "favorite": {
+    "title": "お気に入り",
+    "products": "製品",
+    "services": "サービス",
+    "empty": "お気に入りのリストに製品がありません"
   }
 }
