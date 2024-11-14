@@ -2,13 +2,14 @@ import i18n from "@/languages/i18n";
 import { OrderItem, Orders } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
-import { View, Image, Text, TouchableOpacity, Colors, SkeletonView } from "react-native-ui-lib"
+import { View, Image, Text, TouchableOpacity, Colors, SkeletonView, Button } from "react-native-ui-lib"
 
 interface OrderProductItemProps {
   order: Orders;
 }
 
 const OrderProductItem = ({ order }: OrderProductItemProps) => {
+
   return (
     <View
       paddingT-10
@@ -46,7 +47,7 @@ const OrderProductItem = ({ order }: OrderProductItemProps) => {
           )}
           {order.status === 'completed' ? (
             <TouchableOpacity
-              onPress={() => router.push(`/(app)/transaction/${order.id}`)}
+              onPress={() => router.push(`/transaction/${order.id}`)}
               style={{ padding: 5 }}
             >
               <Text h3_bold
@@ -65,9 +66,9 @@ const OrderProductItem = ({ order }: OrderProductItemProps) => {
         <View key={item.id} paddingH-15 paddingB-10>
           <TouchableOpacity onPress={() => router.push('/(app)/transaction/detail')}>
             <View row spread marginT-10>
-            {item.product?.media?.[0]?.full_url ? (
+            {item.product.media && item.product.media.length > 0 ? (
               <Image
-                source={{ uri: item.product?.media[0].full_url }}
+                source={{ uri: item.product.media[0].full_url }}
                 resizeMode={'fit'}
                 style={{ width: 100, height: 100, borderRadius: 13 }}
               />

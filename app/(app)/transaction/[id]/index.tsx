@@ -35,7 +35,6 @@ import PaymentAddress from "@/components/payment/PaymentAddress";
 import TimelineList from "@/components/payment/TimelineList";
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
 import PaymentPicker from "@/components/payment/PaymentPicker";
-import { paymentMethods } from "../check-out";
 import { getOrderThunk } from "@/redux/features/order/getOrderThunk";
 import { Orders } from "@/types/order.type";
 import OrderProductItem from "@/components/order/OrderProductItem";
@@ -125,8 +124,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Detail() {
+export default function DetailTransaction() {
   const { id } = useLocalSearchParams();
+  console.log(id);
   const dispatch = useDispatch();
 
   const { orders, isLoading } = useSelector((
@@ -144,8 +144,6 @@ export default function Detail() {
 
     fetchOrders();
   }, [dispatch]);
-
-  console.log(orders);
 
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -200,9 +198,7 @@ export default function Detail() {
             />
           </View>
 
-          {/* <TimelineList
-            state={detailOrder.}
-          /> */}
+          <TimelineList state={activeDeliveryStatus} />
           <PaymentAddress />
           <View marginV-10 gap-10>
             <Text h2_bold>{i18n.t("checkout.payment_method")}</Text>

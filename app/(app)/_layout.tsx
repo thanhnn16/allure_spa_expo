@@ -26,6 +26,7 @@ const AppLayout = () => {
     <Stack screenOptions={{ headerShown: false }} initialRouteName={"(tabs)"}>
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="transaction/index" />
+      <Stack.Screen name="transaction/[id]/index" />
       <Stack.Screen name="product/[id]/index" />
       <Stack.Screen name="search/index" />
       <Stack.Screen name="favorite/index" />
