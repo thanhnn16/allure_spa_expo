@@ -93,6 +93,10 @@ class FirebaseService {
         await this.showAppointmentNotification(remoteMessage);
         return remoteMessage;
       }
+      if (remoteMessage.data?.type === 'order') {
+        await this.showOrderNotification(remoteMessage);
+      }
+      return remoteMessage;
     });
   }
 
@@ -147,6 +151,32 @@ class FirebaseService {
       });
     } catch (error) {
       console.error('Error showing chat notification:', error);
+    }
+  }
+
+  async showOrderNotification(remoteMessage: any) {
+    try {
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      
+      let title = remoteMessage.notification?.title || "Thông báo đơn hàng";
+      let body = remoteMessage.notification?.body;
+      
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            ...remoteMessage.data,
+            uniqueId,
+            type: 'order'
+          },
+          sound: 'default',
+          priority: Notifications.AndroidNotificationPriority.HIGH,
+        },
+        trigger: null,
+      });
+    } catch (error) {
+      console.error('Error showing order notification:', error);
     }
   }
 }
