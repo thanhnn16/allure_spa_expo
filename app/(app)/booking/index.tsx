@@ -254,7 +254,10 @@ const BookingPage = () => {
                   <TouchableOpacity
                     onPress={() => setSlot(2)}
                     style={styles.timeSlotContainer}
-                    disabled={selectedTime.available_slots === 1}
+                    disabled={
+                      timeSlots.find((item: any) => item.id === selectedTime)
+                        ?.available_slots === 1
+                    }
                   >
                     <View
                       center
