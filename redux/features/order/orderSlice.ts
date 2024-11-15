@@ -124,5 +124,5 @@ const orderSlice = createSlice({
     },
 });
 
-export const { clearOrder, setOrderProducts, resetOrders } = orderSlice.actions;
+export const { clearOrder, resetOrders, setOrderProducts } = orderSlice.actions;
 export default orderSlice.reducer;
