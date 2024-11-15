@@ -10,9 +10,18 @@ export default function InvoiceFailed() {
   const params = useLocalSearchParams<{
     reason: string;
     type: "cancel" | "failed";
+    payment_method: string;
   }>();
 
   const getContent = () => {
+    if (params.payment_method === 'cash') {
+      return {
+        title: i18n.t("invoice.order_failed"),
+        message: params.reason || i18n.t("invoice.order_failed_message"),
+        icon: "error",
+        iconColor: Colors.red30,
+      };
+    }
     if (params.type === "cancel") {
       return {
         title: i18n.t("invoice.payment_cancelled"),
@@ -36,7 +45,6 @@ export default function InvoiceFailed() {
       <AppBar title={content.title} />
 
       <View flex padding-20 center>
-        {/* Icon */}
         <MaterialIcons
           name={content.icon as any}
           size={120}
@@ -44,7 +52,6 @@ export default function InvoiceFailed() {
           style={{ marginBottom: 30 }}
         />
 
-        {/* Message */}
         <Text h2 center marginB-20>
           {content.title}
         </Text>
@@ -52,7 +59,6 @@ export default function InvoiceFailed() {
           {content.message}
         </Text>
 
-        {/* Button */}
         <View absB bottom-20 left-20 right-20>
           <AppButton
             title={i18n.t("common.back_to_home")}

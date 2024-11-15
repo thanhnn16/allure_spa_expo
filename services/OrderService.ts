@@ -20,20 +20,20 @@ class OrderService {
         return response.data;
     }
 
-    async processPayment(orderId: string, paymentData: { 
-        returnUrl: string; 
-        cancelUrl: string; 
+    async processPayment(orderId: string, paymentData: {
+        returnUrl: string;
+        cancelUrl: string;
     }): Promise<PaymentLinkResponse> {
         try {
-            const response = await AxiosInstance().post(`/orders/${orderId}/payment`, paymentData);
-
-            if (!response.data.success) {
-                throw new Error(response.data.message || 'Không thể tạo link thanh toán');
-            }
+            const response = await AxiosInstance().post(`/orders/${orderId}/payment-link`, {
+                returnUrl: paymentData.returnUrl,
+                cancelUrl: paymentData.cancelUrl
+            });
 
             return response.data;
         } catch (error: any) {
-            throw new Error(error.response?.data?.message || 'Không thể tạo link thanh toán');
+            console.error('Payment Error:', error.response?.data);
+            throw error;
         }
     }
 }

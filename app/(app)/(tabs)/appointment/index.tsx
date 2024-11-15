@@ -72,6 +72,7 @@ const ScheduledPage = () => {
         appointment.status === 'pending' ? i18n.t('appointment.pending') :
             appointment.status === 'cancelled' ? i18n.t('appointment.cancelled') :
                 i18n.t('appointment.confirmed'),
+
   }));
 
   const renderItem = (item: { id: number; name: string; status?: string }, index: number) => {
@@ -112,6 +113,7 @@ const ScheduledPage = () => {
             </View>
           </View>
         </View>
+      </View>
     );
   };
 
@@ -129,6 +131,19 @@ const ScheduledPage = () => {
                   keyExtractor={(item) => item.id.toString()}
         />
       </View>
+      <ScrollView
+        horizontal
+        style={styles.scrollView}
+        showsHorizontalScrollIndicator={false}
+      >
+        {items.map((item, index) => renderItem(item, index))}
+      </ScrollView>
+      <FlatList
+        data={flatListItems}
+        renderItem={renderFlatListItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </View>
   );
 };
 
@@ -138,15 +153,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   text: {
-    color: '#717658',
+    color: "#717658",
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
+    fontFamily: "Inter-Bold",
   },
   bannerContainer: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     marginBottom: 20,
     padding: 20,
     borderRadius: 10,
@@ -164,22 +179,22 @@ const styles = StyleSheet.create({
     width: 350,
     height: 159,
     borderRadius: 18,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   bannerText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
-    color: '#717658',
+    color: "#717658",
     marginTop: 5,
   },
   infoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 5,
   },
   priceSpace: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     flex: 1,
   },
   icon: {
@@ -189,29 +204,29 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: '#717658',
-    fontWeight: 'bold',
+    color: "#717658",
+    fontWeight: "bold",
   },
   priceText: {
-    color: 'red',
+    color: "red",
   },
   blackText: {
-    color: 'black',
+    color: "black",
   },
   underlineText: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   circleIcon: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 5,
   },
   circleIconText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
   },
   scrollView: {
@@ -223,42 +238,42 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 10,
     borderWidth: 1,
     marginBottom: 7,
   },
   selectedItem: {
-    backgroundColor: '#717658',
-    borderColor: '#717658',
+    backgroundColor: "#717658",
+    borderColor: "#717658",
   },
   unselectedItem: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#717658',
+    backgroundColor: "#FFFFFF",
+    borderColor: "#717658",
   },
   itemText: {
     fontSize: 15,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   selectedItemText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   unselectedItemText: {
-    color: '#717658',
+    color: "#717658",
   },
   flatListItem: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   flatListItemText: {
     fontSize: 18,
   },
   completedStatus: {
-    color: '#77891F',
+    color: "#77891F",
   },
   pendingStatus: {
-    color: '#6B7079',
+    color: "#6B7079",
   },
 });

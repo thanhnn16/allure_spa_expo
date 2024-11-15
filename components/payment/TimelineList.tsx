@@ -5,11 +5,9 @@ import i18n from '@/languages/i18n';
 
 interface TimelineListProps {
     state: string;
-    deliveryDate?: string;
-    delivedDate?: string;
 }
 
-const TimelineList = ({ state, deliveryDate, delivedDate }: TimelineListProps) => {
+const TimelineList = ({ state }: TimelineListProps) => {
 
     const handleTimelineList = (state: string) => {
         if (state === 'pending') {
@@ -18,7 +16,7 @@ const TimelineList = ({ state, deliveryDate, delivedDate }: TimelineListProps) =
                     <TimelineItem current currentTitle={i18n.t("transaction_detail.timeline.pending")} state="CURRENT" />
                     <TimelineItem title={i18n.t("transaction_detail.timeline.confirmed")} state="NEXT" />
                     <TimelineItem title={i18n.t("transaction_detail.timeline.delivering")} state="NEXT" />
-                    <TimelineItem title={i18n.t("transaction_detail.timeline.completes")} state="NEXT" />
+                    <TimelineItem title={i18n.t("transaction_detail.timeline.completed")} state="NEXT" />
                 </View>
             )
         } else if (state === 'confirmed') {
@@ -27,7 +25,7 @@ const TimelineList = ({ state, deliveryDate, delivedDate }: TimelineListProps) =
                     <TimelineItem title={i18n.t("transaction_detail.timeline.pending")} state="SUCCESS" />
                     <TimelineItem current currentTitle={i18n.t("transaction_detail.timeline.confirmed")} state="CURRENT" />
                     <TimelineItem title={i18n.t("transaction_detail.timeline.delivering")} state="NEXT" />
-                    <TimelineItem title={i18n.t("transaction_detail.timeline.completes")} state="NEXT" />
+                    <TimelineItem title={i18n.t("transaction_detail.timeline.completed")} state="NEXT" />
                 </View>
             )
         } else if (state === 'delivering') {
@@ -35,27 +33,17 @@ const TimelineList = ({ state, deliveryDate, delivedDate }: TimelineListProps) =
                 <View>
                     <TimelineItem title={i18n.t("transaction_detail.timeline.pending")} state="SUCCESS" />
                     <TimelineItem title={i18n.t("transaction_detail.timeline.confirmed")} state="SUCCESS" />
-                    <View
-                        centerV
-                    >
-                        <TimelineItem current currentTitle={i18n.t("transaction_detail.timeline.delivering")} state="CURRENT" />
-                        <Text h3_bold>{i18n.t("transaction_detail.timeline.date_delivery")} <Text h3>{deliveryDate}</Text></Text>
-                    </View>
-                    <TimelineItem title={i18n.t("transaction_detail.timeline.completes")} state="NEXT" />
+                    <TimelineItem current currentTitle={i18n.t("transaction_detail.timeline.delivering")} state="CURRENT" />
+                    <TimelineItem title={i18n.t("transaction_detail.timeline.completed")} state="NEXT" />
                 </View>
             )
-        } else if (state === 'completes') {
+        } else if (state === 'completed') {
             return (
                 <View>
                     <TimelineItem title={i18n.t("transaction_detail.timeline.pending")} state="SUCCESS" />
                     <TimelineItem title={i18n.t("transaction_detail.timeline.confirmed")} state="SUCCESS" />
                     <TimelineItem title={i18n.t("transaction_detail.timeline.delivering")} state="SUCCESS" />
-                    <View
-                        centerV
-                    >
-                        <TimelineItem current currentTitle={i18n.t("transaction_detail.timeline.completes")} state="SUCCESS" />
-                        <Text h3_bold>{i18n.t("transaction_detail.timeline.date_delivered")} <Text h3>{delivedDate}</Text></Text>
-                    </View>
+                    <TimelineItem current currentTitle={i18n.t("transaction_detail.timeline.completed")} state="SUCCESS" />
                 </View>
             )
         } else {

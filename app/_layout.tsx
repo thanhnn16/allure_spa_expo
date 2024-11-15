@@ -14,7 +14,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
-import { useSegments } from 'expo-router';
+import { useSegments } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 interface ErrorFallbackProps {
@@ -32,7 +32,6 @@ export default function RootLayout() {
     "AlexBrush-Regular": require("@/assets/fonts/AlexBrush-Regular.ttf"),
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
-
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -59,10 +58,13 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <PersistGate loading={null} persistor={persistor}>
           <LanguageManager>
-            {segments[0] === '(auth)' ? (
+            {segments[0] === "(auth)" ? (
               <Slot />
             ) : (
-              <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "white" }}>
+              <SafeAreaView
+                edges={["top"]}
+                style={{ flex: 1, backgroundColor: "white" }}
+              >
                 <StatusBar backgroundColor="transparent" />
                 <Slot />
               </SafeAreaView>

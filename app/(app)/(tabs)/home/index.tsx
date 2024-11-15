@@ -20,8 +20,6 @@ import Animated, {
 import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
-import NotificationIcon from "@/assets/icons/notification_bing.svg";
-import CartIcon from "@/assets/icons/shopping_bag.svg";
 import WeatherView from "@/components/home/WeatherView";
 import { useAuth } from "@/hooks/useAuth";
 import i18n from "@/languages/i18n";
@@ -33,6 +31,7 @@ import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
+import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -63,6 +62,10 @@ const HomePage = () => {
     Dimensions.get("window");
   const { products } = useSelector((state: RootState) => state.product);
 
+  const unreadCount = useSelector(
+    (state: RootState) => state.notification.unreadCount
+  );
+
   useMemo(() => {
     if (hours < 12) {
       setGreeting(i18n.t("greeting.morning"));
@@ -79,6 +82,10 @@ const HomePage = () => {
 
   useEffect(() => {
     dispatch(getAllProductsThunk());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchUnreadCount());
   }, [dispatch]);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -266,13 +273,15 @@ const HomePage = () => {
               onPress={() => {
                 router.push("notification" as Href<string>);
               }}
-              source={NotificationIcon}
+              iconName="notifications-outline"
+              showBadge={unreadCount > 0}
+              badgeCount={unreadCount}
             />
             <HomeHeaderButton
               onPress={() => {
                 router.push("cart" as Href<string>);
               }}
-              source={CartIcon}
+              iconName="cart-outline"
             />
           </View>
 

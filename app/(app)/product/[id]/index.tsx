@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Colors,
 } from "react-native-ui-lib";
 import ImageView from "react-native-image-viewing";
 import { SkeletonView } from "react-native-ui-lib";
@@ -54,7 +55,6 @@ export default function DetailsScreen() {
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
   const [visible, setIsVisible] = useState(false);
-  const [isFavorite, setFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const { isGuest } = useAuth();
@@ -121,9 +121,9 @@ export default function DetailsScreen() {
         throw new Error("Response is undefined");
       }
       if (response.status === "added") {
-        setFavorite(true);
+        setProduct({ ...product, is_favorite: true });
       } else {
-        setFavorite(false);
+        setProduct({ ...product, is_favorite: false });
       }
     } catch (error) {
       console.log("Error toggling favorite:", error);
@@ -131,7 +131,7 @@ export default function DetailsScreen() {
   };
 
   const renderHeartIcon = () => {
-    if (isFavorite) {
+    if (product?.is_favorite) {
       return <Image source={HeartFullIcon} size={24} />;
     }
     return <Image source={HeartIcon} size={24} />;
@@ -200,11 +200,13 @@ export default function DetailsScreen() {
   const handlePressAnim = () => {
     "worklet";
     runOnJS(setShowAnimatedImage)(true);
-    translateY.value = withTiming(-Dimensions.get("window").height / 2, {
-      duration: 1500,
+    translateY.value = withTiming(-Dimensions.get("window").height * 0.7, {
+      duration: 1300,
       easing: Easing.inOut(Easing.ease),
+    }, () => {
+      runOnJS(setShowAnimatedImage)(false);
     });
-    translateX.value = withTiming(Dimensions.get("window").width / 5, {
+    translateX.value = withTiming(Dimensions.get("window").width *0.5, {
       duration: 1500,
       easing: Easing.inOut(Easing.ease),
     });
@@ -220,18 +222,10 @@ export default function DetailsScreen() {
       },
       () => {
         runOnJS(setShowAnimatedImage)(false);
-        translateY.value = withTiming(0, {
-          duration: 0,
-        });
-        translateX.value = withTiming(0, {
-          duration: 0,
-        });
-        scale.value = withTiming(2, {
-          duration: 0,
-        });
-        opacity.value = withTiming(1, {
-          duration: 0,
-        });
+        translateY.value = 0;
+        translateX.value = 0;
+        scale.value = 2;
+        opacity.value = 1;
       }
     );
   };
@@ -282,15 +276,6 @@ export default function DetailsScreen() {
                   </Pressable>
                 ))}
               </Carousel>
-              {showAnimatedImage && (
-                <Animated.Image
-                  source={{ uri: images[0].uri }}
-                  style={[
-                    { width: 150, height: 75, alignSelf: "flex-end" },
-                    animatedStyle,
-                  ]}
-                />
-              )}
             </View>
           )}
           <ImageView
@@ -341,8 +326,8 @@ export default function DetailsScreen() {
                 </View>
                 <View flex row right>
                   <Text h3_medium>
-                    {" "}
-                    +99 {i18n.t("productDetail.purchases")}
+                    {product?.rating_summary.total_ratings}{" "}
+                    {i18n.t("productDetail.reviews")}
                   </Text>
                 </View>
               </View>
@@ -379,6 +364,24 @@ export default function DetailsScreen() {
             setQuantity={setQuantity}
           />
         </ScrollView>
+        {showAnimatedImage && (
+          <View 
+          backgroundColor={Colors.transparent}
+          style={{ 
+            position: "absolute", 
+            left: windowWidth * 0.35, 
+            bottom: 130
+          }}
+          >
+            <Animated.Image
+            source={{ uri: images[0].uri }}
+            style={[
+              { width: 150, height: 75, alignSelf: "flex-end" },
+              animatedStyle,
+            ]}
+          />
+          </View>
+        )}
         <ProductBottomComponent
           isLoading={isLoading}
           product={product}
