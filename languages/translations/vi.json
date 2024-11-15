@@ -410,7 +410,9 @@
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
     "update_address": "Sửa địa chỉ",
-    "type": "Loại địa chỉ"
+    "type": "Loại địa chỉ",
+    "customer_name": "Tên khách hàng",
+    "phone_number": "Điện thoại"
   },
   "date": {
     "formats": {

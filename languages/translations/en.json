@@ -310,7 +310,9 @@
     "province": "Province",
     "district": "District",
     "update_address": "Update Address",
-    "type": "Address Type"
+    "type": "Address Type",
+    "customer_name": "Customer Name",
+    "phone_number": "Phone Number"
   },
   "date": {
     "formats": {

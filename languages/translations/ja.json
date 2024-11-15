@@ -410,7 +410,9 @@
     "province": "都道府県",
     "district": "区市町村",
     "update_address": "住所を更新",
-    "type": "住所タイプ"
+    "type": "住所タイプ",
+    "customer_name": "顧客名",
+    "phone_number": "電話番号"
   },
   "date": {
     "formats": {
