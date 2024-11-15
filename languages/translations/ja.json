@@ -456,7 +456,8 @@
     "cash": "現金",
     "credit_card": "クレジットカード",
     "bank_transfer": "銀行振り込み",
-    "no_address": "住所がありません"
+    "no_address": "住所がありません",
+    "delivery_address": "配達先住所"
   },
   "transaction": {
     "payment_success": "支払い成功",

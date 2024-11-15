@@ -456,7 +456,8 @@
     "cash": "Tiền mặt",
     "credit_card": "Thẻ tín dụng",
     "bank_transfer": "Chuyển khoản ngân hàng",
-    "no_address": "Không có địa chỉ"
+    "no_address": "Không có địa chỉ",
+    "delivery_address": "Địa chỉ giao hàng"
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",

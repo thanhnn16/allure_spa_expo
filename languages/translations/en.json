@@ -356,7 +356,8 @@
     "cash": "Cash",
     "credit_card": "Credit Card",
     "bank_transfer": "Bank Transfer",
-    "no_address": "No address"
+    "no_address": "No address",
+    "delivery_address": "Delivery Address"
   },
   "transaction": {
     "payment_success": "Payment Success",
