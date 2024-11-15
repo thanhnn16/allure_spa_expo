@@ -178,7 +178,6 @@ export default function Checkout() {
 
       // Handle different payment methods
       if (selectedPayment.id === 1) { // Cash payment
-        // Redirect to success page with cash payment details
         router.replace({
           pathname: "/(app)/invoice/success",
           params: {
@@ -188,14 +187,13 @@ export default function Checkout() {
             payment_method: "cash"
           }
         });
-        
         dispatch(clearOrder());
       } else if (selectedPayment.id === 3) { // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
         
         const paymentData = {
-          returnUrl: `${scheme}://transaction?status=success&order_id=${orderId}`,
-          cancelUrl: `${scheme}://transaction?status=cancel&order_id=${orderId}`,
+          returnUrl: `${scheme}://invoice/success?order_id=${orderId}&amount=${discountedPrice}&payment_method=bank_transfer&payment_time=${new Date().toISOString()}`,
+          cancelUrl: `${scheme}://invoice/failed?type=cancel&order_id=${orderId}&payment_method=bank_transfer`,
         };
 
         const paymentResponse = await OrderService.processPayment(orderId, paymentData);
@@ -216,8 +214,6 @@ export default function Checkout() {
       }
     } catch (error: any) {
       console.error("Payment Error:", error);
-      
-      // Redirect to failed page with error details
       router.replace({
         pathname: "/(app)/invoice/failed",
         params: {
