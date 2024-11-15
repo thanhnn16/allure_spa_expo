@@ -422,7 +422,25 @@
     "quantity": "Quantity",
     "total": "Total",
     "no_order": "You have no orders",
-    "buy_more": "Explore more products"
+    "buy_more": "Explore more products",
+    "detail": "Order Detail",
+    "order_id": "Order ID",
+    "items": "Order Items",
+    "payment_info": "Payment Information",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping_info": "Shipping Information",
+    "note": "Note",
+    "cancel": "Cancel Order",
+    "reorder": "Reorder",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "shipping": "Shipping",
+      "delivered": "Delivered",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
   },
   "favorite": {
     "title": "Favorite",

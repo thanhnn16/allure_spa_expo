@@ -11,15 +11,11 @@ export const getOrderByIdThunk = createAsyncThunk(
     async ({ id }: OrderByIdRequest, { rejectWithValue }: any) => {
         try {
             const res = await AxiosInstance().get<OrderResponse>(`/orders/${id}`);
-            console.log("Get order detail res:", res.data);
             if (res.data.success) {
                 return res.data.data;
             }
-
-            console.log('Get order detail failed:', res.data.message);
             return rejectWithValue(res.data.message || 'Get order detail failed');
         } catch (error: any) {
-            console.error('Get order detail error:', error.response?.data.message);
             return rejectWithValue(error.response?.data?.message || "Get order detail failed");
         }
     }

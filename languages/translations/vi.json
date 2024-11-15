@@ -522,7 +522,25 @@
     "quantity": "Số lượng",
     "total": "Tổng cộng",
     "no_order": "Không có đơn hàng nào cả!",
-    "buy_more": "Khám phá thêm sản phẩm khác nhé"
+    "buy_more": "Khám phá thêm sản phẩm khác nhé",
+    "detail": "Chi tiết đơn hàng",
+    "order_id": "Mã đơn hàng",
+    "items": "Sản phẩm",
+    "payment_info": "Thông tin thanh toán",
+    "subtotal": "Tạm tính",
+    "discount": "Giảm giá",
+    "shipping_info": "Thông tin giao hàng",
+    "note": "Ghi chú",
+    "cancel": "Huỷ đơn hàng",
+    "reorder": "Mua lại",
+    "status": {
+      "pending": "Chờ xác nhận",
+      "confirmed": "Đã xác nhận",
+      "shipping": "Đang giao hàng",
+      "delivered": "Đã giao hàng",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã huỷ"
+    }
   },
   "favorite": {
     "title": "Yêu thích",

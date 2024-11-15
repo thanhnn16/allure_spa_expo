@@ -428,12 +428,12 @@
   "invoice": {
     "order_success": "注文が完了しました",
     "order_success_message_cash": "ご注文ありがとうございます。できるだけ早くご連絡させていただきます。",
-    "order_details": "注文詳細", 
+    "order_details": "注文詳細",
     "order_failed": "注文に失敗しました",
     "order_failed_message": "注文の処理中にエラーが発生しました。後でもう一度お試しください。",
     "payment_successful": "支払い完了",
     "payment_success_message": "お支払いが正常に処理されました。",
-    "payment_failed": "支払いに失敗しました", 
+    "payment_failed": "支払いに失敗しました",
     "payment_failed_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。",
     "payment_cancelled": "支払いがキャンセルされました",
     "payment_cancel_message": "この支払い取引をキャンセルしました。",
@@ -522,7 +522,25 @@
     "quantity": "数量",
     "total": "合計",
     "no_order": "注文がありません",
-    "buy_more": "もっと見る"
+    "buy_more": "もっと見る",
+    "detail": "注文詳細",
+    "order_id": "注文ID",
+    "items": "注文商品",
+    "payment_info": "支払い情報",
+    "subtotal": "小計",
+    "discount": "割引",
+    "shipping_info": "配送情報",
+    "note": "注記",
+    "cancel": "注文をキャンセル",
+    "reorder": "再注文",
+    "status": {
+      "pending": "保留中",
+      "confirmed": "確認済み",
+      "shipping": "配達中",
+      "delivered": "配達済み",
+      "completed": "完了",
+      "cancelled": "キャンセル"
+    }
   },
   "favorite": {
     "title": "お気に入り",
