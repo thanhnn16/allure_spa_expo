@@ -423,13 +423,17 @@
     "format": "%n %u"
   },
   "invoice": {
-    "payment_success": "Thanh toán thành công",
-    "payment_details": "Chi tiết thanh toán",
-    "payment_successful": "Thanh toán thành công!",
-    "payment_success_message": "Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận.",
-    "amount": "Số tiền",
-    "payment_time": "Thời gian thanh toán",
-    "order_code": "Mã đơn hàng"
+    "order_success": "Đặt hàng thành công",
+    "order_success_message_cash": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "order_details": "Chi tiết đơn hàng",
+    "order_failed": "Đặt hàng thất bại",
+    "order_failed_message": "Đã có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau.",
+    "payment_successful": "Thanh toán thành công",
+    "payment_success_message": "Thanh toán của bạn đã được xử lý thành công.",
+    "payment_failed": "Thanh toán thất bại",
+    "payment_failed_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau.",
+    "payment_cancelled": "Hủy thanh toán",
+    "payment_cancel_message": "Bạn đã hủy giao dịch thanh toán này."
   },
   "checkout": {
     "title": "Thanh toán",

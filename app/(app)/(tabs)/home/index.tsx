@@ -33,6 +33,7 @@ import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
+import { fetchUnreadCount } from '@/redux/features/notification/notificationThunks';
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -63,6 +64,8 @@ const HomePage = () => {
     Dimensions.get("window");
   const { products } = useSelector((state: RootState) => state.product);
 
+  const unreadCount = useSelector((state: RootState) => state.notification.unreadCount);
+
   useMemo(() => {
     if (hours < 12) {
       setGreeting(i18n.t("greeting.morning"));
@@ -79,6 +82,10 @@ const HomePage = () => {
 
   useEffect(() => {
     dispatch(getAllProductsThunk());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchUnreadCount());
   }, [dispatch]);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -267,6 +274,8 @@ const HomePage = () => {
                 router.push("notification" as Href<string>);
               }}
               source={NotificationIcon}
+              showBadge={unreadCount > 0}
+              badgeCount={unreadCount}
             />
             <HomeHeaderButton
               onPress={() => {

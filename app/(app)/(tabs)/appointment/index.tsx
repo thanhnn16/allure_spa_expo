@@ -6,10 +6,9 @@ import {
   FlatList,
 } from "react-native";
 import { Text, View } from "react-native-ui-lib";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getTimeSlots } from "@/redux/features/booking/bookingThunk";
-import { resetBookingState } from "@/redux/features/booking/bookingSlice";
 import i18n from "@/languages/i18n";
 
 const ScheduledPage = () => {
@@ -21,13 +20,8 @@ const ScheduledPage = () => {
 
   useEffect(() => {
     const date = new Date().toISOString().split("T")[0];
-    console.log("Fetching time slots for date:", date);
     dispatch(getTimeSlots(date));
   }, [dispatch]);
-
-  useEffect(() => {
-    console.log("Component State:", timeSlots);
-  }, [timeSlots]);
 
   const items = [
     { id: 1, name: i18n.t("appointment.all") },

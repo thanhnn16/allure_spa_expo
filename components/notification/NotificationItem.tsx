@@ -8,15 +8,26 @@ import {
   Colors,
 } from "react-native-ui-lib";
 
-type NotificationType = "success" | "cancel" | "reschedule";
+export type NotificationType =
+  | "new_order" // Đơn hàng mới
+  | "order_status" // Cập nhật trạng thái đơn hàng
+  | "new_appointment" // Lịch hẹn mới
+  | "appointment_status" // Cập nhật trạng thái lịch hẹn
+  | "new_review" // Đánh giá mới
+  | "new_message" // Tin nhắn mới
+  | "promotion" // Khuyến mãi
+  | "system" // Thông báo hệ thống
+  | "payment"; // Thanh toán
 
 interface NotificationItemProps {
-  id: string;
+  id: number;
   type: NotificationType;
   title: string;
   content: string;
   time: string;
   isRead: boolean;
+  url?: string;
+  status?: string;
   onPress?: () => void;
 }
 
@@ -24,17 +35,41 @@ const notificationTypeMap: Record<
   NotificationType,
   { backgroundColor: string; icon: any }
 > = {
-  success: {
+  new_order: {
+    backgroundColor: Colors.blue30,
+    icon: require("@/assets/images/home/icons/order.png"),
+  },
+  order_status: {
+    backgroundColor: Colors.blue30,
+    icon: require("@/assets/images/home/icons/order-status.png"),
+  },
+  new_appointment: {
     backgroundColor: Colors.green30,
     icon: require("@/assets/images/home/icons/calendartick.png"),
   },
-  cancel: {
-    backgroundColor: Colors.red30,
-    icon: require("@/assets/images/home/icons/calendarremove.png"),
-  },
-  reschedule: {
-    backgroundColor: Colors.gray30,
+  appointment_status: {
+    backgroundColor: Colors.orange30,
     icon: require("@/assets/images/home/icons/calendaredit.png"),
+  },
+  new_review: {
+    backgroundColor: Colors.yellow30,
+    icon: require("@/assets/images/home/icons/star.png"),
+  },
+  new_message: {
+    backgroundColor: Colors.purple30,
+    icon: require("@/assets/images/home/icons/message.png"),
+  },
+  promotion: {
+    backgroundColor: Colors.red30,
+    icon: require("@/assets/images/home/icons/promotion.png"),
+  },
+  system: {
+    backgroundColor: Colors.gray30,
+    icon: require("@/assets/images/home/icons/system.png"),
+  },
+  payment: {
+    backgroundColor: Colors.green30,
+    icon: require("@/assets/images/home/icons/payment.png"),
   },
 };
 
@@ -46,7 +81,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   isRead,
   onPress,
 }) => {
-  const { backgroundColor, icon } = notificationTypeMap[type];
+  const { backgroundColor, icon } =
+    notificationTypeMap[type] || notificationTypeMap.system;
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -59,8 +95,15 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         }}
       >
         <ListItem.Part left>
-          <View width={48} height={48} br100 bg-white center>
-            <Image source={icon} width={32} height={32} />
+          <View width={48} height={48} br100 center style={{ backgroundColor }}>
+            <Image
+              source={icon}
+              style={{
+                width: 32,
+                height: 32,
+                tintColor: Colors.white,
+              }}
+            />
           </View>
         </ListItem.Part>
         <ListItem.Part
@@ -80,7 +123,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
               {time}
             </Text>
           </View>
-          <Text h3 color={Colors.gray}>
+          <Text h3 color={Colors.gray} numberOfLines={2}>
             {content}
           </Text>
         </ListItem.Part>
