@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Colors, Text, View } from "react-native-ui-lib";
+import { Colors, Text, View, TouchableOpacity } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import AppBar from "@/components/app-bar/AppBar";
@@ -76,26 +76,44 @@ const NotificationPage: React.FC = () => {
         )}
         {notifications?.length > 0 && (
           <>
-            <View row spread centerV padding-8 paddingH-24>
-              <Text h3 color={Colors.gray}>
+            <View
+              row
+              spread
+              centerV
+              padding-16
+              backgroundColor={Colors.white}
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: Colors.grey70,
+              }}
+            >
+              <Text text70 color={Colors.gray}>
                 Tất cả thông báo
               </Text>
               {notifications?.some((n: Notification) => !n.is_read) && (
-                <Text h3 onPress={handleMarkAllAsRead}>
-                  Đánh dấu tất cả là đã đọc
-                </Text>
+                <TouchableOpacity onPress={handleMarkAllAsRead}>
+                  <Text text70 color={Colors.primary}>
+                    Đánh dấu tất cả là đã đọc
+                  </Text>
+                </TouchableOpacity>
               )}
             </View>
             <FlatList
               data={notifications}
               renderItem={renderItem}
               keyExtractor={(item: Notification) => item.id.toString()}
-              contentContainerStyle={{ paddingVertical: 8 }}
+              contentContainerStyle={{
+                paddingVertical: 12,
+              }}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.5}
               ListFooterComponent={() =>
                 loading && (
-                  <ActivityIndicator size="small" color={Colors.primary} />
+                  <ActivityIndicator
+                    size="small"
+                    color={Colors.primary}
+                    style={{ marginVertical: 16 }}
+                  />
                 )
               }
             />

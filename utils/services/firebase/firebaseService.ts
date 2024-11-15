@@ -61,13 +61,17 @@ class FirebaseService {
   }
 
   async setupNotifications() {
-    // Cấu hình thông báo cho ứng dụng
     Notifications.setNotificationHandler({
-      handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldPlaySound: true,
-        shouldSetBadge: true,
-      }),
+      handleNotification: async (notification) => {
+        const isForeground = notification.request.trigger.type === 'push' &&
+          notification.request.content.data?.isForeground === true;
+
+        return {
+          shouldShowAlert: !isForeground,
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+        };
+      },
     });
   }
 
@@ -106,19 +110,16 @@ class FirebaseService {
   async showAppointmentNotification(remoteMessage: any) {
     try {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const isAppForeground = remoteMessage.data?.foreground === 'true';
 
-      // Xử lý thông báo dựa trên loại
-      let title = remoteMessage.notification?.title || "Thông báo mới";
-      let body = remoteMessage.notification?.body;
-
-      // Thêm âm thanh và độ ưu tiên
       await Notifications.scheduleNotificationAsync({
         content: {
-          title,
-          body,
+          title: remoteMessage.notification?.title || "Thông báo mới",
+          body: remoteMessage.notification?.body,
           data: {
             ...remoteMessage.data,
             uniqueId,
+            isForeground: isAppForeground,
           },
           sound: 'default',
           priority: Notifications.AndroidNotificationPriority.HIGH,
@@ -133,8 +134,8 @@ class FirebaseService {
   async showChatNotification(remoteMessage: any) {
     try {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const isAppForeground = remoteMessage.data?.foreground === 'true';
 
-      // Xử lý thông báo tin nhắn
       let title = remoteMessage.notification?.title || "Tin nhắn mới";
       let body = remoteMessage.notification?.body;
 
@@ -145,7 +146,8 @@ class FirebaseService {
           data: {
             ...remoteMessage.data,
             uniqueId,
-            type: 'chat_message'
+            type: 'chat_message',
+            isForeground: isAppForeground,
           },
           sound: 'default',
           priority: Notifications.AndroidNotificationPriority.HIGH,
@@ -186,6 +188,7 @@ class FirebaseService {
   async showPaymentNotification(remoteMessage: any) {
     try {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const isAppForeground = remoteMessage.data?.foreground === 'true';
 
       let title = remoteMessage.notification?.title || "Thông báo thanh toán";
       let body = remoteMessage.notification?.body;
@@ -197,7 +200,8 @@ class FirebaseService {
           data: {
             ...remoteMessage.data,
             uniqueId,
-            type: 'payment_success'
+            type: 'payment_success',
+            isForeground: isAppForeground,
           },
           sound: 'default',
           priority: Notifications.AndroidNotificationPriority.HIGH,
