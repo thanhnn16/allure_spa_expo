@@ -160,7 +160,7 @@ export default function Checkout() {
       // Create order data
       const orderData = {
         payment_method_id: selectedPayment.id,
-        total_amount: discountedPrice, // Use discounted price
+        total_amount: discountedPrice,
         discount_amount: totalPrice - discountedPrice,
         voucher_id: selectedVoucher?.id || null,
         shipping_address_id: selectedAddress.addressId,
@@ -177,25 +177,25 @@ export default function Checkout() {
       const orderId = orderResponse.data.id;
 
       // Handle different payment methods
-      if (selectedPayment.id === 1) {
-        // Cash payment
-        showDialog(
-          i18n.t("checkout.order_success"),
-          i18n.t("checkout.order_success_message"),
-          "success"
-        );
+      if (selectedPayment.id === 1) { // Cash payment
+        // Redirect to success page with cash payment details
+        router.replace({
+          pathname: "/(app)/invoice/success",
+          params: {
+            order_id: orderId,
+            amount: discountedPrice.toString(),
+            payment_time: new Date().toISOString(),
+            payment_method: "cash"
+          }
+        });
         
-        setTimeout(() => {
-          dispatch(clearOrder());
-          router.replace("/(app)/");
-        }, 2000);
-      } else if (selectedPayment.id === 3) {
-        // Bank transfer
+        dispatch(clearOrder());
+      } else if (selectedPayment.id === 3) { // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
         
         const paymentData = {
-          returnUrl: `${scheme}://transaction?status=success`,
-          cancelUrl: `${scheme}://transaction?status=cancel`,
+          returnUrl: `${scheme}://transaction?status=success&order_id=${orderId}`,
+          cancelUrl: `${scheme}://transaction?status=cancel&order_id=${orderId}`,
         };
 
         const paymentResponse = await OrderService.processPayment(orderId, paymentData);
@@ -206,6 +206,8 @@ export default function Checkout() {
             params: {
               url: paymentResponse.data.checkoutUrl,
               type: WebViewType.PAYMENT,
+              orderId: orderId,
+              amount: discountedPrice.toString()
             },
           });
         } else {
@@ -215,11 +217,15 @@ export default function Checkout() {
     } catch (error: any) {
       console.error("Payment Error:", error);
       
-      showDialog(
-        i18n.t("checkout.payment_error"),
-        error.response?.data?.message || i18n.t("checkout.payment_error_message"),
-        "error"
-      );
+      // Redirect to failed page with error details
+      router.replace({
+        pathname: "/(app)/invoice/failed",
+        params: {
+          reason: error.response?.data?.message || i18n.t("checkout.payment_error_message"),
+          type: "failed",
+          payment_method: selectedPayment.id === 1 ? "cash" : "bank_transfer"
+        }
+      });
     }
   };
 

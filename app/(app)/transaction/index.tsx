@@ -46,27 +46,23 @@ const Transaction = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.white }}>
       <View flex centerV centerH gap-10 paddingH-20>
-        <Image
-          source={renderIcon()}
-          width={200}
-          height={200}
-        />
+        <Image source={renderIcon()} width={200} height={200} />
         {isSuccess ? (
           <Text h2_bold color={Colors.primary}>
             {i18n.t("transaction.payment_success")}
           </Text>
         ) : (
-          <Text h2_bold>
-            {i18n.t("transaction.payment_fail")}
-          </Text>
+          <Text h2_bold>{i18n.t("transaction.payment_fail")}</Text>
         )}
         {isSuccess ? (
           <Text h3 center color={Colors.grey40}>
-            {i18n.t("transaction.your_order")} #123456 {i18n.t("transaction.has_been_confirmed")}
+            {i18n.t("transaction.your_order")} #123456{" "}
+            {i18n.t("transaction.has_been_confirmed")}
           </Text>
         ) : (
           <Text h3 center color={Colors.grey40}>
-            {i18n.t("transaction.your_order")} #123456 {i18n.t("transaction.has_been_failed")}
+            {i18n.t("transaction.your_order")} #123456{" "}
+            {i18n.t("transaction.has_been_failed")}
           </Text>
         )}
       </View>
@@ -79,7 +75,7 @@ const Transaction = () => {
           padding-20
           style={{ height: 50 }}
           borderRadius={13}
-          onPress={() => router.dismissAll()}
+          onPress={() => router.replace("/(app)/home")}
         />
       </View>
     </SafeAreaView>
