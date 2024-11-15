@@ -491,7 +491,7 @@
       "pending": "Order is being processed",
       "confirmed": "Order confirmed",
       "delivering": "Order is being delivered",
-      "completes": "Order successfully delivered",
+      "completed": "Order successfully delivered",
       "canceled": "Order canceled",
       "date_delivery": "Estimated delivery date",
       "date_delivered": "Delivery date"
@@ -509,5 +509,25 @@
     "times": "Số lần",
     "not_started": "Chưa tiến hành",
     "view_details": "Nhấn xem chi tiết"
+  },
+  "orders": {
+    "title": "Đơn hàng",
+    "pending": "Chờ xác nhận",
+    "confirmed": "Chờ lấy hàng",
+    "delivering": "Đang giao hàng",
+    "completed": "Hoàn thành",
+    "cancelled": "Đã huỷ",
+    "repurchase": "Mua lại",
+    "rate_now": "Đánh giá ngay",
+    "quantity": "Số lượng",
+    "total": "Tổng cộng",
+    "no_order": "Không có đơn hàng nào cả!",
+    "buy_more": "Khám phá thêm sản phẩm khác nhé"
+  },
+  "favorite": {
+    "title": "Yêu thích",
+    "products": "Sản phẩm",
+    "services": "Dịch vụ",
+    "empty": "Không có sản phẩm nào trong danh sách yêu thích"
   }
 }

@@ -7,6 +7,7 @@ import { FlatList } from "react-native";
 import FavoriteItem from "./FavoriteItem";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
+import AppTabBar from "@/components/app-bar/AppTabBar";
 
 export default function FavoriteScreen() {
   const [selectedTab, setSelectedTab] = useState<"product" | "service">(
@@ -35,31 +36,12 @@ export default function FavoriteScreen() {
     fetchFavorites(selectedTab);
   }, [selectedTab]);
 
-  return (
-    <View flex bg-$white>
-      <AppBar title={i18n.t("favorite.title")} />
-
-      <TabController
-        initialIndex={selectedTabIndex}
-        onChangeIndex={setSelectedTabIndex}
-        items={[
-          { label: i18n.t("favorite.products") },
-          { label: i18n.t("favorite.services") },
-        ]}
-      >
-        <TabController.TabBar
-          height={48}
-          items={[
-            { label: i18n.t("favorite.products") },
-            { label: i18n.t("favorite.services") },
-          ]}
-        />
-      </TabController>
-
+  const renderProductsPage = () => {
+    return (
       <FlatList
         data={favorites}
         renderItem={({ item }) => (
-          <FavoriteItem item={item} type={selectedTab} />
+          <FavoriteItem item={item} type={"product"} />
         )}
         numColumns={2}
         columnWrapperStyle={{
@@ -74,6 +56,50 @@ export default function FavoriteScreen() {
           </View>
         )}
       />
+    );
+  };
+
+  const renderServicesPage = () => {
+    return (
+      <FlatList
+        data={favorites}
+        renderItem={({ item }) => (
+          <FavoriteItem item={item} type={"service"} />
+        )}
+        numColumns={2}
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          paddingHorizontal: 20,
+          marginTop: 10,
+        }}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View center padding-20>
+            <Text>{i18n.t("favorite.empty")}</Text>
+          </View>
+        )}
+      />
+    );
+  };
+
+  return (
+    <View flex bg-$white>
+      <AppBar back title={i18n.t("favorite.title")} />
+
+      <TabController
+        initialIndex={selectedTabIndex}
+        onChangeIndex={setSelectedTabIndex}
+        items={[
+          { label: i18n.t("favorite.products") },
+          { label: i18n.t("favorite.services") },
+        ]}
+      >
+        <AppTabBar />
+        <View flex>
+          <TabController.TabPage index={0}>{renderProductsPage()}</TabController.TabPage>
+          <TabController.TabPage index={1} lazy>{renderServicesPage()}</TabController.TabPage>
+        </View>
+      </TabController>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { AppStyles } from "@/constants/AppStyles";
 import { router } from "expo-router";
-import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
+import { TouchableOpacity, Image, View, Text, SkeletonView } from "react-native-ui-lib";
 import StarIcon from "@/assets/icons/star.svg";
 import formatCurrency from "@/utils/price/formatCurrency";
 
@@ -12,10 +12,7 @@ interface FavoriteItemProps {
 
 const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
   const itemData = type === 'product' ? item.product : item.service;
-  const itemImage =
-    itemData.media && itemData.media.length > 0
-      ? { uri: itemData.media[0].full_url }
-      : require("@/assets/images/home/product1.png");
+  const itemImage = itemData.media && itemData.media.length > 0 ? { uri: itemData.media[0].uri } : null;
 
   const handlePress = () => {
     router.push(`/${type}/${itemData.id}`);
@@ -27,17 +24,27 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
       style={[{ width: "48%", borderRadius: 12 }, AppStyles.shadowItem]}
       onPress={handlePress}
     >
-      <View br50 width="100%" gap-5>
-        <Image
-          source={itemImage}
-          width={"100%"}
-          resizeMode="cover"
-          height={170}
-          style={{
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-          }}
-        />
+      <View br50 width="100%" gap-5
+        style={{
+          borderTopLeftRadius: 12,
+          borderTopRightRadius: 12,
+        }}
+      >
+        {itemData.media && itemData.media.length > 0 ? (
+          <Image
+            source={itemImage}
+            width={"100%"}
+            resizeMode="cover"
+            height={170}
+            style={{
+              borderTopLeftRadius: 12,
+              borderTopRightRadius: 12,
+            }}
+            />
+          ) : (
+            <SkeletonView width={100} height={170} borderRadius={12} />
+        )
+        }
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
         <Text text70H numberOfLines={2} ellipsizeMode="tail">
@@ -59,8 +66,8 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
 
         <View bottom paddingB-5>
           <Text text70H style={{ color: "#A85A29" }}>
-            {formatCurrency({ 
-              price: type === 'product' ? itemData.price : itemData.single_price 
+            {formatCurrency({
+              price: type === 'product' ? itemData.price : itemData.single_price
             })}
           </Text>
         </View>

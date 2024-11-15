@@ -491,7 +491,7 @@
       "pending": "保留中",
       "confirmed": "確認済み",
       "delivering": "配信中",
-      "completes": "完了",
+      "completed": "完了",
       "canceled": "キャンセル",
       "date_delivery": "配達日",
       "date_delivered": "配達日"
@@ -509,5 +509,25 @@
     "times": "回数",
     "not_started": "開始されていません",
     "view_details": "詳細を見る"
+  },
+  "orders": {
+    "title": "注文",
+    "pending": "保留中",
+    "confirmed": "確認済み",
+    "delivering": "配信中",
+    "completed": "完了",
+    "cancelled": "キャンセル",
+    "repurchase": "再購入",
+    "rate_now": "今すぐ評価",
+    "quantity": "数量",
+    "total": "合計",
+    "no_order": "注文がありません",
+    "buy_more": "もっと見る"
+  },
+  "favorite": {
+    "title": "お気に入り",
+    "products": "製品",
+    "services": "サービス",
+    "empty": "お気に入りのリストに製品がありません"
   }
 }

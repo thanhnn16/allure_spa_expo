@@ -4,15 +4,13 @@ import { useRef, useState } from 'react';
 import { Animated, StyleSheet } from 'react-native'
 import { Card, Text, TouchableOpacity, View, Image, Colors } from 'react-native-ui-lib'
 
-const PaymentPicker = ({
-    value,
-    items,
-    onSelect,
-}: {
-    value: PaymentMethod | null;
-    items: PaymentMethod[];
-    onSelect: (value: PaymentMethod) => void;
-}) => {
+interface PaymentPickerProps {
+    value?: PaymentMethod | null;
+    items?: PaymentMethod[];
+    onSelect?: (value: PaymentMethod) => void;
+}
+
+const PaymentPicker = ({ value, items, onSelect} : PaymentPickerProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const animation = useRef(new Animated.Value(0)).current;
 
@@ -28,7 +26,7 @@ const PaymentPicker = ({
     };
 
     const handleSelect = (method: PaymentMethod) => {
-        onSelect(method);
+        onSelect?.(method);
         setIsOpen(false);
     };
 
@@ -39,7 +37,7 @@ const PaymentPicker = ({
 
     return (
         <View>
-            <TouchableOpacity onPress={toggleDropdown}>
+            <TouchableOpacity onPress={onSelect ? toggleDropdown : undefined}>
                 <View
                     row centerV spread padding-15
                     style={{
@@ -52,13 +50,11 @@ const PaymentPicker = ({
                     <Text h3>
                         {value?.name}
                     </Text>
-                    <Animated.View
-                        style={[
-                            { transform: [{ rotate: rotateIcon }] },
-                        ]}
-                    >
-                        <Ionicons name="chevron-down" size={20} color="#BCBABA" />
-                    </Animated.View>
+                    {onSelect && (
+                        <Animated.View style={{ transform: [{ rotate: rotateIcon }] }}>
+                            <Ionicons name="chevron-down" size={24} color={Colors.grey10} />
+                        </Animated.View>
+                    )}
                 </View>
             </TouchableOpacity>
 
@@ -74,7 +70,7 @@ const PaymentPicker = ({
                         },
                     ]}
                 >
-                    {items.map((method) => (
+                    {items?.map((method) => (
                         <TouchableOpacity
                             key={method.id}
                             style={{

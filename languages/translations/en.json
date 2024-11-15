@@ -409,5 +409,25 @@
     "times": "times",
     "not_started": "Not started",
     "view_details": "View details"
+  },
+  "orders": {
+    "title": "Orders",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "delivering": "Delivering",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "repurchase": "Repurchase",
+    "rate_now": "Rate now",
+    "quantity": "Quantity",
+    "total": "Total",
+    "no_order": "You have no orders",
+    "buy_more": "Explore more products"
+  },
+  "favorite": {
+    "title": "Favorite",
+    "products": "Products",
+    "services": "Services",
+    "empty": "No products in the favorite list"
   }
 }

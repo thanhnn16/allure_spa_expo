@@ -13,7 +13,7 @@ export interface OrderItem {
     created_at: string;
     updated_at: string;
     item_name: string;
-    product?: Product;
+    product: Product;
 }
 
 export interface Orders {
