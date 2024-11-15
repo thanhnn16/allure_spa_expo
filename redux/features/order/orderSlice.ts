@@ -2,9 +2,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Orders } from '@/types/order.type';
 import { getAllOrderThunk } from './getAllOrderThunk';
 import { getOrderThunk } from './getOrderThunk';
+import { getOrderByIdThunk } from './getOrderByIdThunk';
 
 interface OrderState {
-    orders: Orders[];
+    orders: Orders[] | Orders;
     isLoading: boolean;
     isLoadingMore: boolean;
     error: null | string;
@@ -16,6 +17,7 @@ interface OrderState {
         total: number;
         perPage: number;
     };
+    selectedOrder: Orders | null;
 }
 
 const initialState: OrderState = {
@@ -30,7 +32,8 @@ const initialState: OrderState = {
         lastPage: 1,
         total: 0,
         perPage: 10
-    }
+    },
+    selectedOrder: null
 };
 
 const orderSlice = createSlice({
@@ -69,13 +72,15 @@ const orderSlice = createSlice({
             .addCase(getAllOrderThunk.fulfilled, (state: OrderState, action: any) => {
                 const isLoadMore = action.meta.arg?.page > 1;
                 if (isLoadMore) {
-                    state.orders = [...state.orders, ...action.payload.data];
+                    state.orders = Array.isArray(state.orders) && Array.isArray(action.payload.data) ?
+                        [...state.orders, ...action.payload.data] :
+                        action.payload.data;
                     state.isLoadingMore = false;
                 } else {
                     state.orders = action.payload.data;
                     state.isLoading = false;
                 }
-                
+
                 state.pagination = {
                     currentPage: action.payload.current_page,
                     lastPage: action.payload.last_page,
@@ -101,6 +106,18 @@ const orderSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(getOrderThunk.rejected, (state: any, action: any) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+            .addCase(getOrderByIdThunk.pending, (state: OrderState) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getOrderByIdThunk.fulfilled, (state: OrderState, action: any) => {
+                state.selectedOrder = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(getOrderByIdThunk.rejected, (state: OrderState, action: any) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });

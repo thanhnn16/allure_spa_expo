@@ -1,4 +1,5 @@
 import { Product } from "./product.type";
+import { ServiceResponeModel } from "./service.type";
 
 export interface OrderItem {
     id: number;
@@ -7,13 +8,14 @@ export interface OrderItem {
     item_id: number;
     service_type: string;
     quantity: number;
-    price: string;
+    price: number;
     discount_amount: string;
     discount_type: string | null;
     created_at: string;
     updated_at: string;
     item_name: string;
     product: Product;
+    service: ServiceResponeModel;
 }
 
 export interface Orders {

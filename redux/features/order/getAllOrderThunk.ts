@@ -10,7 +10,7 @@ interface OrderRequest {
 
 export const getAllOrderThunk = createAsyncThunk(
   "orders/getAllOrders",
-  async (params?: OrderRequest, { rejectWithValue }: any) => {
+  async (params: OrderRequest, { rejectWithValue }: any) => {
     try {
       let url = "/orders/my-orders";
       const queryParams = [];
