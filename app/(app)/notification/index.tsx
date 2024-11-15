@@ -1,69 +1,59 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useEffect } from "react";
 import { Colors, Text, View } from "react-native-ui-lib";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import AppBar from "@/components/app-bar/AppBar";
-import NotificationItem from "@/components/notification/NotificationItem";
-import { FlatList } from "react-native";
-
-// Types
-type NotificationType = "success" | "cancel" | "reschedule";
-
-interface Notification {
-  id: string;
-  title: string;
-  content: string;
-  time: string;
-  type: NotificationType;
-  isRead: boolean;
-}
-
-// Data
-const notificationData: Notification[] = [
-  {
-    id: "1",
-    title: "Đặt hàng thành công",
-    content:
-      "Bạn đã đặt hàng thành công cho đơn hàng: Làm sạch bằng lamellar..",
-    time: "1h trước",
-    type: "success",
-    isRead: false,
-  },
-  {
-    id: "2",
-    title: "Đã huỷ lịch hẹn",
-    content:
-      "Bạn đã huỷ lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy l...",
-    time: "2h trước",
-    type: "cancel",
-    isRead: true,
-  },
-  {
-    id: "3",
-    title: "Đã đổi lịch hẹn",
-    content:
-      "Bạn đã đổi lịch hẹn thành công cho dịch vụ: Kiểm tra và sửa chữa máy lạnh. V...",
-    time: "3h trước",
-    type: "reschedule",
-    isRead: true,
-  },
-];
+import NotificationItem, { NotificationType } from "@/components/notification/NotificationItem";
+import { FlatList, ActivityIndicator } from "react-native";
+import {
+  fetchNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead,
+} from "@/redux/features/notification/notificationThunks";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
+import { Notification } from "@/redux/features/notification/types";
 
 const NotificationPage: React.FC = () => {
-  const handleNotificationPress = (id: string) => {
-    console.log(`Notification ${id} pressed`);
+  const dispatch = useDispatch<AppDispatch>();
+  const { notifications, loading } = useSelector(
+    (state: RootState) => state.notification
+  );
+
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
+
+  const handleNotificationPress = async (id: string) => {
+    await dispatch(markNotificationAsRead(id));
+  };
+
+  const handleMarkAllAsRead = async () => {
+    await dispatch(markAllNotificationsAsRead());
   };
 
   const renderItem = ({ item }: { item: Notification }) => (
     <NotificationItem
       id={item.id}
-      type={item.type}
+      type={item.type as NotificationType}
       title={item.title}
       content={item.content}
-      time={item.time}
+      time={formatDistanceToNow(new Date(item.createdAt), {
+        addSuffix: true,
+        locale: vi,
+      })}
       isRead={item.isRead}
       onPress={() => handleNotificationPress(item.id)}
     />
   );
+
+  if (loading) {
+    return (
+      <View flex center>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <View flex bg-white>
@@ -73,12 +63,16 @@ const NotificationPage: React.FC = () => {
           <Text h3 color={Colors.gray}>
             Hôm nay
           </Text>
-          <Text h3>Đánh dấu tất cả là đã đọc</Text>
+          {notifications.some((n: Notification) => !n.isRead) && (
+            <Text h3 onPress={handleMarkAllAsRead}>
+              Đánh dấu tất cả là đã đọc
+            </Text>
+          )}
         </View>
         <FlatList
-          data={notificationData}
+          data={notifications}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: Notification) => item.id}
           contentContainerStyle={{ paddingVertical: 8 }}
         />
       </View>
