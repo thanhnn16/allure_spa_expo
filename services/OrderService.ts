@@ -20,15 +20,14 @@ class OrderService {
         return response.data;
     }
 
-    async processPayment(orderId: string, paymentData: { 
-        returnUrl: string; 
-        cancelUrl: string; 
+    async processPayment(orderId: string, paymentData: {
+        returnUrl: string;
+        cancelUrl: string;
     }): Promise<PaymentLinkResponse> {
         try {
-            const response = await AxiosInstance().post(`/orders/${orderId}/payment`, {
+            const response = await AxiosInstance().post(`/orders/${orderId}/payment-link`, {
                 returnUrl: paymentData.returnUrl,
-                cancelUrl: paymentData.cancelUrl,
-                order_id: orderId
+                cancelUrl: paymentData.cancelUrl
             });
 
             return response.data;
