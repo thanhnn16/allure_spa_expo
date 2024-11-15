@@ -112,13 +112,17 @@ class FirebaseService {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       const isAppForeground = remoteMessage.data?.foreground === 'true';
 
+      let title = remoteMessage.notification?.title || "Thông báo lịch hẹn";
+      let body = remoteMessage.notification?.body;
+
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: remoteMessage.notification?.title || "Thông báo mới",
-          body: remoteMessage.notification?.body,
+          title,
+          body,
           data: {
             ...remoteMessage.data,
             uniqueId,
+            type: 'appointment',
             isForeground: isAppForeground,
           },
           sound: 'default',
