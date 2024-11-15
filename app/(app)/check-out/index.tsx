@@ -152,12 +152,11 @@ export default function Checkout() {
 
   const handlePayment = async () => {
     try {
-      const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
-
+      // Create order data
       const invoiceData = {
         payment_method_id: selectedPayment.id,
         total_amount: totalAmount,
-        discount_amount: 0,
+        discount_amount: totalPrice - discountedPrice,
         voucher_id: voucher?.id || null,
         order_items: products.map((item: any) => ({
           item_type: item.type || "product",
@@ -166,24 +165,40 @@ export default function Checkout() {
           price: item.price,
         })),
       };
-      console.log("Invoice data:", invoiceData);
 
+      // Create order
       const orderResponse = await OrderService.createOrder(invoiceData);
       const orderId = orderResponse.data.id;
-      console.log("Order created:", orderResponse);
 
-      const paymentData = {
-        returnUrl: `${scheme}://transaction?status=success`,
-        cancelUrl: `${scheme}://transaction?status=cancel`,
-      };
-      const paymentResponse = await OrderService.processPayment(
-        orderId,
-        paymentData
-      );
+      // Handle different payment methods
+      if (selectedPayment.id === 1) { // Cash payment
+        // Show success dialog and redirect
+        showDialog(
+          i18n.t("checkout.order_success"),
+          i18n.t("checkout.order_success_message"),
+          "success"
+        );
+        
+        // Clear cart and redirect after dialog closes
+        setTimeout(() => {
+          dispatch(clearOrder());
+          router.replace("/(app)/");
+        }, 2000);
+        
+      } else if (selectedPayment.id === 3) { // Bank transfer
+        const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
+        
+        const paymentData = {
+          returnUrl: `${scheme}://transaction?status=success`,
+          cancelUrl: `${scheme}://transaction?status=cancel`,
+        };
 
-      if (paymentResponse.success) {
-        // Navigate to the payment URL or show the QR code
-        if (paymentResponse.data?.checkoutUrl) {
+        const paymentResponse = await OrderService.processPayment(
+          orderId,
+          paymentData
+        );
+
+        if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
           router.push({
             pathname: "/webview",
             params: {
@@ -191,14 +206,13 @@ export default function Checkout() {
               type: WebViewType.PAYMENT,
             },
           });
-        } else if (paymentResponse.data?.qrCode) {
-          Alert.alert("QR Code", paymentResponse.data.qrCode);
+        } else {
+          showDialog(
+            i18n.t("checkout.payment_error"),
+            paymentResponse.message || i18n.t("checkout.payment_error_message"),
+            "error"
+          );
         }
-      } else {
-        Alert.alert(
-          "Error",
-          paymentResponse.message || "Không thể tạo link thanh toán"
-        );
       }
     } catch (error: any) {
       console.error("Payment Error:", {
@@ -206,7 +220,11 @@ export default function Checkout() {
         response: error.response?.data,
       });
 
-      setPaymentDialog(false);
+      showDialog(
+        i18n.t("checkout.payment_error"),
+        error.response?.data?.message || i18n.t("checkout.payment_error_message"),
+        "error" 
+      );
     }
   };
 

@@ -322,13 +322,17 @@
     "format": "%u%n"
   },
   "invoice": {
-    "payment_success": "Payment Success",
-    "payment_details": "Payment Details",
-    "payment_successful": "Payment Successful!",
-    "payment_success_message": "Thank you for your payment. Your order has been confirmed.",
-    "amount": "Amount",
-    "payment_time": "Payment Time",
-    "order_code": "Order Code"
+    "order_success": "Order Success",
+    "order_success_message_cash": "Your order has been created successfully. We will contact you as soon as possible.",
+    "order_details": "Order Details",
+    "order_failed": "Order Failed",
+    "order_failed_message": "An error occurred while creating the order. Please try again later.",
+    "payment_successful": "Payment Successful",
+    "payment_success_message": "Your payment has been processed successfully.",
+    "payment_failed": "Payment Failed",
+    "payment_failed_message": "An error occurred while processing the payment. Please try again later.",
+    "payment_cancelled": "Payment Cancelled",
+    "payment_cancel_message": "You have cancelled this payment transaction."
   },
   "checkout": {
     "title": "Payment",
@@ -367,12 +371,12 @@
     },
     "timeline": {
       "pending": "Pending",
-      "confirmed": "確認済み",
-      "delivering": "配信中",
-      "completes": "完了",
-      "canceled": "キャンセル",
-      "date_delivery": "配達日",
-      "date_delivered": "配達日"
+      "confirmed": "Confirmed",
+      "delivering": "Delivering",
+      "completes": "Completed",
+      "canceled": "Canceled",
+      "date_delivery": "Delivery Date",
+      "date_delivered": "Delivery Date"
     },
     "buy_again": "Buy again",
     "order_code": "Order Code"
