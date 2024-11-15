@@ -503,11 +503,15 @@
     "title": "Lịch hẹn",
     "scheduled": "Lịch đã đặt",
     "all": "Tất cả",
-    "upcoming": "Sắp tới",
+    "7upcoming": " 7 ngày sắp tới",
     "completed": "Đã hoàn thành",
-    "cancelled": "Bị hoãn",
+    "cancelled": "Bị huỷ",
     "times": "Số lần",
     "not_started": "Chưa tiến hành",
+    "view_details": "Nhấn xem chi tiết",
+    "pending": "Chờ xác nhận",
+    "confirmed": "Đã xác nhận",
+    "available_slots": "Còn trống {available_slots} chỗ",
     "view_details": "Nhấn xem chi tiết"
   },
   "orders": {

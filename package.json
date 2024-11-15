@@ -54,6 +54,7 @@
     "i18n-js": "^4.4.3",
     "lottie-react-native": "7.1.0",
     "moment": "^2.30.1",
+    "moment-timezone": "^0.5.46",
     "native": "^0.3.3",
     "pusher-js": "^8.4.0-rc2",
     "react": "^18.2.0",

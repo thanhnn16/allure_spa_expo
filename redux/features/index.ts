@@ -11,6 +11,7 @@ export { getUserThunk } from "./users/getUserThunk";
 export { updateUserThunk } from "./users/updateUserThunk";
 export { updateAvatarUrlThunk } from "./users/updateAvatarUrlThunk";
 export { fetchAddresses, addAddress, updateAddress, deleteAddress } from "./address/addressThunk";
+export { appointmentSlice } from "./appointment/appointmentSlice";
 export { getOrderThunk } from "./order/getOrderThunk";
 export { clearOrder } from "./order/orderSlice";
 

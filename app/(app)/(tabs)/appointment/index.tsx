@@ -1,131 +1,115 @@
-import {
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  FlatList,
-} from "react-native";
-import { Text, View } from "react-native-ui-lib";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getTimeSlots } from "@/redux/features/booking/bookingThunk";
-import i18n from "@/languages/i18n";
+import { StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
+import { Text, View } from 'react-native-ui-lib';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAppointments } from '@/redux/features/appointment/appointmentThunk';
+import { resetAppointmentState } from '@/redux/features/appointment/appointmentSlice';
+import i18n from '@/languages/i18n';
+import moment from 'moment-timezone';
 
 const ScheduledPage = () => {
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<number>(1); // Set initial selected item to 1
   const dispatch = useDispatch();
-  const { timeSlots, loading, error } = useSelector(
-    (state: any) => state.booking
-  );
+  const { appointments, loading, error } = useSelector((state: any) => state.appointment);
 
   useEffect(() => {
-    const date = new Date().toISOString().split("T")[0];
-    dispatch(getTimeSlots(date));
+    const params = {
+      from_date: moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD'),
+      to_date: moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD'),
+      status: 'confirmed'
+    };
+    console.log('Fetching appointments with params:', params);
+    dispatch(getAppointments(params));
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log('Component State:', appointments);
+  }, [appointments]);
+
   const items = [
-    { id: 1, name: i18n.t("appointment.all") },
-    { id: 2, name: i18n.t("appointment.upcoming") },
-    { id: 3, name: i18n.t("appointment.completed") },
-    { id: 4, name: i18n.t("appointment.cancelled") },
+    { id: 1, name: i18n.t('appointment.all') },
+    { id: 6, name: i18n.t('appointment.7upcoming') },
+    { id: 2, name: i18n.t('appointment.pending'), status: 'pending' },
+    { id: 5, name: i18n.t('appointment.confirmed'), status: 'confirmed' },
+    { id: 3, name: i18n.t('appointment.completed'), status: 'completed' },
+    { id: 4, name: i18n.t('appointment.cancelled'), status: 'cancelled' },
   ];
 
-  const flatListItems = timeSlots.map((slot: any) => ({
-    id: slot.id,
+  const handleItemPress = (item: { id: number; status?: string }) => {
+    setSelectedItem(item.id);
+    let params: { from_date: string; to_date: string; status?: string } = {
+      from_date: moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD'),
+      to_date: moment().tz('Asia/Ho_Chi_Minh').add(7, 'days').format('YYYY-MM-DD'),
+      status: item.status,
+    };
+
+    if (item.id === 6) {
+      params = {
+        from_date: moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD'),
+        to_date: moment().tz('Asia/Ho_Chi_Minh').add(7, 'days').format('YYYY-MM-DD'),
+        status: 'confirmed',
+      };
+    }
+
+    console.log('Fetching appointments with params:', params);
+    dispatch(getAppointments(params));
+  };
+
+  useEffect(() => {
+    handleItemPress(items[0]);
+  }, []);
+
+
+  const flatListItems = appointments.map((appointment: any) => ({
+    id: appointment.id,
     isBanner: true,
-    name: slot.name,
-    price: `${i18n.t("appointment.price")}: ${slot.price}`,
-    times: `${i18n.t("appointment.times")}: ${slot.times}`,
-    time: `${slot.start_time} - ${slot.end_time}`,
-    status: slot.available
-      ? i18n.t("appointment.not_started")
-      : i18n.t("appointment.completed"),
+    name: appointment.title,
+    note: appointment.note,
+    service: appointment.service,
+    times: appointment.time_slot ? `${i18n.t('appointment.times')}: ${moment(appointment.time_slot.start_time, 'HH:mm:ss').tz('Asia/Ho_Chi_Minh').format('HH:mm')} - ${moment(appointment.time_slot.end_time, 'HH:mm:ss').tz('Asia/Ho_Chi_Minh').format('HH:mm')}` : '',
+    time: `${moment(appointment.start).tz('Asia/Ho_Chi_Minh').format(' HH:mm  DD/MM/YYYY ')}  -  ${moment(appointment.end).tz('Asia/Ho_Chi_Minh').format(' HH:mm  DD/MM/YYYY')}`,
+    status: appointment.status === 'completed' ? i18n.t('appointment.completed') :
+        appointment.status === 'pending' ? i18n.t('appointment.pending') :
+            appointment.status === 'cancelled' ? i18n.t('appointment.cancelled') :
+                i18n.t('appointment.confirmed'),
+
   }));
 
-  const renderItem = (item: { id: number; name: string }, index: number) => {
+  const renderItem = (item: { id: number; name: string; status?: string }, index: number) => {
     const isSelected = item.id === selectedItem;
     return (
-      <TouchableOpacity key={item.id} onPress={() => setSelectedItem(item.id)}>
-        <View
-          style={[
-            styles.itemContainer,
-            isSelected ? styles.selectedItem : styles.unselectedItem,
-          ]}
-        >
-          <Text
-            style={[
-              styles.itemText,
-              isSelected ? styles.selectedItemText : styles.unselectedItemText,
-            ]}
-          >
-            {item.name}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity key={item.id} onPress={() => handleItemPress(item)}>
+          <View style={[styles.itemContainer, isSelected ? styles.selectedItem : styles.unselectedItem]}>
+            <Text style={[styles.itemText, isSelected ? styles.selectedItemText : styles.unselectedItemText]}>
+              {item.name}
+            </Text>
+          </View>
+        </TouchableOpacity>
     );
   };
 
-  const renderFlatListItem = ({
-    item,
-  }: {
-    item: {
-      id: number;
-      isBanner?: boolean;
-      name?: string;
-      price?: string;
-      times?: string;
-      time?: string;
-      status?: string;
-    };
-  }) => {
-    const statusStyle =
-      item.status === i18n.t("appointment.completed")
-        ? styles.completedStatus
-        : styles.pendingStatus;
+  const renderFlatListItem = ({ item }: { item: { id: number; isBanner?: boolean; name?: string; service?: { single_price?: number }; times?: string; time?: string; status?: string; note?: string } }) => {
+    const statusStyle = item.status === i18n.t('appointment.completed') ? styles.completedStatus : styles.pendingStatus;
     return (
-      <View style={styles.bannerContainer}>
-        <Image
-          source={require("@/assets/images/banner.png")}
-          style={styles.banner}
-        />
-        <View marginT-10>
-          <Text h2_bold>{item.name}</Text>
-        </View>
-        <View centerV style={styles.infoContainer}>
-          <Image
-            source={require("@/assets/images/home/icons/ticket.png")}
-            style={styles.icon}
-          />
-          <View centerV style={styles.priceSpace}>
-            <Text h3_semibold secondary>
-              {item.price}
-            </Text>
-            <Text h3 gray>
-              {item.status}
-            </Text>
+        <View style={styles.bannerContainer}>
+          <Image source={require('@/assets/images/banner.png')} style={styles.banner} />
+          <View marginT-10>
+            <Text h2_bold>{item.name}</Text>
           </View>
-        </View>
-        <View centerV style={styles.infoContainer}>
-          <Image
-            source={require("@/assets/images/home/icons/note.png")}
-            style={styles.icon}
-          />
-          <Text h3_semibold>{item.times}</Text>
-        </View>
-        <View centerV style={styles.infoContainer}>
-          <Image
-            source={require("@/assets/images/home/icons/clock.png")}
-            style={styles.icon}
-          />
-          <View style={styles.priceSpace}>
-            <Text h3_semibold>{item.time}</Text>
-            <View centerV style={styles.infoContainer}>
-              <Text h3_bold primary>
-                {i18n.t("appointment.view_details")}
-              </Text>
-              <View style={styles.circleIcon}>
-                <Text style={styles.circleIconText}>!</Text>
-              </View>
+          <View centerV style={styles.infoContainer}>
+            <Image source={require('@/assets/images/home/icons/ticket.png')} style={styles.icon} />
+            <View centerV style={styles.priceSpace}>
+              <Text h3_semibold>{item.service?.single_price ? ` ${item.service.single_price.toLocaleString()} ₫` : i18n.t('appointment.no_price')}</Text>
+            </View>
+          </View>
+          <View centerV style={styles.infoContainer}>
+            <Image source={require('@/assets/images/home/icons/note.png')} style={styles.icon} />
+            <Text h3_semibold>{item.note}</Text>
+          </View>
+          <View centerV style={styles.infoContainer}>
+            <Image source={require('@/assets/images/home/icons/clock.png')} style={styles.icon} />
+            <View style={styles.priceSpace}>
+              <Text h3_semibold>{item.time}</Text>
             </View>
           </View>
         </View>
@@ -134,11 +118,18 @@ const ScheduledPage = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text h1_bold primary>
-          {i18n.t("appointment.title")}
-        </Text>
+      <View style={styles.container} >
+        <View>
+          <Text h1_bold primary>{i18n.t('appointment.scheduled')}</Text>
+        </View>
+        <ScrollView showsHorizontalScrollIndicator={false} horizontal style={styles.scrollView}>
+          {items.map((item, index) => renderItem(item, index))}
+        </ScrollView>
+        <FlatList showsVerticalScrollIndicator={false}
+                  data={flatListItems}
+                  renderItem={renderFlatListItem}
+                  keyExtractor={(item) => item.id.toString()}
+        />
       </View>
       <ScrollView
         horizontal
@@ -173,6 +164,16 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginBottom: 20,
     padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+    elevation: 5,
+    backgroundColor: '#fff',
   },
   banner: {
     width: 350,
