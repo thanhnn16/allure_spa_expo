@@ -54,7 +54,6 @@ export default function DetailsScreen() {
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
   const [visible, setIsVisible] = useState(false);
-  const [isFavorite, setFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const { isGuest } = useAuth();
@@ -121,9 +120,9 @@ export default function DetailsScreen() {
         throw new Error("Response is undefined");
       }
       if (response.status === "added") {
-        setFavorite(true);
+        setProduct({ ...product, is_favorite: true });
       } else {
-        setFavorite(false);
+        setProduct({ ...product, is_favorite: false });
       }
     } catch (error) {
       console.log("Error toggling favorite:", error);
@@ -131,7 +130,7 @@ export default function DetailsScreen() {
   };
 
   const renderHeartIcon = () => {
-    if (isFavorite) {
+    if (product?.is_favorite) {
       return <Image source={HeartFullIcon} size={24} />;
     }
     return <Image source={HeartIcon} size={24} />;
@@ -341,7 +340,8 @@ export default function DetailsScreen() {
                 </View>
                 <View flex row right>
                   <Text h3_medium>
-                    {product?.rating_summary.total_ratings} {i18n.t("productDetail.reviews")}
+                    {product?.rating_summary.total_ratings}{" "}
+                    {i18n.t("productDetail.reviews")}
                   </Text>
                 </View>
               </View>
