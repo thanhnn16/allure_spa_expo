@@ -459,7 +459,11 @@
     "credit_card": "クレジットカード",
     "bank_transfer": "銀行振り込み",
     "no_address": "住所がありません",
-    "delivery_address": "配達先住所"
+    "delivery_address": "配達先住所",
+    "order_success": "注文成功",
+    "order_success_message": "あなたの注文が正常に作成されました。すぐにお問い合わせください。",
+    "payment_error": "支払いエラー",
+    "payment_error_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。"
   },
   "transaction": {
     "payment_success": "支払い成功",

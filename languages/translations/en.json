@@ -359,7 +359,11 @@
     "credit_card": "Credit Card",
     "bank_transfer": "Bank Transfer",
     "no_address": "No address",
-    "delivery_address": "Delivery Address"
+    "delivery_address": "Delivery Address",
+    "order_success": "Order Success",
+    "order_success_message": "Your order has been created successfully. We will contact you as soon as possible.",
+    "payment_error": "Payment Error",
+    "payment_error_message": "An error occurred while processing the payment. Please try again later."
   },
   "transaction": {
     "payment_success": "Payment Success",

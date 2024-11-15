@@ -459,7 +459,11 @@
     "credit_card": "Thẻ tín dụng",
     "bank_transfer": "Chuyển khoản ngân hàng",
     "no_address": "Không có địa chỉ",
-    "delivery_address": "Địa chỉ giao hàng"
+    "delivery_address": "Địa chỉ giao hàng",
+    "order_success": "Đặt hàng thành công",
+    "order_success_message": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "payment_error": "Thanh toán thất bại",
+    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
