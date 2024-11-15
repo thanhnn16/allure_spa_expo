@@ -18,6 +18,7 @@ import addressReducer from './features/address/addressSlice';
 import orderReducer from './features/order/orderSlice';
 import voucherReducer from "./features/voucher/voucherSlice";
 import bookingReducer from './features/booking/bookingSlice';
+import appointmentReducer from './features/appointment/appointmentSlice'; // Import the appointment reducer
 
 const persistConfig = {
     key: 'root',
@@ -44,8 +45,8 @@ const rootReducer: any = combineReducers({
     order: orderReducer,
     voucher: voucherReducer,
     booking: bookingReducer,
+    appointment: appointmentReducer,
 })
-
 
 export type RootState = ReturnType<typeof rootReducer>;
 

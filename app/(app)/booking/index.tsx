@@ -317,6 +317,7 @@ const BookingPage = () => {
                       placeholderTextColor="#8C8585"
                       multiline
                       numberOfLines={10}
+                      maxLength={200}
                       style={styles.enhancedNoteInput}
                   />
                 </View>
