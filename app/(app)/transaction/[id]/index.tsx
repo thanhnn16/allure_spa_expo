@@ -7,6 +7,7 @@ import {
   FlatList,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import {
   Button,
@@ -40,6 +41,17 @@ import { Orders } from "@/types/order.type";
 import OrderProductItem from "@/components/order/OrderProductItem";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { set } from "lodash";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { OrderItem } from "@/types/order.type";
+
+interface PaymentAddressProps {
+  shippingAddress: {
+    full_name: string;
+    phone: string;
+    address: string;
+    // thêm các field khác nếu cần
+  };
+}
 
 const styles = StyleSheet.create({
   // Container styles
@@ -122,28 +134,25 @@ const styles = StyleSheet.create({
     right: -10,
     zIndex: 1000,
   },
+  bottomActions: {
+    borderTopWidth: 1,
+    borderTopColor: Colors.grey60,
+    backgroundColor: Colors.white,
+  },
+  buyAgainLabel: {
+    fontFamily: "SFProText-Bold",
+    fontSize: 16,
+  },
 });
 
-export default function DetailTransaction() {
+const DetailTransaction = () => {
   const { id } = useLocalSearchParams();
-  console.log(id);
-  const dispatch = useDispatch();
-
-  const { orders, isLoading } = useSelector((
-    state: RootState) => state.order
-  );
+  const dispatch = useDispatch<AppDispatch>();
+  const { orders, isLoading } = useSelector((state: RootState) => state.order);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        await dispatch(getOrderThunk({ id }));
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-      }
-    };
-
-    fetchOrders();
-  }, [dispatch]);
+    dispatch(getOrderThunk({ id }));
+  }, [dispatch, id]);
 
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -154,108 +163,176 @@ export default function DetailTransaction() {
     bottomSheetRef.current?.expand();
   };
 
-  const sendReview = () => {
-    dispatch(createRatingProductThunk({
-      rating_type: "product",
-      item_id: 0,
-      stars: 5,
-      comment: "string",
-      media_id: 1
-    }));
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+
+  const sendReview = async () => {
+    try {
+      // Implement your review logic here
+      console.log("Sending review:", {
+        rating,
+        review,
+        images: selectedImages,
+      });
+      bottomSheetRef.current?.close();
+    } catch (error) {
+      console.error("Error sending review:", error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+        <AppBar back title={i18n.t("transaction_detail.title")} />
+        <View flex center>
+          <ActivityIndicator size="large" color={Colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
   }
 
-  type DeliveryStatus = 'pending' | 'confirmed' | 'delivering' | 'completed' | 'canceled';
-  const [activeDeliveryStatus, setactiveDeliveryStatus] = useState<DeliveryStatus>('completed');
+  const order = orders;
+  if (!order) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
         <AppBar back title={i18n.t("transaction_detail.title")} />
 
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{
-            flexGrow: 1,
-            paddingBottom: 10,
-            paddingHorizontal: 20
-          }}
-        >
-          <View style={styles.ratingContainer}>
-            <View>
-              <View>
-                <Text style={styles.textTitle}>{i18n.t("transaction_detail.review.title")}</Text>
-                <Text style={styles.textSubtitle}>
-                  {i18n.t("transaction_detail.review.content")}
-                </Text>
-              </View>
-              <TouchableOpacity style={styles.btnRate} onPress={() => handleOpenBottomSheet()}>
-                <Text style={styles.btnRateText}>{i18n.t("transaction_detail.review.button")}</Text>
-              </TouchableOpacity>
-            </View>
-            <Image
-              source={require("@/assets/images/coin.png")}
-              style={styles.imgCoin}
-            />
-          </View>
-
-          <TimelineList state={activeDeliveryStatus} />
-          <PaymentAddress />
-          <View marginV-10 gap-10>
-            <Text h2_bold>{i18n.t("checkout.payment_method")}</Text>
-            <PaymentPicker />
-          </View>
-
-          <View gap-10>
-            <Text h2_bold>{i18n.t("checkout.product")}</Text>
-            {/* {detailOrder.map((order: Orders) => (
-              <OrderProductItem key={order.id} order={order} />
-            ))} */}
-          </View>
-
-        </ScrollView>
-
-        <View paddingH-20
-          style={{
-            borderTopWidth: 1,
-            borderLeftWidth: 1,
-            borderRightWidth: 1,
-            borderTopColor: "#E0E0E0",
-            borderLeftColor: "#E0E0E0",
-            borderRightColor: "#E0E0E0",
-            borderTopLeftRadius: 13,
-            borderTopRightRadius: 13,
-            backgroundColor: "#FFFFFF",
-            paddingTop: 10,
-          }}
-        >
-
-          <View gap-10 marginV-5>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
+          {/* Order Status Card */}
+          <View
+            style={{
+              backgroundColor: Colors.primary,
+              padding: 15,
+              margin: 15,
+              borderRadius: 10,
+            }}
+          >
+            <Text white h2_bold marginB-10>
+              {i18n.t("transaction_detail.order_id")}: #{order.id}
+            </Text>
             <View row spread>
-              <Text h3_bold >{i18n.t("checkout.voucher")}</Text>
-              <Text h3>50k</Text>
-            </View>
-            <View row spread>
-              <Text h3_bold>{i18n.t("checkout.total_payment")}:</Text>
-              <Text h3_bold secondary>
-                123.456 VNĐ
+              <Text white h3>
+                {i18n.t("transaction_detail.status")}
+              </Text>
+              <Text white h3_bold>
+                {order.status?.toUpperCase()}
               </Text>
             </View>
           </View>
 
-          <Button
-            label={i18n.t("transaction_detail.buy_again").toString()}
-            labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-            backgroundColor={Colors.primary}
-            padding-20
-            borderRadius={10}
-            style={{
-              width: 338,
-              height: 47,
-              alignSelf: "center",
-              marginVertical: 10,
-            }}
-          />
-        </View>
+          {/* Timeline */}
+          <TimelineList state={order.status} />
+
+          {/* Shipping Address */}
+          <View marginH-15>
+            <PaymentAddress shippingAddress={order.shipping_address} />
+          </View>
+
+          {/* Payment Method */}
+          <View marginH-15 marginT-15>
+            <Text h2_bold marginB-10>
+              {i18n.t("checkout.payment_method")}
+            </Text>
+            <Card padding-15>
+              <View row centerV spread>
+                <View row centerV>
+                  <MaterialCommunityIcons
+                    name="credit-card-outline"
+                    size={30}
+                    color={Colors.primary}
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text h3>{order.payment_method?.name}</Text>
+                </View>
+                <Text h3_bold primary>
+                  {order.payment_method?.status}
+                </Text>
+              </View>
+            </Card>
+          </View>
+
+          {/* Products */}
+          <View marginH-15 marginT-15>
+            <Text h2_bold marginB-10>
+              {i18n.t("checkout.product")}
+            </Text>
+            {order.order_items?.map((item: OrderItem) => (
+              <OrderProductItem key={item.id} order={item} />
+            ))}
+          </View>
+
+          {/* Price Summary */}
+          <Card margin-15 padding-15>
+            <View gap-10>
+              <View row spread>
+                <Text h3>{i18n.t("checkout.subtotal")}</Text>
+                <Text h3>{order.total_amount?.toLocaleString()} VNĐ</Text>
+              </View>
+
+              {order.voucher && (
+                <View row spread>
+                  <Text h3>{i18n.t("checkout.voucher")}</Text>
+                  <Text h3 red>
+                    -{order.discount_amount?.toLocaleString()} VNĐ
+                  </Text>
+                </View>
+              )}
+
+              <View row spread>
+                <Text h3_bold>{i18n.t("checkout.total_payment")}</Text>
+                <Text h2_bold primary>
+                  {(
+                    order.total_amount - (order.discount_amount || 0)
+                  ).toLocaleString()}{" "}
+                  VNĐ
+                </Text>
+              </View>
+            </View>
+          </Card>
+
+          {/* Review Section */}
+          {order.status === "completed" && (
+            <View style={styles.ratingContainer}>
+              <View>
+                <Text style={styles.textTitle}>
+                  {i18n.t("transaction_detail.review.title")}
+                </Text>
+                <Text style={styles.textSubtitle}>
+                  {i18n.t("transaction_detail.review.content")}
+                </Text>
+                <TouchableOpacity
+                  style={styles.btnRate}
+                  onPress={handleOpenBottomSheet}
+                >
+                  <Text style={styles.btnRateText}>
+                    {i18n.t("transaction_detail.review.button")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Image
+                source={require("@/assets/images/coin.png")}
+                style={styles.imgCoin}
+              />
+            </View>
+          )}
+        </ScrollView>
+
+        {/* Bottom Actions */}
+        {order.status === "completed" && (
+          <View padding-15 style={styles.bottomActions}>
+            <Button
+              label={i18n.t("transaction_detail.buy_again")}
+              labelStyle={styles.buyAgainLabel}
+              backgroundColor={Colors.primary}
+              borderRadius={10}
+              onPress={() => {}}
+            />
+          </View>
+        )}
+
+        {/* Rating Bottom Sheet */}
         <BottomSheet
           ref={bottomSheetRef}
           onChange={handleSheetChanges}
@@ -290,6 +367,7 @@ export default function DetailTransaction() {
                 ratingBackgroundColor="#E0E0E0"
                 ratingColor="#FFC700"
                 ratingTextColor="#000"
+                onFinishRating={(value: number) => setRating(value)}
               />
             </View>
 
@@ -299,6 +377,8 @@ export default function DetailTransaction() {
                 <TextInput
                   placeholder={i18n.t("rating.type_content")}
                   style={{ height: 150, textAlignVertical: "top" }}
+                  value={review}
+                  onChangeText={setReview}
                 />
               </View>
               <Text>{i18n.t("rating.images")}</Text>
@@ -312,11 +392,11 @@ export default function DetailTransaction() {
 
             <View flex width={"100%"} bottom paddingV-20>
               <Button
-                label={i18n.t("rating.send_review").toString()}
+                label={i18n.t("rating.send_review")}
                 labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
                 backgroundColor={Colors.primary}
                 borderRadius={10}
-                onPress={() => sendReview()}
+                onPress={sendReview}
               />
             </View>
           </BottomSheetView>
@@ -324,4 +404,6 @@ export default function DetailTransaction() {
       </SafeAreaView>
     </GestureHandlerRootView>
   );
-}
+};
+
+export default DetailTransaction;

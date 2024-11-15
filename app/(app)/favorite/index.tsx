@@ -10,9 +10,7 @@ import i18n from "@/languages/i18n";
 import AppTabBar from "@/components/app-bar/AppTabBar";
 
 export default function FavoriteScreen() {
-  const [selectedTab, setSelectedTab] = useState<"product" | "service">(
-    "product"
-  );
+  const [selectedTab, setSelectedTab] = useState<"product" | "service">("product");
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [favorites, setFavorites] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,9 +22,10 @@ export default function FavoriteScreen() {
       const result = await dispatch(
         fetchFavoritesThunkByType({ type })
       ).unwrap();
-      setFavorites(result);
+      setFavorites(result || []); // Add null check here
     } catch (error) {
       console.error("Error fetching favorites:", error);
+      setFavorites([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }
@@ -36,36 +35,16 @@ export default function FavoriteScreen() {
     fetchFavorites(selectedTab);
   }, [selectedTab]);
 
-  const renderProductsPage = () => {
-    return (
-      <FlatList
-        data={favorites}
-        renderItem={({ item }) => (
-          <FavoriteItem item={item} type={"product"} />
-        )}
-        numColumns={2}
-        columnWrapperStyle={{
-          justifyContent: "space-between",
-          paddingHorizontal: 20,
-          marginTop: 10,
-        }}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={() => (
-          <View center padding-20>
-            <Text>{i18n.t("favorite.empty")}</Text>
-          </View>
-        )}
-      />
-    );
+  const renderItem = ({ item }: { item: any }) => {
+    if (!item) return null; // Add null check for item
+    return <FavoriteItem item={item} type={selectedTab} />;
   };
 
-  const renderServicesPage = () => {
+  const renderListComponent = () => {
     return (
       <FlatList
         data={favorites}
-        renderItem={({ item }) => (
-          <FavoriteItem item={item} type={"service"} />
-        )}
+        renderItem={renderItem}
         numColumns={2}
         columnWrapperStyle={{
           justifyContent: "space-between",
@@ -88,7 +67,10 @@ export default function FavoriteScreen() {
 
       <TabController
         initialIndex={selectedTabIndex}
-        onChangeIndex={setSelectedTabIndex}
+        onChangeIndex={(index) => {
+          setSelectedTabIndex(index);
+          setSelectedTab(index === 0 ? "product" : "service");
+        }}
         items={[
           { label: i18n.t("favorite.products") },
           { label: i18n.t("favorite.services") },
@@ -96,8 +78,8 @@ export default function FavoriteScreen() {
       >
         <AppTabBar />
         <View flex>
-          <TabController.TabPage index={0}>{renderProductsPage()}</TabController.TabPage>
-          <TabController.TabPage index={1} lazy>{renderServicesPage()}</TabController.TabPage>
+          <TabController.TabPage index={0}>{renderListComponent()}</TabController.TabPage>
+          <TabController.TabPage index={1} lazy>{renderListComponent()}</TabController.TabPage>
         </View>
       </TabController>
     </View>
