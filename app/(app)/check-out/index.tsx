@@ -87,17 +87,8 @@ export default function Checkout() {
 
   const { dialogConfig, showDialog, hideDialog } = useDialog();
 
-  const { products = [], totalAmount = 0 } = useSelector((state: RootState) =>
-    state.order.orders
-      ? {
-          products: state.order.orders,
-          totalAmount: state.order.totalAmount,
-        }
-      : {
-          products: [],
-          totalAmount: 0,
-        }
-  );
+  const products = useSelector((state: RootState) => state.order.orders || []);
+  const totalAmount = useSelector((state: RootState) => state.order.totalAmount || 0);
   const { vouchers, isLoading } = useSelector(
     (state: RootState) => state.voucher
   );
