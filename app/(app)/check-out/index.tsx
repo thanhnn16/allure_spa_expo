@@ -148,35 +148,43 @@ export default function Checkout() {
 
   const handlePayment = async () => {
     try {
+      if (!selectedAddress) {
+        showDialog(
+          i18n.t("checkout.address_required_title"),
+          i18n.t("checkout.address_required_message"),
+          "warning"
+        );
+        return;
+      }
+
       // Create order data
-      const invoiceData = {
+      const orderData = {
         payment_method_id: selectedPayment.id,
-        total_amount: totalAmount,
+        total_amount: discountedPrice, // Use discounted price
         discount_amount: totalPrice - discountedPrice,
-        voucher_id: voucher?.id || null,
+        voucher_id: selectedVoucher?.id || null,
+        shipping_address_id: selectedAddress.addressId,
         order_items: products.map((item: any) => ({
           item_type: item.type || "product",
           item_id: item.id,
           quantity: item.quantity,
-          price: item.price,
-        })),
+          price: item.priceValue
+        }))
       };
 
       // Create order
-      const orderResponse = await OrderService.createOrder(invoiceData);
+      const orderResponse = await OrderService.createOrder(orderData);
       const orderId = orderResponse.data.id;
 
       // Handle different payment methods
       if (selectedPayment.id === 1) {
         // Cash payment
-        // Show success dialog and redirect
         showDialog(
           i18n.t("checkout.order_success"),
           i18n.t("checkout.order_success_message"),
           "success"
         );
-
-        // Clear cart and redirect after dialog closes
+        
         setTimeout(() => {
           dispatch(clearOrder());
           router.replace("/(app)/");
@@ -184,16 +192,13 @@ export default function Checkout() {
       } else if (selectedPayment.id === 3) {
         // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
-
+        
         const paymentData = {
           returnUrl: `${scheme}://transaction?status=success`,
           cancelUrl: `${scheme}://transaction?status=cancel`,
         };
 
-        const paymentResponse = await OrderService.processPayment(
-          orderId,
-          paymentData
-        );
+        const paymentResponse = await OrderService.processPayment(orderId, paymentData);
 
         if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
           router.push({
@@ -204,23 +209,15 @@ export default function Checkout() {
             },
           });
         } else {
-          showDialog(
-            i18n.t("checkout.payment_error"),
-            paymentResponse.message || i18n.t("checkout.payment_error_message"),
-            "error"
-          );
+          throw new Error(paymentResponse.message || i18n.t("checkout.payment_error_message"));
         }
       }
     } catch (error: any) {
-      console.error("Payment Error:", {
-        message: error.message,
-        response: error.response?.data,
-      });
-
+      console.error("Payment Error:", error);
+      
       showDialog(
         i18n.t("checkout.payment_error"),
-        error.response?.data?.message ||
-          i18n.t("checkout.payment_error_message"),
+        error.response?.data?.message || i18n.t("checkout.payment_error_message"),
         "error"
       );
     }
