@@ -1,17 +1,42 @@
-import React from 'react'
-import { SvgProps } from 'react-native-svg'
-import { TouchableOpacity, Image } from 'react-native-ui-lib'
+import React from "react";
+import { TouchableOpacity, View, Badge } from "react-native-ui-lib";
+import { Ionicons } from "@expo/vector-icons";
 
-type ButtonMessageIconProps = {
-    onPress: () => void,
-    source: React.FC<SvgProps>
-}
-const ButtonMessageIcon = ({ onPress, source }: ButtonMessageIconProps) => {
+type HomeHeaderButtonProps = {
+  onPress: () => void;
+  iconName: keyof typeof Ionicons.glyphMap;
+  showBadge?: boolean;
+  badgeCount?: number;
+};
+
+const HomeHeaderButton = ({
+  onPress,
+  iconName,
+  showBadge,
+  badgeCount,
+}: HomeHeaderButtonProps) => {
   return (
     <TouchableOpacity onPress={onPress}>
-        <Image source={source} />
+      <View>
+        <Ionicons name={iconName} size={24} color="#717658" />
+        {showBadge && (
+          <Badge
+            label={
+              badgeCount && badgeCount > 99 ? "99+" : badgeCount?.toString()
+            }
+            size={16}
+            backgroundColor={"$red30"}
+            labelStyle={{ fontSize: 10, color: "white" }}
+            containerStyle={{
+              position: "absolute",
+              top: -8,
+              right: -8,
+            }}
+          />
+        )}
+      </View>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
-export default ButtonMessageIcon
+export default HomeHeaderButton;

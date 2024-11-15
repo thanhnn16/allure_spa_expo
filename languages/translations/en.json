@@ -60,7 +60,8 @@
       "login_notification": "You need to login to access your notification",
       "login_now": "Login now",
       "invalid_email": "Invalid email format",
-      "password_mismatch": "Passwords do not match"
+      "password_mismatch": "Passwords do not match",
+      "personal_info": "Personal Information"
     },
     "art": {
       "title": "The Art of Skincare",
@@ -291,8 +292,9 @@
     "note": "Note",
     "address": "Address",
     "home": "Home",
+    "work": "Work",
     "company": "Company",
-    "other": "Other",
+    "others": "Other",
     "name": "Name",
     "phone": "Phone",
     "save": "Save",
@@ -308,7 +310,9 @@
     "province": "Province",
     "district": "District",
     "update_address": "Update Address",
-    "type": "Address Type"
+    "type": "Address Type",
+    "customer_name": "Customer Name",
+    "phone_number": "Phone Number"
   },
   "date": {
     "formats": {
@@ -324,11 +328,20 @@
   "invoice": {
     "payment_success": "Payment Success",
     "payment_details": "Payment Details",
-    "payment_successful": "Payment Successful!",
-    "payment_success_message": "Thank you for your payment. Your order has been confirmed.",
     "amount": "Amount",
     "payment_time": "Payment Time",
-    "order_code": "Order Code"
+    "order_code": "Order Code",
+    "order_success": "Order Success",
+    "order_success_message_cash": "Your order has been created successfully. We will contact you as soon as possible.",
+    "order_details": "Order Details",
+    "order_failed": "Order Failed",
+    "order_failed_message": "An error occurred while creating the order. Please try again later.",
+    "payment_successful": "Payment Successful",
+    "payment_success_message": "Your payment has been processed successfully.",
+    "payment_failed": "Payment Failed",
+    "payment_failed_message": "An error occurred while processing the payment. Please try again later.",
+    "payment_cancelled": "Payment Cancelled",
+    "payment_cancel_message": "You have cancelled this payment transaction."
   },
   "checkout": {
     "title": "Payment",
@@ -346,7 +359,16 @@
     "no_discount": "No discount",
     "total_payment": "Total Payment",
     "payment": "Payment",
-    "subtotal": "Subtotal"
+    "subtotal": "Subtotal",
+    "cash": "Cash",
+    "credit_card": "Credit Card",
+    "bank_transfer": "Bank Transfer",
+    "no_address": "No address",
+    "delivery_address": "Delivery Address",
+    "order_success": "Order Success",
+    "order_success_message": "Your order has been created successfully. We will contact you as soon as possible.",
+    "payment_error": "Payment Error",
+    "payment_error_message": "An error occurred while processing the payment. Please try again later."
   },
   "transaction": {
     "payment_success": "Payment Success",
@@ -367,12 +389,12 @@
     },
     "timeline": {
       "pending": "Pending",
-      "confirmed": "確認済み",
-      "delivering": "配信中",
-      "completed": "完了",
-      "canceled": "キャンセル",
-      "date_delivery": "配達日",
-      "date_delivered": "配達日"
+      "confirmed": "Confirmed",
+      "delivering": "Delivering",
+      "completes": "Completed",
+      "canceled": "Canceled",
+      "date_delivery": "Delivery Date",
+      "date_delivered": "Delivery Date"
     },
     "buy_again": "Buy again",
     "order_code": "Order Code"

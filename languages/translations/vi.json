@@ -60,7 +60,8 @@
       "login_notification": "Bạn cần đăng nhập để truy cập vào thông báo",
       "login_now": "Đăng nhập ngay",
       "invalid_email": "Email không hợp lệ",
-      "password_mismatch": "Mật khẩu không khớp"
+      "password_mismatch": "Mật khẩu không khớp",
+      "personal_info": "Thông tin cá nhân"
     },
     "art": {
       "title": "Nghệ thuật chăm sóc da",
@@ -409,7 +410,9 @@
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
     "update_address": "Sửa địa chỉ",
-    "type": "Loại địa chỉ"
+    "type": "Loại địa chỉ",
+    "customer_name": "Tên khách hàng",
+    "phone_number": "Điện thoại"
   },
   "date": {
     "formats": {
@@ -425,11 +428,20 @@
   "invoice": {
     "payment_success": "Thanh toán thành công",
     "payment_details": "Chi tiết thanh toán",
-    "payment_successful": "Thanh toán thành công!",
-    "payment_success_message": "Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận.",
     "amount": "Số tiền",
     "payment_time": "Thời gian thanh toán",
-    "order_code": "Mã đơn hàng"
+    "order_code": "Mã đơn hàng",
+    "order_success": "Đặt hàng thành công",
+    "order_success_message_cash": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "order_details": "Chi tiết đơn hàng",
+    "order_failed": "Đặt hàng thất bại",
+    "order_failed_message": "Đã có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau.",
+    "payment_successful": "Thanh toán thành công",
+    "payment_success_message": "Thanh toán của bạn đã được xử lý thành công.",
+    "payment_failed": "Thanh toán thất bại",
+    "payment_failed_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau.",
+    "payment_cancelled": "Hủy thanh toán",
+    "payment_cancel_message": "Bạn đã hủy giao dịch thanh toán này."
   },
   "checkout": {
     "title": "Thanh toán",
@@ -447,7 +459,16 @@
     "no_discount": "Không có",
     "total_payment": "Tổng thanh toán",
     "payment": "Thanh toán",
-    "subtotal": "Tạm tính"
+    "subtotal": "Tạm tính",
+    "cash": "Tiền mặt",
+    "credit_card": "Thẻ tín dụng",
+    "bank_transfer": "Chuyển khoản ngân hàng",
+    "no_address": "Không có địa chỉ",
+    "delivery_address": "Địa chỉ giao hàng",
+    "order_success": "Đặt hàng thành công",
+    "order_success_message": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "payment_error": "Thanh toán thất bại",
+    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
