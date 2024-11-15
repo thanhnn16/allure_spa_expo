@@ -16,7 +16,8 @@
     "ok": "OK",
     "error": "Error",
     "success": "Success",
-    "back_to_home": "Back to Home"
+    "back_to_home": "Back to Home",
+    "loading": "Loading..."
   },
   "auth": {
     "login": {

@@ -16,7 +16,8 @@
     "ok": "OK",
     "error": "Lỗi",
     "success": "Thành công",
-    "back_to_home": "Về trang chủ"
+    "back_to_home": "Về trang chủ",
+    "loading": "Đang tải..."
   },
   "auth": {
     "login": {
