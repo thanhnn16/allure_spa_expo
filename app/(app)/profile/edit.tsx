@@ -6,6 +6,7 @@ import {
   Image,
   Picker,
 } from "react-native-ui-lib";
+import { Alert } from "react-native";
 import { useNavigation } from "expo-router";
 import i18n from "@/languages/i18n";
 import AppDialog from "@/components/dialog/AppDialog";
@@ -21,18 +22,22 @@ import BirthdayIcon from "@/assets/icons/birthday.svg";
 import { useAuth } from "@/hooks/useAuth";
 import { useDispatch } from "react-redux";
 import { updateUserThunk } from "@/redux/features/users/updateUserThunk";
-import { updateAvatarUrlThunk } from "@/redux/features/users/updateAvatarUrlThunk";
 import { uploadAvatarUrlThunk } from "@/redux/features/users/uploadAvatarUrlThunk";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import * as FileSystem from 'expo-file-system';
+import * as ImageManipulator from 'expo-image-manipulator';
+import { validateImage } from "@/utils/helpers/imageHelper";
+import { processImageForUpload } from "@/utils/helpers/imageHelper";
+
 interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const { user, setUser: setAuthUser } = useAuth();
 
   // Initialize state with user data
   const [name, setName] = React.useState(user?.full_name || "");
@@ -109,25 +114,43 @@ const ProfileEdit = (props: ProfileEditProps) => {
   };
 
   const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.5,
-    });
-    console.log("Image picked:", result?.assets?.[0]?.uri);
-
-    if (!result || !result.assets || !result.assets[0].uri) return;
     try {
-      const response = await fetch(result.assets[0].uri);
-      const blob = await response.blob();
-      const formData = new FormData();
-      formData.append("avatar", blob, "avatar.jpg");
-      await dispatch(uploadAvatarUrlThunk(formData)).unwrap();
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.5,
+      });
 
-      setAvatar({ uri: result.assets[0].uri });
-    } catch (error) {
+      if (!result.canceled && result.assets[0]) {
+        const processedUri = await processImageForUpload(result.assets[0].uri);
+        
+        const formData = new FormData();
+        formData.append('avatar', {
+          uri: processedUri,
+          type: 'image/jpeg',
+          name: 'avatar.jpg',
+        } as any);
+
+        const uploadedUser = await dispatch(uploadAvatarUrlThunk(formData)).unwrap();
+        const updatedUser = await dispatch(getUserThunk()).unwrap();
+        
+        // Cập nhật state local
+        setAvatar({ uri: updatedUser.avatar_url + '?' + new Date().getTime() });
+        
+        // Cập nhật user trong auth context
+        if (setAuthUser) {
+          setAuthUser({
+            ...updatedUser,
+            avatar_url: updatedUser.avatar_url + '?' + new Date().getTime()
+          });
+        }
+        
+        Alert.alert("Thành công", "Cập nhật ảnh đại diện thành công");
+      }
+    } catch (error: any) {
       console.error("Failed to upload avatar:", error);
+      Alert.alert("Lỗi", error.message || "Không thể tải lên ảnh đại diện");
     }
   };
 
