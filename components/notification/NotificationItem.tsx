@@ -8,19 +8,19 @@ import {
   Colors,
 } from "react-native-ui-lib";
 
-export type NotificationType = 
-  | 'new_order'           // Đơn hàng mới
-  | 'order_status'        // Cập nhật trạng thái đơn hàng
-  | 'new_appointment'     // Lịch hẹn mới
-  | 'appointment_status'  // Cập nhật trạng thái lịch hẹn
-  | 'new_review'         // Đánh giá mới
-  | 'new_message'        // Tin nhắn mới
-  | 'promotion'          // Khuyến mãi
-  | 'system'             // Thông báo hệ thống
-  | 'payment';           // Thanh toán
+export type NotificationType =
+  | "new_order" // Đơn hàng mới
+  | "order_status" // Cập nhật trạng thái đơn hàng
+  | "new_appointment" // Lịch hẹn mới
+  | "appointment_status" // Cập nhật trạng thái lịch hẹn
+  | "new_review" // Đánh giá mới
+  | "new_message" // Tin nhắn mới
+  | "promotion" // Khuyến mãi
+  | "system" // Thông báo hệ thống
+  | "payment"; // Thanh toán
 
 interface NotificationItemProps {
-  id: string;
+  id: number;
   type: NotificationType;
   title: string;
   content: string;
@@ -70,7 +70,7 @@ const notificationTypeMap: Record<
   payment: {
     backgroundColor: Colors.green30,
     icon: require("@/assets/images/home/icons/payment.png"),
-  }
+  },
 };
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
@@ -81,7 +81,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   isRead,
   onPress,
 }) => {
-  const { backgroundColor, icon } = notificationTypeMap[type] || notificationTypeMap.system;
+  const { backgroundColor, icon } =
+    notificationTypeMap[type] || notificationTypeMap.system;
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -94,20 +95,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         }}
       >
         <ListItem.Part left>
-          <View 
-            width={48} 
-            height={48} 
-            br100 
-            center
-            style={{ backgroundColor }}
-          >
-            <Image 
-              source={icon} 
+          <View width={48} height={48} br100 center style={{ backgroundColor }}>
+            <Image
+              source={icon}
               style={{
                 width: 32,
                 height: 32,
-                tintColor: Colors.white
-              }} 
+                tintColor: Colors.white,
+              }}
             />
           </View>
         </ListItem.Part>
