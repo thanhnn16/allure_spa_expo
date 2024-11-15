@@ -6,7 +6,6 @@ import i18n from "@/languages/i18n";
 import { useAuth } from "@/hooks/useAuth";
 import { router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ProfileDetailProps {}
 
@@ -44,7 +43,10 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             {
               title: i18n.t("profile.change_password"),
               icon: require("@/assets/images/key.png"),
-              onPress: () => {},
+              onPress: () => {
+                console.log("Đổi mật khẩu");  
+                router.push("/(app)/change-password"); 
+              },
             },
             {
               title: i18n.t("profile.history_login"),
