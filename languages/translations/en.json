@@ -60,7 +60,8 @@
       "login_notification": "You need to login to access your notification",
       "login_now": "Login now",
       "invalid_email": "Invalid email format",
-      "password_mismatch": "Passwords do not match"
+      "password_mismatch": "Passwords do not match",
+      "personal_info": "Personal Information"
     },
     "art": {
       "title": "The Art of Skincare",
@@ -291,8 +292,9 @@
     "note": "Note",
     "address": "Address",
     "home": "Home",
+    "work": "Work",
     "company": "Company",
-    "other": "Other",
+    "others": "Other",
     "name": "Name",
     "phone": "Phone",
     "save": "Save",
@@ -350,7 +352,11 @@
     "no_discount": "No discount",
     "total_payment": "Total Payment",
     "payment": "Payment",
-    "subtotal": "Subtotal"
+    "subtotal": "Subtotal",
+    "cash": "Cash",
+    "credit_card": "Credit Card",
+    "bank_transfer": "Bank Transfer",
+    "no_address": "No address"
   },
   "transaction": {
     "payment_success": "Payment Success",

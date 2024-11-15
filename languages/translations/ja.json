@@ -59,7 +59,8 @@
       "login_notification": "この商品を購入するにはログインが必要です",
       "login_now": "ログインする",
       "invalid_email": "無効なメール形式",
-      "password_mismatch": "パスワードが一致しません"
+      "password_mismatch": "パスワードが一致しません",
+      "personal_info": "個人情報"
     },
     "register": {
       "title": "登録",
@@ -391,8 +392,9 @@
     "note": "ノート",
     "address": "住所",
     "home": "家",
+    "work": "仕事",
     "company": "会社",
-    "other": "その他",
+    "others": "その他",
     "name": "名前",
     "phone": "電話",
     "save": "保存",
@@ -418,7 +420,7 @@
   "currency": {
     "unit": "₫",
     "separator": ".",
-    "delimiter": ",", 
+    "delimiter": ",",
     "format": "%n%u"
   },
   "invoice": {
@@ -450,7 +452,11 @@
     "no_discount": "割引なし",
     "total_payment": "合計支払い",
     "payment": "支払い",
-    "subtotal": "小計"
+    "subtotal": "小計",
+    "cash": "現金",
+    "credit_card": "クレジットカード",
+    "bank_transfer": "銀行振り込み",
+    "no_address": "住所がありません"
   },
   "transaction": {
     "payment_success": "支払い成功",
@@ -484,7 +490,7 @@
   "appointment": {
     "title": "予約",
     "scheduled": "予定",
-    "all": "すべて", 
+    "all": "すべて",
     "upcoming": "今後",
     "completed": "完了",
     "cancelled": "キャンセル",

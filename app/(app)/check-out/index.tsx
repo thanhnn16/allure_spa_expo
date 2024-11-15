@@ -5,6 +5,7 @@ import {
   ImageSourcePropType,
   SafeAreaView,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
@@ -29,6 +30,9 @@ import { clearOrder } from "@/redux";
 import { OrderItem } from "@/types";
 import { Product } from "@/types/product.type";
 import { useDialog } from "@/hooks/useDialog";
+import { fetchAddresses } from "@/redux/features";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import AppButton from "@/components/buttons/AppButton";
 
 export interface PaymentAddressProps {
   fullName: string;
@@ -97,6 +101,7 @@ export default function Checkout() {
   const { vouchers, isLoading } = useSelector(
     (state: RootState) => state.voucher
   );
+  const { addresses } = useSelector((state: RootState) => state.address);
 
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
@@ -171,23 +176,24 @@ export default function Checkout() {
       const orderId = orderResponse.data.id;
 
       // Handle different payment methods
-      if (selectedPayment.id === 1) { // Cash payment
+      if (selectedPayment.id === 1) {
+        // Cash payment
         // Show success dialog and redirect
         showDialog(
           i18n.t("checkout.order_success"),
           i18n.t("checkout.order_success_message"),
           "success"
         );
-        
+
         // Clear cart and redirect after dialog closes
         setTimeout(() => {
           dispatch(clearOrder());
           router.replace("/(app)/");
         }, 2000);
-        
-      } else if (selectedPayment.id === 3) { // Bank transfer
+      } else if (selectedPayment.id === 3) {
+        // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
-        
+
         const paymentData = {
           returnUrl: `${scheme}://transaction?status=success`,
           cancelUrl: `${scheme}://transaction?status=cancel`,
@@ -222,8 +228,9 @@ export default function Checkout() {
 
       showDialog(
         i18n.t("checkout.payment_error"),
-        error.response?.data?.message || i18n.t("checkout.payment_error_message"),
-        "error" 
+        error.response?.data?.message ||
+          i18n.t("checkout.payment_error_message"),
+        "error"
       );
     }
   };
@@ -267,19 +274,103 @@ export default function Checkout() {
     };
   }, [products, totalAmount, dispatch]);
 
+  useEffect(() => {
+    loadAddressData();
+  }, []);
+
+  const loadAddressData = async () => {
+    try {
+      // Load addresses from redux
+      await dispatch(fetchAddresses()).unwrap();
+
+      // Check for previously selected address
+      const savedAddress = await AsyncStorage.getItem("selectedAddress");
+      if (savedAddress) {
+        setSelectedAddress(JSON.parse(savedAddress));
+      }
+    } catch (error) {
+      console.error("Error loading addresses:", error);
+    }
+  };
+
+  const handleProceedToPayment = () => {
+    if (!selectedAddress) {
+      Alert.alert(
+        i18n.t("checkout.address_required_title"),
+        i18n.t("checkout.address_required_message"),
+        [
+          {
+            text: i18n.t("common.add_now"),
+            onPress: () => router.push("/(app)/address/add"),
+          },
+          {
+            text: i18n.t("common.cancel"),
+            style: "cancel",
+          },
+        ]
+      );
+      return;
+    }
+
+    // Proceed with payment logic
+    // ...
+  };
+
+  const renderAddressSection = () => {
+    if (addresses.length === 0) {
+      return (
+        <View style={styles.noAddressContainer}>
+          <Text style={styles.noAddressText}>
+            {i18n.t("checkout.no_address")}
+          </Text>
+          <AppButton
+            type="primary"
+            onPress={() => router.push("/(app)/address/add")}
+          >
+            <Text style={styles.buttonText}>
+              {i18n.t("address.add_new_address")}
+            </Text>
+          </AppButton>
+        </View>
+      );
+    }
+
+    return (
+      <TouchableOpacity
+        style={styles.addressContainer}
+        onPress={() => router.push("/(app)/address")}
+      >
+        {selectedAddress ? (
+          <View>
+            <Text style={styles.addressTitle}>
+              {i18n.t("checkout.delivery_address")}
+            </Text>
+            <Text style={styles.addressText}>
+              {selectedAddress.fullAddress}
+            </Text>
+            <Text style={styles.recipientText}>
+              {selectedAddress.fullName} | {selectedAddress.phoneNumber}
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.selectAddressText}>
+            {i18n.t("checkout.select_address")}
+          </Text>
+        )}
+        <MaterialCommunityIcons name="chevron-right" size={24} color="#666" />
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View flex bg-white>
       <AppBar back title={i18n.t("checkout.title")} />
       <View flex backgroundColor={Colors.white}>
         <ScrollView
           style={{ paddingHorizontal: 20 }}
           showsVerticalScrollIndicator={false}
         >
-          <PaymentAddress
-            isPayment
-            onPress={() => router.push("/(app)/address")}
-            selectAddress={selectedAddress}
-          />
+          {renderAddressSection()}
 
           <View marginV-10 gap-10>
             <Text h2_bold>{i18n.t("checkout.voucher")}</Text>
@@ -381,7 +472,7 @@ export default function Checkout() {
 
         <AppDialog {...dialogConfig} onClose={hideDialog} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -403,5 +494,41 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 20,
     marginBottom: 10,
+  },
+  noAddressContainer: {
+    padding: 16,
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  noAddressText: {
+    marginBottom: 16,
+    color: "#666",
+  },
+  addressContainer: {
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  addressTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  addressText: {
+    color: "#666",
+    marginBottom: 4,
+  },
+  recipientText: {
+    color: "#666",
+  },
+  selectAddressText: {
+    color: "#666",
+  },
+  buttonText: {
+    color: "#fff",
   },
 });

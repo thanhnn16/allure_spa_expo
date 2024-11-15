@@ -60,7 +60,8 @@
       "login_notification": "Bạn cần đăng nhập để truy cập vào thông báo",
       "login_now": "Đăng nhập ngay",
       "invalid_email": "Email không hợp lệ",
-      "password_mismatch": "Mật khẩu không khớp"
+      "password_mismatch": "Mật khẩu không khớp",
+      "personal_info": "Thông tin cá nhân"
     },
     "art": {
       "title": "Nghệ thuật chăm sóc da",
@@ -451,7 +452,11 @@
     "no_discount": "Không có",
     "total_payment": "Tổng thanh toán",
     "payment": "Thanh toán",
-    "subtotal": "Tạm tính"
+    "subtotal": "Tạm tính",
+    "cash": "Tiền mặt",
+    "credit_card": "Thẻ tín dụng",
+    "bank_transfer": "Chuyển khoản ngân hàng",
+    "no_address": "Không có địa chỉ"
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",

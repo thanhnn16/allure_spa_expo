@@ -1,13 +1,9 @@
-// app/(app)/(tabs)/profile/address/index.tsx
 import { TouchableOpacity, View, Text } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
 import { useNavigation } from "expo-router";
 import {
   Alert,
-  Dimensions,
-  SafeAreaView,
   ScrollView,
-  StyleSheet,
 } from "react-native";
 import { useState, useEffect } from "react";
 import AppButton from "@/components/buttons/AppButton";
