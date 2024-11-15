@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Notification, NotificationResponse } from './types';
-import { 
-    setNotifications, 
+import {
+    setNotifications,
     appendNotifications,
-    setLoading, 
-    setError, 
-    setUnreadCount, 
-    markAsRead as markAsReadAction, 
-    markAllAsRead as markAllAsReadAction 
+    setLoading,
+    setError,
+    setUnreadCount,
+    markAsRead as markAsReadAction,
+    markAllAsRead as markAllAsReadAction
 } from './notificationSlice';
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { RootState } from '@/redux/store';
