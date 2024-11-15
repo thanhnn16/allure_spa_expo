@@ -428,15 +428,20 @@
   "invoice": {
     "order_success": "注文が完了しました",
     "order_success_message_cash": "ご注文ありがとうございます。できるだけ早くご連絡させていただきます。",
-    "order_details": "注文詳細",
+    "order_details": "注文詳細", 
     "order_failed": "注文に失敗しました",
     "order_failed_message": "注文の処理中にエラーが発生しました。後でもう一度お試しください。",
     "payment_successful": "支払い完了",
     "payment_success_message": "お支払いが正常に処理されました。",
-    "payment_failed": "支払いに失敗しました",
+    "payment_failed": "支払いに失敗しました", 
     "payment_failed_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。",
     "payment_cancelled": "支払いがキャンセルされました",
-    "payment_cancel_message": "この支払い取引をキャンセルしました。"
+    "payment_cancel_message": "この支払い取引をキャンセルしました。",
+    "payment_success": "支払い完了",
+    "payment_details": "支払い詳細",
+    "amount": "金額",
+    "payment_time": "支払い時間",
+    "order_code": "注文コード"
   },
   "checkout": {
     "title": "支払い",

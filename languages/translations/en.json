@@ -326,6 +326,11 @@
     "format": "%u%n"
   },
   "invoice": {
+    "payment_success": "Payment Success",
+    "payment_details": "Payment Details",
+    "amount": "Amount",
+    "payment_time": "Payment Time",
+    "order_code": "Order Code",
     "order_success": "Order Success",
     "order_success_message_cash": "Your order has been created successfully. We will contact you as soon as possible.",
     "order_details": "Order Details",

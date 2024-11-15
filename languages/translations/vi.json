@@ -426,6 +426,11 @@
     "format": "%n %u"
   },
   "invoice": {
+    "payment_success": "Thanh toán thành công",
+    "payment_details": "Chi tiết thanh toán",
+    "amount": "Số tiền",
+    "payment_time": "Thời gian thanh toán",
+    "order_code": "Mã đơn hàng",
     "order_success": "Đặt hàng thành công",
     "order_success_message_cash": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
     "order_details": "Chi tiết đơn hàng",
