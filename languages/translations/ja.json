@@ -508,7 +508,8 @@
     "cancelled": "キャンセル",
     "times": "回数",
     "not_started": "開始されていません",
-    "view_details": "詳細を見る"
+    "view_details": "詳細を見る",
+    "7upcoming": "今後 (7日)"
   },
   "orders": {
     "title": "注文",

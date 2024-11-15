@@ -408,7 +408,8 @@
     "cancelled": "Cancelled",
     "times": "times",
     "not_started": "Not started",
-    "view_details": "View details"
+    "view_details": "View details",
+    "7upcoming": "Upcoming (7 days)"
   },
   "orders": {
     "title": "Orders",
