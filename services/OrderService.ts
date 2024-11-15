@@ -25,7 +25,11 @@ class OrderService {
         cancelUrl: string; 
     }): Promise<PaymentLinkResponse> {
         try {
-            const response = await AxiosInstance().post(`/orders/${orderId}/payment`, paymentData);
+            const response = await AxiosInstance().post(`/orders/${orderId}/payment`, {
+                returnUrl: paymentData.returnUrl,
+                cancelUrl: paymentData.cancelUrl,
+                order_id: orderId
+            });
 
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Không thể tạo link thanh toán');
