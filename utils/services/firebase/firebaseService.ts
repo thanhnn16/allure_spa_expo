@@ -96,6 +96,9 @@ class FirebaseService {
       if (remoteMessage.data?.type === 'order') {
         await this.showOrderNotification(remoteMessage);
       }
+      if (remoteMessage.data?.type === 'payment_success') {
+        await this.showPaymentNotification(remoteMessage);
+      }
       return remoteMessage;
     });
   }
@@ -157,10 +160,10 @@ class FirebaseService {
   async showOrderNotification(remoteMessage: any) {
     try {
       const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      
+
       let title = remoteMessage.notification?.title || "Thông báo đơn hàng";
       let body = remoteMessage.notification?.body;
-      
+
       await Notifications.scheduleNotificationAsync({
         content: {
           title,
@@ -177,6 +180,32 @@ class FirebaseService {
       });
     } catch (error) {
       console.error('Error showing order notification:', error);
+    }
+  }
+
+  async showPaymentNotification(remoteMessage: any) {
+    try {
+      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+      let title = remoteMessage.notification?.title || "Thông báo thanh toán";
+      let body = remoteMessage.notification?.body;
+
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title,
+          body,
+          data: {
+            ...remoteMessage.data,
+            uniqueId,
+            type: 'payment_success'
+          },
+          sound: 'default',
+          priority: Notifications.AndroidNotificationPriority.HIGH,
+        },
+        trigger: null,
+      });
+    } catch (error) {
+      console.error('Error showing payment notification:', error);
     }
   }
 }

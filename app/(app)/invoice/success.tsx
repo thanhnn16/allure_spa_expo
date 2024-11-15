@@ -79,10 +79,9 @@ export default function InvoiceSuccess() {
   };
 
   return (
-    <View flex bg-$background>
+    <View flex bg-white>
       <AppBar title={i18n.t("invoice.payment_success")} />
-
-      <View flex padding-20>
+      <View flex center gap-20 paddingH-24>
         {loading ? (
           <View>
             <SkeletonView height={30} width={screenWidth * 0.6} marginB-10 />
@@ -99,8 +98,8 @@ export default function InvoiceSuccess() {
                 : i18n.t("invoice.payment_details")}
             </Text>
 
-            <View bg-white padding-20 br20 marginT-20>
-              <View row spread marginB-10>
+            <View br20 gap-10>
+              <View row spread>
                 <Text h3>{i18n.t("invoice.amount")}</Text>
                 <Text h3 primary>
                   {paymentDetails?.amount
@@ -110,7 +109,7 @@ export default function InvoiceSuccess() {
               </View>
 
               {paymentDetails?.paymentMethod === "bank_transfer" && (
-                <View row spread marginB-10>
+                <View row spread>
                   <Text h3>{i18n.t("invoice.payment_time")}</Text>
                   <Text h3>
                     {paymentDetails?.paymentTime
@@ -120,7 +119,7 @@ export default function InvoiceSuccess() {
                 </View>
               )}
 
-              <View row spread marginB-10>
+              <View row spread>
                 <Text h3>{i18n.t("invoice.order_code")}</Text>
                 <Text h3>{paymentDetails?.orderCode || "-"}</Text>
               </View>
@@ -128,13 +127,11 @@ export default function InvoiceSuccess() {
           </View>
         )}
 
-        <View absB bottom-20 left-20 right-20>
-          <AppButton
-            title={i18n.t("common.back_to_home")}
-            onPress={() => router.replace("/(app)/")}
-            type="primary"
-          />
-        </View>
+        <AppButton
+          title={i18n.t("common.back_to_home")}
+          onPress={() => router.replace("/(app)/")}
+          type="primary"
+        />
       </View>
 
       <AppDialog

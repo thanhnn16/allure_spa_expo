@@ -3,22 +3,23 @@ import { View, Text, TabController, Image } from 'react-native-ui-lib'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { getOrderThunk } from '@/redux/features/order/getOrderThunk';
+import { getAllOrderThunk } from '@/redux/features/order/getAllOrderThunk';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppBar from '@/components/app-bar/AppBar';
 import VoucherSkeletonView from '@/components/voucher/VoucherSkeletonView';
 import AppTabBar from '@/components/app-bar/AppTabBar';
 import OrderProductItem from '@/components/order/OrderProductItem';
-import { OrderItem } from '@/types/order.type';
+import { Orders } from '@/types/order.type';
 
 import ShoppingBagIcon from "@/assets/icons/bag.svg";
+import i18n from '@/languages/i18n';
 
 const MyOrder = () => {
-    const [pendingOrder, setPendingOrder] = useState<OrderItem[]>([]);
-    const [confirmedOrder, setConfirmedOrder] = useState<OrderItem[]>([]);
-    const [deliveringOrder, setDeliveringOrder] = useState<OrderItem[]>([]);
-    const [completesOrder, setCompletesOrder] = useState<OrderItem[]>([]);
-    const [canceledOrder, setCanceledOrder] = useState<OrderItem[]>([]);
+    const [pendingOrder, setPendingOrder] = useState<Orders[]>([]);
+    const [confirmedOrder, setConfirmedOrder] = useState<Orders[]>([]);
+    const [deliveringOrder, setDeliveringOrder] = useState<Orders[]>([]);
+    const [completesOrder, setCompletesOrder] = useState<Orders[]>([]);
+    const [canceledOrder, setCanceledOrder] = useState<Orders[]>([]);
     const dispatch = useDispatch();
 
     const { orders, isLoading } = useSelector((
@@ -28,7 +29,7 @@ const MyOrder = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                await dispatch(getOrderThunk());
+                await dispatch(getAllOrderThunk());
             } catch (error) {
                 console.error('Error fetching orders:', error);
             }
@@ -39,11 +40,11 @@ const MyOrder = () => {
 
     useEffect(() => {
         if (orders.length > 0) {
-            setPendingOrder(orders.filter((order: any) => order.status === 'pending').flatMap((order: any) => order.order_items));
-            setConfirmedOrder(orders.filter((order: any) => order.status === 'confirmed').flatMap((order: any) => order.order_items));
-            setDeliveringOrder(orders.filter((order: any) => order.status === 'delivering').flatMap((order: any) => order.order_items));
-            setCompletesOrder(orders.filter((order: any) => order.status === 'completed').flatMap((order: any) => order.order_items));
-            setCanceledOrder(orders.filter((order: any) => order.status === 'cancelled').flatMap((order: any) => order.order_items));
+            setPendingOrder(orders.filter((order: any) => order.status === 'pending'));
+            setConfirmedOrder(orders.filter((order: any) => order.status === 'confirmed'));
+            setDeliveringOrder(orders.filter((order: any) => order.status === 'delivering'));
+            setCompletesOrder(orders.filter((order: any) => order.status === 'completed'));
+            setCanceledOrder(orders.filter((order: any) => order.status === 'cancelled'));
         }
     }, [orders]);
 
@@ -57,8 +58,8 @@ const MyOrder = () => {
                         height={200}
                     />
                     <View marginT-20 centerH>
-                        <Text h3_bold>Chưa có đơn hàng nào nào cả!</Text>
-                        <Text h3>Mua hàng ngay nhé</Text>
+                        <Text h3_bold>{i18n.t("orders.no_order")}</Text>
+                        <Text h3>{i18n.t("orders.buy_more")}</Text>
                     </View>
                 </View>
             );
@@ -69,9 +70,8 @@ const MyOrder = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <OrderProductItem
-                            key={item.item_id}
+                            key={item.id}
                             order={item}
-                            status='pending'
                         />
                     )}
                 />
@@ -89,8 +89,8 @@ const MyOrder = () => {
                         height={200}
                     />
                     <View marginT-20 centerH>
-                        <Text h3_bold>Chưa có đơn hàng nào nào cả!</Text>
-                        <Text h3>Mua hàng ngay nhé</Text>
+                        <Text h3_bold>{i18n.t("orders.no_order")}</Text>
+                        <Text h3>{i18n.t("orders.buy_more")}</Text>
                     </View>
                 </View>
             );
@@ -101,9 +101,8 @@ const MyOrder = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <OrderProductItem
-                            key={item.item_id}
+                            key={item.id}
                             order={item}
-                            status='confirmed'
                         />
                     )}
                 />
@@ -121,8 +120,8 @@ const MyOrder = () => {
                         height={200}
                     />
                     <View marginT-20 centerH>
-                        <Text h3_bold>Chưa có đơn hàng nào nào cả!</Text>
-                        <Text h3>Mua hàng ngay nhé</Text>
+                        <Text h3_bold>{i18n.t("orders.no_order")}</Text>
+                        <Text h3>{i18n.t("orders.buy_more")}</Text>
                     </View>
                 </View>
             );
@@ -133,9 +132,8 @@ const MyOrder = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <OrderProductItem
-                            key={item.item_id}
+                            key={item.id}
                             order={item}
-                            status='delivering'
                         />
                     )}
                 />
@@ -153,8 +151,8 @@ const MyOrder = () => {
                         height={200}
                     />
                     <View marginT-20 centerH>
-                        <Text h3_bold>Chưa có đơn hàng nào nào cả!</Text>
-                        <Text h3>Mua hàng ngay nhé</Text>
+                        <Text h3_bold>{i18n.t("orders.no_order")}</Text>
+                        <Text h3>{i18n.t("orders.buy_more")}</Text>
                     </View>
                 </View>
             );
@@ -165,9 +163,8 @@ const MyOrder = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <OrderProductItem
-                            key={item.item_id}
+                            key={item.id}
                             order={item}
-                            status='completed'
                         />
                     )}
                 />
@@ -185,8 +182,8 @@ const MyOrder = () => {
                         height={200}
                     />
                     <View marginT-20 centerH>
-                        <Text h3_bold>Chưa có đơn hàng nào nào cả!</Text>
-                        <Text h3>Mua hàng ngay nhé</Text>
+                        <Text h3_bold>{i18n.t("orders.no_order")}</Text>
+                        <Text h3>{i18n.t("orders.buy_more")}</Text>
                     </View>
                 </View>
             );
@@ -197,9 +194,8 @@ const MyOrder = () => {
                     showsVerticalScrollIndicator={false}
                     renderItem={({ item }) => (
                         <OrderProductItem
-                            key={item.item_id}
+                            key={item.id}
                             order={item}
-                            status='cancelled'
                         />
                     )}
                 />
@@ -210,17 +206,17 @@ const MyOrder = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <View flex bg-white>
-                <AppBar back title="Đơn hàng" />
+                <AppBar back title={i18n.t("orders.title")} />
                 {isLoading ? (
                     <VoucherSkeletonView />
                 ) : (
                     <TabController
                         items={[
-                            { label: 'Chờ xác nhận' },
-                            { label: 'Chờ lấy hàng' },
-                            { label: 'Đang giao hàng' },
-                            { label: 'Đã giao hàng' },
-                            { label: 'Đã hủy' }
+                            { label: i18n.t("orders.pending") },
+                            { label: i18n.t("orders.confirmed") },
+                            { label: i18n.t("orders.delivering") },
+                            { label: i18n.t("orders.completed") },
+                            { label: i18n.t("orders.cancelled") }
                         ]}
                     >
                         <AppTabBar />

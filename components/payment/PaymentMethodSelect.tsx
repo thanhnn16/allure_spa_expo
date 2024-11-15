@@ -37,7 +37,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
 
     return (
         <View gap-10 marginB-20>
-            <Text h2_bold>{i18n.t("payment.payment_method")}</Text>
+            <Text h2_bold>{i18n.t("checkout.payment_method")}</Text>
             <TouchableOpacity
                 onPress={isPayment ? onPress : undefined}
             >
@@ -60,7 +60,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
                     )}
                     {!selectedPayment && (
                         <Text h3>
-                            {i18n.t("payment.select_payment_method")}
+                            {i18n.t("checkout.select_payment_method")}
                         </Text>
                     )}
                     {isPayment && (

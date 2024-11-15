@@ -15,6 +15,7 @@ export interface Product extends Timestamps {
     ingredients: string;
     directions: string;
     storage_instructions: string;
+    is_favorite: boolean;
     product_notes: string;
     rating_summary: RatingSummary;
     category: Category;

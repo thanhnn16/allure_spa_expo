@@ -60,7 +60,8 @@
       "login_notification": "You need to login to access your notification",
       "login_now": "Login now",
       "invalid_email": "Invalid email format",
-      "password_mismatch": "Passwords do not match"
+      "password_mismatch": "Passwords do not match",
+      "personal_info": "Personal Information"
     },
     "art": {
       "title": "The Art of Skincare",
@@ -291,8 +292,9 @@
     "note": "Note",
     "address": "Address",
     "home": "Home",
+    "work": "Work",
     "company": "Company",
-    "other": "Other",
+    "others": "Other",
     "name": "Name",
     "phone": "Phone",
     "save": "Save",
@@ -308,7 +310,9 @@
     "province": "Province",
     "district": "District",
     "update_address": "Update Address",
-    "type": "Address Type"
+    "type": "Address Type",
+    "customer_name": "Customer Name",
+    "phone_number": "Phone Number"
   },
   "date": {
     "formats": {
@@ -322,6 +326,11 @@
     "format": "%u%n"
   },
   "invoice": {
+    "payment_success": "Payment Success",
+    "payment_details": "Payment Details",
+    "amount": "Amount",
+    "payment_time": "Payment Time",
+    "order_code": "Order Code",
     "order_success": "Order Success",
     "order_success_message_cash": "Your order has been created successfully. We will contact you as soon as possible.",
     "order_details": "Order Details",
@@ -350,7 +359,16 @@
     "no_discount": "No discount",
     "total_payment": "Total Payment",
     "payment": "Payment",
-    "subtotal": "Subtotal"
+    "subtotal": "Subtotal",
+    "cash": "Cash",
+    "credit_card": "Credit Card",
+    "bank_transfer": "Bank Transfer",
+    "no_address": "No address",
+    "delivery_address": "Delivery Address",
+    "order_success": "Order Success",
+    "order_success_message": "Your order has been created successfully. We will contact you as soon as possible.",
+    "payment_error": "Payment Error",
+    "payment_error_message": "An error occurred while processing the payment. Please try again later."
   },
   "transaction": {
     "payment_success": "Payment Success",
@@ -391,5 +409,25 @@
     "times": "times",
     "not_started": "Not started",
     "view_details": "View details"
+  },
+  "orders": {
+    "title": "Orders",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "delivering": "Delivering",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "repurchase": "Repurchase",
+    "rate_now": "Rate now",
+    "quantity": "Quantity",
+    "total": "Total",
+    "no_order": "You have no orders",
+    "buy_more": "Explore more products"
+  },
+  "favorite": {
+    "title": "Favorite",
+    "products": "Products",
+    "services": "Services",
+    "empty": "No products in the favorite list"
   }
 }
