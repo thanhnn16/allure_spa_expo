@@ -1,10 +1,7 @@
 import { TouchableOpacity, View, Text } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
 import { useNavigation } from "expo-router";
-import {
-  Alert,
-  ScrollView,
-} from "react-native";
+import { Alert, ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import AppButton from "@/components/buttons/AppButton";
 import { useRouter } from "expo-router";
@@ -127,12 +124,12 @@ const Address = () => {
               size={24}
               color="#22A45D"
             />
-            <Text marginL-10 style={styles.addressType}>
+            <Text text60 color="#22A45D" marginL-4>
               {i18n.t(`address.${item.address_type}`)}
             </Text>
             {item.is_default && (
-              <View style={styles.defaultBadge}>
-                <Text style={styles.defaultText}>
+              <View bg-green20 padding-4 br40 marginL-8>
+                <Text text80 green20>
                   {i18n.t("address.default")}
                 </Text>
               </View>
@@ -142,14 +139,19 @@ const Address = () => {
           <View row>
             <TouchableOpacity
               onPress={() => handleSelectAddress(item)}
-              style={[styles.iconButton, { marginRight: 8 }]}
+              bg-grey60
+              padding-4
+              br40
+              marginR-8
             >
               <MaterialCommunityIcons name="pencil" size={22} color="#717658" />
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => handleDeleteAddress(item.id as string)}
-              style={styles.iconButton}
+              bg-grey60
+              padding-4
+              br40
             >
               <Ionicons name="close-circle-outline" size={24} color="#FF4D4F" />
             </TouchableOpacity>
@@ -167,7 +169,7 @@ const Address = () => {
               style={{ marginRight: 8 }}
             />
             <Text text60>{i18n.t("address.address")}:</Text>
-            <Text style={styles.addressText}>
+            <Text text70 grey10 flex>
               {item.address}, {item.district}, {item.province}
             </Text>
           </View>
@@ -180,7 +182,7 @@ const Address = () => {
               style={{ marginRight: 8 }}
             />
             <Text text60>{i18n.t("address.customer_name")}:</Text>
-            <Text text60 style={styles.infoText}>
+            <Text text70 grey10 flex>
               {userProfile?.full_name}
             </Text>
           </View>
@@ -193,7 +195,7 @@ const Address = () => {
               style={{ marginRight: 8 }}
             />
             <Text text60>{i18n.t("address.phone_number")}:</Text>
-            <Text text60 style={styles.infoText}>
+            <Text text70 grey10 flex>
               {userProfile?.phone_number}
             </Text>
           </View>
@@ -212,7 +214,7 @@ const Address = () => {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
-            {addresses.map((item, index) => (
+            {addresses.map((item: Address, index: number) => (
               <AddressItem key={index} item={item} />
             ))}
           </ScrollView>
@@ -224,9 +226,7 @@ const Address = () => {
           type="primary"
           onPress={() => router.push("/(app)/address/add")}
         >
-          <Text style={{ color: "#fff" }}>
-            {i18n.t("address.add_new_address")}
-          </Text>
+          <Text white>{i18n.t("address.add_new_address")}</Text>
         </AppButton>
       </View>
     </View>
