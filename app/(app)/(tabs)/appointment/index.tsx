@@ -113,12 +113,11 @@ const ScheduledPage = () => {
             </View>
           </View>
         </View>
-      </View>
     );
   };
 
   return (
-      <View style={styles.container} >
+      <View style={styles.container}>
         <View>
           <Text h1_bold primary>{i18n.t('appointment.scheduled')}</Text>
         </View>
@@ -131,19 +130,6 @@ const ScheduledPage = () => {
                   keyExtractor={(item) => item.id.toString()}
         />
       </View>
-      <ScrollView
-        horizontal
-        style={styles.scrollView}
-        showsHorizontalScrollIndicator={false}
-      >
-        {items.map((item, index) => renderItem(item, index))}
-      </ScrollView>
-      <FlatList
-        data={flatListItems}
-        renderItem={renderFlatListItem}
-        keyExtractor={(item) => item.id.toString()}
-      />
-    </View>
   );
 };
 
