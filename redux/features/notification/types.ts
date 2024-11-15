@@ -15,10 +15,12 @@ export interface Notification {
 }
 
 export interface NotificationResponse {
+    message: string;
+    status_code: number;
+    success: boolean;
     data: {
-        items: Notification[];
+        data: Notification[];
         hasMore: boolean;
-        unreadCount: number;
     };
 }
 

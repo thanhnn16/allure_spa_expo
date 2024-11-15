@@ -18,7 +18,11 @@ export const fetchNotifications = createAsyncThunk(
         try {
             dispatch(setLoading(true));
             const response = await AxiosInstance().get<NotificationResponse>('/notifications');
-            dispatch(setNotifications(response.data.data));
+            dispatch(setNotifications({
+                items: response.data.data.data,
+                hasMore: response.data.data.hasMore,
+                unreadCount: response.data.data.data.filter(n => !n.is_read).length
+            }));
             return response.data.data;
         } catch (error: any) {
             dispatch(setError(error.message));
@@ -43,7 +47,7 @@ export const loadMoreNotifications = createAsyncThunk(
                 params: { page: currentPage + 1 }
             });
             dispatch(appendNotifications({
-                items: response.data.data.items,
+                items: response.data.data.data,
                 hasMore: response.data.data.hasMore
             }));
         } catch (error: any) {

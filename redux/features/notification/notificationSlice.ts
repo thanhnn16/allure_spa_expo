@@ -48,9 +48,10 @@ const notificationSlice = createSlice({
             }
         },
         markAllAsRead: (state) => {
-            state.notifications.forEach(n => {
-                n.is_read = true;
-            });
+            state.notifications = state.notifications.map(notification => ({
+                ...notification,
+                is_read: true
+            }));
             state.unreadCount = 0;
         },
         setLoading: (state, action: PayloadAction<boolean>) => {

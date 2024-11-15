@@ -16,6 +16,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Notification } from "@/redux/features/notification/types";
+import EmptyNotification from "@/components/notification/EmptyNotification";
 
 const NotificationPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,7 +59,7 @@ const NotificationPage: React.FC = () => {
     />
   );
 
-  if (loading && !notifications.length) {
+  if (loading && !notifications?.length) {
     return (
       <View flex center>
         <ActivityIndicator size="large" color={Colors.primary} />
@@ -70,27 +71,36 @@ const NotificationPage: React.FC = () => {
     <View flex bg-white>
       <AppBar back title="Thông báo" />
       <View flex>
-        <View row spread centerV padding-8 paddingH-24>
-          <Text h3 color={Colors.gray}>
-            Hôm nay
-          </Text>
-          {notifications?.some((n: Notification) => !n.is_read) && (
-            <Text h3 onPress={handleMarkAllAsRead}>
-              Đánh dấu tất cả là đã đọc
-            </Text>
-          )}
-        </View>
-        <FlatList
-          data={notifications}
-          renderItem={renderItem}
-          keyExtractor={(item: Notification) => item.id.toString()}
-          contentContainerStyle={{ paddingVertical: 8 }}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() =>
-            loading && <ActivityIndicator size="small" color={Colors.primary} />
-          }
-        />
+        {!loading && notifications?.length === 0 && (
+          <EmptyNotification showHeader={false} />
+        )}
+        {notifications?.length > 0 && (
+          <>
+            <View row spread centerV padding-8 paddingH-24>
+              <Text h3 color={Colors.gray}>
+                Tất cả thông báo
+              </Text>
+              {notifications?.some((n: Notification) => !n.is_read) && (
+                <Text h3 onPress={handleMarkAllAsRead}>
+                  Đánh dấu tất cả là đã đọc
+                </Text>
+              )}
+            </View>
+            <FlatList
+              data={notifications}
+              renderItem={renderItem}
+              keyExtractor={(item: Notification) => item.id.toString()}
+              contentContainerStyle={{ paddingVertical: 8 }}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={() =>
+                loading && (
+                  <ActivityIndicator size="small" color={Colors.primary} />
+                )
+              }
+            />
+          </>
+        )}
       </View>
     </View>
   );
