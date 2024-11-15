@@ -19,9 +19,11 @@ import { Notification } from "@/redux/features/notification/types";
 
 const NotificationPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { notifications, loading, hasMore } = useSelector(
-    (state: RootState) => state.notification
-  );
+  const {
+    notifications = [],
+    loading,
+    hasMore,
+  } = useSelector((state: RootState) => state.notification);
 
   useEffect(() => {
     dispatch(fetchNotifications());
@@ -56,7 +58,7 @@ const NotificationPage: React.FC = () => {
     />
   );
 
-  if (loading) {
+  if (loading && !notifications.length) {
     return (
       <View flex center>
         <ActivityIndicator size="large" color={Colors.primary} />
@@ -72,7 +74,7 @@ const NotificationPage: React.FC = () => {
           <Text h3 color={Colors.gray}>
             Hôm nay
           </Text>
-          {notifications.some((n: Notification) => !n.is_read) && (
+          {notifications?.some((n: Notification) => !n.is_read) && (
             <Text h3 onPress={handleMarkAllAsRead}>
               Đánh dấu tất cả là đã đọc
             </Text>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Image } from "react-native";
 import {
   View,
   Text,
@@ -7,6 +6,11 @@ import {
   ListItem,
   Colors,
 } from "react-native-ui-lib";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  Ionicons,
+} from "@expo/vector-icons";
 
 export type NotificationType =
   | "new_order" // Đơn hàng mới
@@ -33,43 +37,56 @@ interface NotificationItemProps {
 
 const notificationTypeMap: Record<
   NotificationType,
-  { backgroundColor: string; icon: any }
+  {
+    backgroundColor: string;
+    iconName: string;
+    iconFamily: "MaterialCommunityIcons" | "MaterialIcons" | "Ionicons";
+  }
 > = {
   new_order: {
     backgroundColor: Colors.blue30,
-    icon: require("@/assets/images/home/icons/order.png"),
+    iconName: "shopping-cart",
+    iconFamily: "MaterialIcons",
   },
   order_status: {
     backgroundColor: Colors.blue30,
-    icon: require("@/assets/images/home/icons/order-status.png"),
+    iconName: "clipboard-list",
+    iconFamily: "MaterialCommunityIcons",
   },
   new_appointment: {
     backgroundColor: Colors.green30,
-    icon: require("@/assets/images/home/icons/calendartick.png"),
+    iconName: "calendar-check",
+    iconFamily: "MaterialCommunityIcons",
   },
   appointment_status: {
     backgroundColor: Colors.orange30,
-    icon: require("@/assets/images/home/icons/calendaredit.png"),
+    iconName: "calendar-edit",
+    iconFamily: "MaterialCommunityIcons",
   },
   new_review: {
     backgroundColor: Colors.yellow30,
-    icon: require("@/assets/images/home/icons/star.png"),
+    iconName: "star",
+    iconFamily: "MaterialIcons",
   },
   new_message: {
     backgroundColor: Colors.purple30,
-    icon: require("@/assets/images/home/icons/message.png"),
+    iconName: "message",
+    iconFamily: "MaterialIcons",
   },
   promotion: {
     backgroundColor: Colors.red30,
-    icon: require("@/assets/images/home/icons/promotion.png"),
+    iconName: "local-offer",
+    iconFamily: "MaterialIcons",
   },
   system: {
     backgroundColor: Colors.gray30,
-    icon: require("@/assets/images/home/icons/system.png"),
+    iconName: "settings",
+    iconFamily: "MaterialIcons",
   },
   payment: {
     backgroundColor: Colors.green30,
-    icon: require("@/assets/images/home/icons/payment.png"),
+    iconName: "payment",
+    iconFamily: "MaterialIcons",
   },
 };
 
@@ -81,8 +98,33 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   isRead,
   onPress,
 }) => {
-  const { backgroundColor, icon } =
+  const { backgroundColor, iconName, iconFamily } =
     notificationTypeMap[type] || notificationTypeMap.system;
+
+  const renderIcon = () => {
+    switch (iconFamily) {
+      case "MaterialCommunityIcons":
+        return (
+          <MaterialCommunityIcons
+            name={iconName as any}
+            size={24}
+            color={Colors.white}
+          />
+        );
+      case "MaterialIcons":
+        return (
+          <MaterialIcons
+            name={iconName as any}
+            size={24}
+            color={Colors.white}
+          />
+        );
+      case "Ionicons":
+        return (
+          <Ionicons name={iconName as any} size={24} color={Colors.white} />
+        );
+    }
+  };
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -96,14 +138,7 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       >
         <ListItem.Part left>
           <View width={48} height={48} br100 center style={{ backgroundColor }}>
-            <Image
-              source={icon}
-              style={{
-                width: 32,
-                height: 32,
-                tintColor: Colors.white,
-              }}
-            />
+            {renderIcon()}
           </View>
         </ListItem.Part>
         <ListItem.Part
