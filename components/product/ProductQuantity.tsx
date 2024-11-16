@@ -51,7 +51,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, qu
           style={{
             padding: 10,
           }}
-          onPress={() => setQuantity(Math.max(1, quantity - 1))}
+          onPress={() => setQuantity(Math.max(0, quantity - 1))}
         >
           <Text h2>-</Text>
         </TouchableOpacity>
