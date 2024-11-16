@@ -358,6 +358,7 @@ export default function DetailsScreen() {
             isLoading={isLoading}
             quantity={quantity}
             setQuantity={setQuantity}
+            maxQuantity={product?.quantity}
           />
 
           <View marginT-10 paddingH-20>

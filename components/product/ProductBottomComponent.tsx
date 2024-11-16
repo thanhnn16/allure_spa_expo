@@ -48,9 +48,8 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
     }
     const cartItem = {
       ...product,
-      quantity: 1,
     };
-    dispatch(addItemToCart({ product: cartItem, quantity: quantity }));
+    dispatch(addItemToCart({ product: cartItem, cart_quantity: quantity }));
     dispatch(resetOrders())
     onAddToCart && onAddToCart();
   };

@@ -12,7 +12,7 @@ interface CartProductItemProps {
     setItemDelete?: (id: number) => void;
 }
 
-const CartProductItem = ({product, dialogVisible, setItemDelete} : CartProductItemProps) => {
+const CartProductItem = ({ product, dialogVisible, setItemDelete }: CartProductItemProps) => {
     const dispatch = useDispatch();
     const windowWidth = Dimensions.get("window").width;
 
@@ -20,11 +20,15 @@ const CartProductItem = ({product, dialogVisible, setItemDelete} : CartProductIt
         setItemDelete && setItemDelete(id);
     };
 
+    console.log(product);
     const handleIncreaseQuantity = (id: number) => {
-        dispatch(incrementCartItem(id));
+        console.log(product.cart_quantity, product.quantity);
+        if (product.cart_quantity < product.quantity) {
+            dispatch(incrementCartItem(id));
+        }
     };
     const handleDecreaseQuantity = (id: number) => {
-        if (product.quantity == 1) {
+        if (product.cart_quantity == 1) {
             dialogVisible && dialogVisible(true);
             return;
         }
@@ -40,7 +44,7 @@ const CartProductItem = ({product, dialogVisible, setItemDelete} : CartProductIt
             : require("@/assets/images/home/product1.png");
 
 
-    const total = parseFloat(product.price) * product.quantity;
+    const total = product.price * product.cart_quantity;
 
     const renderRightActions = () => {
         return (
@@ -92,12 +96,14 @@ const CartProductItem = ({product, dialogVisible, setItemDelete} : CartProductIt
                                         <Text h2_medium>-</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <Text h2>{product.quantity}</Text>
+                                <Text h2>{product.cart_quantity}</Text>
                                 <View style={styles.quantityButtonContainer}>
                                     <TouchableOpacity
                                         style={styles.quantityButton}
                                         onPress={() => {
+
                                             handleIncreaseQuantity(product.id);
+
                                         }}
                                     >
                                         <Text h2_medium>+</Text>
