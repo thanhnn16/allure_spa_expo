@@ -62,7 +62,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         id: product?.id,
         name: product?.name,
         price: product?.price,
-        priceValue: parseFloat(product?.price || "0"),
+        priceValue: product?.price || 0,
         quantity: quantity,
         image: product?.media?.[0]?.full_url || "",
         type: "product"

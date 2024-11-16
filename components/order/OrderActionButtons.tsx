@@ -15,20 +15,23 @@ const OrderActionButtons = ({ order }: { order: Orders }) => {
     // Implement reorder logic
   };
 
-  if (order.status !== "pending") return null;
-
   return (
-    <View bg-white row spread>
-      <AppButton
-        type="outline"
-        title={i18n.t("orders.cancel")}
-        onPress={handleCancelOrder}
-      />
-      <AppButton
-        type="primary"
-        title={i18n.t("orders.reorder")}
-        onPress={handleReorder}
-      />
+    <View bg-white paddingH-20 gap-10 marginB-10>
+      {order.status === "pending" && (
+        <AppButton
+          type="outline"
+          title={i18n.t("orders.cancel")}
+          onPress={handleCancelOrder}
+        />
+      )}
+
+      {(order.status === "completed" || order.status === "cancelled") && (
+        <AppButton
+          type="primary"
+          title={i18n.t("orders.reorder")}
+          onPress={handleReorder}
+        />
+      )}
     </View>
   );
 };

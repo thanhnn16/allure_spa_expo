@@ -47,7 +47,7 @@ export const cartSlice = createSlice({
       state.items = state.items.map(item => {
         if (item.id === action.payload) {
           item.cart_quantity += 1;
-          state.totalAmount += parseFloat(item.price);
+          state.totalAmount += item.price;
           AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
         }
         return item;
@@ -57,7 +57,7 @@ export const cartSlice = createSlice({
       state.items = state.items.map(item => {
         if (item.id === action.payload && item.cart_quantity > 1) {
           item.cart_quantity -= 1;
-          state.totalAmount -= parseFloat(item.price);
+          state.totalAmount -= item.price;
           AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
         }
         return item;
@@ -66,7 +66,7 @@ export const cartSlice = createSlice({
     removeCartItem: (state: CartState, action: any) => {
       const itemToRemove = state.items.find(item => item.id === action.payload);
       if (itemToRemove) {
-        state.totalAmount -= parseFloat(itemToRemove.price) * itemToRemove.cart_quantity;
+        state.totalAmount -= itemToRemove.price * itemToRemove.cart_quantity;
         state.items = state.items.filter(item => item.id !== action.payload);
         AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
       }

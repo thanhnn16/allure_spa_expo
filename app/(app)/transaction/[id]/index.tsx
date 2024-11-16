@@ -29,27 +29,33 @@ const OrderDetail = () => {
     return <OrderSkeleton />;
   }
 
+  const subTotal = selectedOrder.order_items.reduce(
+    (acc: any, item: any) => acc + item.price * item.quantity,
+    0
+  );
+
   return (
     <View flex bg-white>
       <AppBar back title={i18n.t("orders.detail")} />
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+
         {/* Order Status Section */}
         <View style={styles.section}>
           <View row spread centerV>
-            <Text text65L>
+            <Text h2_bold>
               {i18n.t("orders.order_id")}: #{selectedOrder.id}
             </Text>
             <OrderStatusBadge status={selectedOrder.status} />
           </View>
-          <Text text80L marginT-8 color={Colors.grey30}>
+          <Text h3 marginT-8 color={Colors.grey30}>
             {new Date(selectedOrder.created_at).toLocaleDateString()}
           </Text>
         </View>
 
         {/* Order Items Section */}
         <View style={styles.section}>
-          <Text text65L marginB-16>
+          <Text h2_bold marginB-16>
             {i18n.t("orders.items")}
           </Text>
           {selectedOrder.order_items?.map((item: OrderItem) => (
@@ -59,23 +65,23 @@ const OrderDetail = () => {
 
         {/* Payment Info Section */}
         <View style={styles.section}>
-          <Text text65L marginB-16>
+          <Text h2_bold marginB-16>
             {i18n.t("orders.payment_info")}
           </Text>
 
           <View row spread marginB-8>
-            <Text text80L>{i18n.t("orders.subtotal")}</Text>
-            <Text text80L>
+            <Text h3>{i18n.t("orders.subtotal")}</Text>
+            <Text h3>
               {formatCurrency({
-                price: Number(selectedOrder.total_amount) || 0,
+                price: Number(subTotal) || 0,
               })}
             </Text>
           </View>
 
           {Number(selectedOrder.discount_amount) > 0 && (
             <View row spread marginB-8>
-              <Text text80L>{i18n.t("orders.discount")}</Text>
-              <Text text80L color={Colors.red30}>
+              <Text h3>{i18n.t("orders.discount")}</Text>
+              <Text h3 color={Colors.red30}>
                 -
                 {formatCurrency({
                   price: Number(selectedOrder.discount_amount) || 0,
@@ -85,11 +91,11 @@ const OrderDetail = () => {
           )}
 
           <View row spread marginT-8>
-            <Text text65L>{i18n.t("orders.total")}</Text>
-            <Text text65L color={Colors.primary}>
+            <Text h2>{i18n.t("orders.total")}</Text>
+            <Text h2_bold color={Colors.secondary}>
               {formatCurrency({
                 price:
-                  Number(selectedOrder.total_amount) -
+                  Number(subTotal) -
                   (Number(selectedOrder.discount_amount) || 0),
               })}
             </Text>
@@ -149,6 +155,8 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+    borderColor: Colors.primary_light,
+    borderWidth: 1,
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
