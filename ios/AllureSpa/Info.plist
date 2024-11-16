@@ -25,10 +25,13 @@
     <key>CFBundleURLTypes</key>
     <array>
       <dict>
+        <key>CFBundleURLName</key>
+        <string>zalo</string>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>zalo</string>
           <string>allurespa</string>
-          <string>com.faith-nippon.allure-spa</string>
+          <string>zalo-${process.env.EXPO_PUBLIC_ZALO_CLIENT_ID}</string>
         </array>
       </dict>
       <dict>
@@ -40,6 +43,12 @@
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>zalo</string>
+      <string>zaloshareext</string>
+      <string>zalosdk</string>
+    </array>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -58,13 +67,19 @@
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>This app needs access to location when open.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>This app needs access to the microphone.</string>
+    <string>CUSTOM: Allow $(PRODUCT_NAME) to access the microphone</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to save photos</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your photos.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>CUSTOM: Allow $(PRODUCT_NAME) to securely recognize user speech</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>UIAppFonts</key>
@@ -102,7 +117,5 @@
     <string>Automatic</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-    <key>NSSpeechRecognitionUsageDescription</key>
-    <string>This app needs access to speech recognition.</string>
   </dict>
 </plist>

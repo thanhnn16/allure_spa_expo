@@ -13,7 +13,7 @@
 	<key>PROJECT_ID</key>
 	<string>allure-spa-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>allure-spa-app.firebasestorage.app</string>
+	<string>allure-spa-app.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
