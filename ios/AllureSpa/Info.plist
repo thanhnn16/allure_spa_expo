@@ -31,7 +31,7 @@
         <array>
           <string>zalo</string>
           <string>allurespa</string>
-          <string>zalo-${process.env.EXPO_PUBLIC_ZALO_CLIENT_ID}</string>
+          <string>zalo-3131373079387573469</string>
         </array>
       </dict>
       <dict>
@@ -76,6 +76,7 @@
     <string>CUSTOM: Allow $(PRODUCT_NAME) to securely recognize user speech</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
