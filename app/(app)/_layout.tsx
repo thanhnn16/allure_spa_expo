@@ -9,17 +9,13 @@ const AppLayout = () => {
   );
 
   useEffect(() => {
-    const checkAuthAndNavigate = () => {
-      try {
-        if (!isAuthenticated && !isGuest) {
-          router.replace("/(auth)");
-        }
-      } catch (err) {
-        console.error("Navigation error:", err);
+    const timer = setTimeout(() => {
+      if (!isAuthenticated && !isGuest) {
+        router.replace("/(auth)");
       }
-    };
+    }, 100);
 
-    checkAuthAndNavigate();
+    return () => clearTimeout(timer);
   }, [isAuthenticated, isGuest]);
 
   return (
