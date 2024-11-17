@@ -71,8 +71,8 @@ const AppDialog = ({
           <Text h2_bold center marginB-10 color={Colors.text}>
             {title}
           </Text>
-          <View center>
-            <Text>{description}</Text>
+          <View>
+            <Text center>{description}</Text>
           </View>
         </View>
         <View paddingH-20>

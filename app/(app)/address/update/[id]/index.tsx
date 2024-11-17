@@ -6,7 +6,7 @@ import { useState } from "react";
 import AppButton from "@/components/buttons/AppButton";
 import { SafeAreaView, ScrollView, TextInput, Alert } from "react-native";
 import { useDispatch } from "react-redux";
-import { updateAddress } from "@/redux/features/address/addressSlice";
+// import { updateAddress } from "@/redux/features/address/addressSlice";
 
 const AddressInput = ({
   value,
@@ -47,7 +47,7 @@ const AddressInput = ({
   </View>
 );
 
-const Update = () => {
+const UpdateScreen = () => {
   const params = useLocalSearchParams();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -103,12 +103,12 @@ const Update = () => {
         note: formData.note,
       };
 
-      await dispatch(
-        updateAddress({
-          id: params.id as string,
-          data: updateData,
-        })
-      ).unwrap();
+      // await dispatch(
+      //   updateAddress({
+      //     id: params.id as string,
+      //     data: updateData,
+      //   })
+      // ).unwrap();
 
       Alert.alert("Thành công", "Đã cập nhật địa chỉ", [
         {
@@ -265,7 +265,6 @@ const Update = () => {
                 key={item.id}
                 onPress={() => setSelectedItem(item.id)}
                 center
-                br8
                 marginR-12
                 padding-12
                 paddingH-25
@@ -310,4 +309,4 @@ const Update = () => {
   );
 };
 
-export default Update;
+export default UpdateScreen;
