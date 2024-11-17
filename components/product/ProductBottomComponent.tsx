@@ -39,6 +39,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   quantity,
   onAddToCart,
 }) => {
+  const [isVisible, setIsVisible] = useState(false);
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
@@ -50,7 +51,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       ...product,
     };
     dispatch(addItemToCart({ product: cartItem, cart_quantity: quantity }));
-    dispatch(resetOrders())
+    dispatch(resetOrders());
     onAddToCart && onAddToCart();
   };
 
@@ -65,7 +66,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         priceValue: product?.price || 0,
         quantity: quantity,
         image: product?.media?.[0]?.full_url || "",
-        type: "product"
+        type: "product",
       };
 
       // dispatch(setOrderProducts({
@@ -85,8 +86,6 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       </View>
     );
   }
-
-  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <View
@@ -126,11 +125,18 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       </View>
       <Incubator.Toast
         visible={isVisible}
-        position={'bottom'}
+        position={"bottom"}
         autoDismiss={1500}
         onDismiss={() => setIsVisible(false)}
       >
-        <View row centerV gap-10 paddingH-20 paddingV-10 backgroundColor={Colors.primary_light}>
+        <View
+          row
+          centerV
+          gap-10
+          paddingH-20
+          paddingV-10
+          backgroundColor={Colors.primary_light}
+        >
           <Image source={ShoppingCartIcon} size={24} />
           <Text h3_medium>Cần thêm số lượng sản phẩm</Text>
         </View>

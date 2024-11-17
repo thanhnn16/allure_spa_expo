@@ -43,7 +43,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
-import { resetOrders } from "@/redux/features/order/orderSlice";
 
 interface MediaItem {
   full_url: string;
@@ -61,8 +60,7 @@ export default function DetailsScreen() {
   const { isGuest } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
-  const [quantity, setQuantity] = useState(0);
-  const scaleValue = useSharedValue(2);
+  const [quantity, setQuantity] = useState(1);
 
   const windowWidth = Dimensions.get("window").width;
 
@@ -231,7 +229,6 @@ export default function DetailsScreen() {
         translateX.value = 0;
         scale.value = 2;
         opacity.value = 1;
-
       }
     );
   };
@@ -371,7 +368,6 @@ export default function DetailsScreen() {
             )}
             <ProductDescription product={product} isLoading={isLoading} />
           </View>
-
         </ScrollView>
         {showAnimatedImage && (
           <View

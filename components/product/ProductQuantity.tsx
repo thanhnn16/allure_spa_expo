@@ -17,8 +17,12 @@ interface ProductQuantityProps {
   setQuantity: (quantity: number) => void;
 }
 
-const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, quantity, setQuantity, maxQuantity }) => {
-
+const ProductQuantity: React.FC<ProductQuantityProps> = ({
+  isLoading = false,
+  quantity,
+  setQuantity,
+  maxQuantity,
+}) => {
   if (isLoading) {
     return (
       <View marginV-10 marginH-20>
@@ -52,7 +56,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, qu
           style={{
             padding: 10,
           }}
-          onPress={() => setQuantity(Math.max(0, quantity - 1))}
+          onPress={() => setQuantity(Math.max(1, quantity - 1))}
         >
           <Text h2>-</Text>
         </TouchableOpacity>
