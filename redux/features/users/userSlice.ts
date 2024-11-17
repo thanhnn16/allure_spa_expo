@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { User } from "@/types/user.type";
 import { getUserThunk } from "./getUserThunk";
 import { updateUserThunk } from "./updateUserThunk";
-import { updateAvatarUrlThunk } from "./updateAvatarUrlThunk";
 
 interface UserState {
   user: User | null;
@@ -45,23 +44,7 @@ export const userSlice = createSlice({
       .addCase(updateUserThunk.rejected, (state: any, action: any) => {
         state.error = action.error.message || "Failed to update profile";
         state.isLoading = false;
-      })
-      .addCase(updateAvatarUrlThunk.pending, (state: any) => {
-        state.isLoading = true;
-        state.error = null;
-      }
-      )
-      .addCase(updateAvatarUrlThunk.fulfilled, (state: any, action: any) => {
-        state.user = action.payload;
-        state.isLoading = false;
-      }
-      )
-      .addCase(updateAvatarUrlThunk.rejected, (state: any, action: any) => {
-        state.error = action.error.message || "Failed to update avatar";
-        state.isLoading = false
-      }
-      )
-      ;
+      });
   },
 });
 export const { } = userSlice.actions;
