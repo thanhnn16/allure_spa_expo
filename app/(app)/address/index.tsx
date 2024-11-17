@@ -72,6 +72,7 @@ const AddressScreen = () => {
       ).unwrap();
       setDialogVisible(false);
       await dispatch(fetchAddresses()).unwrap();
+      await AsyncStorage.setItem("selectedAddress", JSON.stringify(item));
 
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể cập nhật địa chỉ");

@@ -127,11 +127,19 @@ export default function InvoiceSuccess() {
           </View>
         )}
 
-        <AppButton
-          title={i18n.t("common.back_to_home")}
-          onPress={() => router.replace("/(app)/")}
-          type="primary"
-        />
+        <View width={"100%"} gap-12 absB marginB-10>
+          <AppButton
+            title={"Xem chi tiết đơn hàng"}
+            buttonStyle={{ backgroundColor: Colors.secondary }}
+            onPress={() => router.replace(`/transaction/${paymentDetails?.orderCode}`)}
+            type="primary"
+          />
+          <AppButton
+            title={i18n.t("common.back_to_home")}
+            onPress={() => router.replace("/(app)/")}
+            type="primary"
+          />
+        </View>
       </View>
 
       <AppDialog

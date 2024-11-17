@@ -33,19 +33,20 @@ import { useDialog } from "@/hooks/useDialog";
 import { fetchAddresses } from "@/redux/features";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppButton from "@/components/buttons/AppButton";
+import { Address, UserProfile } from "@/types/address.type";
 
-export interface PaymentAddressProps {
-  fullName: string;
-  phoneNumber: string;
-  fullAddress: string;
-  addressType: string;
-  isDefault: string;
-  note: string;
-  addressId: string;
-  province: string;
-  district: string;
-  address: string;
-}
+// export interface PaymentAddressProps {
+//   fullName: string;
+//   phoneNumber: string;
+//   fullAddress: string;
+//   addressType: string;
+//   isDefault: string;
+//   note: string;
+//   addressId: string;
+//   province: string;
+//   district: string;
+//   address: string;
+// }
 
 export interface PaymentMethod {
   id: number;
@@ -77,7 +78,7 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [selectedAddress, setSelectedAddress] =
-    useState<PaymentAddressProps | null>(null);
+    useState<Address | null>(null);
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
   const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
   const [voucher, setVoucher] = useState<Voucher | null>(null);
@@ -93,6 +94,24 @@ export default function Checkout() {
     (state: RootState) => state.voucher
   );
   const { addresses } = useSelector((state: RootState) => state.address);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const loadUserData = async () => {
+    try {
+      const userProfileStr = await AsyncStorage.getItem("userProfile");
+      if (userProfileStr) {
+        setUserProfile(JSON.parse(userProfileStr));
+      }
+
+      await dispatch(fetchAddresses()).unwrap();
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+      Alert.alert("Lỗi", "Không thể tải thông tin");
+    }
+  };
+
+  useEffect(() => {
+    loadUserData();
+  }, [dispatch]);
 
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
@@ -163,7 +182,7 @@ export default function Checkout() {
         total_amount: discountedPrice,
         discount_amount: totalPrice - discountedPrice,
         voucher_id: selectedVoucher?.id || null,
-        shipping_address_id: selectedAddress.addressId,
+        shipping_address_id: selectedAddress.id,
         order_items: products.map((item: any) => ({
           item_type: item.type || "product",
           item_id: item.id,
@@ -190,7 +209,7 @@ export default function Checkout() {
         dispatch(clearOrder());
       } else if (selectedPayment.id === 3) { // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
-        
+
         const paymentData = {
           returnUrl: `${scheme}://invoice/success?order_id=${orderId}&amount=${discountedPrice}&payment_method=bank_transfer&payment_time=${new Date().toISOString()}`,
           cancelUrl: `${scheme}://invoice/failed?type=cancel&order_id=${orderId}&payment_method=bank_transfer`,
@@ -331,15 +350,15 @@ export default function Checkout() {
         onPress={() => router.push("/(app)/address")}
       >
         {selectedAddress ? (
-          <View>
+          <View flexS>
             <Text style={styles.addressTitle}>
               {i18n.t("checkout.delivery_address")}
             </Text>
             <Text style={styles.addressText}>
-              {selectedAddress.fullAddress}
+              {selectedAddress.address}, {selectedAddress.ward}, {selectedAddress.district}, {selectedAddress.province}
             </Text>
             <Text style={styles.recipientText}>
-              {selectedAddress.fullName} | {selectedAddress.phoneNumber}
+              {userProfile?.full_name} | {userProfile?.phone_number}
             </Text>
           </View>
         ) : (
