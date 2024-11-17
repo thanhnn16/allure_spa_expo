@@ -411,9 +411,7 @@
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
     "update_address": "Sửa địa chỉ",
-    "type": "Loại địa chỉ",
-    "customer_name": "Tên khách hàng",
-    "phone_number": "Điện thoại"
+    "type": "Loại địa chỉ"
   },
   "date": {
     "formats": {
@@ -460,16 +458,7 @@
     "no_discount": "Không có",
     "total_payment": "Tổng thanh toán",
     "payment": "Thanh toán",
-    "subtotal": "Tạm tính",
-    "cash": "Tiền mặt",
-    "credit_card": "Thẻ tín dụng",
-    "bank_transfer": "Chuyển khoản ngân hàng",
-    "no_address": "Không có địa chỉ",
-    "delivery_address": "Địa chỉ giao hàng",
-    "order_success": "Đặt hàng thành công",
-    "order_success_message": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
-    "payment_error": "Thanh toán thất bại",
-    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."
+    "subtotal": "Tạm tính"
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
@@ -517,6 +506,12 @@
     "cancel_appointment_fail": "Huỷ lịch hẹn thất bại",
     "cancel_appointment_reason": "Nhập lý do huỷ lịch hẹn",
     "confirm": "Xác nhận",
+    "order_code": "Mã đơn hàng:",
+    "cancellation_note": "Lý do huỷ",
+    "cancelled_at": "Thời gian huỷ",
+    "cancelled_by": "Người huỷ",
+    "total_amount": "Tổng tiền",
+    "no_notes": "Không có ghi chú",
     "cancel": "Huỷ",
     "view_details": "Nhấn xem chi tiết",
     "7upcoming": "Sắp tới (7 ngày)"
@@ -560,3 +555,4 @@
     "empty": "Không có sản phẩm nào trong danh sách yêu thích"
   }
 }
+

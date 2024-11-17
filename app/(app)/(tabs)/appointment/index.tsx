@@ -133,23 +133,29 @@ const ScheduledPage = () => {
         >
           <View row spread centerV paddingH-15>
             <View row gap-15 centerV>
-              <Text h3_bold>Mã đơn hàng: #{item.id}</Text>
+              <Text h3_bold>{`${i18n.t('appointment.order_code')} #${item.id.toString().padStart(3)}`}</Text>
             </View>
             <View row gap-10 centerV>
               <View>
                 <Text
                     h3_semibold
-                    style={[
-                      item.status === 'Completed' && styles.completedStatus,
-                      item.status === 'Pending' && styles.pendingStatus,
-                      item.status === 'Cancelled' && styles.cancelledStatus,
-                      item.status === 'Confirmed' && styles.confirmedStatus,
-                    ]}
+                    style={
+                      item.status === 'completed'
+                          ? styles.completedStatus
+                          : item.status === 'pending'
+                              ? styles.pendingStatus
+                              : item.status === 'cancelled'
+                                  ? styles.cancelledStatus
+                                  : styles.confirmedStatus
+                    }
                 >
-                  {item.status === 'Completed' ? i18n.t('appointment.completed') :
-                      item.status === 'Pending' ? i18n.t('appointment.pending') :
-                          item.status === 'Cancelled' ? i18n.t('appointment.cancelled') :
-                              i18n.t('appointment.confirmed')}
+                  {item.status === 'completed'
+                      ? i18n.t('appointment.completed')
+                      : item.status === 'pending'
+                          ? i18n.t('appointment.pending')
+                          : item.status === 'cancelled'
+                              ? i18n.t('appointment.cancelled')
+                              : i18n.t('appointment.confirmed')}
                 </Text>
               </View>
             </View>
@@ -174,9 +180,10 @@ const ScheduledPage = () => {
             </View>
             {item.status !== 'Pending' && item.status !== 'Confirmed' && item.status !== 'Completed' && (
                 <View marginT-10>
-                  <Text h3_bold>Cancellation Note: {item.cancellation_note}</Text>
-                  <Text h3_bold>Cancelled At: {new Date(item.cancelled_at).toLocaleString()}</Text>
-                  <Text h3_bold>Cancelled By: {item.cancelled_by_user?.full_name}</Text>
+
+                  <Text h4_bold>{`${i18n.t('appointment.cancellation_note')}: ${item.cancellation_note ? item.cancellation_note : i18n.t('appointment.no_notes')}`}</Text>
+                  <Text h4_bold>{`${i18n.t('appointment.cancelled_at')}: ${new Date(item.cancelled_at).toLocaleString()}`}</Text>
+                  <Text h4_bold>{`${i18n.t('appointment.cancelled_by')}: ${item.cancelled_by_user?.full_name}`}</Text>
                 </View>
             )}
           </View>
@@ -207,9 +214,7 @@ const ScheduledPage = () => {
                     multiline
                 />
                 <View style={styles.buttonContainer}>
-                  <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
-                    <Text style={styles.buttonText}>{i18n.t('appointment.cancel')}</Text>
-                  </TouchableOpacity>
+
                   <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmCancel}>
                     <Text style={styles.buttonText}>{i18n.t('appointment.confirm')}</Text>
                   </TouchableOpacity>
