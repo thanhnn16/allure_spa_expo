@@ -27,20 +27,19 @@ export interface UserProfile {
   gender?: string;
 }
 
-const clientId = Constants.expoConfig?.extra?.EXPO_PUBLIC_ZALO_CLIENT_ID;
-const clientSecret = Constants.expoConfig?.extra?.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
-const appUrl = Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL;
+const clientId = process.env.EXPO_PUBLIC_ZALO_CLIENT_ID;
+const clientSecret = process.env.EXPO_PUBLIC_ZALO_CLIENT_SECRET;
+const appUrl = process.env.EXPO_PUBLIC_SERVER_URL;
 
 // Tạo redirect URI dựa trên platform
 export const getRedirectUri = () => {
-  // if (Platform.OS === 'web') {
-  console.log('appUrl', appUrl);
-  console.log('full url', `${appUrl}zalo-login-progress`);
-  return `${appUrl}zalo-login-progress`;
-
-  // }
-  // const scheme = Constants.expoConfig?.scheme || 'allurespa';
-  // return `${scheme}://oauth`;
+  if (Platform.OS === 'web') {
+    console.log('appUrl', appUrl);
+    console.log('full url', `${appUrl}zalo-login-progress`);
+    return `${appUrl}zalo-login-progress`;
+  }
+  const scheme = Constants.expoConfig?.scheme || 'allurespa';
+  return `${scheme}://oauth`;
 };
 
 // Tạo state để bảo mật
@@ -69,25 +68,37 @@ export const handleZaloLogin = async (
 ): Promise<void> => {
   const zaloUrl = getZaloOauthUrl(codeChallenge, state);
 
-  if (Platform.OS === 'web') {
-    window.location.href = zaloUrl;
-    return;
-  }
-
   try {
+    // Thử mở app Zalo nếu được cài đặt
     const canOpenZalo = await Linking.canOpenURL('zalo://');
+    
     if (canOpenZalo) {
-      await Linking.openURL(`zalo://oauth?${new URLSearchParams({
-        app_id: clientId!,
-        code_challenge: codeChallenge,
-        redirect_uri: getRedirectUri(),
-        state
-      }).toString()}`);
+      const zaloDeepLink = Platform.select({
+        ios: `zalo://oauth?${new URLSearchParams({
+          app_id: clientId!,
+          code_challenge: codeChallenge,
+          redirect_uri: getRedirectUri(),
+          state
+        }).toString()}`,
+        android: `zalo://app/oauth?${new URLSearchParams({
+          app_id: clientId!,
+          code_challenge: codeChallenge,
+          redirect_uri: getRedirectUri(),
+          state
+        }).toString()}`
+      });
+
+      await Linking.openURL(zaloDeepLink!);
     } else {
-      throw new Error('no_zalo_app');
+      // Fallback to browser login
+      if (Platform.OS === 'web') {
+        window.location.href = zaloUrl;
+        return;
+      }
+      throw { type: 'webview_required', url: zaloUrl };
     }
   } catch (error) {
-    // Nếu không mở được Zalo app, trả về URL để mở WebView
+    console.log('error', error);
     throw { type: 'webview_required', url: zaloUrl };
   }
 };

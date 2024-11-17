@@ -14,11 +14,11 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		26FFF357B500449BB978D00E /* SFProText-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6F10246ADF7748DC95F9E951 /* SFProText-Regular.otf */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		46E7E479F73642F5A574A1D5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2635AF89B9BF47048F9C7C2F /* GoogleService-Info.plist */; };
 		53A065AA5C6641769CF96030 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4020DCFCB1F644F2B2C74CF1 /* noop-file.swift */; };
 		5D1FF14F8F514A1FAF4255A6 /* SFProText-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4E3107F12F3F4CBAA30E8BC8 /* SFProText-Semibold.otf */; };
 		7F36544152874B3481420866 /* SFProText-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3A12913BAE4C45E5A3C10DFF /* SFProText-Bold.otf */; };
 		985C7D39179DE85714995E06 /* Pods_AllureSpa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CC6921E97DFB84DDD8F8C54 /* Pods_AllureSpa.framework */; };
-		9F7846CA2CE1315C001A2212 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9F7846C92CE1315C001A2212 /* GoogleService-Info.plist */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		BD42892976BEF69F8BF6018C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FC329C8483223EAD0F0A6DA1 /* PrivacyInfo.xcprivacy */; };
@@ -33,6 +33,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = AllureSpa/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = AllureSpa/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = AllureSpa/main.m; sourceTree = "<group>"; };
+		2635AF89B9BF47048F9C7C2F /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "AllureSpa/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3A12913BAE4C45E5A3C10DFF /* SFProText-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SFProText-Bold.otf"; path = "../assets/fonts/SFProText-Bold.otf"; sourceTree = "<group>"; };
 		4020DCFCB1F644F2B2C74CF1 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "AllureSpa/noop-file.swift"; sourceTree = "<group>"; };
 		4E3107F12F3F4CBAA30E8BC8 /* SFProText-Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SFProText-Semibold.otf"; path = "../assets/fonts/SFProText-Semibold.otf"; sourceTree = "<group>"; };
@@ -42,7 +43,6 @@
 		7A4D352CD337FB3A3BF06240 /* Pods-AllureSpa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AllureSpa.release.xcconfig"; path = "Target Support Files/Pods-AllureSpa/Pods-AllureSpa.release.xcconfig"; sourceTree = "<group>"; };
 		8AA31E8734054B1FAA57B2EC /* AllureSpa-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "AllureSpa-Bridging-Header.h"; path = "AllureSpa/AllureSpa-Bridging-Header.h"; sourceTree = "<group>"; };
 		9A362B2C5AD64B92A47654F0 /* KaiseiTokumin-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "KaiseiTokumin-Regular.ttf"; path = "../assets/fonts/KaiseiTokumin-Regular.ttf"; sourceTree = "<group>"; };
-		9F7846C92CE1315C001A2212 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A89026F142A547C3B9AC94EB /* SFProText-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SFProText-Medium.otf"; path = "../assets/fonts/SFProText-Medium.otf"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = AllureSpa/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
@@ -76,6 +76,7 @@
 				4020DCFCB1F644F2B2C74CF1 /* noop-file.swift */,
 				8AA31E8734054B1FAA57B2EC /* AllureSpa-Bridging-Header.h */,
 				FC329C8483223EAD0F0A6DA1 /* PrivacyInfo.xcprivacy */,
+				2635AF89B9BF47048F9C7C2F /* GoogleService-Info.plist */,
 			);
 			name = AllureSpa;
 			sourceTree = "<group>";
@@ -112,7 +113,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				9F7846C92CE1315C001A2212 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* AllureSpa */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -235,13 +235,13 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				018373E918544F31A1DD4AA4 /* AlexBrush-Regular.ttf in Resources */,
-				9F7846CA2CE1315C001A2212 /* GoogleService-Info.plist in Resources */,
 				7F36544152874B3481420866 /* SFProText-Bold.otf in Resources */,
 				5D1FF14F8F514A1FAF4255A6 /* SFProText-Semibold.otf in Resources */,
 				CDCF8DF0672A4911960C96D5 /* SFProText-Medium.otf in Resources */,
 				26FFF357B500449BB978D00E /* SFProText-Regular.otf in Resources */,
 				04C6367027FA44EA8C750C61 /* KaiseiTokumin-Regular.ttf in Resources */,
 				BD42892976BEF69F8BF6018C /* PrivacyInfo.xcprivacy in Resources */,
+				46E7E479F73642F5A574A1D5 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -432,7 +432,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AU9DT5AP3K;
+				DEVELOPMENT_TEAM = 72F5K88CQC;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -452,7 +452,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.faith-nippon.allure-spa";
-				PRODUCT_NAME = AllureSpa;
+				PRODUCT_NAME = "AllureSpa";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllureSpa/AllureSpa-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -471,7 +471,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AU9DT5AP3K;
+				DEVELOPMENT_TEAM = 72F5K88CQC;
 				INFOPLIST_FILE = AllureSpa/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -486,7 +486,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.faith-nippon.allure-spa";
-				PRODUCT_NAME = AllureSpa;
+				PRODUCT_NAME = "AllureSpa";
 				SWIFT_OBJC_BRIDGING_HEADER = "AllureSpa/AllureSpa-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

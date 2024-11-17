@@ -13,11 +13,11 @@ const TimelineItem = ({title, current, currentTitle, state} : TimelineItemProps)
         <View row>
             <Timeline
                 topLine={{
-                    state: timelineState
+                    state: timelineState,
                 }}
                 bottomLine={{
                     type: Timeline.lineTypes.DASHED,
-                    state: timelineState
+                    state: timelineState,
                 }}
                 point={{
                     type: Timeline.pointTypes.OUTLINE,

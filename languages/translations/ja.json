@@ -15,7 +15,8 @@
     "ok": "OK",
     "error": "エラー",
     "success": "成功",
-    "back_to_home": "ホームに戻る"
+    "back_to_home": "ホームに戻る",
+    "loading": "読み込み中..."
   },
   "auth": {
     "login": {
@@ -59,7 +60,8 @@
       "login_notification": "この商品を購入するにはログインが必要です",
       "login_now": "ログインする",
       "invalid_email": "無効なメール形式",
-      "password_mismatch": "パスワードが一致しません"
+      "password_mismatch": "パスワードが一致しません",
+      "personal_info": "個人情報"
     },
     "register": {
       "title": "登録",
@@ -102,9 +104,22 @@
       "product_description": "商品説明",
       "reviews": "レビュー",
       "add_to_cart": "カートに追加",
-      "buy_now": "今すぐ購入"
+      "buy_now": "今すぐ購入",
+      "purchases": "購入済み",
+      "available": "利用可能",
+      "description": {
+        "brand": "ブランド",
+        "usage": "使用法",
+        "benefit": "利点",
+        "ingredient": "成分",
+        "directions": "使用方法",
+        "storage": "保管方法",
+        "product_notes": "商品の注意事項"
+      },
+      "no_info": "情報がありません",
+      "title": "製品の詳細"
     },
-    "serviceDetail" : {
+    "serviceDetail": {
       "book_now": "今すぐ予約"
     },
     "rating": {
@@ -141,7 +156,9 @@
       "history_login": "ログイン履歴",
       "dowload_information": "情報をダウンロード",
       "delete_account": "アカウントを削除",
-      "change_info": "情報を変更"
+      "change_info": "情報を変更",
+      "voucher": "クーポン",
+      "voucher_description": "自分のクーポンを見る"
     },
     "voucher": {
       "title": "クーポン",
@@ -376,8 +393,9 @@
     "note": "ノート",
     "address": "住所",
     "home": "家",
+    "work": "仕事",
     "company": "会社",
-    "other": "その他",
+    "others": "その他",
     "name": "名前",
     "phone": "電話",
     "save": "保存",
@@ -393,7 +411,9 @@
     "province": "都道府県",
     "district": "区市町村",
     "update_address": "住所を更新",
-    "type": "住所タイプ"
+    "type": "住所タイプ",
+    "customer_name": "顧客名",
+    "phone_number": "電話番号"
   },
   "date": {
     "formats": {
@@ -404,13 +424,22 @@
     "unit": "₫",
     "separator": ".",
     "delimiter": ",",
-    "format": "%n %u"
+    "format": "%n%u"
   },
   "invoice": {
+    "order_success": "注文が完了しました",
+    "order_success_message_cash": "ご注文ありがとうございます。できるだけ早くご連絡させていただきます。",
+    "order_details": "注文詳細",
+    "order_failed": "注文に失敗しました",
+    "order_failed_message": "注文の処理中にエラーが発生しました。後でもう一度お試しください。",
+    "payment_successful": "支払い完了",
+    "payment_success_message": "お支払いが正常に処理されました。",
+    "payment_failed": "支払いに失敗しました",
+    "payment_failed_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。",
+    "payment_cancelled": "支払いがキャンセルされました",
+    "payment_cancel_message": "この支払い取引をキャンセルしました。",
     "payment_success": "支払い完了",
     "payment_details": "支払い詳細",
-    "payment_successful": "支払いが完了しました！",
-    "payment_success_message": "ご支払いありがとうございます。ご注文が確認されました。",
     "amount": "金額",
     "payment_time": "支払い時間",
     "order_code": "注文コード"
@@ -431,7 +460,16 @@
     "no_discount": "割引なし",
     "total_payment": "合計支払い",
     "payment": "支払い",
-    "subtotal": "小計"
+    "subtotal": "小計",
+    "cash": "現金",
+    "credit_card": "クレジットカード",
+    "bank_transfer": "銀行振り込み",
+    "no_address": "住所がありません",
+    "delivery_address": "配達先住所",
+    "order_success": "注文成功",
+    "order_success_message": "あなたの注文が正常に作成されました。すぐにお問い合わせください。",
+    "payment_error": "支払いエラー",
+    "payment_error_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。"
   },
   "transaction": {
     "payment_success": "支払い成功",
@@ -454,7 +492,7 @@
       "pending": "保留中",
       "confirmed": "確認済み",
       "delivering": "配信中",
-      "completes": "完了",
+      "completed": "完了",
       "canceled": "キャンセル",
       "date_delivery": "配達日",
       "date_delivered": "配達日"
@@ -486,6 +524,45 @@
         "cancelled_at": "キャンセル日時",
         "cancelled_by": "キャンセル者",
         "total_amount": "合計金額",
-        "no_notes": "メモはありません"
+        "no_notes": "メモはありません",
+    "title": "予約"
+  },
+  "orders": {
+    "title": "注文",
+    "pending": "保留中",
+    "confirmed": "確認済み",
+    "delivering": "配信中",
+    "completed": "完了",
+    "cancelled": "キャンセル",
+    "repurchase": "再購入",
+    "rate_now": "今すぐ評価",
+    "quantity": "数量",
+    "total": "合計",
+    "no_order": "注文がありません",
+    "buy_more": "もっと見る",
+    "detail": "注文詳細",
+    "order_id": "注文ID",
+    "items": "注文商品",
+    "payment_info": "支払い情報",
+    "subtotal": "小計",
+    "discount": "割引",
+    "shipping_info": "配送情報",
+    "note": "注記",
+    "cancel": "注文をキャンセル",
+    "reorder": "再注文",
+    "status": {
+      "pending": "保留中",
+      "confirmed": "確認済み",
+      "shipping": "配達中",
+      "delivered": "配達済み",
+      "completed": "完了",
+      "cancelled": "キャンセル"
     }
+  },
+  "favorite": {
+    "title": "お気に入り",
+    "products": "製品",
+    "services": "サービス",
+    "empty": "お気に入りのリストに製品がありません"
   }
+}

@@ -8,12 +8,9 @@ import {
   generateState,
   handleZaloLogin,
   ZaloAuthError,
-  getAccessToken
 } from '@/utils/services/zalo/zaloAuthService';
 import { WebViewType } from '@/utils/constants/webview';
-import { zaloLogin } from '@/redux/features/auth/authSlice';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/redux/store';
 
 interface UseZaloAuthResult {
   login: () => Promise<void>;
@@ -24,7 +21,6 @@ interface UseZaloAuthResult {
 export const useZaloAuth = (): UseZaloAuthResult => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const dispatch = useDispatch<AppDispatch>();
 
   const login = async () => {
     try {
@@ -43,6 +39,7 @@ export const useZaloAuth = (): UseZaloAuthResult => {
       try {
         await handleZaloLogin(codeChallenge, state);
       } catch (error: any) {
+        console.log('error', error);
         if (error.type === 'webview_required') {
           router.push({
             pathname: '/webview',
@@ -55,10 +52,6 @@ export const useZaloAuth = (): UseZaloAuthResult => {
           throw error;
         }
       }
-
-      const accessToken = await getAccessToken(codeVerifier, state);
-      await dispatch(zaloLogin(accessToken)).unwrap();
-      router.replace('/(app)');
     } catch (error) {
       if (error instanceof ZaloAuthError) {
         setError(error.message);

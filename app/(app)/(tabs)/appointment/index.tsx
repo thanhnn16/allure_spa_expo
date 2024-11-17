@@ -81,6 +81,7 @@ const ScheduledPage = () => {
         appointment.status === 'Pending' ? i18n.t('appointment.pending') :
             appointment.status === 'Cancelled' ? i18n.t('appointment.cancelled') :
                 i18n.t('appointment.confirmed'),
+
   }));
 
   const renderItem = (item: { id: number; name: string; status?: string }, index: number) => {
@@ -254,12 +255,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   text: {
-    color: '#717658',
+    color: "#717658",
     fontSize: 24,
-    fontFamily: 'Inter-Bold',
+    fontFamily: "Inter-Bold",
   },
   bannerContainer: {
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     marginBottom: 20,
     borderRadius: 10,
     shadowColor: '#000',
@@ -276,12 +277,12 @@ const styles = StyleSheet.create({
     width: 350,
     height: 159,
     borderRadius: 18,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   bannerText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
-    color: '#717658',
+    color: "#717658",
     marginTop: 5,
   },
   infoContainer: {
@@ -290,8 +291,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   priceSpace: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     flex: 1,
   },
   icon: {
@@ -301,29 +302,29 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: '#717658',
-    fontWeight: 'bold',
+    color: "#717658",
+    fontWeight: "bold",
   },
   priceText: {
-    color: 'red',
+    color: "red",
   },
   blackText: {
-    color: 'black',
+    color: "black",
   },
   underlineText: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
   circleIcon: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 5,
   },
   circleIconText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
   },
   scrollView: {
@@ -336,35 +337,35 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 10,
     borderWidth: 1,
     marginBottom: 7,
     backgroundColor: '#fff',
   },
   selectedItem: {
-    backgroundColor: '#717658',
-    borderColor: '#717658',
+    backgroundColor: "#717658",
+    borderColor: "#717658",
   },
   unselectedItem: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#717658',
+    backgroundColor: "#FFFFFF",
+    borderColor: "#717658",
   },
   itemText: {
     fontSize: 15,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   selectedItemText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   unselectedItemText: {
-    color: '#717658',
+    color: "#717658",
   },
   flatListItem: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   flatListItemText: {
     fontSize: 18,

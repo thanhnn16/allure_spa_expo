@@ -5,7 +5,7 @@ import { RatingSummary } from "./rating.type";
 export interface Product extends Timestamps {
     id: number;
     name: string;
-    price: string;
+    price: number;
     category_id: number;
     quantity: number;
     brand_description: string;
@@ -15,6 +15,7 @@ export interface Product extends Timestamps {
     ingredients: string;
     directions: string;
     storage_instructions: string;
+    is_favorite: boolean;
     product_notes: string;
     rating_summary: RatingSummary;
     category: Category;
