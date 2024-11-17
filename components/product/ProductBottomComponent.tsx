@@ -19,6 +19,7 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
 import { useState } from "react";
+import { resetOrders } from "@/redux/features/order/orderSlice";
 // import { setOrderProducts } from '@/redux/features/order/orderSlice';
 
 const windowWidth = Dimensions.get("window").width;
@@ -41,11 +42,15 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
+    if (quantity === 0) {
+      setIsVisible(true);
+      return;
+    }
     const cartItem = {
       ...product,
-      quantity: 1,
     };
-    dispatch(addItemToCart({ product: cartItem, quantity: quantity }));
+    dispatch(addItemToCart({ product: cartItem, cart_quantity: quantity }));
+    dispatch(resetOrders())
     onAddToCart && onAddToCart();
   };
 
@@ -57,7 +62,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         id: product?.id,
         name: product?.name,
         price: product?.price,
-        priceValue: parseFloat(product?.price || "0"),
+        priceValue: product?.price || 0,
         quantity: quantity,
         image: product?.media?.[0]?.full_url || "",
         type: "product"
@@ -80,6 +85,8 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       </View>
     );
   }
+
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <View
@@ -117,6 +124,17 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           backgroundColor={Colors.primary}
         />
       </View>
+      <Incubator.Toast
+        visible={isVisible}
+        position={'bottom'}
+        autoDismiss={1500}
+        onDismiss={() => setIsVisible(false)}
+      >
+        <View row centerV gap-10 paddingH-20 paddingV-10 backgroundColor={Colors.primary_light}>
+          <Image source={ShoppingCartIcon} size={24} />
+          <Text h3_medium>Cần thêm số lượng sản phẩm</Text>
+        </View>
+      </Incubator.Toast>
     </View>
   );
 };

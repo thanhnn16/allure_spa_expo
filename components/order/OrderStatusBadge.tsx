@@ -21,7 +21,7 @@ const OrderStatusBadge = ({ status }: { status: string }) => {
       br20
       style={{ backgroundColor: getStatusColor(status) }}
     >
-      <Text white text80L>
+      <Text white h3>
         {i18n.t(`orders.status.${status}`)}
       </Text>
     </View>

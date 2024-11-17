@@ -13,10 +13,11 @@ const windowWidth = Dimensions.get("window").width;
 interface ProductQuantityProps {
   isLoading?: boolean;
   quantity: number;
+  maxQuantity?: number;
   setQuantity: (quantity: number) => void;
 }
 
-const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, quantity, setQuantity }) => {
+const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, quantity, setQuantity, maxQuantity }) => {
 
   if (isLoading) {
     return (
@@ -51,7 +52,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, qu
           style={{
             padding: 10,
           }}
-          onPress={() => setQuantity(Math.max(1, quantity - 1))}
+          onPress={() => setQuantity(Math.max(0, quantity - 1))}
         >
           <Text h2>-</Text>
         </TouchableOpacity>
@@ -60,7 +61,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({ isLoading = false, qu
           style={{
             padding: 10,
           }}
-          onPress={() => setQuantity(quantity + 1)}
+          onPress={() => setQuantity(Math.min(maxQuantity || 0, quantity + 1))}
         >
           <Text h2>+</Text>
         </TouchableOpacity>

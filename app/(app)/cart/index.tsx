@@ -133,7 +133,7 @@ export default function Cart() {
       name: item.name,
       price: item.price,
       priceValue: parseFloat(item.price),
-      quantity: item.quantity,
+      quantity: item.cart_quantity,
       image: item.media?.[0]?.full_url || item.image,
       type: "product"
     }));

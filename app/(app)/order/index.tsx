@@ -41,7 +41,7 @@ const MyOrder = () => {
       "pending",
       "confirmed",
       "shipping",
-      "delivered",
+      "completed",
       "cancelled",
     ];
     dispatch(resetOrders());
@@ -61,7 +61,7 @@ const MyOrder = () => {
         "pending",
         "confirmed",
         "shipping",
-        "delivered",
+        "completed",
         "cancelled",
       ];
       fetchOrdersByStatus(statuses[selectedIndex], currentPage + 1);

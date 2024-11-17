@@ -61,7 +61,7 @@ export default function DetailsScreen() {
   const { isGuest } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0);
   const scaleValue = useSharedValue(2);
 
   const windowWidth = Dimensions.get("window").width;
@@ -231,7 +231,7 @@ export default function DetailsScreen() {
         translateX.value = 0;
         scale.value = 2;
         opacity.value = 1;
-        dispatch(resetOrders());
+
       }
     );
   };
@@ -354,6 +354,13 @@ export default function DetailsScreen() {
             </View>
           )}
 
+          <ProductQuantity
+            isLoading={isLoading}
+            quantity={quantity}
+            setQuantity={setQuantity}
+            maxQuantity={product?.quantity}
+          />
+
           <View marginT-10 paddingH-20>
             {isLoading ? (
               <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
@@ -364,11 +371,7 @@ export default function DetailsScreen() {
             )}
             <ProductDescription product={product} isLoading={isLoading} />
           </View>
-          <ProductQuantity
-            isLoading={isLoading}
-            quantity={quantity}
-            setQuantity={setQuantity}
-          />
+
         </ScrollView>
         {showAnimatedImage && (
           <View
