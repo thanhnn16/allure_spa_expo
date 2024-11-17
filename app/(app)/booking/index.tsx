@@ -266,72 +266,75 @@ const BookingPage = () => {
             )}
 
             {selectedTime && (
-              <View gap-10>
-                <Text style={styles.sectionTitle}>
-                  {i18n.t("service.select_seat")}
-                </Text>
-                <View gap-12 row flex>
-                  <TouchableOpacity
-                    onPress={() => setSlot(1)}
-                    style={styles.timeSlotContainer}
-                  >
-                    <View
-                      center
-                      backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
-                      style={styles.timeSlot}
+                <View gap-10>
+                  <Text style={styles.sectionTitle}>
+                    {i18n.t("service.select_seat")}
+                  </Text>
+                  <View gap-12 row flex>
+                    <TouchableOpacity
+                        onPress={() => setSlot(1)}
+                        style={styles.timeSlotContainer}
                     >
-                      <Text color={slot == 1 ? "#FFFFFF" : "#000000"}>
-                        {i18n.t("service.1_seat")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => setSlot(2)}
-                    style={styles.timeSlotContainer}
-                    disabled={
-                      timeSlots.find((item: any) => item.id === selectedTime)
-                        ?.available_slots === 1
-                    }
-                  >
-                    <View
-                      center
-                      backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
-                      style={styles.timeSlot}
+                      <View
+                          center
+                          backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
+                          style={styles.timeSlot}
+                      >
+                        <Text color={slot == 1 ? "#FFFFFF" : "#000000"}>
+                          {i18n.t("service.1_seat")}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => setSlot(2)}
+                        style={[
+                          styles.timeSlotContainer,
+                          timeSlots.find((item: any) => item.id === selectedTime)?.available_slots === 1 && styles.disabledButton
+                        ]}
+                        disabled={
+                            timeSlots.find((item: any) => item.id === selectedTime)?.available_slots === 1
+                        }
                     >
-                      <Text color={slot == 2 ? "#FFFFFF" : "#000000"}>
-                        {i18n.t("service.2_seat")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
+                      <View
+                          center
+                          backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
+                          style={styles.timeSlot}
+                      >
+                        <Text color={slot == 2 ? "#FFFFFF" : "#000000"}>
+                          {i18n.t("service.2_seat")}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
             )}
 
             {slot != 0 && (
-                <View style={styles.noteContainer}>
-                  <Text style={styles.noteTitle}>{i18n.t("service.note")}</Text>
-                  <TextField
-                      value={note}
-                      onChangeText={(text) => setNote(text)}
-                      placeholder={i18n.t("service.enter_content").toString()}
-                      placeholderTextColor="#8C8585"
-                      multiline
-                      numberOfLines={10}
-                      maxLength={200}
-                      style={styles.enhancedNoteInput}
-                  />
-                </View>
+                <>
+                  <View style={styles.noteContainer}>
+                    <Text style={styles.noteTitle}>{i18n.t("service.note")}</Text>
+                    <TextField h3
+                        value={note}
+                        onChangeText={(text) => setNote(text)}
+                        placeholder={i18n.t("service.enter_content").toString()}
+                        placeholderTextColor="#8C8585"
+                        multiline
+                        numberOfLines={10}
+                        maxLength={200}
+                        style={styles.enhancedNoteInput}
+                    />
+                  </View>
+                  <View style={{ paddingVertical: 10 }}>
+                    <AppButton
+                        title={i18n.t("service.continue")}
+                        type="primary"
+                        onPress={() => {
+                          handleShowModal();
+                        }}
+                    />
+                  </View>
+                </>
             )}
-
-            <View style={{ paddingVertical: 20 }}>
-              <AppButton
-                  title={i18n.t("service.continue")}
-                  type="primary"
-                  onPress={() => {
-                    handleShowModal();
-                  }}
-              />
-            </View>
           </View>
         </ScrollView>
       </View>
@@ -349,9 +352,7 @@ const BookingPage = () => {
             <Text style={styles.modalTitle}>
               {i18n.t("service.confirm_information")}
             </Text>
-            <View style={styles.iconContainer}>
-              <Octicons name="checklist" size={44} color="#717658" />
-            </View>
+
             <View style={styles.modalTextContainer}>
               <Text style={styles.modalText}>
                 {i18n.t("service.customer_name")}: <Text style={styles.modalTextBold}>{user.full_name}</Text>
@@ -456,13 +457,14 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   sectionContainer: {
-    marginTop: 8,
+    marginTop: 20,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: "#000000",
-    marginBottom: 4,
+    marginBottom: 10,
   },
   timeSlotContainer: {
     flex: 1,
@@ -477,7 +479,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    paddingVertical: 5,
+    paddingVertical: 10,
     gap: 5,
   },
   selectedTimeSlot: {
@@ -566,37 +568,39 @@ const styles = StyleSheet.create({
   },
 
   noteContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   noteTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 12,
+    marginTop: 10,
     color: "#000",
   },
   noteInput: {
     borderWidth: 1,
     borderColor: "#D9D9D9",
     borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 15,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
     textAlignVertical: "top",
-    height: 200,
+    height: 100,
     backgroundColor: "#F9FAFB",
   },
   enhancedNoteInput: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: "#D9D9D9",
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 15,
+    borderRadius: 12,
+    paddingTop: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
     textAlignVertical: "top",
-    height: 200,
+    height: 100,
     backgroundColor: "#F9FAFB",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.05,
+    shadowRadius: 1,
     elevation: 2,
   },
   buttonContainer2: {
@@ -604,7 +608,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 20,
     marginBottom: 10,
-  }
+  },
+  disabledButton: {
+    opacity: 0.4,
+  },
 });
 
 export default BookingPage;

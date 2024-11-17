@@ -511,6 +511,13 @@
     "pending": "Chờ xác nhận",
     "confirmed": "Đã xác nhận",
     "available_slots": "Còn trống {available_slots} chỗ",
+    "cancel_appointment": "Huỷ lịch hẹn",
+    "cancel_appointment_confirm": "Bạn có chắc chắn muốn huỷ lịch hẹn này không?",
+    "cancel_appointment_success": "Huỷ lịch hẹn thành công",
+    "cancel_appointment_fail": "Huỷ lịch hẹn thất bại",
+    "cancel_appointment_reason": "Nhập lý do huỷ lịch hẹn",
+    "confirm": "Xác nhận",
+    "cancel": "Huỷ",
     "view_details": "Nhấn xem chi tiết",
     "7upcoming": "Sắp tới (7 ngày)"
   },
