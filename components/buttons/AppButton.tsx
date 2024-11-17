@@ -16,6 +16,12 @@ export interface AppButtonProps {
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
     const getButtonStyles = () => {
+        if (props.disabled) {
+            return {
+                backgroundColor: Colors.grey50,
+                labelStyle: { color: Colors.grey30, fontSize: 16, fontWeight: 'bold', ...props.titleStyle },
+            };
+        }
         switch (props.type) {
             case 'primary':
                 return {

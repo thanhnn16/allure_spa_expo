@@ -1,18 +1,26 @@
-import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { Colors, Image, Incubator, PanningProvider, Picker, PickerValue, Text, TextField, TouchableOpacity, View } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useWindowDimensions } from "react-native";
 import AppButton from "@/components/buttons/AppButton";
 import { SafeAreaView, ScrollView, TextInput, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addAddress } from "@/redux/features";
+import AppBar from "@/components/app-bar/AppBar";
+import { RootState } from "@/redux/store";
+import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from "@/redux/features/address/getAddressThunk";
+import { debounce, get, map, set } from "lodash";
+import { AddressDistrict, AddressProvince, AddressWard } from "@/types/address.type";
+import AddressTextInput from "@/components/address/AddressTextInput";
+import AppDialog from "@/components/dialog/AppDialog";
 export interface AddressRequest {
   user_id: string;
   province: string;
   district: string;
+  ward: string;
   address: string;
   address_type: "home" | "work" | "others";
   is_default: boolean;
@@ -32,31 +40,6 @@ interface UserResponse {
   };
 }
 
-const AddressInput = ({
-  value,
-  placeholder,
-  onChangeText,
-  editable = true,
-}) => (
-  <View marginB-10>
-    <TextInput
-      value={value}
-      placeholder={placeholder}
-      onChangeText={onChangeText}
-      editable={editable}
-      style={{
-        fontSize: 14,
-        height: 55,
-        width: "100%",
-        paddingHorizontal: 20,
-        backgroundColor: editable ? "#ffffff" : "#f5f5f5",
-        color: "#555555",
-      }}
-    />
-  </View>
-);
-
-// Thêm interface cho loại địa chỉ
 type AddressType = "home" | "work" | "others";
 
 const Add = () => {
@@ -69,6 +52,7 @@ const Add = () => {
   const [formData, setFormData] = useState({
     province: "",
     district: "",
+    ward: "",
     address: "",
     name: "",
     phone: "",
@@ -78,6 +62,24 @@ const Add = () => {
     user_id: "",
   });
   const dispatch = useDispatch();
+  const [province, setProvince] = useState<AddressProvince>();
+  const [provinceList, setProvinceList] = useState<AddressProvince[]>([]);
+  const [district, setDistrict] = useState<AddressDistrict>();
+  const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
+  const [ward, setWard] = useState<AddressWard>();
+  const [wardList, setWardList] = useState<AddressWard[]>([]);
+  const [titleDialog, setTitleDialog] = useState<string>("");
+  const [dialogDescription, setDialogDescription] = useState<string>("");
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [confirmButton, setConfirmButton] = useState(false);
+  const [onConfirmDialog, setOnConfirmDialog] = useState<() => void>(() => () => { });
+  const [submitButton, setSubmitButton] = useState(false);
+
+  const addressTypeItems = [
+    { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
+    { id: 2, name: i18n.t("address.work"), type: "work" as AddressType },
+    { id: 3, name: i18n.t("address.others"), type: "others" as AddressType },
+  ];
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -92,15 +94,14 @@ const Add = () => {
             user_id: userProfile.id || "",
           }));
         }
-      } catch (error) {
-        console.error("Error loading user data:", error);
-        Alert.alert(
-          "Lỗi",
-          "Không thể tải thông tin người dùng. Vui lòng thử lại sau."
-        );
+      } catch (error: any) {
+        setTitleDialog("Có lỗi xảy ra");
+        setDialogDescription(error.message || "Không thể tải thông tin người dùng");
+        setConfirmButton(true);
+        setOnConfirmDialog(() => () => { setDialogVisible(false) });
+        setDialogVisible(true);
       }
     };
-
     loadUserData();
   }, []);
 
@@ -108,112 +109,123 @@ const Add = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Sửa lại hàm getAddressType
-  const getAddressType = (id: number | null): AddressType => {
-    switch (id) {
-      case 1:
-        return "home";
-      case 2:
-        return "work";
-      case 3:
-        return "others";
-      default:
-        return "home";
+  const getProvince = async () => {
+    try {
+      const response = await dispatch(getAddressProvinceThunk({}));
+      setProvinceList(response.payload.data);
+    } catch (error: any) {
+      setTitleDialog("Có lỗi xảy ra");
+      setDialogDescription(error.message || "Không thể tải thông tin tỉnh/thành phố");
+      setConfirmButton(true);
+      setOnConfirmDialog(() => () => { setDialogVisible(false) });
+      setDialogVisible(true);
     }
   };
 
-  // Trong hàm handleSubmit, thêm xử lý lỗi chi tiết hơn
+  const getDistrict = async (id: number) => {
+    try {
+      const response = await dispatch(getAddressDistrictThunk({ query: id }));
+      setDistrictList(response.payload.data);
+    } catch (error: any) {
+      setTitleDialog("Có lỗi xảy ra");
+      setDialogDescription(error.message || "Không thể tải thông tin quận/huyện");
+      setConfirmButton(true);
+      setOnConfirmDialog(() => () => { setDialogVisible(false) });
+      setDialogVisible(true);
+    }
+  }
+
+  const getWard = async (id: number) => {
+    try {
+      const response = await dispatch(getAddressWardThunk({ query: id }));
+      setWardList(response.payload.data);
+    } catch (error: any) {
+      setTitleDialog("Có lỗi xảy ra");
+      setDialogDescription(error.message || "Không thể tải thông tin phường/xã");
+      setConfirmButton(true);
+      setOnConfirmDialog(() => () => { setDialogVisible(false) });
+      setDialogVisible(true);
+    }
+  }
+
+  useEffect(() => {
+    getProvince();
+  }, []);
+
+
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
       const token = await AsyncStorage.getItem("userToken");
 
+      setTitleDialog("Đang xử lý");
+      setDialogDescription("Vui lòng chờ trong giây lát");
+      setConfirmButton(false);
+      setDialogVisible(true);
+
       if (!token) {
-        Alert.alert("Lỗi", "Vui lòng đăng nhập để thêm địa chỉ");
+        setTitleDialog("Có lỗi xảy ra");
+        setDialogDescription("Vui lòng đăng nhập để thêm địa chỉ");
+        setDialogVisible(true);
         return;
       }
 
       const payload: AddressRequest = {
         user_id: formData.user_id,
-        province: formData.province,
-        district: formData.district,
+        province: province?.name || "",
+        district: district?.name || "",
+        ward: ward?.name || "",
         address: formData.address,
         address_type: selectedAddressType,
         is_default: formData.is_default,
         is_temporary: formData.is_temporary,
         note: formData.note,
       };
-
       await dispatch(addAddress(payload)).unwrap();
 
-      Alert.alert("Thành công", "Thêm địa chỉ thành công", [
-        {
-          text: "OK",
-          onPress: () => {
-            // Reset form data
-            setFormData({
-              province: "",
-              district: "",
-              address: "",
-              name: formData.name, // Giữ lại thông tin người dùng
-              phone: formData.phone,
-              note: "",
-              is_default: false,
-              is_temporary: false,
-              user_id: formData.user_id,
-            });
-            // Reset loại địa chỉ về mặc định
-            setSelectedItem(1);
-            setSelectedAddressType("home");
-
-            navigation.goBack();
-          },
-        },
-      ]);
+      if (payload) {
+        setFormData({
+          province: "",
+          district: "",
+          ward: "",
+          address: "",
+          name: formData.name,
+          phone: formData.phone,
+          note: "",
+          is_default: false,
+          is_temporary: false,
+          user_id: formData.user_id,
+        });
+        setSelectedItem(1);
+        setSelectedAddressType("home");
+  
+        setTitleDialog("Thành công");
+        setDialogDescription("Đã thêm địa chỉ");
+        setConfirmButton(true);
+        setOnConfirmDialog(() => () => { router.back() });
+        setDialogVisible(true);
+      }
+      
     } catch (error: any) {
-      console.error("Lỗi khi thêm địa chỉ:", error);
-      Alert.alert("Lỗi", error.message || "Không thể thêm địa chỉ");
+      setTitleDialog("Lỗi");
+      setDialogDescription("Không thể thêm địa chỉ");
+      setOnConfirmDialog(() => () => { setDialogVisible(false) });
+      setDialogVisible(true);
     } finally {
       setLoading(false);
     }
   };
 
-  // Cập nhật lại mảng items
-  const items = [
-    { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
-    { id: 2, name: i18n.t("address.work"), type: "work" as AddressType },
-    { id: 3, name: i18n.t("address.others"), type: "others" as AddressType },
-  ];
-
   return (
-    <View flex>
-      <View
-        row
-        centerV
-        bg-white
-        padding-15
-        style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 3,
-          elevation: 3,
-        }}
-      >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Image width={30} height={30} source={BackButton} />
-        </TouchableOpacity>
-        <View flex center>
-          <Text text60 bold marginR-30 color="#717658" style={{ fontSize: 18 }}>
-            {i18n.t("address.add_new_address")}
-          </Text>
-        </View>
-      </View>
+    <View flex bg-$backgroundDefault>
+      <AppBar
+        back title={i18n.t("address.add_address")}
+      />
 
       <ScrollView padding-15>
         <View
           bg-white
-          br12
           padding-15
           marginB-15
           style={{
@@ -224,25 +236,25 @@ const Add = () => {
             elevation: 3,
           }}
         >
-          <Text color="#717658" text70BO marginB-10>
+          <Text h2_bold primary marginB-10>
             {i18n.t("auth.login.personal_info")}
           </Text>
-          <AddressInput
+          <AddressTextInput
             value={formData.name}
             placeholder={i18n.t("auth.login.fullname")}
-            onChangeText={() => {}}
-            editable={false}
+            onChangeText={() => { }}
           />
-          <AddressInput
+          <AddressTextInput
             value={formData.phone}
             placeholder={i18n.t("address.phone")}
             onChangeText={(value) => handleChange("phone", value)}
+            maxLength={10}
+            keyboardType="phone-pad"
           />
         </View>
 
         <View
           bg-white
-          br12
           padding-15
           marginB-15
           style={{
@@ -256,21 +268,104 @@ const Add = () => {
           <Text color="#717658" text70BO marginB-10>
             {i18n.t("address.address")}
           </Text>
-          <AddressInput
-            value={formData.province}
-            placeholder={i18n.t("address.province")}
-            onChangeText={(value) => handleChange("province", value)}
+
+          <Picker
+            placeholder="Tỉnh/Thành phố"
+            floatingPlaceholder
+            value={province?.id}
+            label={province?.name}
+            enableModalBlur={true}
+            onChange={(value: PickerValue) => {
+              if (typeof value === 'string') {
+                const selectedProvince = provinceList.find((item) => item.id === value);
+                if (selectedProvince) {
+                  setProvince({ id: selectedProvince.id, name: selectedProvince.name } as AddressProvince);
+                  getDistrict(Number(selectedProvince?.id));
+
+                }
+              }
+            }}
+            topBarProps={{ title: 'Tỉnh/Thành phố' }}
+            showSearch
+            searchPlaceholder={'Tìm một tỉnh/thành phố'}
+            searchStyle={{ placeholderTextColor: Colors.grey50 }}
+            items={
+              provinceList.map((item: AddressProvince) => ({
+                value: item.id,
+                label: item.name,
+              }))
+            }
           />
-          <AddressInput
-            value={formData.district}
-            placeholder={i18n.t("address.district")}
-            onChangeText={(value) => handleChange("district", value)}
-          />
-          <AddressInput
-            value={formData.address}
-            placeholder={i18n.t("address.address")}
-            onChangeText={(value) => handleChange("address", value)}
-          />
+
+          {province?.id && (
+            <Picker
+              placeholder="Quận/Huyện"
+              floatingPlaceholder
+              value={district?.id}
+              label={district?.name}
+              enableModalBlur={true}
+              onChange={(value: PickerValue) => {
+                if (typeof value === 'string') {
+                  const selectedDistrict = districtList.find((item) => item.id === value);
+                  console.log("selectedDistrict", selectedDistrict);
+                  console.log("value", value);
+                  if (selectedDistrict) {
+                    setDistrict({ id: selectedDistrict.id, name: selectedDistrict.name } as AddressDistrict);
+                    getWard(Number(selectedDistrict?.id));
+                  }
+                }
+              }}
+              topBarProps={{ title: 'Quận/Huyện' }}
+              showSearch
+              searchPlaceholder={'Tìm một quận/huyện'}
+              searchStyle={{ placeholderTextColor: Colors.grey50 }}
+              items={
+                districtList.map((item: AddressDistrict) => ({
+                  value: item.id,
+                  label: item.name,
+                }))
+              }
+            />
+          )}
+
+          {district?.id && (
+            <Picker
+              placeholder="Phường/Xã"
+              floatingPlaceholder
+              value={ward?.id}
+              label={ward?.name}
+              enableModalBlur={true}
+              onChange={(value: PickerValue) => {
+                if (typeof value === 'string') {
+                  const selectedWard = wardList.find((item) => item.id === value);
+                  if (selectedWard) {
+                    setWard({ id: selectedWard.id, name: selectedWard.name } as AddressWard);
+                  }
+                }
+              }}
+              topBarProps={{ title: 'Phường/Xã' }}
+              showSearch
+              searchPlaceholder={'Tìm một phường/xã'}
+              searchStyle={{ placeholderTextColor: Colors.grey50 }}
+              items={
+                wardList.map((item: AddressWard) => ({
+                  value: item.id,
+                  label: item.name,
+                }))
+              }
+            />
+          )}
+
+          {ward?.id && (
+            <AddressTextInput
+              value={formData.address}
+              placeholder={i18n.t("address.address")}
+              onChangeText={(value) => {
+                console.log("value", value === "");
+                handleChange("address", value)
+              }}
+            />
+          )}
 
           <TextInput
             value={formData.note}
@@ -288,6 +383,7 @@ const Add = () => {
               textAlignVertical: "top",
               borderWidth: 1,
               borderColor: "#E5E7EB",
+              marginTop: 10,
             }}
           />
         </View>
@@ -296,7 +392,7 @@ const Add = () => {
           bg-white
           br20
           padding-15
-          marginB-80
+          marginB-20
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 1 },
@@ -309,7 +405,7 @@ const Add = () => {
             {i18n.t("address.type")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {items.map((item) => (
+            {addressTypeItems.map((item) => (
               <TouchableOpacity
                 key={item.id}
                 onPress={() => {
@@ -336,29 +432,42 @@ const Add = () => {
                   {item.name}
                 </Text>
               </TouchableOpacity>
+
+
             ))}
           </ScrollView>
         </View>
+
+        <View
+          bg-white
+          padding-20
+          style={{
+            borderTopWidth: 1,
+            borderTopColor: "#E5E7EB",
+            left: 0,
+            right: 0,
+          }}
+        >
+          <AppButton
+            title={i18n.t("address.save")}
+            type="primary"
+            onPress={handleSubmit}
+            disabled={formData.address === "" || loading}
+          />
+        </View>
+
       </ScrollView>
 
-      <View
-        bg-white
-        padding-20
-        absB
-        style={{
-          borderTopWidth: 1,
-          borderTopColor: "#E5E7EB",
-          left: 0,
-          right: 0,
-        }}
-      >
-        <AppButton
-          title={i18n.t("address.save")}
-          type="primary"
-          onPress={handleSubmit}
-          disabled={loading}
-        />
-      </View>
+      <AppDialog
+        visible={dialogVisible}
+        title={titleDialog || "Lỗi"}
+        description={dialogDescription || ""}
+        closeButton={false}
+        confirmButton={confirmButton}
+        confirmButtonLabel={"Đồng ý"}
+        severity="info"
+        onConfirm={() => onConfirmDialog()}
+      />
     </View>
   );
 };
