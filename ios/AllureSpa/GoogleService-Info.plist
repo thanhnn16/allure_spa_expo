@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyBn9gagv7d9pIvaIYUs8tFtiGaZPrmrLQI</string>
+	<string>AIzaSyBBrPzt58Nk7-wUXzV-WkQ3PWUjQvcwlmQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>456860079938</string>
+	<string>150739207719</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.fpl.drum-app</string>
+	<string>com.faithnippon.allurespa</string>
 	<key>PROJECT_ID</key>
-	<string>fpoly-app</string>
+	<string>allure-spa-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>fpoly-app.firebasestorage.app</string>
+	<string>allure-spa-app.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:456860079938:ios:ffb0d9a9378acb51105adb</string>
+	<string>1:150739207719:ios:8f3d607fdb0e25a6dab002</string>
 </dict>
 </plist>

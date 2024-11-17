@@ -7,11 +7,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
+import { getUserThunk } from "@/redux/features/users/getUserThunk";
+import { setUser } from "@/redux/features/auth/authSlice";
 
-interface ProfileDetailProps {}
+interface ProfileDetailProps { }
 
 const ProfileDetail = (props: ProfileDetailProps) => {
-  const { user } = useAuth();
+  const { user, setAuthUser } = useAuth();
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const updatedUser = await dispatch(getUserThunk()).unwrap();
+      setAuthUser && setAuthUser(updatedUser);
+    };
+    fetchUser();
+  }, [user?.avatar_url]);
 
   return (
     <View flex bg-white>
@@ -25,7 +37,12 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             style={{ borderColor: "#D5D6CD", borderWidth: 2 }}
             source={
               user?.avatar_url
-                ? { uri: user.avatar_url }
+                ? {
+                  uri: user.avatar_url + '?' + new Date().getTime(),
+                  headers: {
+                    Pragma: 'no-cache'
+                  }
+                }
                 : require("@/assets/images/avt.png")
             }
           />
@@ -44,7 +61,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             {
               title: i18n.t("profile.change_password"),
               icon: require("@/assets/images/key.png"),
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               title: i18n.t("profile.history_login"),

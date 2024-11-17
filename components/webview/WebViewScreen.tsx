@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import { WebView } from "react-native-webview";
-import Constants from "expo-constants";
-import { Href, router } from "expo-router";
-import axios from "axios";
+import { router } from "expo-router";
 import { LoaderScreen, View } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppDialog from "@/components/dialog/AppDialog";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AppBar from "../app-bar/AppBar";
 import i18n from "@/languages/i18n";
 interface WebViewScreenProps {
@@ -46,83 +42,21 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   };
 
   const handlePaymentCallback = async (navState: any) => {
-    if (
-      navState.url.startsWith("allurespa://") ||
-      navState.url.startsWith("exp+allurespa://")
-    ) {
+    const url = navState.url;
+    if (url.startsWith("allurespa://") || url.startsWith("exp+allurespa://")) {
+      const urlPath = url.split("://")[1]; // Get path after scheme
+      const [screen] = urlPath.split("?"); // Get screen name
       const params = new URL(navState.url).searchParams;
-      const status = params.get("status");
-      const orderCode = params.get("orderCode");
-      const invoiceId = params.get("invoice_id");
 
-      try {
-        await AsyncStorage.removeItem("payos_order_code");
-        await AsyncStorage.removeItem("current_invoice_id");
-        const paymentData = await AsyncStorage.getItem("payment_data");
-        await AsyncStorage.removeItem("payment_data");
-
-        if (status === "success" && orderCode) {
-          try {
-            const response = await axios.post(
-              `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}/api/payos/verify`,
-              { orderCode }
-            );
-
-            if (response.data.success) {
-              router.replace({
-                pathname: "/transaction/success",
-                params: {
-                  invoice_id: invoiceId,
-                  amount: response.data.data.amount,
-                  payment_time: response.data.data.paymentTime,
-                  payment_status: "completed",
-                  payment_method: "payos",
-                },
-              });
-            } else {
-              throw new Error(
-                response.data.message || "Không thể xác nhận thanh toán"
-              );
-            }
-          } catch (error: any) {
-            console.error("Payment verification error:", error);
-            router.replace({
-              pathname: "/(app)/invoice/failed",
-              params: {
-                type: "failed",
-                reason: error.message || "Không thể xác thực thanh toán",
-                invoice_id: invoiceId
-              },
-            });
-          }
-        } else if (status === "cancel") {
-          let parsedPaymentData = null;
-          if (paymentData) {
-            try {
-              parsedPaymentData = JSON.parse(paymentData);
-            } catch (e) {
-              console.error("Error parsing payment data:", e);
-            }
-          }
-
-          router.replace({
-            pathname: "/(app)/invoice/failed",
-            params: {
-              type: "cancel",
-              invoice_id: invoiceId || parsedPaymentData?.invoice_id,
-              reason: "Bạn đã hủy giao dịch thanh toán"
-            },
-          });
-        }
-      } catch (error) {
-        console.error("Payment callback error:", error);
+      if (screen === "invoice/success") {
+        router.replace({
+          pathname: "/(app)/invoice/success",
+          params: Object.fromEntries(params),
+        });
+      } else if (screen === "invoice/failed") {
         router.replace({
           pathname: "/(app)/invoice/failed",
-          params: {
-            type: "failed",
-            reason: "Đã xảy ra lỗi trong quá trình xử lý thanh toán",
-            invoice_id: invoiceId
-          },
+          params: Object.fromEntries(params),
         });
       }
     }

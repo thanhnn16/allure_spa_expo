@@ -1,7 +1,6 @@
 import ArrowRight from "@/assets/icons/arrow.svg";
 import { View, Text, Card, Image, TouchableOpacity } from "react-native-ui-lib";
 import { useAuth } from "@/hooks/useAuth";
-import { SafeAreaView } from "react-native-safe-area-context";
 import i18n from "@/languages/i18n";
 import { Href, router } from "expo-router";
 import { useState } from "react";
@@ -63,14 +62,14 @@ const ProfilePage = () => {
                 <Text h3>{user?.phone_number || ""}</Text>
               </View>
             </View>
-            <View gap-10 center>
-              <View row gap-5 centerV>
+            <View gap-6 center>
+              <View row gap-6 centerV>
                 <Image
-                  width={20}
-                  height={20}
+                  width={16}
+                  height={16}
                   source={require("@/assets/images/allureCoin.png")}
                 />
-                <Text h3_bold black>{user?.loyalty_points || 0}</Text>
+                <Text h3_bold>{user?.loyalty_points || 0}</Text>
               </View>
 
               <TouchableOpacity
@@ -79,7 +78,7 @@ const ProfilePage = () => {
                 style={{
                   borderRadius: 10,
                   width: 48,
-                  height: 29,
+                  height: 32,
                   elevation: 5,
                 }}
                 onPress={() => {
@@ -115,8 +114,8 @@ const ProfilePage = () => {
                 onPress: () => handleNavigation("/(app)/favorite"),
               },
               {
-                title: "Voucher",
-                description: "Xem tất cả voucher của tui",
+                title: i18n.t("profile.voucher"),
+                description: i18n.t("profile.voucher_description"),
                 icon: VoucherIcon,
                 onPress: () => handleNavigation("/(app)/voucher"),
               },
@@ -125,12 +124,6 @@ const ProfilePage = () => {
                 description: i18n.t("profile.address_list"),
                 icon: require("@/assets/images/location.png"),
                 onPress: () => handleNavigation("/(app)/address"),
-              },
-              {
-                title: i18n.t("profile.purchase_policy"),
-                description: i18n.t("profile.policy_description"),
-                icon: require("@/assets/images/chamhoi.png"),
-                onPress: () => console.log("Purchase Policy"),
               },
               {
                 title: isGuest
@@ -158,7 +151,9 @@ const ProfilePage = () => {
                   <View flex gap-5>
                     <Text h3_bold>{item.title}</Text>
                     {item.description ? (
-                      <Text h3 gray>{item.description}</Text>
+                      <Text h3 gray>
+                        {item.description}
+                      </Text>
                     ) : null}
                   </View>
                   <Image source={ArrowRight} />
@@ -171,6 +166,11 @@ const ProfilePage = () => {
           </Text>
           <Card width={"100%"} marginT-20>
             {[
+              {
+                title: i18n.t("profile.purchase_policy"),
+                icon: require("@/assets/images/chamhoi.png"),
+                onPress: () => console.log("Purchase Policy"),
+              },
               {
                 title: i18n.t("profile.help_support"),
                 icon: require("@/assets/images/ring.png"),

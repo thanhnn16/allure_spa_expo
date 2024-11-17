@@ -9,7 +9,7 @@ interface LoginZaloFormProps {
 }
 
 const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ onBackPress }) => {
-  const { login, loading } = useZaloAuth();
+  const { login, loading, error } = useZaloAuth();
 
   return (
     <View>

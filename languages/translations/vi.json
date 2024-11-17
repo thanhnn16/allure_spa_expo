@@ -16,7 +16,8 @@
     "ok": "OK",
     "error": "Lỗi",
     "success": "Thành công",
-    "back_to_home": "Về trang chủ"
+    "back_to_home": "Về trang chủ",
+    "loading": "Đang tải..."
   },
   "auth": {
     "login": {
@@ -60,7 +61,8 @@
       "login_notification": "Bạn cần đăng nhập để truy cập vào thông báo",
       "login_now": "Đăng nhập ngay",
       "invalid_email": "Email không hợp lệ",
-      "password_mismatch": "Mật khẩu không khớp"
+      "password_mismatch": "Mật khẩu không khớp",
+      "personal_info": "Thông tin cá nhân"
     },
     "art": {
       "title": "Nghệ thuật chăm sóc da",
@@ -81,7 +83,20 @@
       "product_description": "MÔ TẢ SẢN PHẨM",
       "reviews": "Đánh giá",
       "add_to_cart": "Thêm giỏ hàng",
-      "buy_now": "Mua ngay"
+      "buy_now": "Mua ngay",
+      "purchases": "lượt mua",
+      "available": "có sẵn",
+      "description": {
+        "brand": "Thương hiệu",
+        "usage": "Cách sử dụng",
+        "benefit": "Công dụng",
+        "ingredient": "Thành phần",
+        "directions": "Hướng dẫn sử dụng",
+        "storage": "Bảo quản",
+        "product_notes": "Lưu ý sản phẩm"
+      },
+      "no_info": "Không có thông tin",
+      "title": "Chi tiết sản phẩm"
     },
     "rating": {
       "add_review": "Thêm đánh giá",
@@ -118,7 +133,9 @@
       "history_login": "Lịch sử đăng nhập",
       "dowload_information": "Tải thông tin xuống",
       "delete_account": "Xóa tài khoản",
-      "change_info": "Đổi thông tin"
+      "change_info": "Đổi thông tin",
+      "voucher": "Voucher",
+      "voucher_description": "Xem tất cả voucher của tôi"
     },
     "settings": {
       "title": "Cài đặt",
@@ -394,7 +411,9 @@
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
     "update_address": "Sửa địa chỉ",
-    "type": "Loại địa chỉ"
+    "type": "Loại địa chỉ",
+    "customer_name": "Tên khách hàng",
+    "phone_number": "Điện thoại"
   },
   "date": {
     "formats": {
@@ -410,11 +429,20 @@
   "invoice": {
     "payment_success": "Thanh toán thành công",
     "payment_details": "Chi tiết thanh toán",
-    "payment_successful": "Thanh toán thành công!",
-    "payment_success_message": "Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận.",
     "amount": "Số tiền",
     "payment_time": "Thời gian thanh toán",
-    "order_code": "Mã đơn hàng"
+    "order_code": "Mã đơn hàng",
+    "order_success": "Đặt hàng thành công",
+    "order_success_message_cash": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "order_details": "Chi tiết đơn hàng",
+    "order_failed": "Đặt hàng thất bại",
+    "order_failed_message": "Đã có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau.",
+    "payment_successful": "Thanh toán thành công",
+    "payment_success_message": "Thanh toán của bạn đã được xử lý thành công.",
+    "payment_failed": "Thanh toán thất bại",
+    "payment_failed_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau.",
+    "payment_cancelled": "Hủy thanh toán",
+    "payment_cancel_message": "Bạn đã hủy giao dịch thanh toán này."
   },
   "checkout": {
     "title": "Thanh toán",
@@ -432,7 +460,16 @@
     "no_discount": "Không có",
     "total_payment": "Tổng thanh toán",
     "payment": "Thanh toán",
-    "subtotal": "Tạm tính"
+    "subtotal": "Tạm tính",
+    "cash": "Tiền mặt",
+    "credit_card": "Thẻ tín dụng",
+    "bank_transfer": "Chuyển khoản ngân hàng",
+    "no_address": "Không có địa chỉ",
+    "delivery_address": "Địa chỉ giao hàng",
+    "order_success": "Đặt hàng thành công",
+    "order_success_message": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "payment_error": "Thanh toán thất bại",
+    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
@@ -455,7 +492,7 @@
       "pending": "Order is being processed",
       "confirmed": "Order confirmed",
       "delivering": "Order is being delivered",
-      "completes": "Order successfully delivered",
+      "completed": "Order successfully delivered",
       "canceled": "Order canceled",
       "date_delivery": "Estimated delivery date",
       "date_delivered": "Delivery date"
@@ -464,14 +501,13 @@
     "cancel_order": "Huỷ đơn hàng"
   },
   "appointment": {
+    "title": "Lịch hẹn",
     "scheduled": "Lịch đã đặt",
     "all": "Tất cả",
-    "7upcoming": " 7 ngày sắp tới",
     "completed": "Đã hoàn thành",
     "cancelled": "Bị huỷ",
     "times": "Số lần",
     "not_started": "Chưa tiến hành",
-    "view_details": "Nhấn xem chi tiết",
     "pending": "Chờ xác nhận",
     "confirmed": "Đã xác nhận",
     "available_slots": "Còn trống {available_slots} chỗ",
@@ -481,7 +517,46 @@
     "cancel_appointment_fail": "Huỷ lịch hẹn thất bại",
     "cancel_appointment_reason": "Nhập lý do huỷ lịch hẹn",
     "confirm": "Xác nhận",
-    "cancel": "Huỷ"
+    "cancel": "Huỷ",
+    "view_details": "Nhấn xem chi tiết",
+    "7upcoming": "Sắp tới (7 ngày)"
+  },
+  "orders": {
+    "title": "Đơn hàng",
+    "pending": "Chờ xác nhận",
+    "confirmed": "Chờ lấy hàng",
+    "delivering": "Đang giao hàng",
+    "completed": "Hoàn thành",
+    "cancelled": "Đã huỷ",
+    "repurchase": "Mua lại",
+    "rate_now": "Đánh giá ngay",
+    "quantity": "Số lượng",
+    "total": "Tổng cộng",
+    "no_order": "Không có đơn hàng nào cả!",
+    "buy_more": "Khám phá thêm sản phẩm khác nhé",
+    "detail": "Chi tiết đơn hàng",
+    "order_id": "Mã đơn hàng",
+    "items": "Sản phẩm",
+    "payment_info": "Thông tin thanh toán",
+    "subtotal": "Tạm tính",
+    "discount": "Giảm giá",
+    "shipping_info": "Thông tin giao hàng",
+    "note": "Ghi chú",
+    "cancel": "Huỷ đơn hàng",
+    "reorder": "Mua lại",
+    "status": {
+      "pending": "Chờ xác nhận",
+      "confirmed": "Đã xác nhận",
+      "shipping": "Đang giao hàng",
+      "delivered": "Đã giao hàng",
+      "completed": "Hoàn thành",
+      "cancelled": "Đã huỷ"
+    }
+  },
+  "favorite": {
+    "title": "Yêu thích",
+    "products": "Sản phẩm",
+    "services": "Dịch vụ",
+    "empty": "Không có sản phẩm nào trong danh sách yêu thích"
   }
 }
-

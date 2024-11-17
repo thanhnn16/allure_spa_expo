@@ -14,7 +14,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
-import { useSegments } from 'expo-router';
+import { useSegments } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 interface ErrorFallbackProps {
@@ -24,7 +24,7 @@ interface ErrorFallbackProps {
 export default function RootLayout() {
   const segments = useSegments();
 
-  useFonts({
+  const [fontsLoaded] = useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
     "SFProText-Medium": require("@/assets/fonts/SFProText-Medium.otf"),
@@ -33,6 +33,15 @@ export default function RootLayout() {
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
 
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -52,17 +61,21 @@ export default function RootLayout() {
     };
 
     initializeFirebase().then(() => console.log("Firebase initialized"));
-  }, []);
+    onLayoutRootView();
+  }, [onLayoutRootView]);
 
   return (
     <Provider store={store}>
       <SafeAreaProvider>
         <PersistGate loading={null} persistor={persistor}>
           <LanguageManager>
-            {segments[0] === '(auth)' ? (
+            {segments[0] === "(auth)" ? (
               <Slot />
             ) : (
-              <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "white" }}>
+              <SafeAreaView
+                edges={["top"]}
+                style={{ flex: 1, backgroundColor: "white" }}
+              >
                 <StatusBar backgroundColor="transparent" />
                 <Slot />
               </SafeAreaView>

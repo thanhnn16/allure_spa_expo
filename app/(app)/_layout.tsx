@@ -1,31 +1,32 @@
 import React, { useEffect } from "react";
 import { Stack, router } from "expo-router";
 import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { getUserThunk } from "@/redux/features/users/getUserThunk";
 
 const AppLayout = () => {
   const { isAuthenticated, isGuest } = useSelector(
     (state: RootState) => state.auth
   );
-
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    const checkAuthAndNavigate = () => {
-      try {
-        if (!isAuthenticated && !isGuest) {
-          router.replace("/(auth)");
-        }
-      } catch (err) {
-        console.error("Navigation error:", err);
+    const timer = setTimeout(() => {
+      if (!isAuthenticated && !isGuest) {
+        router.replace("/(auth)");
       }
-    };
+      if (isAuthenticated) {
+        dispatch(getUserThunk());
+      }
+    }, 100);
 
-    checkAuthAndNavigate();
+    return () => clearTimeout(timer);
   }, [isAuthenticated, isGuest]);
 
   return (
     <Stack screenOptions={{ headerShown: false }} initialRouteName={"(tabs)"}>
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="transaction/index" />
+      <Stack.Screen name="transaction/[id]/index" />
       <Stack.Screen name="product/[id]/index" />
       <Stack.Screen name="search/index" />
       <Stack.Screen name="favorite/index" />
@@ -51,6 +52,7 @@ const AppLayout = () => {
       <Stack.Screen name="profile/edit" />
       <Stack.Screen name="profile/delete-account" />
       <Stack.Screen name="profile/delete-account-verify" />
+      <Stack.Screen name="profile/change-password" />
     </Stack>
   );
 };

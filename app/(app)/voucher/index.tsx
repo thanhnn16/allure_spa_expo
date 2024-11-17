@@ -50,7 +50,7 @@ const Voucher = () => {
             width={200}
             height={200}
           />
-          <View marginT-20>
+          <View marginT-20 centerH>
             <Text h3_bold>Không có Voucher nào cả!</Text>
             <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
           </View>
@@ -76,7 +76,7 @@ const Voucher = () => {
             width={200}
             height={200}
           />
-          <View marginT-20>
+          <View marginT-20 centerH>
             <Text h3_bold>Không có Voucher nào cả!</Text>
             <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
           </View>
