@@ -481,7 +481,13 @@
     "cancel_appointment_fail": "Huỷ lịch hẹn thất bại",
     "cancel_appointment_reason": "Nhập lý do huỷ lịch hẹn",
     "confirm": "Xác nhận",
-    "cancel": "Huỷ"
+    "cancel": "Huỷ",
+    "order_code": "Mã đơn hàng:",
+    "cancellation_note": "Lý do huỷ",
+    "cancelled_at": "Thời gian huỷ",
+    "cancelled_by": "Người huỷ",
+    "total_amount": "Tổng tiền",
+    "no_notes": "Không có ghi chú"
   }
 }
 

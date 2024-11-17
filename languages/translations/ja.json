@@ -463,13 +463,29 @@
     "cancel_order": "注文をキャンセル"
   },
     "appointment": {
-      "scheduled": "予定",
-      "all": "すべて",
-      "upcoming": "今後",
-      "completed": "完了",
-      "cancelled": "キャンセル",
-      "times": "回数",
-      "not_started": "開始されていません",
-      "view_details": "詳細を見る"
+        "scheduled": "予約済み",
+        "all": "すべて",
+        "7upcoming": "7日後",
+        "completed": "完了",
+        "cancelled": "キャンセル",
+        "times": "回数",
+        "not_started": "未開始",
+        "view_details": "詳細を見る",
+        "pending": "保留中",
+        "confirmed": "確認済み",
+        "available_slots": "{available_slots} 席が空いています",
+        "cancel_appointment": "予約をキャンセル",
+        "cancel_appointment_confirm": "この予約をキャンセルしてもよろしいですか？",
+        "cancel_appointment_success": "予約のキャンセルに成功しました",
+        "cancel_appointment_fail": "予約のキャンセルに失敗しました",
+        "cancel_appointment_reason": "キャンセル理由を入力してください",
+        "confirm": "確認",
+        "cancel": "キャンセル",
+        "order_code": "注文コード:",
+        "cancellation_note": "キャンセル理由",
+        "cancelled_at": "キャンセル日時",
+        "cancelled_by": "キャンセル者",
+        "total_amount": "合計金額",
+        "no_notes": "メモはありません"
     }
   }

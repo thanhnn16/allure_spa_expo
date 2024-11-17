@@ -375,14 +375,31 @@
     "buy_again": "Buy again",
     "order_code": "Order Code"
   },
+
     "appointment": {
-      "scheduled": "Scheduled",
-      "all": "All",
-      "upcoming": "Upcoming",
-      "completed": "Completed",
-      "cancelled": "Cancelled",
-      "times": "times",
-      "not_started": "Not started",
-      "view_details": "View details"
+        "scheduled": "Scheduled",
+        "all": "All",
+        "7upcoming": "7 upcoming days",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "times": "Times",
+        "not_started": "Not started",
+        "view_details": "Click to view details",
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "available_slots": "{available_slots} slots available",
+        "cancel_appointment": "Cancel appointment",
+        "cancel_appointment_confirm": "Are you sure you want to cancel this appointment?",
+        "cancel_appointment_success": "Cancel appointment successfully",
+        "cancel_appointment_fail": "Cancel appointment failed",
+        "cancel_appointment_reason": "Enter the reason for canceling the appointment",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "order_code": "Order code:",
+        "cancellation_note": "Cancellation note",
+        "cancelled_at": "Cancelled at",
+        "cancelled_by": "Cancelled by",
+        "total_amount": "Total amount",
+        "no_notes": "No notes"
     }
   }
