@@ -36,16 +36,21 @@ export interface RatingResponeModelParams extends Timestamps {
 
 export interface AppointmentResponeModelParams extends Timestamps {
     id: number;
-    user_id: number;
-    service_id: number;
-    staff_user_id: number;
-    start_time: string;
-    end_time: string;
-    actual_start_time: string;
-    actual_end_time: string;
-    appointment_type: string;
+    title: string;
     status: string;
+    service: Service;
+    start: string;
+    end: string;
+    price: number | null;
+    staff: Staff;
+    time_slot: TimeSlot;
+    appointment_type: string;
     note: string;
+    slots: number;
+    cancelled_by: string | null;
+    cancelled_at: string | null;
+    cancellation_note: string | null;
+    cancelled_by_user: CancelledByUser | null;
 }
 
 export interface ServiceResponeModel extends Timestamps {
@@ -123,3 +128,39 @@ export interface ServicesResponeParams extends ResponeDefaultParams, ResponePage
 export interface ServiceDetailResponeParams extends ResponeDefaultParams {
     data: ServiceDetailResponeModel
 }
+
+export interface Service {
+    id: number;
+    service_name: string;
+    description: string;
+    duration: number;
+    category_id: number;
+    single_price: number;
+    combo_5_price: number;
+    combo_10_price: number;
+    validity_period: number;
+    created_at: string | null;
+    updated_at: string | null;
+    deleted_at: string | null;
+}
+
+export interface TimeSlot {
+    id: number;
+    start_time: string;
+    end_time: string;
+    max_bookings: number;
+}
+
+export interface Staff {
+    id: string;
+    full_name: string;
+}
+
+
+export interface CancelledByUser {
+    id: string;
+    full_name: string;
+}
+
+
+
