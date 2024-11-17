@@ -24,7 +24,7 @@ interface ErrorFallbackProps {
 export default function RootLayout() {
   const segments = useSegments();
 
-  useFonts({
+  const [fontsLoaded] = useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
     "SFProText-Medium": require("@/assets/fonts/SFProText-Medium.otf"),
@@ -32,6 +32,16 @@ export default function RootLayout() {
     "AlexBrush-Regular": require("@/assets/fonts/AlexBrush-Regular.ttf"),
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   useEffect(() => {
     const initializeFirebase = async () => {
@@ -51,7 +61,8 @@ export default function RootLayout() {
     };
 
     initializeFirebase().then(() => console.log("Firebase initialized"));
-  }, []);
+    onLayoutRootView();
+  }, [onLayoutRootView]);
 
   return (
     <Provider store={store}>

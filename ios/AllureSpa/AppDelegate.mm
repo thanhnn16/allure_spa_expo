@@ -1,8 +1,8 @@
 #import "AppDelegate.h"
 #import <Firebase/Firebase.h>
-
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import <ZaloSDK/ZaloSDK.h>
 
 @implementation AppDelegate
 
@@ -11,6 +11,10 @@
 // @generated begin @react-native-firebase/app-didFinishLaunchingWithOptions - expo prebuild (DO NOT MODIFY) sync-ecd111c37e49fdd1ed6354203cd6b1e2a38cccda
 [FIRApp configure];
 // @generated end @react-native-firebase/app-didFinishLaunchingWithOptions
+
+  // Initialize Zalo SDK
+  [[ZaloSDK sharedInstance] initializeWithAppId:@"3131373079387573469"];
+
   self.moduleName = @"main";
 
   // You can add your custom initial props in the dictionary below.
@@ -36,6 +40,10 @@
 
 // Linking API
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+  // Handle Zalo SDK callback
+  if ([[ZDKApplicationDelegate sharedInstance] application:application openURL:url options:options]) {
+    return YES;
+  }
   return [super application:application openURL:url options:options] || [RCTLinkingManager application:application openURL:url options:options];
 }
 

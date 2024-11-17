@@ -9,9 +9,9 @@ export { registerThunk } from "./auth/registerThunk";
 export { userSlice } from "./users/userSlice";
 export { getUserThunk } from "./users/getUserThunk";
 export { updateUserThunk } from "./users/updateUserThunk";
-export { updateAvatarUrlThunk } from "./users/updateAvatarUrlThunk";
 export { fetchAddresses, addAddress, updateAddress, deleteAddress } from "./address/addressThunk";
 export { appointmentSlice } from "./appointment/appointmentSlice";
 export { getOrderThunk } from "./order/getOrderThunk";
 export { clearOrder } from "./order/orderSlice";
-
+export { uploadAvatarUrlThunk } from "./users/uploadAvatarUrlThunk";
+export { changePasswordThunk } from "./auth/change-passwordThunk";

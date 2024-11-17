@@ -22,7 +22,22 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app needs access to location when open.",
         "NSMicrophoneUsageDescription": "This app needs access to the microphone.",
-        "NSCameraUsageDescription": "This app needs access to the camera."
+        "NSCameraUsageDescription": "This app needs access to the camera.",
+        "LSApplicationQueriesSchemes": [
+          "zalo",
+          "zaloshareext",
+          "zalosdk"
+        ],
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLName": "zalo",
+            "CFBundleURLSchemes": [
+              "zalo",
+              "allurespa",
+              "zalo-3131373079387573469"
+            ]
+          }
+        ]
       },
       "entitlements": {
         "aps-environment": "development"
