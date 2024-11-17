@@ -1,4 +1,4 @@
-import { View, Text, Colors } from "react-native-ui-lib";
+import { View, Text, Colors, Wizard } from "react-native-ui-lib";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -13,6 +13,27 @@ import i18n from "@/languages/i18n";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
+import TransactionHeader from "@/components/payment/TransactionHeader";
+import { PaymentMethod } from "../../check-out";
+import { method } from "lodash";
+
+const paymentMethods: PaymentMethod[] = [
+  {
+    id: 1,
+    name: i18n.t("checkout.cash"),
+    iconName: "cash-outline",
+  },
+  {
+    id: 2,
+    name: i18n.t("checkout.credit_card"),
+    iconName: "card-outline",
+  },
+  {
+    id: 3,
+    name: i18n.t("checkout.bank_transfer"),
+    iconName: "card-outline",
+  },
+];
 
 const OrderDetail = () => {
   const { id } = useLocalSearchParams();
@@ -34,11 +55,22 @@ const OrderDetail = () => {
     0
   );
 
+  console.log(selectedOrder);
+
+  const getPaymentMethod = (id: number) => {
+    const method = paymentMethods.find((method) => method.id === id);
+    return method;
+  }
+
+  const method = getPaymentMethod(selectedOrder.payment_method_id);
+
   return (
     <View flex bg-white>
       <AppBar back title={i18n.t("orders.detail")} />
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+
+        <TransactionHeader status={selectedOrder.status} />
 
         {/* Order Status Section */}
         <View style={styles.section}>
@@ -46,10 +78,14 @@ const OrderDetail = () => {
             <Text h2_bold>
               {i18n.t("orders.order_id")}: #{selectedOrder.id}
             </Text>
-            <OrderStatusBadge status={selectedOrder.status} />
+            {/* <OrderStatusBadge status={selectedOrder.status} /> */}
           </View>
           <Text h3 marginT-8 color={Colors.grey30}>
             {new Date(selectedOrder.created_at).toLocaleDateString()}
+          </Text>
+
+          <Text h3 marginT-8 color={Colors.grey30}>
+            {method?.name}
           </Text>
         </View>
 
@@ -126,10 +162,10 @@ const OrderDetail = () => {
         {/* Note Section */}
         {selectedOrder.note && (
           <View style={styles.section}>
-            <Text text65L marginB-8>
+            <Text h2_bold marginB-8>
               {i18n.t("orders.note")}
             </Text>
-            <Text text80L>{selectedOrder.note}</Text>
+            <Text h3>{selectedOrder.note}</Text>
           </View>
         )}
       </ScrollView>

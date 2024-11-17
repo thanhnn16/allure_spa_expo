@@ -1,52 +1,83 @@
 import i18n from "@/languages/i18n";
 import { setSelectedAddress } from "@/redux/features/address/addressSlice";
-import { deleteAddress, updateAddress } from "@/redux/features/address/addressThunk";
+import { deleteAddress, fetchAddresses, updateAddress } from "@/redux/features/address/addressThunk";
 import { Address, UserProfile } from "@/types/address.type";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, router } from "expo-router";
-import { Alert } from "react-native";
 import { TouchableOpacity, View, Text, Colors } from "react-native-ui-lib";
 import { useDispatch } from "react-redux";
 
 interface AddressItemProps {
     item: Address;
     userProfile: UserProfile | null;
+    setDialogTitle: (title: string) => void;
+    setDialogDescription: (description: string) => void;
     setDialogVisible: (visible: boolean) => void;
-    onPress?: () => void;
-    setUpdateItem?: (item: Address) => void;
+    setDialogOnPress: (onPress: () => void) => void;
+    setDialogConfirmButton?: (visible: boolean) => void;
+    setErrorDescription: (description: string) => void;
+    setErrorDialogVisible: (visible: boolean) => void;
+    setErrorDialogOnPress: (onPress: () => void) => void;
 }
 
-const AddressItem = ({ item, userProfile, setDialogVisible, setUpdateItem }: AddressItemProps) => {
+const AddressItem = ({
+    item, userProfile, setDialogVisible,
+    setDialogTitle, setDialogDescription, setDialogConfirmButton, setDialogOnPress,
+    setErrorDescription, setErrorDialogVisible, setErrorDialogOnPress
+}: AddressItemProps
+) => {
     const dispatch = useDispatch();
 
     const handleDeleteAddress = async (addressId: string) => {
-        Alert.alert(
-            "Xác nhận xóa",
-            "Bạn có chắc chắn muốn xóa địa chỉ này không?",
-            [
-                { text: "Hủy", style: "cancel" },
-                {
-                    text: "Xóa",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            await dispatch(deleteAddress(addressId)).unwrap();
-                            Alert.alert("Thành công", "Đã xóa địa chỉ");
-                        } catch (error) {
-                            console.error("Lỗi khi xóa địa chỉ:", error);
-                            Alert.alert("Lỗi", "Không thể xóa địa chỉ");
-                        }
-                    },
-                },
-            ],
-            { cancelable: true }
-        );
+        setDialogVisible(true);
+        setDialogConfirmButton?.(true);
+        setDialogTitle("Xác nhận xóa địa chỉ");
+        setDialogDescription("Bạn có chắc chắn muốn xóa địa chỉ này không?");
+        setDialogOnPress(() => {
+            dispatch(deleteAddress(addressId));
+            setDialogVisible(false);
+        })
     };
 
     const handleSelectAddress = async (item: Address) => {
+        try {
+            const updateData = {
+                "province": item.province,
+                "district": item.district,
+                "ward": item.ward,
+                "address": item.address,
+                "address_type": item.address_type,
+                "is_default": true,
+            };
+
+            await dispatch(
+                updateAddress({
+                    id: item.id,
+                    data: updateData,
+                })
+            ).unwrap();
+            setDialogVisible(false);
+            await dispatch(fetchAddresses()).unwrap();
+            await AsyncStorage.setItem("selectedAddress", JSON.stringify(item));
+
+        } catch (error: any) {
+            setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
+            setErrorDialogOnPress(() => {
+                setErrorDialogVisible(false);
+            })
+            setErrorDialogVisible(true);
+        }
+    };
+
+    const handleConfirmUpdateDialog = async () => {
+        setDialogConfirmButton?.(true);
+        setDialogTitle("Xác nhận chọn địa chỉ");
+        setDialogDescription("Bạn có chắc chắn muốn chọn địa chỉ này làm mặc định không?");
+        setDialogOnPress(() => {
+            handleSelectAddress(item);
+        });
         setDialogVisible(true);
-        setUpdateItem?.(item);
     };
 
     return (
@@ -84,7 +115,7 @@ const AddressItem = ({ item, userProfile, setDialogVisible, setUpdateItem }: Add
                 <View row gap-8>
                     {!item.is_default && (
                         <TouchableOpacity
-                            onPress={() => handleSelectAddress(item)}
+                            onPress={() => handleConfirmUpdateDialog()}
                             backgroundColor={Colors.primary_light}
                             padding-4
                             br50
@@ -114,7 +145,7 @@ const AddressItem = ({ item, userProfile, setDialogVisible, setUpdateItem }: Add
             <View height={1} bg-$backgroundPrimaryLight />
 
             <View padding-10>
-                <View row  centerV marginB-10>
+                <View row centerV marginB-10>
                     <MaterialCommunityIcons
                         name="map-marker"
                         size={20}
@@ -122,11 +153,11 @@ const AddressItem = ({ item, userProfile, setDialogVisible, setUpdateItem }: Add
                         style={{ marginRight: 8 }}
                     />
                     <View flexS>
-                    <Text h3_bold>{i18n.t("address.address")}: {" "}
-                        <Text h3 numberOfLines={2}>
-                            {item.address}, {item.ward}, {item.district}, {item.province}
+                        <Text h3_bold>{i18n.t("address.address")}: {" "}
+                            <Text h3 numberOfLines={2}>
+                                {item.address}, {item.ward}, {item.district}, {item.province}
+                            </Text>
                         </Text>
-                    </Text>
                     </View>
                 </View>
 

@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Alert,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
@@ -85,8 +86,8 @@ export default function Checkout() {
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [createOrderDialog, setCreateOrderDialog] = useState(false);
-
   const { dialogConfig, showDialog, hideDialog } = useDialog();
+  const [note, setNote] = useState("");
 
   const products = useSelector((state: RootState) => state.order.orders || []);
   const totalAmount = useSelector((state: RootState) => state.order.totalAmount || 0);
@@ -176,6 +177,8 @@ export default function Checkout() {
         return;
       }
 
+      console.log("selectedAddress:", selectedAddress.id);
+
       // Create order data
       const orderData = {
         payment_method_id: selectedPayment.id,
@@ -183,6 +186,7 @@ export default function Checkout() {
         discount_amount: totalPrice - discountedPrice,
         voucher_id: selectedVoucher?.id || null,
         shipping_address_id: selectedAddress.id,
+        note: note || "",
         order_items: products.map((item: any) => ({
           item_type: item.type || "product",
           item_id: item.id,
@@ -408,6 +412,31 @@ export default function Checkout() {
             {products.map((product: Product) => (
               <PaymentProductItem key={product.id} product={product} />
             ))}
+          </View>
+
+          <View style={styles.borderInset} />
+
+          <View marginV-10>
+            <Text h2_bold>Note</Text>
+            <TextInput
+              value={note}
+              placeholder={i18n.t("address.note")}
+              onChangeText={(value) => setNote(value)}
+              multiline={true}
+              numberOfLines={3}
+              style={{
+                fontSize: 14,
+                minHeight: 80,
+                width: "100%",
+                padding: 15,
+                backgroundColor: "#ffffff",
+                borderRadius: 8,
+                textAlignVertical: "top",
+                borderWidth: 1,
+                borderColor: "#E5E7EB",
+                marginTop: 10,
+              }}
+            />
           </View>
         </ScrollView>
 
