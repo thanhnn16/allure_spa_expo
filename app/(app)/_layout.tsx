@@ -53,6 +53,7 @@ const AppLayout = () => {
       <Stack.Screen name="profile/delete-account" />
       <Stack.Screen name="profile/delete-account-verify" />
       <Stack.Screen name="profile/change-password" />
+      <Stack.Screen name="service-package/index" />
     </Stack>
   );
 };
