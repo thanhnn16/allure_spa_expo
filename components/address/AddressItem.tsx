@@ -1,85 +1,32 @@
 import i18n from "@/languages/i18n";
-import { setSelectedAddress } from "@/redux/features/address/addressSlice";
-import { deleteAddress, fetchAddresses, updateAddress } from "@/redux/features/address/addressThunk";
 import { Address, UserProfile } from "@/types/address.type";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Href, router } from "expo-router";
 import { TouchableOpacity, View, Text, Colors } from "react-native-ui-lib";
-import { useDispatch } from "react-redux";
+import AddressIconButton from "./AddressIconButton";
 
 interface AddressItemProps {
     item: Address;
     userProfile: UserProfile | null;
-    setDialogTitle: (title: string) => void;
-    setDialogDescription: (description: string) => void;
-    setDialogVisible: (visible: boolean) => void;
-    setDialogOnPress: (onPress: () => void) => void;
-    setDialogConfirmButton?: (visible: boolean) => void;
-    setErrorDescription: (description: string) => void;
-    setErrorDialogVisible: (visible: boolean) => void;
-    setErrorDialogOnPress: (onPress: () => void) => void;
+    setDeleteDialogVisible: (visible: boolean) => void;
+    setUpdateDialogVisible: (visible: boolean) => void;
+    setUpdateItem: (item: Address) => void;
 }
 
 const AddressItem = ({
-    item, userProfile, setDialogVisible,
-    setDialogTitle, setDialogDescription, setDialogConfirmButton, setDialogOnPress,
-    setErrorDescription, setErrorDialogVisible, setErrorDialogOnPress
+    item, userProfile,
+    setDeleteDialogVisible, setUpdateDialogVisible, setUpdateItem
 }: AddressItemProps
 ) => {
-    const dispatch = useDispatch();
+    const handleDelete = () => {
+        setUpdateItem(item)
+        setDeleteDialogVisible(true)
+    }
 
-    const handleDeleteAddress = async (addressId: string) => {
-        setDialogVisible(true);
-        setDialogConfirmButton?.(true);
-        setDialogTitle("Xác nhận xóa địa chỉ");
-        setDialogDescription("Bạn có chắc chắn muốn xóa địa chỉ này không?");
-        setDialogOnPress(() => {
-            dispatch(deleteAddress(addressId));
-            setDialogVisible(false);
-        })
-    };
-
-    const handleSelectAddress = async (item: Address) => {
-        try {
-            const updateData = {
-                "province": item.province,
-                "district": item.district,
-                "ward": item.ward,
-                "address": item.address,
-                "address_type": item.address_type,
-                "is_default": true,
-            };
-
-            await dispatch(
-                updateAddress({
-                    id: item.id,
-                    data: updateData,
-                })
-            ).unwrap();
-            setDialogVisible(false);
-            await dispatch(fetchAddresses()).unwrap();
-            await AsyncStorage.setItem("selectedAddress", JSON.stringify(item));
-
-        } catch (error: any) {
-            setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
-            setErrorDialogOnPress(() => {
-                setErrorDialogVisible(false);
-            })
-            setErrorDialogVisible(true);
-        }
-    };
-
-    const handleConfirmUpdateDialog = async () => {
-        setDialogConfirmButton?.(true);
-        setDialogTitle("Xác nhận chọn địa chỉ");
-        setDialogDescription("Bạn có chắc chắn muốn chọn địa chỉ này làm mặc định không?");
-        setDialogOnPress(() => {
-            handleSelectAddress(item);
-        });
-        setDialogVisible(true);
-    };
-
+    const handleUpdate = () => {
+        setUpdateItem(item)
+        setUpdateDialogVisible(true)
+    }
     return (
         <View
             style={{
@@ -114,32 +61,25 @@ const AddressItem = ({
 
                 <View row gap-8>
                     {!item.is_default && (
-                        <TouchableOpacity
-                            onPress={() => handleConfirmUpdateDialog()}
-                            backgroundColor={Colors.primary_light}
-                            padding-4
-                            br50
-                        >
-                            <MaterialCommunityIcons name="pencil" size={24} color="#717658" />
-                        </TouchableOpacity>
+                        <AddressIconButton
+                            onPress={() => handleUpdate()}
+                            iconName="locate"
+                            color={Colors.primary}
+                        />
                     )}
-                    <TouchableOpacity
-                        onPress={() => router.push(`"address/update/${item.id}/index` as Href)}
-                        backgroundColor={Colors.primary_light}
-                        padding-4
-                        br50
-                    >
-                        <MaterialCommunityIcons name="pencil" size={24} color="#717658" />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity
-                        onPress={() => handleDeleteAddress(item.id as string)}
-                        backgroundColor={Colors.primary_light}
-                        padding-4
-                        br40
-                    >
-                        <Ionicons name="close-circle-outline" size={24} color={Colors.secondary} />
-                    </TouchableOpacity>
+                    <AddressIconButton
+                        onPress={() => router.push(`/address/update/${item.id}`)}
+                        iconName="pencil"
+                        color={Colors.primary}
+                    />
+
+                    <AddressIconButton
+                        onPress={() => handleDelete()}
+                        iconName="remove-circle-outline"
+                        color={Colors.secondary}
+                    />
+
                 </View>
             </View>
             <View height={1} bg-$backgroundPrimaryLight />

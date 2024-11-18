@@ -7,7 +7,7 @@ import AppButton from "@/components/buttons/AppButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { fetchAddresses } from "@/redux/features";
+import { deleteAddress, fetchAddresses, updateAddress } from "@/redux/features";
 import AppBar from "@/components/app-bar/AppBar";
 import AddressSkeletonView from "@/components/address/AddressSkeletonView";
 import type { Address, UserProfile } from "@/types/address.type";
@@ -15,23 +15,21 @@ import AddressItem from "@/components/address/AddressItem";
 import AppDialog from "@/components/dialog/AppDialog";
 
 const AddressScreen = () => {
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState<string>("");
-  const [diaglogDescription, setDialogDescription] = useState<string>("");
-  const [dialogConfirmButton, setDialogConfirmButton] = useState<boolean>(false);
-  const [dialogOnPress, setDialogOnPress] = useState<() => void>(() => { });
+  const [dialogUpdateVisible, setDialogUpdateVisible] = useState(false);
+  const [dialogDeleteVisible, setdialogDeleteVisible] = useState(false);
+
   const [errorDescription, setErrorDescription] = useState<string>();
   const [errorDialogVisible, setErrorDialogVisible] = useState(false);
-  const [setErrorDialogOnPress, setSetErrorDialogOnPress] = useState<() => void>(() => { });
-  const [UpdateItem, setUpdateItem] = useState<Address>();
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [updateItem, setUpdateItem] = useState<Address | null>(null);
+
   const dispatch = useDispatch();
   const { addresses, loading, error } = useSelector(
     (state: RootState) => state.address
   );
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   
-
-  const loadData = async () => {
+  const loadUserData = async () => {
     try {
       const userProfileStr = await AsyncStorage.getItem("userProfile");
       if (userProfileStr) {
@@ -39,17 +37,51 @@ const AddressScreen = () => {
       }
 
       await dispatch(fetchAddresses()).unwrap();
+      console.log("addresses", addresses);
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
       setErrorDialogVisible(true);
-      setSetErrorDialogOnPress(() => {
-        router.back();
-      });
+    }
+  };
+
+  const deleteAddressById = async () => {
+    try {
+      await dispatch(deleteAddress(updateItem?.id)).unwrap();
+      setdialogDeleteVisible(false);
+    } catch (error: any) {
+      setErrorDescription(error.message || "Không thể xóa địa chỉ");
+      setErrorDialogVisible(true);
+    }
+  };
+
+  const handleSelectAddress = async () => {
+    try {
+      const updateData = {
+        "province": updateItem?.province,
+        "district": updateItem?.district,
+        "ward": updateItem?.ward,
+        "address": updateItem?.address,
+        "address_type": updateItem?.address_type,
+        "is_default": true,
+      };
+      setDialogUpdateVisible(false);
+      await dispatch(
+        updateAddress({
+          id: updateItem?.id,
+          data: updateData,
+        })
+      ).unwrap();
+      await dispatch(fetchAddresses()).unwrap();
+      await AsyncStorage.setItem("selectedAddress", JSON.stringify(updateItem));
+
+    } catch (error: any) {
+      setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
+      setErrorDialogVisible(true);
     }
   };
 
   useEffect(() => {
-    loadData();
+    loadUserData();
   }, [dispatch]);
 
   return (
@@ -65,14 +97,9 @@ const AddressScreen = () => {
                 key={index}
                 userProfile={userProfile}
                 item={item}
-                setDialogVisible={setDialogVisible}
-                setDialogTitle={setDialogTitle}
-                setDialogDescription={setDialogDescription}
-                setDialogOnPress={setDialogOnPress}
-                setDialogConfirmButton={setDialogConfirmButton}
-                setErrorDialogVisible={setErrorDialogVisible}
-                setErrorDescription={setErrorDescription}
-                setErrorDialogOnPress={setErrorDialogOnPress}
+                setUpdateItem={setUpdateItem}
+                setUpdateDialogVisible={setDialogUpdateVisible}
+                setDeleteDialogVisible={setdialogDeleteVisible}
               />
             ))}
           </ScrollView>
@@ -94,19 +121,31 @@ const AddressScreen = () => {
         closeButtonLabel={i18n.t("common.cancel")}
         confirmButtonLabel={"Cập nhật"}
         severity="info"
-        onClose={setErrorDialogOnPress}
+        onClose={() => setErrorDialogVisible(false)}
       />
 
       <AppDialog
-        visible={dialogVisible}
-        title={dialogTitle}
-        description={diaglogDescription}
-        confirmButton={dialogConfirmButton}
+        visible={dialogUpdateVisible}
+        title={"Đặt địa chỉ làm mặc định"}
+        description={"Bạn có muốn địa chỉ này thành địa chỉ làm mặc định không?"}
+        confirmButton={true}
         closeButtonLabel={i18n.t("common.cancel")}
         confirmButtonLabel={"Đồng ý"}
         severity="info"
-        onClose={() => setDialogVisible(false)}
-        onConfirm={dialogOnPress}
+        onClose={() => setDialogUpdateVisible(false)}
+        onConfirm={() => handleSelectAddress()}
+      />
+
+      <AppDialog
+        visible={dialogDeleteVisible}
+        title={"Xóa địa chỉ"}
+        description={"Bạn có muốn xóa 0?"}
+        confirmButton={true}
+        closeButtonLabel={i18n.t("common.cancel")}
+        confirmButtonLabel={"Đồng ý"}
+        severity="info"
+        onClose={() => setdialogDeleteVisible(false)}
+        onConfirm={() => deleteAddressById()}
       />
     </View>
   );

@@ -143,7 +143,8 @@ export default function DetailsScreen() {
       if (media.full_url) {
         try {
           await Share.share({
-            message: media.full_url,
+            // message: media.full_url,
+            message: `allurespa://product/${product.id}`,
           });
         } catch (error) {
           console.error("Error sharing the link:", error);

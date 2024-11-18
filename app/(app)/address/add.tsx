@@ -1,65 +1,41 @@
-import { Colors, Image, Incubator, PanningProvider, Picker, PickerValue, Text, TextField, TouchableOpacity, View } from "react-native-ui-lib";
+import { Colors, Picker, PickerValue, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
-import { router, useNavigation } from "expo-router";
-import BackButton from "@/assets/icons/back.svg";
-import { useState, useEffect, useCallback } from "react";
-import { useWindowDimensions } from "react-native";
+import { router } from "expo-router";
+import { useState, useEffect } from "react";
 import AppButton from "@/components/buttons/AppButton";
-import { SafeAreaView, ScrollView, TextInput, Alert } from "react-native";
+import { ScrollView, TextInput } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addAddress } from "@/redux/features";
 import AppBar from "@/components/app-bar/AppBar";
-import { RootState } from "@/redux/store";
 import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from "@/redux/features/address/getAddressThunk";
-import { debounce, get, map, set } from "lodash";
-import { AddressDistrict, AddressProvince, AddressWard } from "@/types/address.type";
+import { Address, AddressDistrict, AddressProvince, AddressWard } from "@/types/address.type";
 import AddressTextInput from "@/components/address/AddressTextInput";
 import AppDialog from "@/components/dialog/AppDialog";
-export interface AddressRequest {
-  user_id: string;
-  province: string;
-  district: string;
-  ward: string;
-  address: string;
-  address_type: "home" | "work" | "others";
-  is_default: boolean;
-  is_temporary: boolean;
-  note?: string;
-}
+import { User } from "@/types/user.type";
 
-// Update interface to match actual API response
-interface UserResponse {
-  message: string;
-  status_code: number;
-  success: boolean;
-  data: {
-    id: string;
-    phone_number: string;
-    full_name: string;
-  };
-}
+export const addressTypeItems = [
+  { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
+  { id: 2, name: i18n.t("address.work"), type: "work" as AddressType },
+  { id: 3, name: i18n.t("address.others"), type: "others" as AddressType },
+];
 
 type AddressType = "home" | "work" | "others";
 
 const Add = () => {
-  const navigation = useNavigation();
-  const window = useWindowDimensions();
   const [selectedItem, setSelectedItem] = useState<number | null>(1);
   const [loading, setLoading] = useState(false);
-  const [selectedAddressType, setSelectedAddressType] =
-    useState<AddressType>("home");
-  const [formData, setFormData] = useState({
+  const [selectedAddressType, setSelectedAddressType] = useState<AddressType>("home");
+  const [formData, setFormData] = useState<Address>({
+    user_id: "",
     province: "",
     district: "",
     ward: "",
     address: "",
-    name: "",
-    phone: "",
     note: "",
+    address_type: "home",
     is_default: false,
     is_temporary: false,
-    user_id: "",
   });
   const dispatch = useDispatch();
   const [province, setProvince] = useState<AddressProvince>();
@@ -73,37 +49,7 @@ const Add = () => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [confirmButton, setConfirmButton] = useState(false);
   const [onConfirmDialog, setOnConfirmDialog] = useState<() => void>(() => () => { });
-  const [submitButton, setSubmitButton] = useState(false);
-
-  const addressTypeItems = [
-    { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
-    { id: 2, name: i18n.t("address.work"), type: "work" as AddressType },
-    { id: 3, name: i18n.t("address.others"), type: "others" as AddressType },
-  ];
-
-  useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const userProfileStr = await AsyncStorage.getItem("userProfile");
-        if (userProfileStr) {
-          const userProfile = JSON.parse(userProfileStr);
-          setFormData((prev) => ({
-            ...prev,
-            name: userProfile.full_name || "",
-            phone: userProfile.phone_number || "",
-            user_id: userProfile.id || "",
-          }));
-        }
-      } catch (error: any) {
-        setTitleDialog("Có lỗi xảy ra");
-        setDialogDescription(error.message || "Không thể tải thông tin người dùng");
-        setConfirmButton(true);
-        setOnConfirmDialog(() => () => { setDialogVisible(false) });
-        setDialogVisible(true);
-      }
-    };
-    loadUserData();
-  }, []);
+  const [userProfile, setUserProfile] = useState<User>();
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -148,12 +94,6 @@ const Add = () => {
     }
   }
 
-  useEffect(() => {
-    getProvince();
-  }, []);
-
-
-
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -171,7 +111,7 @@ const Add = () => {
         return;
       }
 
-      const payload: AddressRequest = {
+      const payload: Address = {
         user_id: formData.user_id,
         province: province?.name || "",
         district: district?.name || "",
@@ -186,27 +126,26 @@ const Add = () => {
 
       if (payload) {
         setFormData({
+          user_id: formData.user_id,
           province: "",
           district: "",
           ward: "",
           address: "",
-          name: formData.name,
-          phone: formData.phone,
           note: "",
+          address_type: "home",
           is_default: false,
           is_temporary: false,
-          user_id: formData.user_id,
         });
         setSelectedItem(1);
         setSelectedAddressType("home");
-  
+
         setTitleDialog("Thành công");
         setDialogDescription("Đã thêm địa chỉ");
         setConfirmButton(true);
         setOnConfirmDialog(() => () => { router.back() });
         setDialogVisible(true);
       }
-      
+
     } catch (error: any) {
       setTitleDialog("Lỗi");
       setDialogDescription("Không thể thêm địa chỉ");
@@ -216,6 +155,29 @@ const Add = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const userProfileStr = await AsyncStorage.getItem("userProfile");
+        if (userProfileStr) {
+          setUserProfile(JSON.parse(userProfileStr));
+        }
+        console.log("userProfileStr", userProfileStr);
+      } catch (error: any) {
+        setTitleDialog("Có lỗi xảy ra");
+        setDialogDescription(error.message || "Không thể tải thông tin người dùng");
+        setConfirmButton(true);
+        setOnConfirmDialog(() => () => { setDialogVisible(false) });
+        setDialogVisible(true);
+      }
+    };
+    loadUserData();
+  }, []);
+
+  useEffect(() => {
+    getProvince();
+  }, []);
 
   return (
     <View flex bg-$backgroundDefault>
@@ -240,12 +202,12 @@ const Add = () => {
             {i18n.t("auth.login.personal_info")}
           </Text>
           <AddressTextInput
-            value={formData.name}
+            value={userProfile?.full_name || ""}
             placeholder={i18n.t("auth.login.fullname")}
             onChangeText={() => { }}
           />
           <AddressTextInput
-            value={formData.phone}
+            value={userProfile?.phone_number || ""}
             placeholder={i18n.t("address.phone")}
             onChangeText={(value) => handleChange("phone", value)}
             maxLength={10}
@@ -265,7 +227,7 @@ const Add = () => {
             elevation: 3,
           }}
         >
-          <Text color="#717658" text70BO marginB-10>
+          <Text color="#717658" h2_bold marginB-10>
             {i18n.t("address.address")}
           </Text>
 
@@ -401,7 +363,7 @@ const Add = () => {
             elevation: 3,
           }}
         >
-          <Text color="#717658" text70BO marginB-10>
+          <Text color="#717658" h2_bold marginB-10>
             {i18n.t("address.type")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -424,6 +386,7 @@ const Add = () => {
                 }}
               >
                 <Text
+                  h3_bold
                   style={{
                     color: selectedItem === item.id ? "#FFFFFF" : "#717658",
                     fontWeight: "500",

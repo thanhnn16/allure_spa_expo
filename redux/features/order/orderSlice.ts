@@ -3,6 +3,7 @@ import { Orders } from '@/types/order.type';
 import { getAllOrderThunk } from './getAllOrderThunk';
 import { getOrderThunk } from './getOrderThunk';
 import { getOrderByIdThunk } from './getOrderByIdThunk';
+import { changeOrderStatusByIdThunk } from './changeOrderStatusThunk';
 
 interface OrderState {
     orders: Orders[] | Orders;
@@ -53,7 +54,15 @@ const orderSlice = createSlice({
             };
         },
         setOrderProducts: (state: OrderState, action: any) => {
-            state.orders = action.payload.products;
+            console.log('setOrderProducts', action.payload);
+
+            if (Array.isArray(action.payload.products)) {
+                state.orders = action.payload.products;
+            } else {
+                console.error('setOrderProducts: products is not an array', action.payload.products);
+                state.orders = [];
+            }
+
             state.totalAmount = action.payload.totalAmount;
             state.fromCart = action.payload.fromCart;
         },
@@ -118,6 +127,18 @@ const orderSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(getOrderByIdThunk.rejected, (state: OrderState, action: any) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+            .addCase(changeOrderStatusByIdThunk.pending, (state: OrderState) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(changeOrderStatusByIdThunk.fulfilled, (state: OrderState, action: any) => {
+                state.selectedOrder = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(changeOrderStatusByIdThunk.rejected, (state: OrderState, action: any) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });

@@ -20,6 +20,7 @@ const AddressTextInput = ({ value, placeholder, maxLength, onChangeText, keyboar
             validateOnChange
             floatingPlaceholderStyle={Typography.h3}
             labelStyle={Typography.h3}
+            h3
             // validate={['required', (value) => value.length == 10]}
             // validationMessage={['Field is required', 'Password is too short']}
             maxLength={maxLength}
