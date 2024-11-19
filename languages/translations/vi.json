@@ -307,15 +307,7 @@
     "version": "Phiên bản: 1.0.0",
     "date_release": "Ngày phát hành: 01/01/2021"
   },
-  "deleteaccount": {
-    "title": "Xóa tài khoản",
-    "description": "Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
-    "placeholder": "Nhập nội dung",
-    "next": "Tiếp theo",
-    "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
-    "verify_yes": "Có , gửi dữ liệu của tôi tới email",
-    "verify_no": "Không, cảm ơn !"
-  },
+
   "days": {
     "mon": "Thứ hai",
     "tue": "Thứ ba",
@@ -376,7 +368,8 @@
     "1_seat": "1 chỗ",
     "2_seat": "2 chỗ",
     "back_to_home": "Quay về trang chủ",
-    "scheduled_successfully": "Đặt lịch thành công"
+    "scheduled_successfully": "Đặt lịch thành công",
+    "propose": "Thanh toán ngay để áp dụng Voucher giảm giá"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",
@@ -553,6 +546,15 @@
     "products": "Sản phẩm",
     "services": "Dịch vụ",
     "empty": "Không có sản phẩm nào trong danh sách yêu thích"
+  },
+  "deleteAccount": {
+    "title": "Xóa tài khoản",
+    "description": "Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
+    "placeholder": "Nhập nội dung",
+    "next": "Tiếp theo",
+    "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
+    "verify_yes": "Có , gửi dữ liệu của tôi tới email",
+    "verify_no": "Không, cảm ơn !"
   }
 }
 

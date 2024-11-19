@@ -1,5 +1,6 @@
 import { Rating } from "react-native-ratings";
 import { ResponeDefaultParams, ResponePagesParams, Timestamps } from "./commons.type";
+import {RatingSummary} from "@/types/rating.type";
 
 
 
@@ -77,6 +78,9 @@ export interface ServiceDetailResponeModel extends Timestamps, ResponeDefaultPar
     category_id: number;
     single_price: number;
     combo_5_price: number;
+    rating_summary: RatingSummary;
+    is_favorite: boolean;
+
     combo_10_price: number;
     validity_period: number;
     category: CategoryResponeModelParams;

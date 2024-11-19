@@ -2,18 +2,15 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { ProductResponseParams } from "@/types/product.type";
 
-interface ProductRequest {
-  id: string;
-}
-
 export const getProductThunk = createAsyncThunk(
   'products/getProduct',
-  async (body: ProductRequest, { rejectWithValue }: { rejectWithValue: any }) => {
+  async (params : any, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
-      const res = await AxiosInstance().get<ProductResponseParams>(`products/${body.id}`);
+      const res = await AxiosInstance().get<ProductResponseParams>(`products/${params.product_id}?user_id=${params.user_id}`);
 
       if (res.data.success) {
-        return res.data;
+        console.log('Get product success:', res.data.data);
+        return res.data.data;
       }
 
       console.log('Get product failed:', res.data.message);

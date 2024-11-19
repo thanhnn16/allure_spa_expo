@@ -15,5 +15,4 @@ i18n.enableFallback = true;
 
 i18n.locale = getLocales()[0].languageCode ?? 'en';
 
-
 export default i18n;

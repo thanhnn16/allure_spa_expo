@@ -43,7 +43,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
                     Pragma: 'no-cache'
                   }
                 }
-                : require("@/assets/images/avt.png")
+                : require("@/assets/images/logo/logo.png")
             }
           />
           <Text text60>{user?.full_name || i18n.t("profile.username")}</Text>

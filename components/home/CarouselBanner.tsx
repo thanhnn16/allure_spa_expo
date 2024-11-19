@@ -1,12 +1,29 @@
-import React from 'react'
-import { StyleSheet } from 'react-native'
-import { AnimatedImage, Carousel, PageControlPosition, View } from 'react-native-ui-lib'
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { fetchBanners } from '@/redux/features/banner/bannerThunk';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { AnimatedImage, Carousel, PageControlPosition } from 'react-native-ui-lib';
+import { router } from 'expo-router';
 
-interface RenderCarouselProps {
-  banner: Array<{ uri: string }>
-}
+const CarouselBanner: React.FC = () => {
+    const dispatch = useDispatch();
+    const { banners } = useSelector((state: RootState) => state.banners);
 
-const RenderCarousel: React.FC<RenderCarouselProps> = ({ banner }) => {
+    useEffect(() => {
+        dispatch(fetchBanners());
+    }, [dispatch]);
+
+    const handleOpenWebView = (url: string | null) => {
+        if (url) {
+            router.push({
+                pathname: '/webview',
+                params: { url },
+            });
+        }
+    };
+
+
     return (
         <View style={styles.carouselContainer}>
             <Carousel
@@ -16,44 +33,45 @@ const RenderCarousel: React.FC<RenderCarouselProps> = ({ banner }) => {
                 pageControlPosition={PageControlPosition.UNDER}
                 containerStyle={styles.carousel}
             >
-                {banner.map((item, index) => (
-                    <View key={index} style={styles.slideContainer}>
+                {banners.map((item, index) => (
+                    <TouchableOpacity
+                        key={index}
+                        style={styles.slideContainer}
+                        onPress={() => handleOpenWebView(item.link_url)}
+                    >
                         <AnimatedImage
-                            source={item}
+                            source={{ uri: item.full_image_url }}
                             style={styles.image}
                             animationDuration={1000}
                         />
-                    </View>
+                    </TouchableOpacity>
                 ))}
             </Carousel>
         </View>
-    )
-}
+    );
+};
 
-export default RenderCarousel
+export default CarouselBanner;
 
 const styles = StyleSheet.create({
     carouselContainer: {
-      borderRadius: 12,
-      overflow: 'hidden',
-      height: 160,
-      marginTop: 10,
-      marginHorizontal: 20,
+        borderRadius: 12,
+        overflow: 'hidden',
+        height: 160,
+        marginTop: 10,
+        marginHorizontal: 20,
     },
     carousel: {
-      height: 200,
+        height: 200,
     },
     slideContainer: {
-      borderRadius: 12,
-      overflow: 'hidden',
-      height: 160,
+        borderRadius: 12,
+        overflow: 'hidden',
+        height: 160,
     },
     image: {
-      height: '100%',
-      width: '100%',
-      resizeMode: 'stretch',
+        height: '100%',
+        width: '100%',
+        resizeMode: 'stretch',
     },
-    touchableOverlay: {
-      ...StyleSheet.absoluteFillObject,
-    },
-  });
+});

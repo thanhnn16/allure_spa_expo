@@ -5,6 +5,8 @@ import { BlurView } from "expo-blur";
 import { Href, router } from "expo-router";
 import BackIcon from "@/assets/icons/arrow_left.svg";
 import ShoppingBagIcon from "@/assets/icons/shopping_bag.svg";
+import {Ionicons} from "@expo/vector-icons";
+import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 
 interface AppBarProps {
   back?: boolean;
@@ -30,7 +32,12 @@ const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
       {rightComponent ? (
         <Pressable onPress={() => router.push('/(app)/cart' as Href)}>
           <View width={48} height={48} centerV right>
-            <Image source={ShoppingBagIcon} />
+              <HomeHeaderButton
+                  onPress={() => {
+                      router.push("cart" as Href<string>);
+                  }}
+                  iconName="cart-outline"
+              />
           </View>
         </Pressable>
       ) : (

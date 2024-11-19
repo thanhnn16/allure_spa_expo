@@ -25,6 +25,7 @@ export interface Product extends Timestamps {
 }
 
 export interface ProductResponseParams extends ResponeDefaultParams {
+    success: boolean;
     data: Product;
 }
 

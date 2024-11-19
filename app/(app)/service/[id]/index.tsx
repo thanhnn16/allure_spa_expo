@@ -11,10 +11,11 @@ import {
     TouchableOpacity,
     ActionSheet,
     SkeletonView,
+    Colors,
 } from "react-native-ui-lib";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { toggleFavoriteThunk } from '@/redux/features/favorite/favoritesThunk';
@@ -41,6 +42,8 @@ import HeartFullIcon from "@/assets/icons/heart_full.svg";
 import TagIcon from "@/assets/icons/tag.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import PhoneCallIcon from "@/assets/icons/phone.svg";
+import BlinkingIconText from "@/components/BlinkingIconText";
+import AppDialog2 from "@/components/dialog/AppDialog2";
 
 // Main component
 const ServiceDetailPage = () => {
@@ -54,24 +57,24 @@ const ServiceDetailPage = () => {
     // UI state
     const [service, setService] = useState<ServiceDetailResponeModel>();
     const [visible, setIsVisible] = useState<boolean>(false);
-    const [showActionSheet, setShowActionSheet] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [imageViewIndex, setImageViewIndex] = useState<number>(0);
     const [index, setIndex] = useState<number>(0);
     const [price, setPrice] = useState<number>();
-    const [combo, setCombo] = useState<number>(0);
     const [comboName, setComboName] = useState<string>("");
     const [media, setMedia] = useState<MediaResponeModelParams[]>([]);
     const [buyProductDialog, setBuyProductDialog] = useState(false);
     const [favoriteDialog, setFavoriteDialog] = useState(false);
+    const [bookingDialog, setBookingDialog] = useState(false);
 
-    // Animation
-    const scaleValue = useRef(new Animated.Value(1)).current;
+    const [showActionSheet, setShowActionSheet] = useState<boolean>(false);
+    const [combo, setCombo] = useState<number>(0);
 
     // Window dimensions
     const windowWidth = Dimensions.get("window").width;
 
-    // Fetch service details on mount
+    const [isFavoriteState, setIsFavoriteState] = useState<boolean | undefined>(service?.is_favorite);
+
     useEffect(() => {
         const getServiceDetail = async () => {
             const res: ServiceDetailResponeParams = (
@@ -82,6 +85,7 @@ const ServiceDetailPage = () => {
                 setService(res.data);
                 setPrice(res.data.single_price);
                 setMedia(res.data.media);
+                setIsFavoriteState(res.data.is_favorite);
             }
             setIsLoading(false);
         };
@@ -94,7 +98,6 @@ const ServiceDetailPage = () => {
         return media.map((item) => ({ uri: item.full_url }));
     }, [media]);
 
-    // Check if service is favorited
     const isFavorite = favorites.some((fav: { item_id: number | undefined; type: string; }) =>
         fav.item_id === service?.id && fav.type === 'service'
     );
@@ -126,26 +129,23 @@ const ServiceDetailPage = () => {
             setFavoriteDialog(true);
             return;
         }
+        setIsFavoriteState((prev) => !prev);
+        await dispatch(
+            toggleFavoriteThunk({
+                type: "service",
+                itemId: service?.id,
+            })
+        );
+        console.log('status', status);
+        setIsFavoriteState(status === "added");
+    };
 
-        if (service) {
-            await dispatch(toggleFavoriteThunk({
-                type: 'service',
-                itemId: service.id,
-            }));
-            // Animate heart icon
-            Animated.sequence([
-                Animated.timing(scaleValue, {
-                    toValue: 1.5,
-                    duration: 200,
-                    useNativeDriver: true,
-                }),
-                Animated.timing(scaleValue, {
-                    toValue: 1,
-                    duration: 200,
-                    useNativeDriver: true,
-                }),
-            ]).start();
-        }
+    const renderHeartIcon = () => {
+        return isFavoriteState ? (
+            <Ionicons name="heart" size={24} color={Colors.primary} />
+        ) : (
+            <Ionicons name="heart-outline" size={24} color={Colors.primary} />
+        );
     };
 
     const handleLoginConfirm = () => {
@@ -160,14 +160,19 @@ const ServiceDetailPage = () => {
     };
 
     const handleBooking = () => {
+        setBookingDialog(false);
         router.push({
-            pathname: `/(app)/booking`,
+            pathname: "/(app)/booking",
             params: {
                 service_id: service?.id,
                 service_name: service?.service_name,
-                combo_id: combo
-            }
+            },
         });
+    };
+
+    const handlePayment = () => {
+        console.log('Payment');
+        setBookingDialog(false);
     };
 
     // Components
@@ -311,31 +316,63 @@ const ServiceDetailPage = () => {
                                             <Image source={LinkIcon} size={24} />
                                         </TouchableOpacity>
                                         <TouchableOpacity onPress={handleToggleFavorite}>
-                                            <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-                                                {isFavorite ? (
-                                                    <Image source={HeartFullIcon} size={24} />
-                                                ) : (
-                                                    <Image source={HeartIcon} size={24} />
-                                                )}
-                                            </Animated.View>
+                                            {renderHeartIcon()}
                                         </TouchableOpacity>
                                     </View>
                                 </View>
 
                                 <View row centerV>
                                     <View row gap-5>
-                                        <RatingStar rating={4.5} />
-                                        <Text h3_medium>4.5</Text>
+                                        <RatingStar
+                                            rating={service?.rating_summary.average_rating ?? 0}
+                                        />
+                                        <Text h3_medium>
+                                            {service?.rating_summary.average_rating}
+                                        </Text>
                                     </View>
                                     <View flex row right>
                                         <Text h3_medium>
-                                            +99 {i18n.t("productDetail.purchases")}
+                                            {service?.rating_summary.total_ratings}{" "}
+                                            {i18n.t("productDetail.reviews")}
                                         </Text>
                                     </View>
+                                </View>
+                                {/* Package Selection */}
+                                <View padding-20 gap-20>
+                                    <Text h2_bold>{i18n.t("service.treatment")}</Text>
+
+                                    <TouchableOpacity onPress={() => setShowActionSheet(true)}>
+                                        <View
+                                            center
+                                            row
+                                            paddingH-20
+                                            height={50}
+                                            style={{
+                                                borderWidth: 1,
+                                                borderRadius: 10,
+                                                borderColor: "#E0E0E0",
+                                            }}
+                                        >
+                                            <Text flex h3>
+                                                {comboName}
+                                            </Text>
+                                            <SimpleLineIcons
+                                                name="arrow-down"
+                                                size={18}
+                                                color="#BCBABA"
+                                            />
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* Service Description */}
+                                <View>
+                                    <BlinkingIconText />
                                 </View>
 
                                 {/* Service Info */}
                                 <View row paddingR-20>
+
                                     <View>
                                         <Image source={SunIcon} width={18} height={18} />
                                     </View>
@@ -344,6 +381,7 @@ const ServiceDetailPage = () => {
                                         <Text h3>{service?.description}</Text>
                                     </View>
                                 </View>
+
 
                                 <View row paddingR-20>
                                     <View>
@@ -354,6 +392,7 @@ const ServiceDetailPage = () => {
                                         <Text h3>Tầng 1 Shophouse P1- SH02 Vinhome Central Park, 720A Điện Biên Phủ, Phường 22, Quận Bình Thạnh, HCM</Text>
                                     </View>
                                 </View>
+
 
                                 <View row paddingR-20>
                                     <View>
@@ -366,33 +405,11 @@ const ServiceDetailPage = () => {
                                 </View>
                             </View>
 
-                            {/* Package Selection */}
-                            <View padding-20 gap-20>
-                                <Text h2_bold>{i18n.t("service.treatment")}</Text>
 
-                                <TouchableOpacity onPress={() => setShowActionSheet(true)}>
-                                    <View
-                                        center
-                                        row
-                                        paddingH-20
-                                        height={50}
-                                        style={{
-                                            borderWidth: 1,
-                                            borderRadius: 10,
-                                            borderColor: "#E0E0E0",
-                                        }}
-                                    >
-                                        <Text flex h3>
-                                            {comboName}
-                                        </Text>
-                                        <SimpleLineIcons
-                                            name="arrow-down"
-                                            size={18}
-                                            color="#BCBABA"
-                                        />
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
+
+
+
+
 
                             {/* Package Selection Sheet */}
                             <ActionSheet
@@ -425,7 +442,7 @@ const ServiceDetailPage = () => {
                     {/* Bottom Actions */}
                     <ServiceBottomComponent
                         isLoading={isLoading}
-                        onPurchase={isGuest ? handleGuestPurchase : handleBooking}
+                        onPurchase={() => setBookingDialog(true)}
                     />
 
                     {/* Dialogs */}
@@ -450,6 +467,58 @@ const ServiceDetailPage = () => {
                         onClose={() => setFavoriteDialog(false)}
                         onConfirm={handleLoginConfirm}
                     />
+
+                    <AppDialog2
+                        visible={bookingDialog}
+                        title={i18n.t("service.serviceDetail.book_now")}
+                        closeButtonLabel={i18n.t("common.cancel")}
+                        confirmButtonLabel={i18n.t("service.book_now")}
+                        secondaryConfirmButtonLabel={i18n.t("checkout.pay_online")}
+                        severity="info"
+                        onClose={() => setBookingDialog(false)}
+                        onConfirm={handleBooking}
+                        onConfrimSecondary={handlePayment}
+                        closeButton={true}
+                        confirmButton={true}
+                        secondaryConfirmButton={true}
+                    >
+                        <Text h2_medium secondary marginL-5>
+                            {formatCurrency({ price: Number(price) })}
+                        </Text>
+                        <Text marginT-10>
+                            Đặt mua combo nhận ngay ưu đãi hôm nay, giảm giá trực tiếp, cộng thêm số buổi.
+                        </Text>
+                        <Text marginT-10>
+                            Combo 5 giảm giá 20% - tặng 1 lần sử dụng.
+                        </Text>
+                        <Text marginT-10>
+                            Combo 10 giảm 30% - tặng 3 lần sử dụng.
+                        </Text>
+                        <ActionSheet
+                            title={i18n.t("package.select_combo")}
+                            cancelButtonIndex={4}
+                            showCancelButton={true}
+                            destructiveButtonIndex={0}
+                            visible={showActionSheet}
+                            containerStyle={{ padding: 10, gap: 10 }}
+                            onDismiss={() => setShowActionSheet(false)}
+                            useNativeIOS
+                            options={[
+                                {
+                                    label: i18n.t("package.single"),
+                                    onPress: () => setCombo(0),
+                                },
+                                {
+                                    label: i18n.t("package.combo5"),
+                                    onPress: () => setCombo(1),
+                                },
+                                {
+                                    label: i18n.t("package.combo10"),
+                                    onPress: () => setCombo(2),
+                                },
+                            ]}
+                        />
+                    </AppDialog2>
                 </View>
             )}
         </View>

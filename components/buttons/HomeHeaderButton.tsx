@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View, Badge } from "react-native-ui-lib";
+import {TouchableOpacity, View, Badge, Colors} from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 
 type HomeHeaderButtonProps = {
@@ -18,7 +18,7 @@ const HomeHeaderButton = ({
   return (
     <TouchableOpacity onPress={onPress}>
       <View>
-        <Ionicons name={iconName} size={24} color="#717658" />
+        <Ionicons name={iconName} size={24} color={Colors.primary} />
         {showBadge && (
           <Badge
             label={
