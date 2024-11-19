@@ -101,6 +101,8 @@ const BookingPage = () => {
 
   const handleBooking = async () => {
     const bookingData: BookingPayload = {
+      user_id: user.id,
+      staff_id: null,
       service_id: Number(service_id),
       slots: Number(slot),
       appointment_date: selectedDate,

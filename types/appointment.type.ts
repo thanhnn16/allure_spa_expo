@@ -1,4 +1,6 @@
 export interface BookingPayload {
+    user_id?: string;
+    staff_id?: string | null;
     service_id?: number;
     user_service_package_id?: number;
     slots: number;
