@@ -3,7 +3,6 @@
   "login": "Đăng nhập",
   "logout": "Đăng xuất",
   "language": "Ngôn ngữ",
-  "settings": "Cài đặt",
   "change_language": "Change Language",
   "continue": "Tiếp tục",
   "back": "Quay lại",
@@ -70,119 +69,6 @@
       "title": "Nghệ thuật chăm sóc da",
       "subtitle": "Từ nghệ nhân Nhật Bản"
     },
-    "pageTitle": {
-      "chat": "Tin nhắn",
-      "favorite": "Yêu thích",
-      "favorite_description": "Danh sách sản phẩm yêu thích",
-      "cart": "Giỏ hàng",
-      "order": "Đơn hàng",
-      "notification": "Thông báo",
-      "profile": "Hồ sơ",
-      "order_description": "Lịch sử đơn hàng"
-    },
-    "productDetail": {
-      "quantity": "SỐ LƯỢNG",
-      "product_description": "MÔ TẢ SẢN PHẨM",
-      "reviews": "Đánh giá",
-      "add_to_cart": "Thêm giỏ hàng",
-      "buy_now": "Mua ngay",
-      "purchases": "lượt mua",
-      "available": "có sẵn",
-      "description": {
-        "brand": "Thương hiệu",
-        "usage": "Cách sử dụng",
-        "benefit": "Công dụng",
-        "ingredient": "Thành phần",
-        "directions": "Hướng dẫn sử dụng",
-        "storage": "Bảo quản",
-        "product_notes": "Lưu ý sản phẩm"
-      },
-      "no_info": "Không có thông tin",
-      "title": "Chi tiết sản phẩm"
-    },
-    "rating": {
-      "add_review": "Thêm đánh giá",
-      "base_on": "Dựa trên",
-      "reviews": "đánh giá",
-      "how_do_you_feel": "Bạn cảm thấy thế nào",
-      "feel_about_product": "Cảm nghĩ về sản phẩm",
-      "type_content": "Nhập nội dung",
-      "images": "Hình ảnh",
-      "send_review": "Gửi đánh giá"
-    },
-    "chat": {
-      "customer_care": "Chăm sóc khách hàng",
-      "chat_with_ai": "Chat với AI",
-      "send": "Gửi",
-      "chat_with": "Chat với"
-    },
-    "profile": {
-      "title": "Hồ sơ",
-      "username": "Nguyễn Văn Tèo",
-      "my_account": "Tài khoản của tôi",
-      "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
-      "purchase_policy": "Chính sách mua hàng và đổi trả",
-      "policy_description": "Chính sách áp dụng cho Allure Spa",
-      "order_address": "Địa chỉ đặt hàng",
-      "address_list": "Danh sách địa chỉ",
-      "logout": "Đăng xuất",
-      "help_support": "Trợ giúp & Hỗ trợ",
-      "about_app": "Về ứng dụng",
-      "settings": "Cài đặt",
-      "more": "Thêm",
-      "edit_profile": "Chỉnh sửa hồ sơ",
-      "change_password": "Đổi mật khẩu",
-      "history_login": "Lịch sử đăng nhập",
-      "dowload_information": "Tải thông tin xuống",
-      "delete_account": "Xóa tài khoản",
-      "change_info": "Đổi thông tin",
-      "voucher": "Voucher",
-      "voucher_description": "Xem tất cả voucher của tôi",
-      "service_package": "Gói dịch vụ",
-      "service_package_description": "Xem tất cả gói dịch vụ của tôi"
-    },
-    "settings": {
-      "title": "Cài đặt",
-      "language": "Ngôn ngữ",
-      "darkMode": "Chế độ tối",
-      "notifications": "Thông báo"
-    },
-    "voucher": {
-      "title": "Giảm giá",
-      "all": "Tất cả",
-      "birthday": "Sinh nhật",
-      "event": "Sự kiện",
-      "prominent": "Nổi bật",
-      "gift": "Quà tặng",
-      "many_offers_comingsoon": "Nhiều ưu đãi sắp tới"
-    },
-    "reward": {
-      "title": "Phần thưởng",
-      "cosmetic": "Mỹ phẩm",
-      "spa": "Spa",
-      "changed": "475 đã đổi",
-      "change_now": "Đổi ngay",
-      "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
-      "title_spa": "Liệu trình Photo Facial"
-    },
-    "aboutapp": {
-      "title": "Giới thiệu về ứng dụng",
-      "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
-      "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
-      "name_app": "Tên ứng dụng: ",
-      "developer": "Nhà phát triển: ",
-      "version": "Phiên bản: ",
-      "date_release": "Ngày phát hành: "
-    },
-    "deleteaccount": {
-      "title": "Xóa tài khoản",
-      "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
-      "placeholder": "Nhập nội dung",
-      "next": "Tiếp theo",
-      "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
-      "verify_yes": "Có , gửi dữ liệu của tôi tới email",
-      "verify_no": "Không, cảm ơn !"
-    },
     "register": {
       "title": "Đăng ký",
       "phone_number": "Số điện thoại",
@@ -207,19 +93,79 @@
       "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự"
     }
   },
+  "pageTitle": {
+    "chat": "Tin nhắn",
+    "favorite": "Yêu thích",
+    "favorite_description": "Danh sách sản phẩm yêu thích",
+    "cart": "Giỏ hàng",
+    "order": "Đơn hàng",
+    "notification": "Thông báo",
+    "profile": "Hồ sơ",
+    "order_description": "Lịch sử đơn hàng"
+  },
+  "profile": {
+    "title": "Hồ sơ",
+    "username": "Nguyễn Văn Tèo",
+    "my_account": "Tài khoản của tôi",
+    "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
+    "purchase_policy": "Chính sách mua hàng và đổi trả",
+    "policy_description": "Chính sách áp dụng cho Allure Spa",
+    "order_address": "Địa chỉ đặt hàng",
+    "address_list": "Danh sách địa chỉ",
+    "logout": "Đăng xuất",
+    "help_support": "Trợ giúp & Hỗ trợ",
+    "about_app": "Về ứng dụng",
+    "settings": "Cài đặt",
+    "more": "Thêm",
+    "edit_profile": "Chỉnh sửa hồ sơ",
+    "change_password": "Đổi mật khẩu",
+    "history_login": "Lịch sử đăng nhập",
+    "dowload_information": "Tải thông tin xuống",
+    "delete_account": "Xóa tài khoản",
+    "change_info": "Đổi thông tin",
+    "voucher": "Voucher",
+    "voucher_description": "Xem tất cả voucher của tôi",
+    "service_package": "Gói dịch vụ",
+    "service_package_description": "Xem tất cả gói dịch vụ của tôi"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "darkMode": "Chế độ tối",
+    "notifications": "Thông báo"
+  },
+  "voucher": {
+    "title": "Giảm giá",
+    "all": "Tất cả",
+    "birthday": "Sinh nhật",
+    "event": "Sự kiện",
+    "prominent": "Nổi bật",
+    "gift": "Quà tặng",
+    "many_offers_comingsoon": "Nhiều ưu đãi sắp tới"
+  },
+  "aboutapp": {
+    "title": "Giới thiệu về ứng dụng",
+    "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
+    "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
+    "name_app": "Tên ứng dụng: ",
+    "developer": "Nhà phát triển: ",
+    "version": "Phiên bản: ",
+    "date_release": "Ngày phát hành: "
+  },
+  "deleteaccount": {
+    "title": "Xóa tài khoản",
+    "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
+    "placeholder": "Nhập nội dung",
+    "next": "Tiếp theo",
+    "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
+    "verify_yes": "Có , gửi dữ liệu của tôi tới email",
+    "verify_no": "Không, cảm ơn !"
+  },
   "terms": "Điều khoản sử dụng",
   "privacy": "Chính sách bảo mật",
   "otp": {
     "otp_input": "Nhập OTP",
     "resend_otp": "Gửi lại mã"
-  },
-  "pageTitle": {
-    "chat": "Tin nhắn",
-    "favorite": "Yêu thích",
-    "cart": "Giỏ hàng",
-    "order": "Đơn hàng",
-    "notification": "Thông báo",
-    "profile": "Hồ sơ"
   },
   "productDetail": {
     "quantity": "SỐ LƯỢNG",
@@ -263,36 +209,6 @@
     "no_message": "Không có tin nhắn",
     "type_message": "Nhập tin nhắn"
   },
-  "profile": {
-    "title": "Hồ sơ",
-    "username": "Nguyễn Văn Tèo",
-    "my_account": "Tài khoản của tôi",
-    "edit_personal_info": "Chỉnh sửa thông tin cá nhân",
-    "purchase_policy": "Chính sách mua hàng và đổi trả",
-    "policy_description": "Chính sách áp dụng cho Allure Spa",
-    "order_address": "Địa chỉ đặt hàng",
-    "address_list": "Danh sách địa chỉ",
-    "logout": "Đăng xuất",
-    "help_support": "Trợ giúp & Hỗ trợ",
-    "about_app": "Về ứng dụng",
-    "settings": "Cài đặt",
-    "more": "Thêm",
-    "edit_profile": "Chỉnh sửa hồ sơ",
-    "change_password": "Đổi mật khẩu",
-    "history_login": "Lịch sử đăng nhập",
-    "dowload_information": "Tải thông tin xuống",
-    "delete_account": "Xóa tài khoản",
-    "change_info": "Đổi thông tin"
-  },
-  "voucher": {
-    "title": "Giảm giá",
-    "all": "Tất cả",
-    "birthday": "Sinh nhật",
-    "event": "Sự kiện",
-    "prominent": "Nổi bật",
-    "gift": "Quà tặng",
-    "many_offers_comingsoon": "Nhiều ưu đãi sắp tới"
-  },
   "reward": {
     "title": "Phần thưởng",
     "cosmetic": "Mỹ phẩm",
@@ -302,16 +218,6 @@
     "title_cosmetic": "Bản sao làm sạch Lipo Collage Lamera",
     "title_spa": "Liệu trình Photo Facial"
   },
-  "aboutapp": {
-    "title": "Giới thiệu về ứng dụng",
-    "title1": "Ứng dụng Allure Spa là giải pháp hoàn hảo dành cho những ai yêu thích làm đẹp và mong muốn khám phá các sản phẩm, dịch vụ spa chất lượng cao đến từ Nhật Bản. Được thiết kế dành riêng cho khách hàng của Allure Spa, ứng dụng này không chỉ mang đến trải nghiệm mua sắm tiện lợi mà còn giúp khách hàng dễ dàng tiếp cận với các liệu trình chăm sóc sắc đẹp đẳng cấp.",
-    "title2": "Các thông tin cơ bản của ứng dụng Allure Spa:",
-    "name_app": "Tên ứng dụng: Allure Spa",
-    "developer": "Nhà phát triển: Allure Spa",
-    "version": "Phiên bản: 1.0.0",
-    "date_release": "Ngày phát hành: 01/01/2021"
-  },
-
   "days": {
     "mon": "Thứ hai",
     "tue": "Thứ ba",
@@ -566,7 +472,7 @@
     "no_packages": "Bạn không có gói dịch vụ nào",
     "progress": "Tiến độ sử dụng",
     "total_sessions": "Tổng số lần",
-    "used_sessions": "Đã sử dụng", 
+    "used_sessions": "Đã sử dụng",
     "remaining_sessions": "Còn lại",
     "next_appointment": "Lịch hẹn tiếp theo",
     "performed_by": "Thực hiện bởi",

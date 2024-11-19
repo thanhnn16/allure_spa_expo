@@ -27,9 +27,6 @@ import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import * as FileSystem from 'expo-file-system';
-import * as ImageManipulator from 'expo-image-manipulator';
-import { validateImage } from "@/utils/helpers/imageHelper";
 import { processImageForUpload } from "@/utils/helpers/imageHelper";
 
 interface ProfileEditProps {}
@@ -126,23 +123,25 @@ const ProfileEdit = (props: ProfileEditProps) => {
         const processedUri = await processImageForUpload(result.assets[0].uri);
 
         const formData = new FormData();
-        formData.append('avatar', {
+        formData.append("avatar", {
           uri: processedUri,
-          type: 'image/jpeg',
-          name: 'avatar.jpg',
+          type: "image/jpeg",
+          name: "avatar.jpg",
         } as any);
 
-        const uploadedUser = await dispatch(uploadAvatarUrlThunk(formData)).unwrap();
+        const uploadedUser = await dispatch(
+          uploadAvatarUrlThunk(formData)
+        ).unwrap();
         const updatedUser = await dispatch(getUserThunk()).unwrap();
 
         // Cập nhật state local
-        setAvatar({ uri: updatedUser.avatar_url + '?' + new Date().getTime() });
+        setAvatar({ uri: updatedUser.avatar_url + "?" + new Date().getTime() });
 
         // Cập nhật user trong auth context
         if (setAuthUser) {
           setAuthUser({
             ...updatedUser,
-            avatar_url: updatedUser.avatar_url + '?' + new Date().getTime()
+            avatar_url: updatedUser.avatar_url + "?" + new Date().getTime(),
           });
         }
 

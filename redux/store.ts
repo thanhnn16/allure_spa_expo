@@ -28,7 +28,6 @@ const persistConfig = {
     storage: AsyncStorage,
     whitelist: ['language', 'zalo', 'auth'],
     timeout: 10000,
-    debug: __DEV__
 }
 
 const rootReducer: any = combineReducers({
@@ -61,7 +60,7 @@ const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
 
 export const store = configureStore({
     reducer: persistedReducer,
-    middleware: (getDefaultMiddleware) =>
+    middleware: (getDefaultMiddleware: any) =>
         getDefaultMiddleware({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
@@ -70,7 +69,6 @@ export const store = configureStore({
                 extraArgument: undefined
             }
         }),
-    devTools: __DEV__,
     preloadedState: undefined
 });
 

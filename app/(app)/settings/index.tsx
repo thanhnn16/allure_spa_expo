@@ -31,6 +31,7 @@ const SettingsScreen: React.FC = () => {
 
   const handleLanguageChange = async (value: string) => {
     dispatch(setLanguage(value));
+    i18n.locale = value;
   };
 
   return (

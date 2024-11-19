@@ -7,8 +7,6 @@ export const getServicePackagesThunk = createAsyncThunk(
         try {
             const response = await AxiosInstance().get(`/users/${userId}/service-packages`);
 
-            console.log("Service packages", response.data.data);
-
             const packages = response.data.data.map((pkg: any) => {
                 const nextAppointment = pkg.treatment_sessions?.find((session: any) =>
                     new Date(session.start) > new Date() && session.status === 'confirmed'
