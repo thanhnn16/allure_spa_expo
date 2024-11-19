@@ -1,4 +1,4 @@
-import { View, Text, Colors } from "react-native-ui-lib";
+import { View, Text, Colors, Wizard } from "react-native-ui-lib";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -13,6 +13,28 @@ import i18n from "@/languages/i18n";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
+import TransactionHeader from "@/components/payment/TransactionHeader";
+import { PaymentMethod } from "../../check-out";
+import { method } from "lodash";
+import AppDialog from "@/components/dialog/AppDialog";
+
+const paymentMethods: PaymentMethod[] = [
+  {
+    id: 1,
+    name: i18n.t("checkout.cash"),
+    iconName: "cash-outline",
+  },
+  {
+    id: 2,
+    name: i18n.t("checkout.credit_card"),
+    iconName: "card-outline",
+  },
+  {
+    id: 3,
+    name: i18n.t("checkout.bank_transfer"),
+    iconName: "card-outline",
+  },
+];
 
 const OrderDetail = () => {
   const { id } = useLocalSearchParams();
@@ -29,10 +51,19 @@ const OrderDetail = () => {
     return <OrderSkeleton />;
   }
 
-  const subTotal = selectedOrder.order_items.reduce(
-    (acc: any, item: any) => acc + item.price * item.quantity,
-    0
-  );
+  // const subTotal = selectedOrder.order_items.reduce(
+  //   (acc: any, item: any) => acc + item.price * item.quantity,
+  //   0
+  // );
+
+  console.log(selectedOrder);
+
+  const getPaymentMethod = (id: number) => {
+    const method = paymentMethods.find((method) => method.id === id);
+    return method;
+  }
+
+  const method = getPaymentMethod(selectedOrder.payment_method_id);
 
   return (
     <View flex bg-white>
@@ -40,16 +71,26 @@ const OrderDetail = () => {
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
+        {selectedOrder.status !== "cancelled" && (
+          <TransactionHeader status={selectedOrder.status} />
+        )}
+
         {/* Order Status Section */}
         <View style={styles.section}>
           <View row spread centerV>
             <Text h2_bold>
               {i18n.t("orders.order_id")}: #{selectedOrder.id}
             </Text>
-            <OrderStatusBadge status={selectedOrder.status} />
+            {selectedOrder.status === "cancelled" && (
+              <OrderStatusBadge status={selectedOrder.status} />
+            )}
           </View>
           <Text h3 marginT-8 color={Colors.grey30}>
             {new Date(selectedOrder.created_at).toLocaleDateString()}
+          </Text>
+
+          <Text h3 marginT-8 color={Colors.grey30}>
+            {method?.name}
           </Text>
         </View>
 
@@ -72,9 +113,9 @@ const OrderDetail = () => {
           <View row spread marginB-8>
             <Text h3>{i18n.t("orders.subtotal")}</Text>
             <Text h3>
-              {formatCurrency({
+              {/* {formatCurrency({
                 price: Number(subTotal) || 0,
-              })}
+              })} */}
             </Text>
           </View>
 
@@ -93,11 +134,11 @@ const OrderDetail = () => {
           <View row spread marginT-8>
             <Text h2>{i18n.t("orders.total")}</Text>
             <Text h2_bold color={Colors.secondary}>
-              {formatCurrency({
+              {/* {formatCurrency({
                 price:
                   Number(subTotal) -
                   (Number(selectedOrder.discount_amount) || 0),
-              })}
+              })} */}
             </Text>
           </View>
         </View>
@@ -108,13 +149,13 @@ const OrderDetail = () => {
             <Text text65L marginB-16>
               {i18n.t("orders.shipping_info")}
             </Text>
-            <Text text80L marginB-8>
-              {selectedOrder.shipping_address.full_name}
+            <Text h3 marginB-8>
+              {selectedOrder.user.full_name}
             </Text>
-            <Text text80L marginB-8>
-              {selectedOrder.shipping_address.phone}
+            <Text h3 marginB-8>
+              {selectedOrder.user.phone_number}
             </Text>
-            <Text text80L>
+            <Text h3>
               {selectedOrder.shipping_address.address},{" "}
               {selectedOrder.shipping_address.ward},
               {selectedOrder.shipping_address.district},{" "}
@@ -126,16 +167,17 @@ const OrderDetail = () => {
         {/* Note Section */}
         {selectedOrder.note && (
           <View style={styles.section}>
-            <Text text65L marginB-8>
+            <Text h2_bold marginB-8>
               {i18n.t("orders.note")}
             </Text>
-            <Text text80L>{selectedOrder.note}</Text>
+            <Text h3>{selectedOrder.note}</Text>
           </View>
         )}
       </ScrollView>
 
       {/* Action Buttons */}
       <OrderActionButtons order={selectedOrder} />
+
     </View>
   );
 };

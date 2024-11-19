@@ -1,33 +1,35 @@
-import { View, Text } from "react-native-ui-lib";
+import { View } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
-import { router, useNavigation } from "expo-router";
-import { Alert, Dimensions, ScrollView } from "react-native";
+import { router } from "expo-router";
+import { ScrollView } from "react-native";
 import { useState, useEffect } from "react";
 import AppButton from "@/components/buttons/AppButton";
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { fetchAddresses, updateAddress } from "@/redux/features";
+import { deleteAddress, fetchAddresses, updateAddress } from "@/redux/features";
 import AppBar from "@/components/app-bar/AppBar";
 import AddressSkeletonView from "@/components/address/AddressSkeletonView";
 import type { Address, UserProfile } from "@/types/address.type";
 import AddressItem from "@/components/address/AddressItem";
 import AppDialog from "@/components/dialog/AppDialog";
-import { set } from "lodash";
 
 const AddressScreen = () => {
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [UpdateItem, setUpdateItem] = useState<Address>();
+  const [dialogUpdateVisible, setDialogUpdateVisible] = useState(false);
+  const [dialogDeleteVisible, setdialogDeleteVisible] = useState(false);
+
+  const [errorDescription, setErrorDescription] = useState<string>();
+  const [errorDialogVisible, setErrorDialogVisible] = useState(false);
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [updateItem, setUpdateItem] = useState<Address | null>(null);
+
   const dispatch = useDispatch();
   const { addresses, loading, error } = useSelector(
     (state: RootState) => state.address
   );
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [errorDescription, setErrorDescription] = useState<string>();
-  const [errorDialogVisible, setErrorDialogVisible] = useState(false);
-
-  const loadData = async () => {
+  
+  const loadUserData = async () => {
     try {
       const userProfileStr = await AsyncStorage.getItem("userProfile");
       if (userProfileStr) {
@@ -35,49 +37,52 @@ const AddressScreen = () => {
       }
 
       await dispatch(fetchAddresses()).unwrap();
-    } catch (error) {
-      console.error("Lỗi khi tải dữ liệu:", error);
-      Alert.alert("Lỗi", "Không thể tải thông tin");
+      console.log("addresses", addresses);
+    } catch (error: any) {
+      setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
+      setErrorDialogVisible(true);
     }
   };
 
-  useEffect(() => {
-    loadData();
-  }, [dispatch]);
+  const deleteAddressById = async () => {
+    try {
+      await dispatch(deleteAddress(updateItem?.id)).unwrap();
+      setdialogDeleteVisible(false);
+    } catch (error: any) {
+      setErrorDescription(error.message || "Không thể xóa địa chỉ");
+      setErrorDialogVisible(true);
+    }
+  };
 
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener("focus", () => {
-  //     loadData();
-  //   });
-
-  //   return unsubscribe;
-  // }, [navigation, dispatch]);
-
-  const handleSelectAddress = async (item: Address) => {
+  const handleSelectAddress = async () => {
     try {
       const updateData = {
-        "province": item.province,
-        "district": item.district,
-        "ward": item.ward,
-        "address": item.address,
-        "address_type": item.address_type,
+        "province": updateItem?.province,
+        "district": updateItem?.district,
+        "ward": updateItem?.ward,
+        "address": updateItem?.address,
+        "address_type": updateItem?.address_type,
         "is_default": true,
       };
-
+      setDialogUpdateVisible(false);
       await dispatch(
         updateAddress({
-          id: item.id,
+          id: updateItem?.id,
           data: updateData,
         })
       ).unwrap();
-      setDialogVisible(false);
       await dispatch(fetchAddresses()).unwrap();
+      await AsyncStorage.setItem("selectedAddress", JSON.stringify(updateItem));
 
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
       setErrorDialogVisible(true);
     }
   };
+
+  useEffect(() => {
+    loadUserData();
+  }, [dispatch]);
 
   return (
     <View flex bg-white>
@@ -92,8 +97,9 @@ const AddressScreen = () => {
                 key={index}
                 userProfile={userProfile}
                 item={item}
-                setDialogVisible={setDialogVisible}
                 setUpdateItem={setUpdateItem}
+                setUpdateDialogVisible={setDialogUpdateVisible}
+                setDeleteDialogVisible={setdialogDeleteVisible}
               />
             ))}
           </ScrollView>
@@ -119,14 +125,27 @@ const AddressScreen = () => {
       />
 
       <AppDialog
-        visible={dialogVisible}
-        title={"Đặt địa chỉ mặc định"}
-        description={"Bạn có chắc chắn muốn đặt địa chỉ này là mặc định không?"}
+        visible={dialogUpdateVisible}
+        title={"Đặt địa chỉ làm mặc định"}
+        description={"Bạn có muốn địa chỉ này thành địa chỉ làm mặc định không?"}
+        confirmButton={true}
         closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={"Cập nhật"}
+        confirmButtonLabel={"Đồng ý"}
         severity="info"
-        onClose={() => setDialogVisible(false)}
-        onConfirm={() => handleSelectAddress(UpdateItem as Address)}
+        onClose={() => setDialogUpdateVisible(false)}
+        onConfirm={() => handleSelectAddress()}
+      />
+
+      <AppDialog
+        visible={dialogDeleteVisible}
+        title={"Xóa địa chỉ"}
+        description={"Bạn có muốn xóa 0?"}
+        confirmButton={true}
+        closeButtonLabel={i18n.t("common.cancel")}
+        confirmButtonLabel={"Đồng ý"}
+        severity="info"
+        onClose={() => setdialogDeleteVisible(false)}
+        onConfirm={() => deleteAddressById()}
       />
     </View>
   );

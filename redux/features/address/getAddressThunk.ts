@@ -3,7 +3,7 @@ import { ProductResponseParams } from "@/types/product.type";
 import axios from "axios";
 
 interface ProvinceRequest {
-  query: string;
+  query?: number;
 }
 
 interface DistrictRequest {
@@ -16,9 +16,9 @@ interface WardRequest {
 
 export const getAddressProvinceThunk = createAsyncThunk(
   'address/getProvince',
-  async (_: any, { rejectWithValue }: { rejectWithValue: any }) => {
+  async (_ : any, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
-      const res = await axios.get(`https://open.oapi.vn/location/provinces?page=0&size=63`);
+      const res = await axios.get(`https://open.oapi.vn/location/provinces/?page=0&size=63`);
       return res.data;
       
     } catch (error: any) {
