@@ -14,19 +14,25 @@ import {
   TouchableOpacity,
 } from "react-native-ui-lib";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Voice from "@react-native-voice/voice";
+import Voice, {
+  SpeechStartEvent,
+  SpeechResultsEvent,
+  SpeechErrorEvent,
+  SpeechEndEvent,
+} from "@react-native-voice/voice";
 import Toast from "react-native-toast-message";
 import { useSelector, useDispatch } from "react-redux";
 
 import SearchIcon from "@/assets/icons/search.svg";
 import MicIcon from "@/assets/icons/mic.svg";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import { Pressable, StyleProp, ViewStyle, Platform } from "react-native";
 import { Href, router } from "expo-router";
 import i18n from "@/languages/i18n";
 import { RootState } from "@/redux/store";
 import { setCurrentSearchText } from "@/redux/features/search/searchSlice";
 
 import { Animated } from "react-native";
+import { Audio } from "expo-av";
 
 type AppSearchProps = {
   value?: string;
@@ -42,214 +48,261 @@ export type AppSearchRef = {
   focus: () => void;
 };
 
-const AppSearch = forwardRef<AppSearchRef, AppSearchProps>(
-  (
-    { value, onChangeText, onClear, isHome, style, onFocus, defaultSearchText },
-    ref
-  ) => {
-    const dispatch = useDispatch();
-    const currentSearchText = useSelector(
-      (state: RootState) => state.search.currentSearchText
-    );
-    const [searchText, setSearchText] = useState(
-      defaultSearchText || currentSearchText || value || ""
-    );
-    const [isListening, setIsListening] = useState(false);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-    const [buttonScale] = useState(new Animated.Value(1));
-    const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
-    const inputRef = useRef<any>(null);
+const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
+  const dispatch = useDispatch();
+  const currentSearchText = useSelector(
+    (state: RootState) => state.search.currentSearchText
+  );
+  const [searchText, setSearchText] = useState(
+    props.defaultSearchText || currentSearchText || props.value || ""
+  );
+  const [isListening, setIsListening] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [buttonScale] = useState(new Animated.Value(1));
+  const silenceTimeout = useRef<NodeJS.Timeout | null>(null);
+  const inputRef = useRef<any>(null);
+  const [recognized, setRecognized] = useState("");
+  const [pitch, setPitch] = useState("");
+  const [error, setError] = useState("");
+  const [end, setEnd] = useState("");
+  const [started, setStarted] = useState("");
+  const [partialResults, setPartialResults] = useState<string[]>([]);
+  const [showVoiceButton, setShowVoiceButton] = useState(false);
 
-    useImperativeHandle(ref, () => ({
-      focus: () => {
-        inputRef.current?.focus();
-      },
-    }));
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current?.focus();
+    },
+  }));
 
-    useEffect(() => {
-      Voice.onSpeechResults = onSpeechResults;
-      Voice.onSpeechError = onSpeechError;
-      return () => {
-        Voice.destroy().then(Voice.removeAllListeners);
-      };
-    }, []);
+  useEffect(() => {
+    checkPermissions();
+    setupVoiceListeners();
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
 
-    useEffect(() => {
-      if (defaultSearchText) {
-        setSearchText(defaultSearchText);
-        dispatch(setCurrentSearchText(defaultSearchText));
-        onChangeText && onChangeText(defaultSearchText);
+  const checkPermissions = async () => {
+    try {
+      // Kiểm tra quyền microphone sử dụng expo-av
+      const { granted } = await Audio.getPermissionsAsync();
+
+      if (!granted) {
+        const { granted: newGranted } = await Audio.requestPermissionsAsync();
+        if (!newGranted) {
+          setShowVoiceButton(false);
+          Toast.show({
+            type: "error",
+            text1: i18n.t("error.microphone_permission_required"),
+          });
+          return;
+        }
       }
-    }, [defaultSearchText]);
 
-    useEffect(() => {
-      if (currentSearchText !== searchText) {
-        setSearchText(currentSearchText || "");
+      // Kiểm tra voice recognition service trên Android
+      if (Platform.OS === "android") {
+        const isVoiceAvailable = await Voice.isAvailable();
+        if (!isVoiceAvailable) {
+          setShowVoiceButton(false);
+          Toast.show({
+            type: "error",
+            text1: i18n.t("error.voice_not_available"),
+          });
+          return;
+        }
+
+        const services = await Voice.getSpeechRecognitionServices();
+        if (!services?.includes("com.google.android.googlequicksearchbox")) {
+          setShowVoiceButton(false);
+          Toast.show({
+            type: "error",
+            text1: i18n.t("error.google_speech_not_available"),
+            text2: i18n.t("error.install_google_search"),
+          });
+          return;
+        }
       }
-    }, [currentSearchText]);
 
-    const onSpeechResults = (e: any) => {
-      const recognizedText = e.value[0];
-      setSearchText(recognizedText);
-      dispatch(setCurrentSearchText(recognizedText));
-      onChangeText && onChangeText(recognizedText);
+      setShowVoiceButton(true);
+    } catch (error) {
+      console.error("Permission check error:", error);
+      setShowVoiceButton(false);
+    }
+  };
 
-      console.log("Reco text:", recognizedText);
-
-      resetSilenceTimeout();
-
-      Toast.show({
-        type: "success",
-        text1: "Recognized:",
-        text2: recognizedText,
-      });
+  const setupVoiceListeners = () => {
+    Voice.onSpeechStart = (e: SpeechStartEvent) => {
+      console.log("onSpeechStart");
+      setStarted("√");
+      setIsListening(true);
+      animateButton(1.2);
     };
 
-    const onSpeechError = (e: any) => {
-      console.error(e);
+    Voice.onSpeechEnd = (e: SpeechEndEvent) => {
+      console.log("onSpeechEnd");
+      setEnd("√");
+      setIsListening(false);
+      animateButton(1);
+    };
+
+    Voice.onSpeechResults = (e: SpeechResultsEvent) => {
+      console.log("onSpeechResults");
+      if (e.value && e.value[0]) {
+        const recognizedText = e.value[0];
+        setSearchText(recognizedText);
+        dispatch(setCurrentSearchText(recognizedText));
+        props.onChangeText?.(recognizedText);
+      }
+    };
+
+    Voice.onSpeechError = (e: SpeechErrorEvent) => {
+      console.log("onSpeechError");
+      setError(JSON.stringify(e.error));
+      setIsListening(false);
+      animateButton(1);
       Toast.show({
         type: "error",
-        text1: "Speech recognition error",
-        text2: e.error.message || "Please try again.",
+        text1: i18n.t("error.voice_recognition"),
+        text2: e.error?.message || i18n.t("error.try_again"),
       });
-      stopListening(); // Reset state on error
     };
+  };
 
-    const stopListening = async () => {
-      // @ts-ignore
-      clearTimeout(silenceTimeout.current);
-      try {
-        await Voice.stop();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsListening(false);
-        setIsButtonDisabled(false);
+  const startRecognizing = async () => {
+    try {
+      // Check availability first
+      const isAvailable = await Voice.isAvailable();
+      if (!isAvailable) {
         Toast.show({
-          type: "info",
-          text1: "Stopped Listening",
+          type: "error",
+          text1: i18n.t("error.voice_not_available"),
         });
-        animateButton(1);
-      }
-    };
-
-    const startListening = async (language: string) => {
-      if (isListening) {
-        stopListening(); // Manually stop if already listening
         return;
       }
-      try {
-        await Voice.start(language);
-        setIsListening(true);
-        setIsButtonDisabled(true);
-        Toast.show({
-          type: "info",
-          text1: "Listening...",
-        });
-        startSilenceTimeout();
-        animateButton(1.2);
-      } catch (error) {
-        console.error(error);
-        setIsButtonDisabled(false);
+
+      // For Android, check Google Speech Recognition
+      if (Platform.OS === "android") {
+        const services = await Voice.getSpeechRecognitionServices();
+        if (!services?.includes("com.google.android.googlequicksearchbox")) {
+          Toast.show({
+            type: "error",
+            text1: i18n.t("error.google_speech_not_available"),
+            text2: i18n.t("error.install_google_search"),
+          });
+          return;
+        }
       }
-    };
 
-    const handleMicPress = (language: string) => {
-      if (isListening) {
-        stopListening();
-      } else {
-        startListening(language);
-      }
-    };
+      await Voice.start("vi-VN");
+      setIsListening(true);
+      Toast.show({
+        type: "info",
+        text1: i18n.t("info.listening"),
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-    const handleClear = () => {
-      setSearchText("");
-      dispatch(setCurrentSearchText(""));
-      onClear && onClear();
-    };
+  const stopRecognizing = async () => {
+    try {
+      await Voice.stop();
+      setIsListening(false);
+      Toast.show({
+        type: "info",
+        text1: i18n.t("info.stopped_listening"),
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
-    const resetSilenceTimeout = () => {
-      // @ts-ignore
-      clearTimeout(silenceTimeout.current);
-      startSilenceTimeout();
-    };
+  const handleMicPress = async () => {
+    if (isListening) {
+      await stopRecognizing();
+    } else {
+      await startRecognizing();
+    }
+  };
 
-    const startSilenceTimeout = () => {
-      silenceTimeout.current = setTimeout(() => {
-        stopListening();
-      }, 2000);
-    };
+  const handleClear = () => {
+    setSearchText("");
+    dispatch(setCurrentSearchText(""));
+    props.onClear && props.onClear();
+  };
 
-    const animateButton = (toValue: number) => {
-      Animated.spring(buttonScale, {
-        toValue,
-        useNativeDriver: true,
-      }).start();
-    };
+  const animateButton = (toValue: number) => {
+    Animated.spring(buttonScale, {
+      toValue,
+      useNativeDriver: true,
+    }).start();
+  };
 
-    return (
+  return (
+    <View
+      width={"100%"}
+      style={[
+        props.style,
+        {
+          borderRadius: 8,
+          borderColor: "#C9C9C9",
+          borderWidth: 1,
+          overflow: "hidden",
+        },
+      ]}
+    >
       <View
-        width={"100%"}
-        style={[
-          style,
-          {
-            borderRadius: 8,
-            borderColor: "#C9C9C9",
-            borderWidth: 1,
-            overflow: "hidden",
-          },
-        ]}
+        style={{
+          width: "100%",
+          height: 48,
+          paddingHorizontal: 10,
+          alignSelf: "center",
+          alignItems: "center",
+          flexDirection: "row",
+        }}
       >
-        <View
-          style={{
-            width: "100%",
-            height: 48,
-            paddingHorizontal: 10,
-            alignSelf: "center",
-            alignItems: "center",
-            flexDirection: "row",
-          }}
-        >
-          <Image source={SearchIcon} />
-          {isHome ? (
-            <Pressable
-              style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-              onPress={() => router.push("search" as Href<string>)}
-            >
-              <View flex marginL-10>
-                <Text h3 gray>
-                  {i18n.t("home.placeholder_search")}
-                </Text>
-              </View>
-            </Pressable>
-          ) : (
-            <View flex row centerV>
-              <TextField
-                ref={inputRef}
-                value={searchText}
-                onChangeText={(text) => {
-                  setSearchText(text);
-                  dispatch(setCurrentSearchText(text));
-                  onChangeText && onChangeText(text);
-                }}
-                onFocus={onFocus}
-                placeholder="Tìm kiếm mỹ phẩm, liệu trình ..."
-                placeholderTextColor={Colors.gray}
-                containerStyle={{
-                  flex: 1,
-                  marginStart: 10,
-                }}
-              />
-              {searchText.length > 0 && (
-                <TouchableOpacity onPress={handleClear} style={{ padding: 5 }}>
-                  <AntDesign name="close" size={20} color={Colors.gray} />
-                </TouchableOpacity>
-              )}
+        <Image source={SearchIcon} />
+        {props.isHome ? (
+          <Pressable
+            style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+            onPress={() => router.push("search" as Href<string>)}
+          >
+            <View flex marginL-10>
+              <Text h3 gray>
+                {i18n.t("home.placeholder_search")}
+              </Text>
             </View>
-          )}
+          </Pressable>
+        ) : (
+          <View flex row centerV>
+            <TextField
+              ref={inputRef}
+              value={searchText}
+              onChangeText={(text) => {
+                setSearchText(text);
+                dispatch(setCurrentSearchText(text));
+                props.onChangeText && props.onChangeText(text);
+              }}
+              onFocus={props.onFocus}
+              placeholder="Tìm kiếm mỹ phẩm, liệu trình ..."
+              placeholderTextColor={Colors.gray}
+              containerStyle={{
+                flex: 1,
+                marginStart: 10,
+              }}
+            />
+            {searchText.length > 0 && (
+              <TouchableOpacity onPress={handleClear} style={{ padding: 5 }}>
+                <AntDesign name="close" size={20} color={Colors.gray} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+        {showVoiceButton && (
           <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
             <TouchableOpacity
-              onPress={() => handleMicPress("vi-VN")}
+              onPress={handleMicPress}
               disabled={isButtonDisabled}
               style={{
                 backgroundColor: isListening ? "red" : "white",
@@ -263,10 +316,10 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>(
               />
             </TouchableOpacity>
           </Animated.View>
-        </View>
+        )}
       </View>
-    );
-  }
-);
+    </View>
+  );
+});
 
 export default AppSearch;
