@@ -49,7 +49,6 @@
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"
       android:exported="false" />
   </application>
-  <application android:name="com.zing.zalo.zalosdk.oauth.ZaloSDKApplication" />
   <activity android:name="com.zing.zalo.zalosdk.oauth.BrowserLoginActivity"
     android:exported="true">
     <intent-filter>
