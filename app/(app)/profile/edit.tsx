@@ -124,7 +124,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
 
       if (!result.canceled && result.assets[0]) {
         const processedUri = await processImageForUpload(result.assets[0].uri);
-        
+
         const formData = new FormData();
         formData.append('avatar', {
           uri: processedUri,
@@ -134,10 +134,10 @@ const ProfileEdit = (props: ProfileEditProps) => {
 
         const uploadedUser = await dispatch(uploadAvatarUrlThunk(formData)).unwrap();
         const updatedUser = await dispatch(getUserThunk()).unwrap();
-        
+
         // Cập nhật state local
         setAvatar({ uri: updatedUser.avatar_url + '?' + new Date().getTime() });
-        
+
         // Cập nhật user trong auth context
         if (setAuthUser) {
           setAuthUser({
@@ -145,7 +145,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
             avatar_url: updatedUser.avatar_url + '?' + new Date().getTime()
           });
         }
-        
+
         Alert.alert("Thành công", "Cập nhật ảnh đại diện thành công");
       }
     } catch (error: any) {
@@ -202,7 +202,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
           source={
             avatar.uri
               ? { uri: avatar.uri }
-              : require("@/assets/images/avt.png")
+              : require("@/assets/images/logo/logo.png")
           }
         />
         <TouchableOpacity

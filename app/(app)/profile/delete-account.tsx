@@ -10,16 +10,16 @@ const DeleteAccountScreen: React.FC = () => {
   const [value, onChangeText] = useState("");
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("deleteacount.title")} />
+      <AppBar back title={i18n.t("deleteAccount.title")} />
       <View flex bg-white paddingH-24>
         <View marginT-20>
-          <Text text40H>{i18n.t("deleteacount.title")}</Text>
+          <Text text40H>{i18n.t("deleteAccount.title")}</Text>
           <Text marginT-20 text70>
-            {i18n.t("deleteaccount.description")}
+            {i18n.t("deleteAccount.description")}
           </Text>
 
           <TextInput
-            placeholder={i18n.t("deleteaccount.placeholder")}
+            placeholder={i18n.t("deleteAccount.placeholder")}
             maxLength={500}
             onChangeText={(text) => onChangeText(text)}
             value={value}
@@ -36,10 +36,10 @@ const DeleteAccountScreen: React.FC = () => {
             }}
           />
         </View>
-        <View absB marginB-16 width={"100%"}>
+        <View  marginT-40>
           <AppButton
             type="primary"
-            title={i18n.t("deleteaccount.next")}
+            title={i18n.t("deleteAccount.next")}
             onPress={() => router.push("/(app)/profile/delete-account-verify")}
           />
         </View>

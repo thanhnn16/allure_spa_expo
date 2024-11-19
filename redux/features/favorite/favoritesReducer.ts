@@ -35,7 +35,9 @@ const favoriteSlice = createSlice({
             })
             .addCase(toggleFavoriteThunk.fulfilled, (state: FavoriteState, action: any) => {
                 state.loading = false;
-                state.status = action.payload;
+                if (action.payload.status) {
+                    state.status = action.payload.status;
+                }
             })
             .addCase(toggleFavoriteThunk.rejected, (state: FavoriteState, action: any) => {
                 const { type, itemId } = action.payload;

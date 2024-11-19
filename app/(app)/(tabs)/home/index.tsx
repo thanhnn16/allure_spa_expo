@@ -29,6 +29,8 @@ import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
+import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
+import {fetchBanners} from "@/redux/features/banner/bannerThunk";
 import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import { getServicePackagesThunk } from "@/redux/features/servicePackage/getServicePackagesThunk";
 
@@ -37,13 +39,12 @@ const HomePage = () => {
   const currentDate = new Date();
   const hours = currentDate.getHours();
   const [greeting, setGreeting] = useState<string>("");
-  const [banner, setBanner] = useState([
-    { uri: "https://intphcm.com/data/upload/banner-spa-cta.jpg" },
-    { uri: "https://easysalon.vn/wp-content/uploads/2019/12/banner-spa.jpg" },
-    {
-      uri: "https://i.pinimg.com/originals/4f/25/c1/4f25c16a936656f89e38796eda8898e2.jpg",
-    },
-  ]);
+
+  const { loading } = useSelector((state: RootState) => state.banners);
+
+  useEffect(() => {
+    dispatch(fetchBanners());
+  }, [dispatch]);
 
   const { user } = useAuth();
 
@@ -84,6 +85,8 @@ const HomePage = () => {
       dispatch(getServicePackagesThunk(user.id));
     }
   }, [dispatch, user?.id]);
+
+
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -143,8 +146,10 @@ const HomePage = () => {
 
   const renderContent = () => (
     <View flex>
-      <CarouselBanner banner={banner} />
-      <CategoryItem cateData={cateArr} />
+      <View>
+            <CarouselBanner />
+      </View>
+      <CategoryItem cateData={categories} />
 
       {upcomingAppointment && (
         <View paddingH-20>
@@ -156,7 +161,7 @@ const HomePage = () => {
 
       {services && Array.isArray(services) && services.length > 0 && (
         <SectionContainer
-          title={i18n.t("home.featured_services")}
+            title={i18n.t("home.featured_services")}
           data={services}
           renderItem={({ item }: { item: ServiceResponeModel }) => (
             <ServiceItem
@@ -211,18 +216,12 @@ const HomePage = () => {
 
       {/* Category skeleton */}
       <View row centerH marginB-20>
-        {Array(6)
-          .fill(0)
-          .map((_, index) => (
-            <View key={index} center marginH-12>
-              <SkeletonView
-                height={48}
-                width={48}
-                style={{ borderRadius: 24 }}
-              />
-              <SkeletonView height={15} width={40} style={{ marginTop: 5 }} />
+        {categories.map((category) => (
+            <View key={category.id} center marginH-12>
+              <Image source={category.icon} style={{ height: 48, width: 48, borderRadius: 24 }} />
+              <Text style={{ marginTop: 5 }}>{category.name}</Text>
             </View>
-          ))}
+        ))}
       </View>
 
       {/* Services section skeleton */}
@@ -375,9 +374,32 @@ const HomePage = () => {
   );
 };
 
+const styles = {
+  carouselContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    height: 160,
+    marginTop: 10,
+    marginHorizontal: 20,
+  },
+  carousel: {
+    height: 200,
+  },
+  slideContainer: {
+    borderRadius: 12,
+    overflow: "hidden",
+    height: 160,
+  },
+  image: {
+    height: 160,
+    width: "100%",
+    borderRadius: 12,
+  },
+};
+
 export default HomePage;
 
-const cateArr = [
+const categories = [
   {
     id: "1",
     name: i18n.t("home.introduce"),

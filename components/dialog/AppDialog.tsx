@@ -1,4 +1,4 @@
-import { Dialog, Button, Text, View } from "react-native-ui-lib";
+import { Dialog, Text, View } from "react-native-ui-lib";
 import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import i18n from "@/languages/i18n";
@@ -6,17 +6,21 @@ import AppButton from "../buttons/AppButton";
 import { ActivityIndicator } from "react-native";
 
 interface AppDialogProps {
-  visible: boolean;
-  title: string;
-  description: string;
-  closeButton?: boolean;
-  confirmButton?: boolean;
-  closeButtonLabel?: string;
-  confirmButtonLabel?: string;
-  onClose?: () => void;
-  onConfirm?: () => void;
-  severity: "success" | "error" | "info" | "warning";
-  loading?: boolean;
+    visible: boolean;
+    title: string;
+    description?: string;
+    closeButton?: boolean;
+    confirmButton?: boolean;
+    secondaryConfirmButton?: boolean;
+    secondaryConfirmButtonLabel?: string;
+    closeButtonLabel?: string;
+    confirmButtonLabel?: string;
+    onClose?: () => void;
+    onConfirm?: () => void;
+    onConfrimSecondary?: () => void;
+    severity: "success" | "error" | "info" | "warning";
+    loading?: boolean;
+    children?: React.ReactNode;
 }
 
 const AppDialog = ({

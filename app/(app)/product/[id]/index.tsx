@@ -23,8 +23,8 @@ import LinkIcon from "@/assets/icons/link.svg";
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "@/redux/store";
 import { getProductThunk } from "@/redux/features/products/productThunk";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Product } from "@/types/product.type";
@@ -43,59 +43,42 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
+import {Media} from "@/types/media.type";
 
-interface MediaItem {
-  full_url: string;
-}
+import { Ionicons } from "@expo/vector-icons";
+import {clearProduct} from "@/redux/features/products/productSlice";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [images, setImages] = useState<{ uri: string }[]>([]);
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
   const [visible, setIsVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const { isGuest } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
+
+  const user_id = useSelector((state: RootState) => state.auth.user?.id);
+
+  const status = useSelector((state: RootState) => state.favorite.status);
+
+  const {product, isLoading, media} = useSelector((state: RootState) => state.product);
   const windowWidth = Dimensions.get("window").width;
 
-  const getProduct = async (id: string) => {
-    try {
-      setIsLoading(true);
-      const resultAction = await dispatch(getProductThunk({ id }));
-      const result = unwrapResult(resultAction);
-      if (result && result.success) {
-        setProduct(result.data);
-        if (result.data.media && result.data.media.length > 0) {
-          const transformedImages = result.data.media.map((img: MediaItem) => ({
-            uri: img.full_url,
-          }));
-          setImages(transformedImages);
-        }
-      }
-    } catch (error: any) {
-      Alert.alert(
-        i18n.t("auth.login.error"),
-        error.message || i18n.t("auth.login.unknown_error"),
-        [{ text: "OK", onPress: () => router.back() }]
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [isFavorite, setIsFavorite] = useState(product?.is_favorite);
 
   useEffect(() => {
-    if (typeof id === "string") {
-      getProduct(id);
-    } else if (Array.isArray(id) && id.length > 0) {
-      getProduct(id[0]);
-    }
+    dispatch(getProductThunk({ product_id: Number(id), user_id }));
+      return () => {
+        dispatch(clearProduct());
+      }
   }, [id]);
+
+  useEffect(() => {
+    setIsFavorite(product?.is_favorite);
+  }, [product]);
 
   const handleOpenImage = (index: number) => {
     setImageViewIndex(index);
@@ -107,39 +90,28 @@ export default function DetailsScreen() {
       setFavoriteDialog(true);
       return;
     }
-    try {
-      if (!product) return;
-      const result = await dispatch(
-        toggleFavoriteThunk({
-          type: "product",
-          itemId: product.id,
-        })
+      setIsFavorite((prev) => !prev);
+      await dispatch(
+          toggleFavoriteThunk({
+            type: "product",
+            itemId: product?.id,
+          })
       );
-      const response = unwrapResult(result);
-      if (!response) {
-        throw new Error("Response is undefined");
-      }
-      if (response.status === "added") {
-        setProduct({ ...product, is_favorite: true });
-      } else {
-        setProduct({ ...product, is_favorite: false });
-      }
-    } catch (error) {
-      console.log("Error toggling favorite:", error);
-    }
+      console.log('status', status);
+    setIsFavorite(status === "added");
   };
 
   const renderHeartIcon = () => {
-    if (product?.is_favorite) {
-      return <Image source={HeartFullIcon} size={24} />;
-    }
-    return <Image source={HeartIcon} size={24} />;
+    return isFavorite ? (
+        <Ionicons name="heart" size={24} color={Colors.primary} />
+    ) : (
+        <Ionicons name="heart-outline" size={24} color={Colors.primary}  />
+    );
   };
 
   const handleShare = async () => {
     if (!product) return;
-    if (product.media && product.media.length > 0) {
-      const media = product.media[0];
+    if (media && media.length > 0) {
       if (media.full_url) {
         try {
           await Share.share({
@@ -156,7 +128,7 @@ export default function DetailsScreen() {
   const ImageViewFooterComponent = () => {
     return (
       <View marginB-20 padding-20>
-        <Text h2 white>{`${imageViewIndex + 1} / ${images.length}`}</Text>
+        <Text h2 white>{`${imageViewIndex + 1} / ${media.length}`}</Text>
       </View>
     );
   };
@@ -268,11 +240,11 @@ export default function DetailsScreen() {
                   inactiveColor: "#c4c4c4",
                 }}
               >
-                {images.map((item, index) => (
+                {media.map((item: Media, index: number) => (
                   <Pressable onPress={() => handleOpenImage(index)} key={index}>
                     <AnimatedImage
                       animationDuration={1000}
-                      source={{ uri: item.uri }}
+                      source={{ uri: item.full_url }}
                       aspectRatio={16 / 9}
                       cover
                       key={index}
@@ -283,7 +255,7 @@ export default function DetailsScreen() {
             </View>
           )}
           <ImageView
-            images={images}
+            images={media}
             imageIndex={imageViewIndex}
             visible={visible}
             onRequestClose={() => setIsVisible(false)}
@@ -380,7 +352,7 @@ export default function DetailsScreen() {
             }}
           >
             <Animated.Image
-              source={{ uri: images[0].uri }}
+              source={{ uri: media[0].uri }}
               style={[
                 { width: 150, height: 75, alignSelf: "flex-end" },
                 animatedStyle,

@@ -115,6 +115,7 @@ const ScheduledPage = () => {
 
   const renderFlatListItem = ({ item }: { item: AppointmentResponeModelParams }) => {
     // @ts-ignore
+    // @ts-ignore
     return (
         <View
             paddingT-10
@@ -178,9 +179,8 @@ const ScheduledPage = () => {
               <Image source={ClockIcon} width={20} height={20} />
               <Text h3>{`${moment(item.start).tz('Asia/Ho_Chi_Minh').format(' HH:mm  DD/MM/YYYY ')}  -  ${moment(item.end).tz('Asia/Ho_Chi_Minh').format(' HH:mm  DD/MM/YYYY')}`}</Text>
             </View>
-            {item.status !== 'Pending' && item.status !== 'Confirmed' && item.status !== 'Completed' && (
+            {item.status === 'cancelled' && (
                 <View marginT-10>
-
                   <Text h4_bold>{`${i18n.t('appointment.cancellation_note')}: ${item.cancellation_note ? item.cancellation_note : i18n.t('appointment.no_notes')}`}</Text>
                   <Text h4_bold>{`${i18n.t('appointment.cancelled_at')}: ${new Date(item.cancelled_at).toLocaleString()}`}</Text>
                   <Text h4_bold>{`${i18n.t('appointment.cancelled_by')}: ${item.cancelled_by_user?.full_name}`}</Text>
@@ -193,7 +193,7 @@ const ScheduledPage = () => {
               <Text h3_bold>Tổng tiền:</Text>
               <Text h3_bold secondary>{item.service?.single_price ? ` ${item.service.single_price.toLocaleString()} ₫` : i18n.t('appointment.no_price')}</Text>
             </View>
-            {item.status === 'Pending' && (
+            {item.status === 'pending' && (
                 <AppButton
                     type="outline"
                     title={i18n.t('appointment.cancel_appointment')}
@@ -214,10 +214,17 @@ const ScheduledPage = () => {
                     multiline
                 />
                 <View style={styles.buttonContainer}>
+                  <AppButton
+                      type="outline"
+                      title={i18n.t('appointment.cancel')}
+                      onPress={() => setModalVisible(false)}
+                  />
+                    <AppButton
+                        type="primary"
+                        title={i18n.t('appointment.confirm')}
+                        onPress={handleConfirmCancel}
+                    />
 
-                  <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmCancel}>
-                    <Text style={styles.buttonText}>{i18n.t('appointment.confirm')}</Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             </View>
@@ -447,8 +454,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
+    width: '90%',
     justifyContent: 'space-between',
-    width: '100%',
   },
     buttonText: {
         fontSize: 14,

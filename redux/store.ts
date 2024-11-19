@@ -20,6 +20,7 @@ import voucherReducer from "./features/voucher/voucherSlice";
 import bookingReducer from './features/booking/bookingSlice';
 import appointmentReducer from './features/appointment/appointmentSlice';
 import notificationReducer from './features/notification/notificationSlice';
+import bannerReducer from '@/redux/features/banner/bannerSlice';
 import servicePackageReducer from './features/servicePackage/servicePackageSlice';
 
 const persistConfig = {
@@ -31,6 +32,8 @@ const persistConfig = {
 }
 
 const rootReducer: any = combineReducers({
+    banners: bannerReducer,
+
     user: userReducer,
     language: languageSlice.reducer,
     zalo: zaloSlice.reducer,
@@ -58,7 +61,7 @@ const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
 
 export const store = configureStore({
     reducer: persistedReducer,
-    middleware: (getDefaultMiddleware: any) =>
+    middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
