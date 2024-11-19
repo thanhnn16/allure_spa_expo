@@ -14,8 +14,8 @@ export interface OrderItem {
     created_at: string;
     updated_at: string;
     item_name: string;
-    product: Product;
-    service: ServiceResponeModel;
+    product?: Product;
+    service?: ServiceResponeModel;
 }
 
 export interface Orders {

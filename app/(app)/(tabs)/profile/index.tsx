@@ -1,5 +1,12 @@
 import ArrowRight from "@/assets/icons/arrow.svg";
-import { View, Text, Card, Image, TouchableOpacity } from "react-native-ui-lib";
+import {
+  View,
+  Text,
+  Card,
+  Image,
+  TouchableOpacity,
+  Colors,
+} from "react-native-ui-lib";
 import { useAuth } from "@/hooks/useAuth";
 import i18n from "@/languages/i18n";
 import { Href, router } from "expo-router";
@@ -63,13 +70,16 @@ const ProfilePage = () => {
               </View>
             </View>
             <View gap-6 center>
-              <View row gap-6 centerV>
+              <View row gap-4 centerV>
+                <Text color={Colors.primary} h3_bold>
+                  {user?.loyalty_points || 0}
+                </Text>
                 <Image
                   width={16}
                   height={16}
+                  marginB-2
                   source={require("@/assets/images/allureCoin.png")}
                 />
-                <Text h3_bold>{user?.loyalty_points || 0}</Text>
               </View>
 
               <TouchableOpacity
