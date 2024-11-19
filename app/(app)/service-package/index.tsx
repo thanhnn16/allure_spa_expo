@@ -8,6 +8,7 @@ import { RootState } from "@/redux/store";
 import { View, Text, Card, ProgressBar } from "react-native-ui-lib";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import AppBar from "@/components/app-bar/AppBar";
 
 const ServicePackageScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +16,7 @@ const ServicePackageScreen = () => {
   const servicePackages = user?.service_packages || [];
 
   useEffect(() => {
-    dispatch(getServicePackagesThunk());
+    dispatch(getServicePackagesThunk(user?.id));
   }, [dispatch]);
 
   const renderPackageType = (packageType: any) => {
@@ -32,44 +33,46 @@ const ServicePackageScreen = () => {
     if (!nextAppointment) return null;
 
     return (
-      <View marginT-16 padding-16 br20 backgroundColor={Colors.blue80}>
-        <View row centerV>
-          <MaterialCommunityIcons
-            name="calendar-clock"
-            size={20}
-            color={Colors.blue30}
-          />
-          <View marginL-12 flex>
-            <Text text70BO color={Colors.blue20}>
-              Lịch hẹn sắp tới
-            </Text>
-            <Text text80 color={Colors.blue20} marginT-4>
-              {nextAppointment.date}
-            </Text>
-
-            <View row centerV marginT-8>
-              <MaterialCommunityIcons
-                name="clock-outline"
-                size={16}
-                color={Colors.blue30}
-              />
-              <Text text80 color={Colors.blue20} marginL-4>
-                {nextAppointment.time.start} - {nextAppointment.time.end}
+      <View backgroundColor={Colors.blue80}>
+        <View marginT-16 padding-16 br20>
+          <View row centerV>
+            <MaterialCommunityIcons
+              name="calendar-clock"
+              size={20}
+              color={Colors.blue30}
+            />
+            <View marginL-12 flex>
+              <Text text70BO color={Colors.blue20}>
+                Lịch hẹn sắp tới
               </Text>
-            </View>
+              <Text text80 color={Colors.blue20} marginT-4>
+                {nextAppointment.date}
+              </Text>
 
-            {nextAppointment.staff && (
               <View row centerV marginT-8>
                 <MaterialCommunityIcons
-                  name="account"
+                  name="clock-outline"
                   size={16}
                   color={Colors.blue30}
                 />
                 <Text text80 color={Colors.blue20} marginL-4>
-                  Thực hiện bởi: {nextAppointment.staff.full_name}
+                  {nextAppointment.time.start} - {nextAppointment.time.end}
                 </Text>
               </View>
-            )}
+
+              {nextAppointment.staff && (
+                <View row centerV marginT-8>
+                  <MaterialCommunityIcons
+                    name="account"
+                    size={16}
+                    color={Colors.blue30}
+                  />
+                  <Text text80 color={Colors.blue20} marginL-4>
+                    Thực hiện bởi: {nextAppointment.staff.full_name}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
         </View>
       </View>
@@ -88,65 +91,68 @@ const ServicePackageScreen = () => {
   );
 
   return (
-    <ScrollView style={{ backgroundColor: Colors.grey70 }}>
-      <View padding-16>
-        {servicePackages.map((pkg: any) => (
-          <Card
-            key={pkg.id}
-            elevation={2}
-            marginB-16
-            enableShadow
-            containerStyle={{ borderRadius: 16 }}
-          >
-            <Card.Section
-              content={[
-                {
-                  text: pkg.service_name,
-                  contentType: true,
-                },
-              ]}
-            />
-            <View padding-16>
-              {/* Header */}
-              <View row spread centerV>
-                <View row centerV flex>
-                  <Text text65M flex>
-                    {pkg.service_name}
-                  </Text>
-                  {renderPackageType(pkg.package_type)}
+    <View flex bg-white>
+      <AppBar back title="Lịch hẹn sắp tới" />
+      <ScrollView>
+        <View padding-16>
+          {servicePackages.map((pkg: any) => (
+            <Card
+              key={pkg.id}
+              elevation={2}
+              marginB-16
+              enableShadow
+              containerStyle={{ borderRadius: 16 }}
+            >
+              <Card.Section
+                content={[
+                  {
+                    text: pkg.service_name,
+                    contentType: true,
+                  },
+                ]}
+              />
+              <View padding-16>
+                {/* Header */}
+                <View row spread centerV>
+                  <View row centerV flex>
+                    <Text text65M flex>
+                      {pkg.service_name}
+                    </Text>
+                    {renderPackageType(pkg.package_type)}
+                  </View>
                 </View>
+
+                <Text text80 grey40 marginT-8>
+                  Hết hạn: {pkg.formatted_expiry_date || "Không giới hạn"}
+                </Text>
+
+                {/* Progress */}
+                <View marginT-16>
+                  <ProgressBar
+                    progress={pkg.progress_percentage}
+                    progressColor={
+                      pkg.progress_percentage >= 100
+                        ? Colors.green30
+                        : Colors.blue30
+                    }
+                  />
+                </View>
+
+                {/* Sessions Info */}
+                <View row spread marginT-16>
+                  {renderSessionInfo("Tổng số buổi", pkg.total_sessions)}
+                  {renderSessionInfo("Đã sử dụng", pkg.used_sessions)}
+                  {renderSessionInfo("Còn lại", pkg.remaining_sessions)}
+                </View>
+
+                {/* Next Appointment */}
+                {renderNextAppointment(pkg.next_appointment_details)}
               </View>
-
-              <Text text80 grey40 marginT-8>
-                Hết hạn: {pkg.formatted_expiry_date || "Không giới hạn"}
-              </Text>
-
-              {/* Progress */}
-              <View marginT-16>
-                <ProgressBar
-                  progress={pkg.progress_percentage}
-                  progressColor={
-                    pkg.progress_percentage >= 100
-                      ? Colors.green30
-                      : Colors.blue30
-                  }
-                />
-              </View>
-
-              {/* Sessions Info */}
-              <View row spread marginT-16>
-                {renderSessionInfo("Tổng số buổi", pkg.total_sessions)}
-                {renderSessionInfo("Đã sử dụng", pkg.used_sessions)}
-                {renderSessionInfo("Còn lại", pkg.remaining_sessions)}
-              </View>
-
-              {/* Next Appointment */}
-              {renderNextAppointment(pkg.next_appointment_details)}
-            </View>
-          </Card>
-        ))}
-      </View>
-    </ScrollView>
+            </Card>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
