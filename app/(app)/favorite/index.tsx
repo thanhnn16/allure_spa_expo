@@ -10,7 +10,9 @@ import i18n from "@/languages/i18n";
 import AppTabBar from "@/components/app-bar/AppTabBar";
 
 export default function FavoriteScreen() {
-  const [selectedTab, setSelectedTab] = useState<"product" | "service">("product");
+  const [selectedTab, setSelectedTab] = useState<"product" | "service">(
+    "product"
+  );
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [favorites, setFavorites] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +38,13 @@ export default function FavoriteScreen() {
   }, [selectedTab]);
 
   const renderItem = ({ item }: { item: any }) => {
-    if (!item) return null; // Add null check for item
+    if (
+      !item ||
+      (selectedTab === "product" && !item.product) ||
+      (selectedTab === "service" && !item.service)
+    ) {
+      return null;
+    }
     return <FavoriteItem item={item} type={selectedTab} />;
   };
 
@@ -78,8 +86,12 @@ export default function FavoriteScreen() {
       >
         <AppTabBar />
         <View flex>
-          <TabController.TabPage index={0}>{renderListComponent()}</TabController.TabPage>
-          <TabController.TabPage index={1} lazy>{renderListComponent()}</TabController.TabPage>
+          <TabController.TabPage index={0}>
+            {renderListComponent()}
+          </TabController.TabPage>
+          <TabController.TabPage index={1} lazy>
+            {renderListComponent()}
+          </TabController.TabPage>
         </View>
       </TabController>
     </View>

@@ -1,18 +1,37 @@
 import React from "react";
 import { AppStyles } from "@/constants/AppStyles";
 import { router } from "expo-router";
-import { TouchableOpacity, Image, View, Text, SkeletonView } from "react-native-ui-lib";
+import {
+  TouchableOpacity,
+  Image,
+  View,
+  Text,
+  SkeletonView,
+} from "react-native-ui-lib";
 import StarIcon from "@/assets/icons/star.svg";
 import formatCurrency from "@/utils/price/formatCurrency";
+import { Product } from "@/types/product.type";
+import { ServiceDetailResponeModel } from "@/types/service.type";
 
 interface FavoriteItemProps {
-  item: any;
-  type: 'product' | 'service';
+  item: {
+    product?: Product;
+    service?: ServiceDetailResponeModel;
+  };
+  type: "product" | "service";
 }
 
 const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
-  const itemData = type === 'product' ? item.product : item.service;
-  const itemImage = itemData.media && itemData.media.length > 0 ? { uri: itemData.media[0].uri } : null;
+  const itemData = type === "product" ? item.product : item.service;
+
+  if (!itemData) return null;
+
+  const itemImage =
+    itemData.media && itemData.media.length > 0
+      ? {
+          uri: itemData.media[0].full_url,
+        }
+      : null;
 
   const handlePress = () => {
     router.push(`/${type}/${itemData.id}`);
@@ -24,7 +43,10 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
       style={[{ width: "48%", borderRadius: 12 }, AppStyles.shadowItem]}
       onPress={handlePress}
     >
-      <View br50 width="100%" gap-5
+      <View
+        br50
+        width="100%"
+        gap-5
         style={{
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
@@ -40,26 +62,29 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
               borderTopLeftRadius: 12,
               borderTopRightRadius: 12,
             }}
-            />
-          ) : (
-            <SkeletonView width={100} height={170} borderRadius={12} />
-        )
-        }
+          />
+        ) : (
+          <SkeletonView width={100} height={170} borderRadius={12} />
+        )}
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
         <Text text70H numberOfLines={2} ellipsizeMode="tail">
-          {type === 'product' ? itemData.name : itemData.service_name}
+          {type === "product" ? itemData.name : itemData.service_name}
         </Text>
 
-        {type === 'product' ? (
+        {type === "product" ? (
           <View flex-1 gap-5 row centerV>
             <Image source={StarIcon} width={15} height={15} />
             <Text style={{ color: "#8C8585" }}>
-              5.0 | {itemData?.quantity} có sẵn
+              5.0 | {itemData.quantity} có sẵn
             </Text>
           </View>
         ) : (
-          <Text style={{ color: "#8C8585" }} numberOfLines={2} ellipsizeMode="tail">
+          <Text
+            style={{ color: "#8C8585" }}
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
             {itemData.description}
           </Text>
         )}
@@ -67,7 +92,8 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
         <View bottom paddingB-5>
           <Text text70H style={{ color: "#A85A29" }}>
             {formatCurrency({
-              price: type === 'product' ? itemData.price : itemData.single_price
+              price:
+                type === "product" ? itemData.price : itemData.single_price,
             })}
           </Text>
         </View>
