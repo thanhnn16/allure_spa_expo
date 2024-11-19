@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Notification, NotificationResponse } from './types';
+import { NotificationResponse } from './types';
 import {
     setNotifications,
     appendNotifications,
@@ -14,7 +14,7 @@ import { RootState } from '@/redux/store';
 
 export const fetchNotifications = createAsyncThunk(
     'notification/fetchNotifications',
-    async (_, { dispatch }) => {
+    async (_: any, { dispatch }: any) => {
         try {
             dispatch(setLoading(true));
             const response = await AxiosInstance().get<NotificationResponse>('/notifications');
@@ -35,7 +35,7 @@ export const fetchNotifications = createAsyncThunk(
 
 export const loadMoreNotifications = createAsyncThunk(
     'notification/loadMore',
-    async (_, { dispatch, getState }) => {
+    async (_: any, { dispatch, getState }: any) => {
         const state = getState() as RootState;
         const { currentPage, hasMore, loading } = state.notification;
 
@@ -61,21 +61,35 @@ export const loadMoreNotifications = createAsyncThunk(
 
 export const fetchUnreadCount = createAsyncThunk(
     'notification/fetchUnreadCount',
-    async (_, { dispatch }) => {
+    async (_: any, { dispatch, getState }: any) => {
+        const state = getState() as RootState;
+
         try {
             const response = await AxiosInstance().get('/notifications/unread-count');
-            dispatch(setUnreadCount(response.data.data.count));
-            return response.data.data.count;
+            const newCount = response.data.data.count;
+
+            if (newCount !== state.notification.unreadCount) {
+                dispatch(setUnreadCount(newCount));
+            }
+            return newCount;
         } catch (error: any) {
-            dispatch(setError(error.message));
+            if (!error.message.includes('Network Error')) {
+                dispatch(setError(error.message));
+            }
             throw error;
+        }
+    },
+    {
+        condition: (_: any, { getState }: any) => {
+            const state = getState() as RootState;
+            return !state.notification.loading;
         }
     }
 );
 
 export const markNotificationAsRead = createAsyncThunk(
     'notification/markAsRead',
-    async (notificationId: number, { dispatch }) => {
+    async (notificationId: number, { dispatch }: any) => {
         try {
             await AxiosInstance().post(`/notifications/${notificationId}/mark-as-read`);
             dispatch(markAsReadAction(notificationId));
@@ -89,7 +103,7 @@ export const markNotificationAsRead = createAsyncThunk(
 
 export const markAllNotificationsAsRead = createAsyncThunk(
     'notification/markAllAsRead',
-    async (_, { dispatch }) => {
+    async (_: any, { dispatch }: any) => {
         try {
             await AxiosInstance().post('/notifications/mark-all-as-read');
             dispatch(markAllAsReadAction());

@@ -1,37 +1,52 @@
-import React from "react";
 import { TouchableOpacity, View, Badge } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 type HomeHeaderButtonProps = {
   onPress: () => void;
   iconName: keyof typeof Ionicons.glyphMap;
-  showBadge?: boolean;
-  badgeCount?: number;
+  type: "notification" | "cart";
 };
 
 const HomeHeaderButton = ({
   onPress,
   iconName,
-  showBadge,
-  badgeCount,
+  type,
 }: HomeHeaderButtonProps) => {
-  console.log("badgeCount", badgeCount);
+  const unreadCount = useSelector(
+    (state: RootState) => state.notification.unreadCount
+  );
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartItemCount = cartItems.length;
+
+  const getBadgeCount = () => {
+    if (type === "notification") {
+      return unreadCount;
+    }
+    return cartItemCount;
+  };
+
+  const count = getBadgeCount();
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View>
         <Ionicons name={iconName} size={24} color="#717658" />
-        {showBadge && (
+        {count > 0 && (
           <Badge
-            label={
-              badgeCount && badgeCount > 99 ? "99+" : badgeCount?.toString()
-            }
+            label={count > 99 ? "99+" : count.toString()}
             size={16}
-            backgroundColor={"$red30"}
-            labelStyle={{ fontSize: 10, color: "white" }}
+            backgroundColor="#FF375B"
+            labelStyle={{
+              fontSize: 10,
+              color: "white",
+              fontWeight: "bold",
+            }}
             containerStyle={{
               position: "absolute",
-              top: -8,
-              right: -8,
+              top: -6,
+              right: -6,
             }}
           />
         )}

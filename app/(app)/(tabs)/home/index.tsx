@@ -17,7 +17,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
-import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
 import WeatherView from "@/components/home/WeatherView";
@@ -25,8 +25,6 @@ import { useAuth } from "@/hooks/useAuth";
 import i18n from "@/languages/i18n";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import { RootState } from "@/redux/store";
-import formatCurrency from "@/utils/price/formatCurrency";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
@@ -62,8 +60,8 @@ const HomePage = () => {
     Dimensions.get("window");
   const { products } = useSelector((state: RootState) => state.product);
 
-  const unreadCount = useSelector(
-    (state: RootState) => state.notification.unreadCount
+  const { unreadCount, loading: notificationLoading } = useSelector(
+    (state: RootState) => state.notification
   );
 
   useMemo(() => {
@@ -79,7 +77,6 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(getServicesThunk({ page: 1, limit: 5 }));
     dispatch(getAllProductsThunk());
-    dispatch(fetchUnreadCount());
   }, [dispatch]);
 
   const scrollHandler = useAnimatedScrollHandler({
@@ -253,29 +250,28 @@ const HomePage = () => {
           </Animated.View>
           <View
             row
+            centerV
             gap-15
-            style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              zIndex: 1,
-              paddingEnd: 20,
-              paddingVertical: 5,
-            }}
+            absR
+            style={{ zIndex: 1 }}
+            right-0
+            top-0
+            paddingV-10
+            marginH-20
           >
             <HomeHeaderButton
               onPress={() => {
                 router.push("/notification");
               }}
               iconName="notifications-outline"
-              showBadge={unreadCount > 0}
-              badgeCount={unreadCount}
+              type="notification"
             />
             <HomeHeaderButton
               onPress={() => {
-                router.push("cart" as Href<string>);
+                router.push("/cart");
               }}
               iconName="cart-outline"
+              type="cart"
             />
           </View>
 
