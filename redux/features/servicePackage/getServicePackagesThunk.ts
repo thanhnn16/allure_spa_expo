@@ -5,7 +5,11 @@ export const getServicePackagesThunk = createAsyncThunk(
     "servicePackage/getServicePackages",
     async (userId: string, { rejectWithValue }: any) => {
         try {
+            console.log("User ID", userId);
+
             const response = await AxiosInstance().get(`/users/${userId}/service-packages`);
+
+            console.log("Service packages", response.data.data);
 
             // Transform và sắp xếp dữ liệu trước khi trả về
             const packages = response.data.map((pkg: any) => ({
@@ -39,7 +43,7 @@ export const getServicePackagesThunk = createAsyncThunk(
             });
 
         } catch (error: any) {
-            console.log("Error service package", error.response?.data?.message);
+            console.log("Error service package", error.response);
             return rejectWithValue(error.response?.data?.message || 'Không thể tải dữ liệu gói dịch vụ');
         }
     }

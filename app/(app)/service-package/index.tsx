@@ -12,7 +12,7 @@ import AppBar from "@/components/app-bar/AppBar";
 
 const ServicePackageScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.user);
+  const { user } = useSelector((state: RootState) => state.auth);
   const servicePackages = user?.service_packages || [];
 
   useEffect(() => {
