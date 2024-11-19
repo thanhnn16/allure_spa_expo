@@ -193,6 +193,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+        implementation "me.zalo:sdk-core:+"
+        implementation "me.zalo:sdk-auth:+"
+        implementation "me.zalo:sdk-openapi:+"
 }
 
 if (rnVersion < versionToNumber(0, 75, 0)) {

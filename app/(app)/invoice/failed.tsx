@@ -52,14 +52,19 @@ export default function InvoiceFailed() {
           style={{ marginBottom: 30 }}
         />
 
-        <Text h2 center marginB-20>
+        <Text h2_bold center marginB-20>
           {content.title}
         </Text>
-        <Text body center marginB-30>
+        <Text h3 body center marginB-30>
           {content.message}
         </Text>
 
-        <View absB bottom-20 left-20 right-20>
+        <View absB width={'100%'} marginB-10 gap-10>
+          <AppButton
+            title="Liên hệ hỗ trợ"
+            onPress={() => router.replace("/(app)/(tabs)/chat")}
+            type="primary"
+          />
           <AppButton
             title={i18n.t("common.back_to_home")}
             onPress={() => router.replace("/(app)/")}

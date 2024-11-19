@@ -17,7 +17,9 @@
     "error": "Error",
     "success": "Success",
     "back_to_home": "Back to Home",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "staff": "Staff",
+    "view_detail": "View Detail"
   },
   "auth": {
     "login": {
@@ -167,7 +169,9 @@
     "delete_account": "Delete Account",
     "change_info": "Change Information",
     "voucher": "Voucher",
-    "voucher_description": "View all vouchers of me"
+    "voucher_description": "View all vouchers of me",
+    "service_package": "Service Package",
+    "service_package_description": "View all service packages of me"
   },
   "settings": {
     "title": "Settings",
@@ -232,7 +236,8 @@
     "product": "Product",
     "course": "Course",
     "news": "News",
-    "placeholder_search": "Search for cosmetics, treatments..."
+    "placeholder_search": "Search for cosmetics, treatments...",
+    "upcoming_appointment": "Upcoming Service Package Appointment"
   },
   "greeting": {
     "morning": "Good morning!",
@@ -476,5 +481,19 @@
     "description2": "You should ask us to send the data to your email.",
     "verify_yes": "Yes, send my data to email",
     "verify_no": "No, thanks!"
+},
+  "service_package": {
+    "title": "My Service Packages",
+    "no_packages": "You don't have any service packages",
+    "progress": "Usage Progress",
+    "total_sessions": "Total Sessions",
+    "used_sessions": "Used Sessions", 
+    "remaining_sessions": "Remaining Sessions",
+    "next_appointment": "Next Appointment",
+    "performed_by": "Performed by",
+    "book_appointment": "Book Appointment",
+    "expires_on": "Expires on",
+    "no_expiry": "No time limit",
+    "unlimited_time": "Unlimited time"
   }
 }

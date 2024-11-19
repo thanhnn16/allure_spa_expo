@@ -43,7 +43,7 @@ const AppLayout = () => {
       <Stack.Screen name="order/index" />
       <Stack.Screen name="invoice/failed" />
       <Stack.Screen name="invoice/success" />
-      <Stack.Screen name="address/update" />
+      <Stack.Screen name="address/update/[id]/index" />
       <Stack.Screen name="address/add" />
       <Stack.Screen name="address/index" />
       <Stack.Screen name="see-more/index" />
@@ -53,6 +53,7 @@ const AppLayout = () => {
       <Stack.Screen name="profile/delete-account" />
       <Stack.Screen name="profile/delete-account-verify" />
       <Stack.Screen name="profile/change-password" />
+      <Stack.Screen name="service-package/index" />
     </Stack>
   );
 };

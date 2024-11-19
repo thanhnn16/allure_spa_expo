@@ -16,8 +16,11 @@ interface OrderProductItemProps {
   order: Orders;
   orderItem?: OrderItem;
 }
-
 const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
+  const orderItems = order.order_items || []; // Ensure order_items is an array
+
+  console.log("orderItems", orderItems);
+
   return (
     <View
       paddingT-10
@@ -63,7 +66,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
       </View>
       <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
 
-      {order.order_items.map((item: OrderItem) => (
+      {orderItems.map((item: OrderItem) => (
         <View key={item.id} paddingH-15 paddingB-10>
           <TouchableOpacity
             onPress={() => router.push(`/transaction/${order.id}`)}
@@ -81,7 +84,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
               <View flex marginL-10 gap-5>
                 <View>
                   <Text h3_bold numberOfLines={2}>
-                    {item.product?.name}
+                    {item.product.name || "hehe"}
                   </Text>
                   <Text h3>
                     {i18n.t("orders.quantity")}: {item.quantity}

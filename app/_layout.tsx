@@ -76,7 +76,7 @@ export default function RootLayout() {
                 edges={["top"]}
                 style={{ flex: 1, backgroundColor: "white" }}
               >
-                <StatusBar backgroundColor="transparent" />
+                <StatusBar backgroundColor="transparent" barStyle={"dark-content"}  />
                 <Slot />
               </SafeAreaView>
             )}

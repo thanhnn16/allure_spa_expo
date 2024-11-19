@@ -1,31 +1,67 @@
-import { Colors, Picker, PickerValue, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { Colors, Image, Picker, PickerValue, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import i18n from "@/languages/i18n";
-import { router } from "expo-router";
-import { useState, useEffect } from "react";
+import { useNavigation, useLocalSearchParams } from "expo-router";
+import BackButton from "@/assets/icons/back.svg";
+import { useEffect, useState } from "react";
 import AppButton from "@/components/buttons/AppButton";
-import { ScrollView, TextInput } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useDispatch } from "react-redux";
-import { addAddress } from "@/redux/features";
+import { SafeAreaView, ScrollView, TextInput, Alert } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import AppBar from "@/components/app-bar/AppBar";
-import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from "@/redux/features/address/getAddressThunk";
-import { Address, AddressDistrict, AddressProvince, AddressWard } from "@/types/address.type";
-import AddressTextInput from "@/components/address/AddressTextInput";
+import { Address, AddressDistrict, AddressProvince, AddressWard, UserProfile } from "@/types/address.type";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchAddresses } from "@/redux/features/address/addressThunk";
 import AppDialog from "@/components/dialog/AppDialog";
+import AddressTextInput from "@/components/address/AddressTextInput";
+import { RootState } from "@/redux/store";
 import { User } from "@/types/user.type";
+import { addressTypeItems } from "../../add";
+import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from "@/redux/features/address/getAddressThunk";
+import { get } from "lodash";
 
-export const addressTypeItems = [
-  { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
-  { id: 2, name: i18n.t("address.work"), type: "work" as AddressType },
-  { id: 3, name: i18n.t("address.others"), type: "others" as AddressType },
-];
+const AddressInput = ({
+  value,
+  placeholder,
+  onChangeText,
+  editable = true,
+}: {
+  value: string;
+  placeholder: string;
+  onChangeText: (text: string) => void;
+  editable?: boolean;
+}) => (
+  <View
+    bg-white
+    marginB-10
+    br20
+    style={{
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.1,
+      shadowRadius: 2,
+      elevation: 3,
+    }}
+  >
+    <TextInput
+      value={value}
+      placeholder={placeholder}
+      onChangeText={onChangeText}
+      editable={editable}
+      style={{
+        fontSize: 14,
+        height: 55,
+        width: "100%",
+        paddingHorizontal: 20,
+        color: editable ? "#333333" : "#666666",
+      }}
+    />
+  </View>
+);
 
 type AddressType = "home" | "work" | "others";
 
-const Add = () => {
-  const [selectedItem, setSelectedItem] = useState<number | null>(1);
-  const [loading, setLoading] = useState(false);
-  const [selectedAddressType, setSelectedAddressType] = useState<AddressType>("home");
+const UpdateScreen = () => {
+  const { id } = useLocalSearchParams();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<Address>({
     user_id: "",
     province: "",
@@ -33,23 +69,27 @@ const Add = () => {
     ward: "",
     address: "",
     note: "",
-    address_type: "home",
+    address_type: "others",
     is_default: false,
     is_temporary: false,
   });
-  const dispatch = useDispatch();
+  const [userProfile, setUserProfile] = useState<User | null>(null);
+  const [errorDescription, setErrorDescription] = useState<string>();
+  const [errorDialogVisible, setErrorDialogVisible] = useState(false);
+  const [selectedAddressType, setSelectedAddressType] = useState<AddressType>("home");
+  const [selectedItem, setSelectedItem] = useState<number | null>(1);
+
   const [province, setProvince] = useState<AddressProvince>();
   const [provinceList, setProvinceList] = useState<AddressProvince[]>([]);
   const [district, setDistrict] = useState<AddressDistrict>();
   const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
   const [ward, setWard] = useState<AddressWard>();
   const [wardList, setWardList] = useState<AddressWard[]>([]);
-  const [titleDialog, setTitleDialog] = useState<string>("");
-  const [dialogDescription, setDialogDescription] = useState<string>("");
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [confirmButton, setConfirmButton] = useState(false);
-  const [onConfirmDialog, setOnConfirmDialog] = useState<() => void>(() => () => { });
-  const [userProfile, setUserProfile] = useState<User>();
+
+
+  const { addresses, loading, error } = useSelector(
+    (state: RootState) => state.address
+  );
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -60,101 +100,45 @@ const Add = () => {
       const response = await dispatch(getAddressProvinceThunk({}));
       setProvinceList(response.payload.data);
     } catch (error: any) {
-      setTitleDialog("Có lỗi xảy ra");
-      setDialogDescription(error.message || "Không thể tải thông tin tỉnh/thành phố");
-      setConfirmButton(true);
-      setOnConfirmDialog(() => () => { setDialogVisible(false) });
-      setDialogVisible(true);
+      setErrorDescription(error.message || "Không thể tải thông tin tỉnh/thành phố");
+      setErrorDialogVisible(true);
     }
   };
+
+  const getProvinceFromName = async () => {
+    const selectedProvince = provinceList.find((item) => item.name === formData?.province);
+    setProvince(selectedProvince);
+
+  }
 
   const getDistrict = async (id: number) => {
     try {
       const response = await dispatch(getAddressDistrictThunk({ query: id }));
       setDistrictList(response.payload.data);
+      console.log("districtList", districtList);
+
     } catch (error: any) {
-      setTitleDialog("Có lỗi xảy ra");
-      setDialogDescription(error.message || "Không thể tải thông tin quận/huyện");
-      setConfirmButton(true);
-      setOnConfirmDialog(() => () => { setDialogVisible(false) });
-      setDialogVisible(true);
+      setErrorDescription(error.message || "Không thể tải thông tin quận/huyện");
+      setErrorDialogVisible(true);
     }
+  }
+
+  const getDistrictFromName = async () => {
+    const selectedDistrict = districtList.find((item) => item.name === formData.district);
+    setDistrict(selectedDistrict);
+    await getWard(Number(selectedDistrict?.id));
   }
 
   const getWard = async (id: number) => {
     try {
       const response = await dispatch(getAddressWardThunk({ query: id }));
       setWardList(response.payload.data);
+
     } catch (error: any) {
-      setTitleDialog("Có lỗi xảy ra");
-      setDialogDescription(error.message || "Không thể tải thông tin phường/xã");
-      setConfirmButton(true);
-      setOnConfirmDialog(() => () => { setDialogVisible(false) });
-      setDialogVisible(true);
+      setErrorDescription(error.message || "Không thể tải thông tin phường/xã");
+      setErrorDialogVisible(true);
     }
   }
-
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("userToken");
-
-      setTitleDialog("Đang xử lý");
-      setDialogDescription("Vui lòng chờ trong giây lát");
-      setConfirmButton(false);
-      setDialogVisible(true);
-
-      if (!token) {
-        setTitleDialog("Có lỗi xảy ra");
-        setDialogDescription("Vui lòng đăng nhập để thêm địa chỉ");
-        setDialogVisible(true);
-        return;
-      }
-
-      const payload: Address = {
-        user_id: formData.user_id,
-        province: province?.name || "",
-        district: district?.name || "",
-        ward: ward?.name || "",
-        address: formData.address,
-        address_type: selectedAddressType,
-        is_default: formData.is_default,
-        is_temporary: formData.is_temporary,
-        note: formData.note,
-      };
-      await dispatch(addAddress(payload)).unwrap();
-
-      if (payload) {
-        setFormData({
-          user_id: formData.user_id,
-          province: "",
-          district: "",
-          ward: "",
-          address: "",
-          note: "",
-          address_type: "home",
-          is_default: false,
-          is_temporary: false,
-        });
-        setSelectedItem(1);
-        setSelectedAddressType("home");
-
-        setTitleDialog("Thành công");
-        setDialogDescription("Đã thêm địa chỉ");
-        setConfirmButton(true);
-        setOnConfirmDialog(() => () => { router.back() });
-        setDialogVisible(true);
-      }
-
-    } catch (error: any) {
-      setTitleDialog("Lỗi");
-      setDialogDescription("Không thể thêm địa chỉ");
-      setOnConfirmDialog(() => () => { setDialogVisible(false) });
-      setDialogVisible(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -163,31 +147,57 @@ const Add = () => {
         if (userProfileStr) {
           setUserProfile(JSON.parse(userProfileStr));
         }
-        console.log("userProfileStr", userProfileStr);
       } catch (error: any) {
-        setTitleDialog("Có lỗi xảy ra");
-        setDialogDescription(error.message || "Không thể tải thông tin người dùng");
-        setConfirmButton(true);
-        setOnConfirmDialog(() => () => { setDialogVisible(false) });
-        setDialogVisible(true);
+        setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
+        setErrorDialogVisible(true);
       }
     };
     loadUserData();
   }, []);
 
   useEffect(() => {
+    const loadAddressData = async () => {
+      try {
+        await dispatch(fetchAddresses()).unwrap();
+        const address = addresses.find((item: Address) => Number(item.id) === Number(id));
+        setFormData((prev) => ({
+          ...prev,
+          province: address.province,
+          district: address.district,
+          ward: address.ward,
+          address: address.address,
+          address_type: address.address_type,
+          is_default: address.is_default,
+          is_temporary: address.is_temporary,
+          note: address.note,
+        }));
+        selectedAddressType === "home" && setSelectedItem(1);
+      } catch (error: any) {
+        setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
+        setErrorDialogVisible(true);
+      }
+    };
+    loadAddressData();
+  }, []);
+
+  useEffect(() => {
     getProvince();
   }, []);
 
+  useEffect(() => {
+    if (provinceList.length > 0) {
+      getProvinceFromName();
+    }
+  }, [provinceList]);
+
   return (
-    <View flex bg-$backgroundDefault>
-      <AppBar
-        back title={i18n.t("address.add_address")}
-      />
+    <View flex bg-F5F7FA>
+      <AppBar back title="Cập nhật địa chỉ" />
 
       <ScrollView padding-15>
         <View
           bg-white
+          br20
           padding-15
           marginB-15
           style={{
@@ -198,25 +208,28 @@ const Add = () => {
             elevation: 3,
           }}
         >
-          <Text h2_bold primary marginB-10>
+          <Text color="#717658" marginB-10 h2_bold>
             {i18n.t("auth.login.personal_info")}
           </Text>
           <AddressTextInput
             value={userProfile?.full_name || ""}
             placeholder={i18n.t("auth.login.fullname")}
-            onChangeText={() => { }}
+            onChangeText={(value) =>
+              setFormData((prev) => ({ ...prev, name: value }))
+            }
           />
           <AddressTextInput
             value={userProfile?.phone_number || ""}
             placeholder={i18n.t("address.phone")}
-            onChangeText={(value) => handleChange("phone", value)}
-            maxLength={10}
-            keyboardType="phone-pad"
+            onChangeText={(value) =>
+              setFormData((prev) => ({ ...prev, phone: value }))
+            }
           />
         </View>
 
         <View
           bg-white
+          br20
           padding-15
           marginB-15
           style={{
@@ -227,10 +240,9 @@ const Add = () => {
             elevation: 3,
           }}
         >
-          <Text color="#717658" h2_bold marginB-10>
+          <Text color="#717658" marginB-10 text70BO>
             {i18n.t("address.address")}
           </Text>
-
           <Picker
             placeholder="Tỉnh/Thành phố"
             floatingPlaceholder
@@ -290,7 +302,7 @@ const Add = () => {
             />
           )}
 
-          {district?.id && (
+          {/* {district?.id && (
             <Picker
               placeholder="Phường/Xã"
               floatingPlaceholder
@@ -316,23 +328,24 @@ const Add = () => {
                 }))
               }
             />
-          )}
+          )} */}
 
-          {ward?.id && (
+          {/* {ward?.id && (
             <AddressTextInput
               value={formData.address}
               placeholder={i18n.t("address.address")}
               onChangeText={(value) => {
-                console.log("value", value === "");
                 handleChange("address", value)
               }}
             />
-          )}
+          )} */}
 
           <TextInput
             value={formData.note}
             placeholder={i18n.t("address.note")}
-            onChangeText={(value) => handleChange("note", value)}
+            onChangeText={(value) =>
+              setFormData((prev) => ({ ...prev, note: value }))
+            }
             multiline={true}
             numberOfLines={3}
             style={{
@@ -354,7 +367,7 @@ const Add = () => {
           bg-white
           br20
           padding-15
-          marginB-20
+          marginB-80
           style={{
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 1 },
@@ -363,7 +376,7 @@ const Add = () => {
             elevation: 3,
           }}
         >
-          <Text color="#717658" h2_bold marginB-10>
+          <Text color="#717658" marginB-10 text70BO>
             {i18n.t("address.type")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -400,39 +413,38 @@ const Add = () => {
             ))}
           </ScrollView>
         </View>
-
-        <View
-          bg-white
-          padding-20
-          style={{
-            borderTopWidth: 1,
-            borderTopColor: "#E5E7EB",
-            left: 0,
-            right: 0,
-          }}
-        >
-          <AppButton
-            title={i18n.t("address.save")}
-            type="primary"
-            onPress={handleSubmit}
-            disabled={formData.address === "" || loading}
-          />
-        </View>
-
       </ScrollView>
 
+      {/* <View
+        bg-white
+        padding-20
+        absB
+        left-0
+        right-0
+        style={{
+          borderTopWidth: 1,
+          borderTopColor: "#E5E7EB",
+        }}
+      >
+        <AppButton
+          title={i18n.t("address.save")}
+          type="primary"
+          onPress={handleUpdateAddress}
+          disabled={loading}
+        />
+      </View> */}
+
       <AppDialog
-        visible={dialogVisible}
-        title={titleDialog || "Lỗi"}
-        description={dialogDescription || ""}
-        closeButton={false}
-        confirmButton={confirmButton}
-        confirmButtonLabel={"Đồng ý"}
+        visible={errorDialogVisible}
+        title={"Có lỗi xảy ra"}
+        description={errorDescription || ""}
+        closeButtonLabel={i18n.t("common.cancel")}
+        confirmButtonLabel={"Cập nhật"}
         severity="info"
-        onConfirm={() => onConfirmDialog()}
+        onClose={() => setErrorDialogVisible(false)}
       />
     </View>
   );
 };
 
-export default Add;
+export default UpdateScreen;

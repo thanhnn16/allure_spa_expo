@@ -10,7 +10,13 @@ import {
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import { router, useLocalSearchParams } from "expo-router";
-import {View, Text, TouchableOpacity, TextField, Colors} from "react-native-ui-lib";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TextField,
+  Colors,
+} from "react-native-ui-lib";
 import { Calendar } from "react-native-calendars";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import moment from "moment";
@@ -26,7 +32,7 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { User } from "@/types/user.type";
 
 import AppDialog from "@/components/dialog/AppDialog";
-
+import { BookingPayload } from "@/types/appointment.type";
 
 const BookingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,7 +46,7 @@ const BookingPage = () => {
   const numColumns = 2;
   const itemWidth = (windowWidth - padding * 2 - gap) / numColumns;
 
-  const { service_id, service_name } = useLocalSearchParams();
+  const { service_id, service_name, package_id } = useLocalSearchParams();
   const [today] = useState(moment().format("YYYY-MM-DD"));
   const [maxDate] = useState(moment().add(1, "year").format("YYYY-MM-DD"));
   const [selectedDate, setSelectedDate] = useState<string>(today.toString());
@@ -54,8 +60,6 @@ const BookingPage = () => {
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
   const [dialogTitle, setDialogTitle] = useState<string>("");
   const [dialogDescription, setDialogDescription] = useState<string>("");
-
-
 
   const handleDayPress = (day: any) => {
     setSelectedDate(day.dateString);
@@ -96,20 +100,22 @@ const BookingPage = () => {
   };
 
   const handleBooking = async () => {
-    const bookingData = {
-      service_id: Number(service_id),
+    const bookingData: BookingPayload = {
+      user_id: user.id,
       staff_id: null,
+      service_id: Number(service_id),
       slots: Number(slot),
       appointment_date: selectedDate,
-      time_slot_id: Number(selectedTime),
-      appointment_type: "consultation",
       status: "pending",
+      time_slot_id: Number(selectedTime),
+      appointment_type: package_id ? "service_package" : "service",
+      ...(package_id && { user_service_package_id: Number(package_id) }),
       note: note === "" ? "Không có ghi chú" : note,
     };
 
     try {
       await dispatch(createBooking(bookingData));
-    } catch (error) {
+    } catch (error: any) {
       setDialogTitle(i18n.t("service.error"));
       setDialogDescription(error.message);
       setDialogVisible(true);
@@ -266,83 +272,86 @@ const BookingPage = () => {
             )}
 
             {selectedTime && (
-                <View gap-10>
-                  <Text style={styles.sectionTitle}>
-                    {i18n.t("service.select_seat")}
-                  </Text>
-                  <View gap-12 row flex>
-                    <TouchableOpacity
-                        onPress={() => setSlot(1)}
-                        style={styles.timeSlotContainer}
+              <View gap-10>
+                <Text style={styles.sectionTitle}>
+                  {i18n.t("service.select_seat")}
+                </Text>
+                <View gap-12 row flex>
+                  <TouchableOpacity
+                    onPress={() => setSlot(1)}
+                    style={styles.timeSlotContainer}
+                  >
+                    <View
+                      center
+                      backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
+                      style={styles.timeSlot}
                     >
-                      <View
-                          center
-                          backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
-                          style={styles.timeSlot}
-                      >
-                        <Text color={slot == 1 ? "#FFFFFF" : "#000000"}>
-                          {i18n.t("service.1_seat")}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => setSlot(2)}
-                        style={[
-                          styles.timeSlotContainer,
-                          timeSlots.find((item: any) => item.id === selectedTime)?.available_slots === 1 && styles.disabledButton
-                        ]}
-                        disabled={
-                            timeSlots.find((item: any) => item.id === selectedTime)?.available_slots === 1
-                        }
+                      <Text color={slot == 1 ? "#FFFFFF" : "#000000"}>
+                        {i18n.t("service.1_seat")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setSlot(2)}
+                    style={[
+                      styles.timeSlotContainer,
+                      timeSlots.find((item: any) => item.id === selectedTime)
+                        ?.available_slots === 1 && styles.disabledButton,
+                    ]}
+                    disabled={
+                      timeSlots.find((item: any) => item.id === selectedTime)
+                        ?.available_slots === 1
+                    }
+                  >
+                    <View
+                      center
+                      backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
+                      style={styles.timeSlot}
                     >
-                      <View
-                          center
-                          backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
-                          style={styles.timeSlot}
-                      >
-                        <Text color={slot == 2 ? "#FFFFFF" : "#000000"}>
-                          {i18n.t("service.2_seat")}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
+                      <Text color={slot == 2 ? "#FFFFFF" : "#000000"}>
+                        {i18n.t("service.2_seat")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
+              </View>
             )}
 
             {slot != 0 && (
-                <>
-                  <View style={styles.noteContainer}>
-                    <Text style={styles.noteTitle}>{i18n.t("service.note")}</Text>
-                    <TextField h3
-                        value={note}
-                        onChangeText={(text) => setNote(text)}
-                        placeholder={i18n.t("service.enter_content").toString()}
-                        placeholderTextColor="#8C8585"
-                        multiline
-                        numberOfLines={10}
-                        maxLength={200}
-                        style={styles.enhancedNoteInput}
-                    />
-                  </View>
-                  <View style={{ paddingVertical: 10 }}>
-                    <AppButton
-                        title={i18n.t("service.continue")}
-                        type="primary"
-                        onPress={() => {
-                          handleShowModal();
-                        }}
-                    />
-                  </View>
-                </>
+              <>
+                <View style={styles.noteContainer}>
+                  <Text style={styles.noteTitle}>{i18n.t("service.note")}</Text>
+                  <TextField
+                    h3
+                    value={note}
+                    onChangeText={(text) => setNote(text)}
+                    placeholder={i18n.t("service.enter_content").toString()}
+                    placeholderTextColor="#8C8585"
+                    multiline
+                    numberOfLines={10}
+                    maxLength={200}
+                    style={styles.enhancedNoteInput}
+                  />
+                </View>
+                <View style={{ paddingVertical: 10 }}>
+                  <AppButton
+                    title={i18n.t("service.continue")}
+                    type="primary"
+                    onPress={() => {
+                      handleShowModal();
+                    }}
+                  />
+                </View>
+              </>
             )}
           </View>
         </ScrollView>
       </View>
       <Modal
-          visible={showModal}
-          transparent
-          onRequestClose={() => setShowModal(false)}
-          style={styles.modal}
+        visible={showModal}
+        transparent
+        onRequestClose={() => setShowModal(false)}
+        style={styles.modal}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -355,35 +364,44 @@ const BookingPage = () => {
 
             <View style={styles.modalTextContainer}>
               <Text style={styles.modalText}>
-                {i18n.t("service.customer_name")}: <Text style={styles.modalTextBold}>{user.full_name}</Text>
+                {i18n.t("service.customer_name")}:{" "}
+                <Text style={styles.modalTextBold}>{user.full_name}</Text>
               </Text>
               <Text style={styles.modalText}>
-                {i18n.t("service.service_name")}: <Text style={styles.modalTextBold}>{service_name}</Text>
+                {i18n.t("service.service_name")}:{" "}
+                <Text style={styles.modalTextBold}>{service_name}</Text>
               </Text>
               <Text style={styles.modalText}>
-                {i18n.t("service.time")}: <Text style={styles.modalTextBold}>{timeString}</Text>
+                {i18n.t("service.time")}:{" "}
+                <Text style={styles.modalTextBold}>{timeString}</Text>
               </Text>
               <Text style={styles.modalText}>
-                {i18n.t("service.date")}: <Text style={styles.modalTextBold}>{moment(selectedDate).format("DD/MM/YYYY")}</Text>
+                {i18n.t("service.date")}:{" "}
+                <Text style={styles.modalTextBold}>
+                  {moment(selectedDate).format("DD/MM/YYYY")}
+                </Text>
               </Text>
               <Text style={styles.modalText}>
-                {i18n.t("service.note")}: <Text style={styles.modalTextBold}>{note === "" ? i18n.t("service.no_notes") : note}</Text>
+                {i18n.t("service.note")}:{" "}
+                <Text style={styles.modalTextBold}>
+                  {note === "" ? i18n.t("service.no_notes") : note}
+                </Text>
               </Text>
             </View>
             <View style={styles.buttonContainer}>
               <AppButton
-                  title={i18n.t("service.agree")}
-                  type="primary"
-                  onPress={() => {
-                    handleBooking();
-                  }}
+                title={i18n.t("service.agree")}
+                type="primary"
+                onPress={() => {
+                  handleBooking();
+                }}
               />
               <AppButton
-                  title={i18n.t("service.cancel")}
-                  type="outline"
-                  onPress={() => {
-                    setShowModal(false);
-                  }}
+                title={i18n.t("service.cancel")}
+                type="outline"
+                onPress={() => {
+                  setShowModal(false);
+                }}
               />
             </View>
           </View>
@@ -401,21 +419,21 @@ const BookingPage = () => {
             </Text>
             <View style={styles.buttonContainer2}>
               <AppButton
-                  title={i18n.t("service.back_to_home")}
-                  type="primary"
-                  onPress={() => {
-                    router.push("/(tabs)");
-                    setSuccess(false);
-                  }}
-                  buttonStyle={styles.primaryButton2}
+                title={i18n.t("service.back_to_home")}
+                type="primary"
+                onPress={() => {
+                  router.push("/(tabs)");
+                  setSuccess(false);
+                }}
+                buttonStyle={styles.primaryButton2}
               />
               <AppButton
-                  title={i18n.t("service.make_appointment")}
-                  type="outline"
-                  onPress={() => {
-                   router.push("/(app)/(tabs)/appointment");
-                    setSuccess(false);
-                  }}
+                title={i18n.t("service.make_appointment")}
+                type="outline"
+                onPress={() => {
+                  router.push("/(app)/(tabs)/appointment");
+                  setSuccess(false);
+                }}
               />
             </View>
           </View>

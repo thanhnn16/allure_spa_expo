@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { Notification } from "./types";
 
 interface NotificationState {
@@ -23,45 +23,42 @@ const notificationSlice = createSlice({
     name: 'notification',
     initialState,
     reducers: {
-        setNotifications: (state, action: PayloadAction<{
-            items: Notification[];
-            hasMore: boolean;
-            unreadCount: number;
-        }>) => {
+        setNotifications: (state: NotificationState, action: any) => {
             state.notifications = action.payload.items;
             state.hasMore = action.payload.hasMore;
-            state.unreadCount = action.payload.unreadCount;
+            if (typeof action.payload.unreadCount === 'number') {
+                state.unreadCount = action.payload.unreadCount;
+            }
         },
-        appendNotifications: (state, action: PayloadAction<{
-            items: Notification[];
-            hasMore: boolean;
-        }>) => {
+        appendNotifications: (state: NotificationState, action: any) => {
             state.notifications = [...state.notifications, ...action.payload.items];
             state.hasMore = action.payload.hasMore;
             state.currentPage += 1;
         },
-        markAsRead: (state, action: PayloadAction<number>) => {
+        markAsRead: (state: NotificationState, action: any) => {
             const notification = state.notifications.find(n => n.id === action.payload);
             if (notification && !notification.is_read) {
                 notification.is_read = true;
                 state.unreadCount = Math.max(0, state.unreadCount - 1);
             }
         },
-        markAllAsRead: (state) => {
+        markAllAsRead: (state: NotificationState) => {
             state.notifications = state.notifications.map(notification => ({
                 ...notification,
                 is_read: true
             }));
             state.unreadCount = 0;
         },
-        setLoading: (state, action: PayloadAction<boolean>) => {
+        setLoading: (state: NotificationState, action: any) => {
             state.loading = action.payload;
         },
-        setError: (state, action: PayloadAction<string | null>) => {
+        setError: (state: NotificationState, action: any) => {
             state.error = action.payload;
         },
-        setUnreadCount: (state, action: PayloadAction<number>) => {
-            state.unreadCount = action.payload;
+        setUnreadCount: (state: NotificationState, action: any) => {
+            if (typeof action.payload === 'number' && action.payload >= 0) {
+                state.unreadCount = action.payload;
+            }
         },
     },
 });

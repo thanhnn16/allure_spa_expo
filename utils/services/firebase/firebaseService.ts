@@ -3,6 +3,9 @@ import AxiosInstance from '../helper/axiosInstance';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { useDispatch } from 'react-redux';
+import { fetchUnreadCount } from '@/redux/features/notification/notificationThunks';
+import { AppDispatch } from '@/redux/store';
 
 class FirebaseService {
   private static instance: FirebaseService;
@@ -63,11 +66,8 @@ class FirebaseService {
   async setupNotifications() {
     Notifications.setNotificationHandler({
       handleNotification: async (notification) => {
-        const isForeground = notification.request.trigger.type === 'push' &&
-          notification.request.content.data?.isForeground === true;
-
         return {
-          shouldShowAlert: !isForeground,
+          shouldShowAlert: true,
           shouldPlaySound: true,
           shouldSetBadge: true,
         };
@@ -78,7 +78,8 @@ class FirebaseService {
   setupMessageHandlers() {
     // Xử lý tin nhắn khi ứng dụng ở background
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background:', remoteMessage);
+      const dispatch = useDispatch<AppDispatch>();
+      dispatch(fetchUnreadCount());
       if (remoteMessage.data?.type === 'chat_message') {
         await this.showChatNotification(remoteMessage);
       }
@@ -87,9 +88,14 @@ class FirebaseService {
       }
     });
 
-    // Xử lý tin nhắn khi ứng dụng đang mở
     return messaging().onMessage(async remoteMessage => {
       console.log('Received foreground message:', remoteMessage);
+      const dispatch = useDispatch<AppDispatch>();
+      await dispatch(fetchUnreadCount());
+      remoteMessage.data = {
+        ...remoteMessage.data,
+      };
+
       if (remoteMessage.data?.type === 'chat_message') {
         await this.showChatNotification(remoteMessage);
       }

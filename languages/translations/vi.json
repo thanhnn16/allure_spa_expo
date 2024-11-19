@@ -17,7 +17,9 @@
     "error": "Lỗi",
     "success": "Thành công",
     "back_to_home": "Về trang chủ",
-    "loading": "Đang tải..."
+    "loading": "Đang tải...",
+    "staff": "Nhân viên",
+    "view_detail": "Xem chi tiết"
   },
   "auth": {
     "login": {
@@ -135,7 +137,9 @@
       "delete_account": "Xóa tài khoản",
       "change_info": "Đổi thông tin",
       "voucher": "Voucher",
-      "voucher_description": "Xem tất cả voucher của tôi"
+      "voucher_description": "Xem tất cả voucher của tôi",
+      "service_package": "Gói dịch vụ",
+      "service_package_description": "Xem tất cả gói dịch vụ của tôi"
     },
     "settings": {
       "title": "Cài đặt",
@@ -329,7 +333,8 @@
     "product": "Sản phẩm",
     "course": "Khoá học",
     "news": "Tin tức",
-    "placeholder_search": "Tìm kiếm mỹ phẩm, liệu trình ..."
+    "placeholder_search": "Tìm kiếm mỹ phẩm, liệu trình ...",
+    "upcoming_appointment": "Lịch hẹn gói dịch vụ sắp tới"
   },
   "greeting": {
     "morning": "Chúc bạn buổi sáng vui vẻ!",
@@ -555,6 +560,19 @@
     "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
     "verify_yes": "Có , gửi dữ liệu của tôi tới email",
     "verify_no": "Không, cảm ơn !"
+  },
+  "service_package": {
+    "title": "Gói dịch vụ",
+    "no_packages": "Bạn không có gói dịch vụ nào",
+    "progress": "Tiến độ sử dụng",
+    "total_sessions": "Tổng số lần",
+    "used_sessions": "Đã sử dụng", 
+    "remaining_sessions": "Còn lại",
+    "next_appointment": "Lịch hẹn tiếp theo",
+    "performed_by": "Thực hiện bởi",
+    "book_appointment": "Đặt lịch hẹn",
+    "expires_on": "Hết hạn vào",
+    "no_expiry": "Không giới hạn thời gian",
+    "unlimited_time": "Không giới hạn thời gian"
   }
 }
-

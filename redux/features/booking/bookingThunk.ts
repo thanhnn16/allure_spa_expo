@@ -1,17 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '@/utils/services/helper/axiosInstance';
-
-interface BookingPayload {
-    user_id: number;
-    service_id: number;
-    staff_id: number | null;
-    slots: number;
-    appointment_date: string;
-    time_slot_id: number;
-    appointment_type: string;
-    status: string;
-    note: string;
-}
+import { BookingPayload } from '@/types/appointment.type';
 
 export const getTimeSlots = createAsyncThunk(
     'booking/getTimeSlots',

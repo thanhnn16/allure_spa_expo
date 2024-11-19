@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Alert,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
@@ -33,19 +34,20 @@ import { useDialog } from "@/hooks/useDialog";
 import { fetchAddresses } from "@/redux/features";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppButton from "@/components/buttons/AppButton";
+import { Address, UserProfile } from "@/types/address.type";
 
-export interface PaymentAddressProps {
-  fullName: string;
-  phoneNumber: string;
-  fullAddress: string;
-  addressType: string;
-  isDefault: string;
-  note: string;
-  addressId: string;
-  province: string;
-  district: string;
-  address: string;
-}
+// export interface PaymentAddressProps {
+//   fullName: string;
+//   phoneNumber: string;
+//   fullAddress: string;
+//   addressType: string;
+//   isDefault: string;
+//   note: string;
+//   addressId: string;
+//   province: string;
+//   district: string;
+//   address: string;
+// }
 
 export interface PaymentMethod {
   id: number;
@@ -77,15 +79,15 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [selectedAddress, setSelectedAddress] =
-    useState<PaymentAddressProps | null>(null);
+    useState<Address | null>(null);
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
   const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
   const [voucher, setVoucher] = useState<Voucher | null>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [paymentDialog, setPaymentDialog] = useState(false);
   const [createOrderDialog, setCreateOrderDialog] = useState(false);
-
   const { dialogConfig, showDialog, hideDialog } = useDialog();
+  const [note, setNote] = useState("");
 
   const products = useSelector((state: RootState) => state.order.orders || []);
   const totalAmount = useSelector((state: RootState) => state.order.totalAmount || 0);
@@ -93,6 +95,24 @@ export default function Checkout() {
     (state: RootState) => state.voucher
   );
   const { addresses } = useSelector((state: RootState) => state.address);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const loadUserData = async () => {
+    try {
+      const userProfileStr = await AsyncStorage.getItem("userProfile");
+      if (userProfileStr) {
+        setUserProfile(JSON.parse(userProfileStr));
+      }
+
+      await dispatch(fetchAddresses()).unwrap();
+    } catch (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+      Alert.alert("Lỗi", "Không thể tải thông tin");
+    }
+  };
+
+  useEffect(() => {
+    loadUserData();
+  }, [dispatch]);
 
   // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
@@ -157,13 +177,16 @@ export default function Checkout() {
         return;
       }
 
+      console.log("selectedAddress:", selectedAddress.id);
+
       // Create order data
       const orderData = {
         payment_method_id: selectedPayment.id,
         total_amount: discountedPrice,
         discount_amount: totalPrice - discountedPrice,
         voucher_id: selectedVoucher?.id || null,
-        shipping_address_id: selectedAddress.addressId,
+        shipping_address_id: selectedAddress.id,
+        note: note || "",
         order_items: products.map((item: any) => ({
           item_type: item.type || "product",
           item_id: item.id,
@@ -190,7 +213,7 @@ export default function Checkout() {
         dispatch(clearOrder());
       } else if (selectedPayment.id === 3) { // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
-        
+
         const paymentData = {
           returnUrl: `${scheme}://invoice/success?order_id=${orderId}&amount=${discountedPrice}&payment_method=bank_transfer&payment_time=${new Date().toISOString()}`,
           cancelUrl: `${scheme}://invoice/failed?type=cancel&order_id=${orderId}&payment_method=bank_transfer`,
@@ -331,15 +354,15 @@ export default function Checkout() {
         onPress={() => router.push("/(app)/address")}
       >
         {selectedAddress ? (
-          <View>
+          <View flexS>
             <Text style={styles.addressTitle}>
               {i18n.t("checkout.delivery_address")}
             </Text>
             <Text style={styles.addressText}>
-              {selectedAddress.fullAddress}
+              {selectedAddress.address}, {selectedAddress.ward}, {selectedAddress.district}, {selectedAddress.province}
             </Text>
             <Text style={styles.recipientText}>
-              {selectedAddress.fullName} | {selectedAddress.phoneNumber}
+              {userProfile?.full_name} | {userProfile?.phone_number}
             </Text>
           </View>
         ) : (
@@ -389,6 +412,31 @@ export default function Checkout() {
             {products.map((product: Product) => (
               <PaymentProductItem key={product.id} product={product} />
             ))}
+          </View>
+
+          <View style={styles.borderInset} />
+
+          <View marginV-10>
+            <Text h2_bold>Note</Text>
+            <TextInput
+              value={note}
+              placeholder={i18n.t("address.note")}
+              onChangeText={(value) => setNote(value)}
+              multiline={true}
+              numberOfLines={3}
+              style={{
+                fontSize: 14,
+                minHeight: 80,
+                width: "100%",
+                padding: 15,
+                backgroundColor: "#ffffff",
+                borderRadius: 8,
+                textAlignVertical: "top",
+                borderWidth: 1,
+                borderColor: "#E5E7EB",
+                marginTop: 10,
+              }}
+            />
           </View>
         </ScrollView>
 

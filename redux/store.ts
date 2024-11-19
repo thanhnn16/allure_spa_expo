@@ -21,7 +21,7 @@ import bookingReducer from './features/booking/bookingSlice';
 import appointmentReducer from './features/appointment/appointmentSlice';
 import notificationReducer from './features/notification/notificationSlice';
 import bannerReducer from '@/redux/features/banner/bannerSlice';
-
+import servicePackageReducer from './features/servicePackage/servicePackageSlice';
 
 const persistConfig = {
     key: 'root',
@@ -52,6 +52,7 @@ const rootReducer: any = combineReducers({
     booking: bookingReducer,
     appointment: appointmentReducer,
     notification: notificationReducer,
+    servicePackage: servicePackageReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;

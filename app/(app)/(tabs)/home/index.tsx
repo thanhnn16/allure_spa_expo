@@ -17,7 +17,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
-import { Image, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { Colors, Dividers, Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
 import WeatherView from "@/components/home/WeatherView";
@@ -25,14 +25,14 @@ import { useAuth } from "@/hooks/useAuth";
 import i18n from "@/languages/i18n";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import { RootState } from "@/redux/store";
-import formatCurrency from "@/utils/price/formatCurrency";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 import {fetchBanners} from "@/redux/features/banner/bannerThunk";
+import UpcomingAppointment from "@/components/home/UpcomingAppointment";
+import { getServicePackagesThunk } from "@/redux/features/servicePackage/getServicePackagesThunk";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -62,9 +62,11 @@ const HomePage = () => {
     Dimensions.get("window");
   const { products } = useSelector((state: RootState) => state.product);
 
-  const unreadCount = useSelector(
-    (state: RootState) => state.notification.unreadCount
+  const { unreadCount, loading: notificationLoading } = useSelector(
+    (state: RootState) => state.notification
   );
+
+  const { packages } = useSelector((state: RootState) => state.servicePackage);
 
   useMemo(() => {
     if (hours < 12) {
@@ -78,15 +80,11 @@ const HomePage = () => {
 
   useEffect(() => {
     dispatch(getServicesThunk({ page: 1, limit: 5 }));
-  }, [dispatch]);
-
-  useEffect(() => {
     dispatch(getAllProductsThunk());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(fetchUnreadCount());
-  }, [dispatch]);
+    if (user?.id) {
+      dispatch(getServicePackagesThunk(user.id));
+    }
+  }, [dispatch, user?.id]);
 
 
 
@@ -96,12 +94,70 @@ const HomePage = () => {
     },
   });
 
+  const getUpcomingAppointment = () => {
+    if (!packages || !Array.isArray(packages)) {
+      return null;
+    }
+
+    const now = new Date();
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(now.getDate() + 7);
+
+    for (const pkg of packages) {
+      if (pkg.next_appointment_details) {
+        try {
+          const [day, month, year] =
+            pkg.next_appointment_details.date.split("/");
+          const appointmentDate = new Date(
+            parseInt(year),
+            parseInt(month) - 1,
+            parseInt(day),
+            0,
+            0,
+            0
+          );
+
+          // Chuyển đổi thời gian start thành giờ và phút
+          const [startHour, startMinute] =
+            pkg.next_appointment_details.time.start.split(":");
+          appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
+
+          if (
+            !isNaN(appointmentDate.getTime()) &&
+            appointmentDate > now &&
+            appointmentDate <= threeDaysFromNow
+          ) {
+            return {
+              ...pkg.next_appointment_details,
+              service_name: pkg.service_name,
+              id: pkg.id,
+            };
+          }
+        } catch (error) {
+          console.error("Error parsing date:", error);
+          continue;
+        }
+      }
+    }
+    return null;
+  };
+
+  const upcomingAppointment = getUpcomingAppointment();
+
   const renderContent = () => (
     <View flex>
       <View>
             <CarouselBanner />
       </View>
       <CategoryItem cateData={categories} />
+
+      {upcomingAppointment && (
+        <View paddingH-20>
+          <View height={1} backgroundColor={Colors.primary} marginV-10 />
+          <UpcomingAppointment appointment={upcomingAppointment} />
+          <View height={1} backgroundColor={Colors.primary} marginV-10 />
+        </View>
+      )}
 
       {services && Array.isArray(services) && services.length > 0 && (
         <SectionContainer
@@ -257,29 +313,28 @@ const HomePage = () => {
           </Animated.View>
           <View
             row
+            centerV
             gap-15
-            style={{
-              position: "absolute",
-              top: 0,
-              right: 0,
-              zIndex: 1,
-              paddingEnd: 20,
-              paddingVertical: 5,
-            }}
+            absR
+            style={{ zIndex: 1 }}
+            right-0
+            top-0
+            paddingV-10
+            marginH-20
           >
             <HomeHeaderButton
               onPress={() => {
-                router.push("notification" as Href<string>);
+                router.push("/notification");
               }}
               iconName="notifications-outline"
-              showBadge={unreadCount > 0}
-              badgeCount={unreadCount}
+              type="notification"
             />
             <HomeHeaderButton
               onPress={() => {
-                router.push("cart" as Href<string>);
+                router.push("/cart");
               }}
               iconName="cart-outline"
+              type="cart"
             />
           </View>
 
