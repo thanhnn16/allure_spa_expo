@@ -20,7 +20,6 @@ import Voice, {
   SpeechErrorEvent,
   SpeechEndEvent,
 } from "@react-native-voice/voice";
-import Toast from "react-native-toast-message";
 import { useSelector, useDispatch } from "react-redux";
 
 import SearchIcon from "@/assets/icons/search.svg";
@@ -92,10 +91,6 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
         const { granted: newGranted } = await Audio.requestPermissionsAsync();
         if (!newGranted) {
           setShowVoiceButton(false);
-          Toast.show({
-            type: "error",
-            text1: i18n.t("error.microphone_permission_required"),
-          });
           return;
         }
       }
@@ -105,21 +100,12 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
         const isVoiceAvailable = await Voice.isAvailable();
         if (!isVoiceAvailable) {
           setShowVoiceButton(false);
-          Toast.show({
-            type: "error",
-            text1: i18n.t("error.voice_not_available"),
-          });
           return;
         }
 
         const services = await Voice.getSpeechRecognitionServices();
         if (!services?.includes("com.google.android.googlequicksearchbox")) {
           setShowVoiceButton(false);
-          Toast.show({
-            type: "error",
-            text1: i18n.t("error.google_speech_not_available"),
-            text2: i18n.t("error.install_google_search"),
-          });
           return;
         }
       }
@@ -161,11 +147,6 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
       setError(JSON.stringify(e.error));
       setIsListening(false);
       animateButton(1);
-      Toast.show({
-        type: "error",
-        text1: i18n.t("error.voice_recognition"),
-        text2: e.error?.message || i18n.t("error.try_again"),
-      });
     };
   };
 
@@ -174,10 +155,6 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
       // Check availability first
       const isAvailable = await Voice.isAvailable();
       if (!isAvailable) {
-        Toast.show({
-          type: "error",
-          text1: i18n.t("error.voice_not_available"),
-        });
         return;
       }
 
@@ -185,21 +162,12 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
       if (Platform.OS === "android") {
         const services = await Voice.getSpeechRecognitionServices();
         if (!services?.includes("com.google.android.googlequicksearchbox")) {
-          Toast.show({
-            type: "error",
-            text1: i18n.t("error.google_speech_not_available"),
-            text2: i18n.t("error.install_google_search"),
-          });
           return;
         }
       }
 
       await Voice.start("vi-VN");
       setIsListening(true);
-      Toast.show({
-        type: "info",
-        text1: i18n.t("info.listening"),
-      });
     } catch (e) {
       console.error(e);
     }
@@ -209,10 +177,6 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
     try {
       await Voice.stop();
       setIsListening(false);
-      Toast.show({
-        type: "info",
-        text1: i18n.t("info.stopped_listening"),
-      });
     } catch (e) {
       console.error(e);
     }
