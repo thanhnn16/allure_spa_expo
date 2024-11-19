@@ -32,6 +32,7 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { User } from "@/types/user.type";
 
 import AppDialog from "@/components/dialog/AppDialog";
+import { BookingPayload } from "@/types/appointment.type";
 
 const BookingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,7 +46,7 @@ const BookingPage = () => {
   const numColumns = 2;
   const itemWidth = (windowWidth - padding * 2 - gap) / numColumns;
 
-  const { service_id, service_name } = useLocalSearchParams();
+  const { service_id, service_name, package_id } = useLocalSearchParams();
   const [today] = useState(moment().format("YYYY-MM-DD"));
   const [maxDate] = useState(moment().add(1, "year").format("YYYY-MM-DD"));
   const [selectedDate, setSelectedDate] = useState<string>(today.toString());
@@ -99,20 +100,20 @@ const BookingPage = () => {
   };
 
   const handleBooking = async () => {
-    const bookingData = {
+    const bookingData: BookingPayload = {
       service_id: Number(service_id),
-      staff_id: null,
       slots: Number(slot),
       appointment_date: selectedDate,
-      time_slot_id: Number(selectedTime),
-      appointment_type: "consultation",
       status: "pending",
+      time_slot_id: Number(selectedTime),
+      appointment_type: package_id ? 'service_package' : 'service',
+      ...(package_id && { user_service_package_id: Number(package_id) }),
       note: note === "" ? "Không có ghi chú" : note,
     };
 
     try {
       await dispatch(createBooking(bookingData));
-    } catch (error) {
+    } catch (error: any) {
       setDialogTitle(i18n.t("service.error"));
       setDialogDescription(error.message);
       setDialogVisible(true);

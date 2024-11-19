@@ -9,15 +9,29 @@ import { View, Text, Card, ProgressBar } from "react-native-ui-lib";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import AppBar from "@/components/app-bar/AppBar";
+import AppButton from "@/components/buttons/AppButton";
+import { router } from "expo-router";
 
 const ServicePackageScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const servicePackages = user?.service_packages || [];
+  const { packages, isLoading } = useSelector(
+    (state: RootState) => state.servicePackage
+  );
 
   useEffect(() => {
-    dispatch(getServicePackagesThunk(user?.id));
-  }, [dispatch]);
+    if (user?.id) {
+      dispatch(getServicePackagesThunk(user.id));
+    }
+  }, [dispatch, user?.id]);
+
+  if (isLoading) {
+    return (
+      <View flex center>
+        <Text>Đang tải...</Text>
+      </View>
+    );
+  }
 
   const renderPackageType = (packageType: any) => {
     return (
@@ -90,12 +104,23 @@ const ServicePackageScreen = () => {
     </View>
   );
 
+  const handleBooking = (pkg: any) => {
+    router.push({
+      pathname: "/(app)/booking",
+      params: {
+        service_id: pkg.service_id,
+        service_name: pkg.service_name,
+        package_id: pkg.id
+      }
+    });
+  };
+
   return (
     <View flex bg-white>
       <AppBar back title="Lịch hẹn sắp tới" />
       <ScrollView>
         <View padding-16>
-          {servicePackages.map((pkg: any) => (
+          {packages.map((pkg: any) => (
             <Card
               key={pkg.id}
               elevation={2}
@@ -147,6 +172,17 @@ const ServicePackageScreen = () => {
 
                 {/* Next Appointment */}
                 {renderNextAppointment(pkg.next_appointment_details)}
+
+                {/* Add booking button */}
+                {pkg.remaining_sessions > 0 && (
+                  <View marginT-16>
+                    <AppButton
+                      title="Đặt lịch hẹn"
+                      type="primary"
+                      onPress={() => handleBooking(pkg)}
+                    />
+                  </View>
+                )}
               </View>
             </Card>
           ))}

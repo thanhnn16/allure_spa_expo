@@ -17,17 +17,17 @@ export const servicePackageSlice = createSlice({
     name: 'servicePackage',
     initialState,
     reducers: {},
-    extraReducers: (builder) => {
+    extraReducers: (builder: any) => {
         builder
-            .addCase(getServicePackagesThunk.pending, (state) => {
+            .addCase(getServicePackagesThunk.pending, (state: any) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(getServicePackagesThunk.fulfilled, (state, action) => {
+            .addCase(getServicePackagesThunk.fulfilled, (state: any, action: any) => {
                 state.packages = action.payload;
                 state.isLoading = false;
             })
-            .addCase(getServicePackagesThunk.rejected, (state, action) => {
+            .addCase(getServicePackagesThunk.rejected, (state: any, action: any) => {
                 state.error = action.error.message || 'Failed to load service packages';
                 state.isLoading = false;
             });
