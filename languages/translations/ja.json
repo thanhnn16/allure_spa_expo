@@ -16,7 +16,9 @@
     "error": "エラー",
     "success": "成功",
     "back_to_home": "ホームに戻る",
-    "loading": "読み込み中..."
+    "loading": "読み込み中...",
+    "staff": "スタッフ",
+    "view_detail": "詳細を見る"
   },
   "auth": {
     "login": {
@@ -158,7 +160,9 @@
       "delete_account": "アカウントを削除",
       "change_info": "情報を変更",
       "voucher": "クーポン",
-      "voucher_description": "自分のクーポンを見る"
+      "voucher_description": "自分のクーポンを見る",
+      "service_package": "サービスパッケージ",
+      "service_package_description": "自分のサービスパッケージを見る"
     },
     "voucher": {
       "title": "クーポン",
@@ -333,7 +337,8 @@
     "product": "製品",
     "course": "コース",
     "news": "ニュース",
-    "placeholder_search": "化粧品、トリートメントを検索..."
+    "placeholder_search": "化粧品、トリートメントを検索...",
+    "upcoming_appointment": "サービスパッケージの予約が近づいています"
   },
   "greeting": {
     "morning": "おはようございます！",
@@ -500,31 +505,31 @@
     "buy_again": "もう一度購入",
     "cancel_order": "注文をキャンセル"
   },
-    "appointment": {
-        "scheduled": "予約済み",
-        "all": "すべて",
-        "7upcoming": "7日後",
-        "completed": "完了",
-        "cancelled": "キャンセル",
-        "times": "回数",
-        "not_started": "未開始",
-        "view_details": "詳細を見る",
-        "pending": "保留中",
-        "confirmed": "確認済み",
-        "available_slots": "{available_slots} 席が空いています",
-        "cancel_appointment": "予約をキャンセル",
-        "cancel_appointment_confirm": "この予約をキャンセルしてもよろしいですか？",
-        "cancel_appointment_success": "予約のキャンセルに成功しました",
-        "cancel_appointment_fail": "予約のキャンセルに失敗しました",
-        "cancel_appointment_reason": "キャンセル理由を入力してください",
-        "confirm": "確認",
-        "cancel": "キャンセル",
-        "order_code": "注文コード:",
-        "cancellation_note": "キャンセル理由",
-        "cancelled_at": "キャンセル日時",
-        "cancelled_by": "キャンセル者",
-        "total_amount": "合計金額",
-        "no_notes": "メモはありません",
+  "appointment": {
+    "scheduled": "予約済み",
+    "all": "すべて",
+    "7upcoming": "7日後",
+    "completed": "完了",
+    "cancelled": "キャンセル",
+    "times": "回数",
+    "not_started": "未開始",
+    "view_details": "詳細を見る",
+    "pending": "保留中",
+    "confirmed": "確認済み",
+    "available_slots": "{available_slots} 席が空いています",
+    "cancel_appointment": "予約をキャンセル",
+    "cancel_appointment_confirm": "この予約をキャンセルしてもよろしいですか？",
+    "cancel_appointment_success": "予約のキャンセルに成功しました",
+    "cancel_appointment_fail": "予約のキャンセルに失敗しました",
+    "cancel_appointment_reason": "キャンセル理由を入力してください",
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "order_code": "注文コード:",
+    "cancellation_note": "キャンセル理由",
+    "cancelled_at": "キャンセル日時",
+    "cancelled_by": "キャンセル者",
+    "total_amount": "合計金額",
+    "no_notes": "メモはありません",
     "title": "予約"
   },
   "orders": {
@@ -564,5 +569,19 @@
     "products": "製品",
     "services": "サービス",
     "empty": "お気に入りのリストに製品がありません"
+  },
+  "service_package": {
+    "title": "サービスパッケージ",
+    "no_packages": "サービスパッケージがありません",
+    "progress": "使用進捗",
+    "total_sessions": "合計回数",
+    "used_sessions": "使用済み",
+    "remaining_sessions": "残り",
+    "next_appointment": "次の予約",
+    "performed_by": "実行者",
+    "book_appointment": "予約を立てる",
+    "expires_on": "期限切れ",
+    "no_expiry": "時間制限なし",
+    "unlimited_time": "時間制限なし"
   }
 }

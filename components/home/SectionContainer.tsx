@@ -21,7 +21,7 @@ const SectionContainer: React.FC<RenderSectionProps> = ({
 }) => {
   return (
     <View gap-10 marginV-10 paddingH-24>
-      <View row spread marginH-20>
+      <View row spread>
         <Text text60BO>{title}</Text>
         <TouchableOpacity onPress={onPressMore}>
           <Text underline style={{ color: "#717658" }}>

@@ -19,19 +19,13 @@ export const getServicePackagesThunk = createAsyncThunk(
                     treatment_sessions: pkg.treatment_sessions?.sort((a: any, b: any) =>
                         new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
                     ),
-                    next_appointment_details: nextAppointment ? {
-                        date: new Date(nextAppointment.start).toLocaleDateString('vi-VN'),
+                    next_appointment_details: pkg.next_appointment_details ? {
+                        date: pkg.next_appointment_details.date,
                         time: {
-                            start: new Date(nextAppointment.start).toLocaleTimeString('vi-VN', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            }),
-                            end: new Date(nextAppointment.end).toLocaleTimeString('vi-VN', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })
+                            start: pkg.next_appointment_details.time.start,
+                            end: pkg.next_appointment_details.time.end
                         },
-                        staff: nextAppointment.staff
+                        staff: pkg.next_appointment_details.staff
                     } : null,
                     status_color: (() => {
                         switch (pkg.status) {

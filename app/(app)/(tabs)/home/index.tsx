@@ -17,7 +17,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from "react-native-reanimated";
-import { Image, Text, View } from "react-native-ui-lib";
+import { Colors, Dividers, Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
 import WeatherView from "@/components/home/WeatherView";
@@ -29,7 +29,8 @@ import { SkeletonView } from "react-native-ui-lib";
 import ServiceItem from "@/components/home/ServiceItem";
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
-import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
+import UpcomingAppointment from "@/components/home/UpcomingAppointment";
+import { getServicePackagesThunk } from "@/redux/features/servicePackage/getServicePackagesThunk";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -64,6 +65,8 @@ const HomePage = () => {
     (state: RootState) => state.notification
   );
 
+  const { packages } = useSelector((state: RootState) => state.servicePackage);
+
   useMemo(() => {
     if (hours < 12) {
       setGreeting(i18n.t("greeting.morning"));
@@ -77,7 +80,10 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(getServicesThunk({ page: 1, limit: 5 }));
     dispatch(getAllProductsThunk());
-  }, [dispatch]);
+    if (user?.id) {
+      dispatch(getServicePackagesThunk(user.id));
+    }
+  }, [dispatch, user?.id]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -85,10 +91,68 @@ const HomePage = () => {
     },
   });
 
+  const getUpcomingAppointment = () => {
+    if (!packages || !Array.isArray(packages)) {
+      return null;
+    }
+
+    const now = new Date();
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(now.getDate() + 7);
+
+    for (const pkg of packages) {
+      if (pkg.next_appointment_details) {
+        try {
+          const [day, month, year] =
+            pkg.next_appointment_details.date.split("/");
+          const appointmentDate = new Date(
+            parseInt(year),
+            parseInt(month) - 1,
+            parseInt(day),
+            0,
+            0,
+            0
+          );
+
+          // Chuyển đổi thời gian start thành giờ và phút
+          const [startHour, startMinute] =
+            pkg.next_appointment_details.time.start.split(":");
+          appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
+
+          if (
+            !isNaN(appointmentDate.getTime()) &&
+            appointmentDate > now &&
+            appointmentDate <= threeDaysFromNow
+          ) {
+            return {
+              ...pkg.next_appointment_details,
+              service_name: pkg.service_name,
+              id: pkg.id,
+            };
+          }
+        } catch (error) {
+          console.error("Error parsing date:", error);
+          continue;
+        }
+      }
+    }
+    return null;
+  };
+
+  const upcomingAppointment = getUpcomingAppointment();
+
   const renderContent = () => (
     <View flex>
       <CarouselBanner banner={banner} />
       <CategoryItem cateData={cateArr} />
+
+      {upcomingAppointment && (
+        <View paddingH-20>
+          <View height={1} backgroundColor={Colors.primary} marginV-10 />
+          <UpcomingAppointment appointment={upcomingAppointment} />
+          <View height={1} backgroundColor={Colors.primary} marginV-10 />
+        </View>
+      )}
 
       {services && Array.isArray(services) && services.length > 0 && (
         <SectionContainer

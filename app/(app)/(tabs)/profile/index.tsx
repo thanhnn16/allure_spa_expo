@@ -104,7 +104,7 @@ const ProfilePage = () => {
               {
                 title: i18n.t("profile.service_package"),
                 description: i18n.t("profile.service_package_description"),
-                icon: require("@/assets/images/ic_favorite.png"),
+                icon: require("@/assets/images/service-package.png"),
                 onPress: () => handleNavigation("/(app)/service-package"),
               },
               {
