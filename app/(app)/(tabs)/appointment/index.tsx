@@ -1,12 +1,19 @@
 import {
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   FlatList,
   Modal,
   TextInput,
+  Dimensions,
 } from "react-native";
-import { Colors, Text, View, Image, Button } from "react-native-ui-lib";
+import {
+  Colors,
+  Text,
+  View,
+  Image,
+  Button,
+  SkeletonView,
+} from "react-native-ui-lib";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,18 +26,26 @@ import ClockIcon from "@/assets/icons/clock.svg";
 import AppButton from "@/components/buttons/AppButton";
 import { AppointmentResponeModelParams } from "@/types/service.type";
 import AppBar from "@/components/app-bar/AppBar";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import LinearGradient from "react-native-linear-gradient";
+const { width } = Dimensions.get("window");
 
 const ScheduledPage = () => {
   const [selectedItem, setSelectedItem] = useState<number>(1);
   const [isModalVisible, setModalVisible] = useState(false);
   const [note, setNote] = useState("");
   const [currentItemId, setCurrentItemId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const { appointments } = useSelector((state: any) => state.appointment);
   const loggedInUserId = useSelector((state: any) => state.auth.user.id);
 
   useEffect(() => {
-    dispatch(getAppointments());
+    setLoading(true);
+    dispatch(getAppointments()).finally(() => {
+      setLoading(false);
+    });
   }, [dispatch]);
 
   useEffect(() => {
@@ -48,7 +63,11 @@ const ScheduledPage = () => {
 
   const handleItemPress = (item: { id: number; status?: string }) => {
     setSelectedItem(item.id);
-    let params: { from_date: string; to_date: string; status?: string } = {
+    let params: {
+      from_date: string | null;
+      to_date: string | null;
+      status?: string | null;
+    } = {
       from_date: moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD"),
       to_date: moment()
         .tz("Asia/Ho_Chi_Minh")
@@ -128,25 +147,60 @@ const ScheduledPage = () => {
   ) => {
     const isSelected = item.id === selectedItem;
     return (
-      <TouchableOpacity key={item.id} onPress={() => handleItemPress(item)}>
+      <TouchableOpacity
+        key={item.id}
+        onPress={() => handleItemPress(item)}
+        style={{
+          marginBottom: 5,
+          marginRight: 12,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
+      >
         <View
-          style={[
-            styles.itemContainer,
-            isSelected ? styles.selectedItem : styles.unselectedItem,
-          ]}
+          br30
+          paddingH-15
+          paddingV-10
+          backgroundColor={isSelected ? Colors.primary : Colors.white}
+          style={{
+            borderWidth: 1,
+            borderColor: isSelected ? Colors.primary : Colors.grey60,
+          }}
         >
-          <Text
-            style={[
-              styles.itemText,
-              isSelected ? styles.selectedItemText : styles.unselectedItemText,
-            ]}
-          >
+          <Text h3 color={isSelected ? Colors.white : Colors.text}>
             {item.name}
           </Text>
         </View>
       </TouchableOpacity>
     );
   };
+
+  const renderSkeletonItem = () => (
+    <View
+      padding-15
+      marginB-10
+      br20
+      backgroundColor={Colors.white}
+      style={{
+        shadowColor: Colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+      }}
+    >
+      <SkeletonView height={20} width={width * 0.4} />
+      <View marginT-10>
+        <SkeletonView height={120} width={width - 60} />
+      </View>
+      <View row marginT-10>
+        <SkeletonView height={20} width={width * 0.6} />
+      </View>
+    </View>
+  );
 
   const handleCancelOrderPress = (id: number) => {
     setCurrentItemId(id);
@@ -165,378 +219,280 @@ const ScheduledPage = () => {
 
   const renderFlatListItem = ({
     item,
+    index,
   }: {
     item: AppointmentResponeModelParams;
+    index: number;
   }) => {
-    // @ts-ignore
-    // @ts-ignore
+    const statusColors = {
+      completed: {
+        bg: Colors.rgba(Colors.green30, 0.15),
+        text: Colors.green10,
+        icon: "check-circle" as const,
+      },
+      pending: {
+        bg: Colors.rgba(Colors.yellow30, 0.15),
+        text: Colors.yellow10,
+        icon: "clock-outline" as const,
+      },
+      cancelled: {
+        bg: Colors.rgba(Colors.red30, 0.15),
+        text: Colors.red10,
+        icon: "close-circle" as const,
+      },
+      confirmed: {
+        bg: Colors.rgba(Colors.blue30, 0.15),
+        text: Colors.blue10,
+        icon: "calendar-check" as const,
+      },
+    };
+
+    const statusConfig =
+      statusColors[item.status.toLowerCase() as keyof typeof statusColors];
+
     return (
-      <View
-        paddingT-10
+      <Animated.View
+        entering={FadeInDown.delay(index * 100).springify()}
         style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 3,
-          backgroundColor: "white",
-          borderRadius: 10,
-          marginVertical: 10,
-          marginHorizontal: 10,
-          borderColor: "#e3e4de",
+          marginBottom: 15,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.1,
+          shadowRadius: 12,
+          elevation: 8,
         }}
       >
-        <View row spread centerV paddingH-15>
-          <View row gap-15 centerV>
-            <Text h3_bold>{`${i18n.t("appointment.order_code")} #${item.id
-              .toString()
-              .padStart(3)}`}</Text>
-          </View>
-          <View row gap-10 centerV>
-            <View>
-              <Text
-                h3_semibold
-                style={
-                  item.status === "completed"
-                    ? styles.completedStatus
-                    : item.status === "pending"
-                    ? styles.pendingStatus
-                    : item.status === "cancelled"
-                    ? styles.cancelledStatus
-                    : styles.confirmedStatus
-                }
-              >
-                {item.status === "completed"
-                  ? i18n.t("appointment.completed")
-                  : item.status === "pending"
-                  ? i18n.t("appointment.pending")
-                  : item.status === "cancelled"
-                  ? i18n.t("appointment.cancelled")
-                  : i18n.t("appointment.confirmed")}
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
-        <View paddingH-15>
-          <View row spread marginT-10>
-            <Image
-              source={require("@/assets/images/banner.png")}
-              style={{ width: 120, height: 120, borderRadius: 13 }}
-            />
-            <View flex marginL-10 gap-5>
-              <View>
-                <Text h3_bold numberOfLines={2}>
-                  {item.title}
-                </Text>
-                <Text h3_bold secondary>
-                  {item.service?.single_price
-                    ? ` ${item.service.single_price.toLocaleString()} ₫`
-                    : i18n.t("appointment.no_price")}
-                </Text>
+        <LinearGradient
+          colors={[
+            Colors.white as string,
+            Colors.rgba(Colors.primary, 0.05) as string,
+          ]}
+          style={{ borderRadius: 20 }}
+        >
+          <View padding-15 br20>
+            {/* Header */}
+            <View row spread centerV>
+              <View row centerV>
+                <Text h2_bold color={Colors.primary}>{`#${item.id
+                  .toString()
+                  .padStart(3)}`}</Text>
+                {item.service?.single_price && (
+                  <Text marginL-10 h3 color={Colors.secondary}>
+                    {`${item.service.single_price.toLocaleString()} ₫`}
+                  </Text>
+                )}
+              </View>
+              <View row centerV>
+                <MaterialCommunityIcons
+                  name={statusConfig.icon}
+                  size={20}
+                  color={statusConfig.text}
+                />
+                <View
+                  marginL-8
+                  padding-8
+                  br30
+                  backgroundColor={statusConfig.bg}
+                >
+                  <Text h4 color={statusConfig.text}>
+                    {item.status}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-          <View flex row centerV bottom marginT-10>
-            <Image source={ClockIcon} width={20} height={20} />
-            <Text h3>{`${moment(item.start)
-              .tz("Asia/Ho_Chi_Minh")
-              .format(" HH:mm  DD/MM/YYYY ")}  -  ${moment(item.end)
-              .tz("Asia/Ho_Chi_Minh")
-              .format(" HH:mm  DD/MM/YYYY")}`}</Text>
-          </View>
-          {item.status === "cancelled" && (
-            <View marginT-10>
-              <Text h4_bold>{`${i18n.t("appointment.cancellation_note")}: ${
-                item.cancellation_note
-                  ? item.cancellation_note
-                  : i18n.t("appointment.no_notes")
-              }`}</Text>
-              <Text h4_bold>{`${i18n.t("appointment.cancelled_at")}: ${new Date(
-                item.cancelled_at
-              ).toLocaleString()}`}</Text>
-              <Text h4_bold>{`${i18n.t("appointment.cancelled_by")}: ${
-                item.cancelled_by_user?.full_name
-              }`}</Text>
-            </View>
-          )}
-        </View>
-        <View height={1} marginT-10 bg-$backgroundPrimaryLight></View>
-        <View paddingH-15 paddingV-5 backgroundColor={Colors.primary_light}>
-          <View row spread marginT-10>
-            <Text h3_bold>Tổng tiền:</Text>
-            <Text h3_bold secondary>
-              {item.service?.single_price
-                ? ` ${item.service.single_price.toLocaleString()} ₫`
-                : i18n.t("appointment.no_price")}
-            </Text>
-          </View>
-          {item.status === "pending" && (
-            <AppButton
-              type="outline"
-              title={i18n.t("appointment.cancel_appointment")}
-              onPress={() => handleCancelOrderPress(item.id)}
-              buttonStyle={{ marginTop: 10 }}
-            />
-          )}
-        </View>
-        <Modal visible={isModalVisible} transparent>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>
-                {i18n.t("appointment.cancel_appointment")}
-              </Text>
-              <TextInput
-                style={styles.noteInput}
-                placeholder={i18n.t("appointment.cancel_appointment_reason")}
-                value={note}
-                onChangeText={setNote}
-                multiline
-              />
-              <View style={styles.buttonContainer}>
+
+            {/* Content */}
+            <View paddingT-15>
+              <View row>
+                <Image
+                  source={require("@/assets/images/banner.png")}
+                  style={{
+                    width: 110,
+                    height: 110,
+                    borderRadius: 15,
+                    backgroundColor: Colors.grey60,
+                  }}
+                />
+                <View flex marginL-15>
+                  <Text h3_bold numberOfLines={2}>
+                    {item.title}
+                  </Text>
+
+                  {/* Time Slot */}
+                  {item.time_slot && (
+                    <View row centerV marginT-8>
+                      <MaterialCommunityIcons
+                        name="clock-time-four"
+                        size={16}
+                        color={Colors.primary}
+                      />
+                      <Text marginL-5 h4 color={Colors.text}>
+                        {`${moment(
+                          item.time_slot.start_time,
+                          "HH:mm:ss"
+                        ).format("HH:mm")} - ${moment(
+                          item.time_slot.end_time,
+                          "HH:mm:ss"
+                        ).format("HH:mm")}`}
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Date */}
+                  <View row centerV marginT-5>
+                    <MaterialCommunityIcons
+                      name="calendar"
+                      size={16}
+                      color={Colors.primary}
+                    />
+                    <Text marginL-5 h4 color={Colors.text}>
+                      {moment(item.start).format("DD/MM/YYYY")}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Notes if exists */}
+              {item.note && (
+                <View
+                  marginT-10
+                  padding-10
+                  br10
+                  backgroundColor={Colors.grey70}
+                >
+                  <Text h4>{item.note}</Text>
+                </View>
+              )}
+
+              {/* Cancellation info */}
+              {item.status === "cancelled" && item.cancelled_by_user && (
+                <View
+                  marginT-10
+                  padding-10
+                  br10
+                  backgroundColor={Colors.rgba(Colors.red30, 0.1)}
+                >
+                  <Text h4 color={Colors.red10}>
+                    {`${i18n.t("appointment.cancelled_by")}: ${
+                      item.cancelled_by_user.full_name
+                    }`}
+                  </Text>
+                  {item.cancellation_note && (
+                    <Text marginT-5 h4 color={Colors.red10}>
+                      {`${i18n.t("appointment.cancel_reason")}: ${
+                        item.cancellation_note
+                      }`}
+                    </Text>
+                  )}
+                </View>
+              )}
+
+              {/* Cancel button */}
+              {item.status === "pending" && (
                 <AppButton
                   type="outline"
-                  title={i18n.t("appointment.cancel")}
-                  onPress={() => setModalVisible(false)}
+                  title={i18n.t("appointment.cancel_appointment")}
+                  onPress={() => handleCancelOrderPress(item.id)}
+                  buttonStyle={{ marginTop: 15 }}
+                  leftIcon={
+                    <MaterialCommunityIcons
+                      name="close-circle"
+                      size={20}
+                      color={Colors.red10}
+                      style={{ marginRight: 8 }}
+                    />
+                  }
                 />
-                <AppButton
-                  type="primary"
-                  title={i18n.t("appointment.confirm")}
-                  onPress={handleConfirmCancel}
-                />
-              </View>
+              )}
             </View>
           </View>
-        </Modal>
-      </View>
+        </LinearGradient>
+      </Animated.View>
     );
   };
 
   return (
     <View flex bg-white>
       <AppBar title={i18n.t("appointment.scheduled")} />
-      <View paddingH-24>
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal>
+      <View padding-15>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {items.map((item, index) => renderItem(item, index))}
         </ScrollView>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={appointments}
-          renderItem={renderFlatListItem}
-          keyExtractor={(item) => item.id.toString()}
-        />
+
+        {loading ? (
+          <View>
+            {[1, 2, 3].map((_, index) => (
+              <View key={index}>{renderSkeletonItem()}</View>
+            ))}
+          </View>
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={appointments}
+            renderItem={renderFlatListItem}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        )}
       </View>
+
+      <Modal visible={isModalVisible} transparent animationType="fade">
+        <View
+          flex
+          center
+          backgroundColor={Colors.rgba(Colors.black, 0.5)}
+          style={{}}
+        >
+          <Animated.View
+            entering={FadeInDown}
+            style={{
+              width: "85%",
+              backgroundColor: Colors.white,
+              borderRadius: 20,
+              padding: 20,
+              shadowColor: Colors.black,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.2,
+              shadowRadius: 8,
+              elevation: 8,
+            }}
+          >
+            <Text h2_bold marginB-15>
+              {i18n.t("appointment.cancel_appointment")}
+            </Text>
+
+            <TextInput
+              style={{
+                minHeight: 100,
+                borderColor: Colors.grey40,
+                borderWidth: 1,
+                borderRadius: 15,
+                padding: 15,
+                marginBottom: 20,
+                textAlignVertical: "top",
+              }}
+              placeholder={i18n.t("appointment.cancel_appointment_reason")}
+              value={note}
+              onChangeText={setNote}
+              multiline
+            />
+
+            <View row spread>
+              <AppButton
+                type="outline"
+                title={i18n.t("appointment.cancel")}
+                onPress={() => setModalVisible(false)}
+              />
+              <AppButton
+                type="outline"
+                title={i18n.t("appointment.confirm")}
+                onPress={handleConfirmCancel}
+              />
+            </View>
+          </Animated.View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 export default ScheduledPage;
-
-const styles = StyleSheet.create({
-  container: {
-    paddingStart: 10,
-    marginBottom: 95,
-    backgroundColor: "#fff",
-  },
-  text: {
-    color: "#717658",
-    fontSize: 24,
-    fontFamily: "Inter-Bold",
-  },
-  bannerContainer: {
-    alignItems: "flex-start",
-    marginBottom: 20,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 5,
-    elevation: 5,
-    backgroundColor: "#fff",
-  },
-  banner: {
-    width: 350,
-    height: 159,
-    borderRadius: 18,
-    alignSelf: "center",
-  },
-  bannerText: {
-    fontWeight: "bold",
-    fontSize: 16,
-    color: "#717658",
-    marginTop: 5,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  priceSpace: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    flex: 1,
-  },
-  icon: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-  },
-  infoText: {
-    fontSize: 14,
-    color: "#717658",
-    fontWeight: "bold",
-  },
-  priceText: {
-    color: "red",
-  },
-  blackText: {
-    color: "black",
-  },
-  underlineText: {
-    textDecorationLine: "underline",
-  },
-  circleIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: "#000",
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 5,
-  },
-  circleIconText: {
-    color: "#fff",
-    fontSize: 12,
-  },
-  scrollView: {
-    marginTop: 10,
-    marginBottom: 5,
-    backgroundColor: "#fff",
-  },
-  itemContainer: {
-    height: 40,
-    paddingHorizontal: 15,
-    paddingVertical: 5,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-    borderWidth: 1,
-    marginBottom: 7,
-    backgroundColor: "#fff",
-  },
-  selectedItem: {
-    backgroundColor: "#717658",
-    borderColor: "#717658",
-  },
-  unselectedItem: {
-    backgroundColor: "#FFFFFF",
-    borderColor: "#717658",
-  },
-  itemText: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
-  selectedItemText: {
-    color: "#FFFFFF",
-  },
-  unselectedItemText: {
-    color: "#717658",
-  },
-  flatListItem: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  flatListItemText: {
-    fontSize: 18,
-  },
-  noteInput: {
-    width: "100%",
-    height: 100,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-  },
-  cancelButton: {
-    backgroundColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-  },
-  confirmButton: {
-    backgroundColor: "#77891F",
-    padding: 10,
-    borderRadius: 5,
-  },
-  completedStatus: {
-    color: "#77891F",
-    backgroundColor: "#F0F4E3",
-    borderRadius: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "#77891F",
-  },
-  pendingStatus: {
-    color: "#6B7079",
-    backgroundColor: "#E8E9EB",
-    borderRadius: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "#6B7079",
-  },
-  cancelledStatus: {
-    color: "#FF0000",
-    backgroundColor: "#FFE5E5",
-    borderRadius: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "#FF0000",
-  },
-  confirmedStatus: {
-    color: "#0000FF",
-    backgroundColor: "#E5E5FF",
-    borderRadius: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "#0000FF",
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-    color: "#333",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    width: "90%",
-    justifyContent: "space-between",
-  },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-});
