@@ -108,7 +108,7 @@ const BookingPage = () => {
       appointment_date: selectedDate,
       status: "pending",
       time_slot_id: Number(selectedTime),
-      appointment_type: package_id ? 'service_package' : 'service',
+      appointment_type: package_id ? "service_package" : "service",
       ...(package_id && { user_service_package_id: Number(package_id) }),
       note: note === "" ? "Không có ghi chú" : note,
     };
