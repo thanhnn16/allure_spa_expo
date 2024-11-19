@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ListItem,
-  Colors,
-} from "react-native-ui-lib";
+import { View, Text, TouchableOpacity, Colors } from "react-native-ui-lib";
 import { Feather } from "@expo/vector-icons";
 
 export type NotificationType =
@@ -36,53 +30,53 @@ const notificationTypeMap: Record<
   {
     iconName: string;
     iconColor: string;
-    readIconColor: string;
+    bgColor: string;
   }
 > = {
   new_order: {
     iconName: "shopping-bag",
-    iconColor: "#2196F3",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
   },
   order_status: {
     iconName: "package",
-    iconColor: "#2196F3",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
   },
   new_appointment: {
     iconName: "calendar",
-    iconColor: "#4CAF50",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.secondary,
+    bgColor: "#FFF5EE", // Light version of secondary
   },
   appointment_status: {
     iconName: "clock",
-    iconColor: "#FF9800",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.secondary,
+    bgColor: "#FFF5EE",
   },
   new_review: {
     iconName: "star",
-    iconColor: "#FFC107",
-    readIconColor: "#BDBDBD",
+    iconColor: "#FFB800",
+    bgColor: "#FFF8E7",
   },
   new_message: {
     iconName: "message-circle",
-    iconColor: "#9C27B0",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
   },
   promotion: {
     iconName: "tag",
-    iconColor: "#F44336",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.secondary,
+    bgColor: "#FFF5EE",
   },
   system: {
     iconName: "alert-circle",
-    iconColor: "#607D8B",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.text,
+    bgColor: Colors.grey70,
   },
   payment: {
     iconName: "credit-card",
-    iconColor: "#4CAF50",
-    readIconColor: "#BDBDBD",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
   },
 };
 
@@ -94,92 +88,98 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
   isRead,
   onPress,
 }) => {
-  const { iconName, iconColor, readIconColor } =
+  const { iconName, iconColor, bgColor } =
     notificationTypeMap[type] || notificationTypeMap.system;
 
   return (
-    <TouchableOpacity
-      paddingH-16
-      marginV-6
-      onPress={onPress}
-      activeOpacity={0.8}
-      style={{
-        borderBottomWidth: 1,
-        borderRadius: 20,
-        borderBottomColor: Colors.grey70,
-      }}
-    >
-      <ListItem
-        height={88}
-        paddingH-16
-        paddingV-12
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <View
+        padding-16
+        marginH-12
+        marginV-4
+        bg-white
+        br20
         style={{
-          backgroundColor: isRead ? Colors.grey80 : Colors.white,
+          opacity: isRead ? 0.9 : 1,
+          shadowColor: Colors.grey40,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 3,
+          elevation: isRead ? 1 : 2,
         }}
       >
-        <ListItem.Part left marginR-12>
+        <View row centerV>
+          {/* Icon Container - Updated styling */}
           <View
-            width={36}
-            height={36}
-            br20
             center
+            width={40}
+            height={40}
+            br20
+            marginR-12
+            backgroundColor={isRead ? Colors.grey70 : bgColor}
             style={{
-              backgroundColor: isRead ? Colors.grey80 : iconColor,
+              shadowColor: iconColor,
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 2,
+              elevation: isRead ? 0 : 2,
             }}
           >
             <Feather
               name={iconName as any}
               size={20}
-              color={isRead ? readIconColor : Colors.white}
+              color={isRead ? Colors.grey30 : iconColor}
             />
           </View>
-        </ListItem.Part>
 
-        <ListItem.Part middle column>
-          <View row spread centerV marginB-4>
+          {/* Content Container */}
+          <View flex>
+            <View row spread centerV marginB-4>
+              <Text
+                flex-3
+                text70BO={!isRead}
+                text70={isRead}
+                color={isRead ? Colors.grey30 : Colors.text}
+                numberOfLines={1}
+              >
+                {title}
+              </Text>
+              <Text flex-1 right text90 color={Colors.grey40} marginL-8>
+                {time}
+              </Text>
+            </View>
+
             <Text
               text80
-              color={Colors.grey20}
-              style={{
-                fontWeight: isRead ? "400" : "600",
-                flex: 1,
-                marginRight: 8,
-              }}
-              numberOfLines={1}
+              color={isRead ? Colors.grey40 : Colors.grey20}
+              numberOfLines={2}
+              style={{ lineHeight: 18 }}
             >
-              {title}
-            </Text>
-            <Text text90 color={Colors.grey40}>
-              {time}
+              {content}
             </Text>
           </View>
-          <Text
-            text80
-            color={Colors.grey40}
-            numberOfLines={2}
-            style={{
-              lineHeight: 20,
-            }}
-          >
-            {content}
-          </Text>
-        </ListItem.Part>
+        </View>
 
+        {/* Updated unread indicator */}
         {!isRead && (
           <View
+            absR
+            marginR-12
+            marginT-6
+            width={6}
+            height={6}
+            br100
+            backgroundColor={Colors.primary}
             style={{
-              position: "absolute",
-              right: 16,
-              top: "50%",
-              marginTop: -4,
-              width: 8,
-              height: 8,
-              borderRadius: 4,
-              backgroundColor: Colors.primary,
+              shadowColor: Colors.primary,
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.3,
+              shadowRadius: 2,
+              elevation: 2,
             }}
           />
         )}
-      </ListItem>
+      </View>
     </TouchableOpacity>
   );
 };
