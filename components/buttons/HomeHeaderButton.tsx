@@ -15,6 +15,7 @@ const HomeHeaderButton = ({
   showBadge,
   badgeCount,
 }: HomeHeaderButtonProps) => {
+  console.log("badgeCount", badgeCount);
   return (
     <TouchableOpacity onPress={onPress}>
       <View>

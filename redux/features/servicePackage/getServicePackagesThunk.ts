@@ -9,21 +9,41 @@ export const getServicePackagesThunk = createAsyncThunk(
 
             console.log("Service packages", response.data.data);
 
-            const packages = response.data.data.map((pkg: any) => ({
-                ...pkg,
-                treatment_sessions: pkg.treatment_sessions?.sort((a: any, b: any) =>
-                    new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
-                ),
-                status_color: (() => {
-                    switch (pkg.status) {
-                        case 'active': return 'green';
-                        case 'pending': return 'blue';
-                        case 'expired': return 'red';
-                        case 'completed': return 'purple';
-                        default: return 'gray';
-                    }
-                })()
-            }));
+            const packages = response.data.data.map((pkg: any) => {
+                const nextAppointment = pkg.treatment_sessions?.find((session: any) =>
+                    new Date(session.start) > new Date() && session.status === 'confirmed'
+                );
+
+                return {
+                    ...pkg,
+                    treatment_sessions: pkg.treatment_sessions?.sort((a: any, b: any) =>
+                        new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
+                    ),
+                    next_appointment_details: nextAppointment ? {
+                        date: new Date(nextAppointment.start).toLocaleDateString('vi-VN'),
+                        time: {
+                            start: new Date(nextAppointment.start).toLocaleTimeString('vi-VN', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            }),
+                            end: new Date(nextAppointment.end).toLocaleTimeString('vi-VN', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })
+                        },
+                        staff: nextAppointment.staff
+                    } : null,
+                    status_color: (() => {
+                        switch (pkg.status) {
+                            case 'active': return 'green';
+                            case 'pending': return 'blue';
+                            case 'expired': return 'red';
+                            case 'completed': return 'purple';
+                            default: return 'gray';
+                        }
+                    })()
+                };
+            });
 
             return packages.sort((a: any, b: any) => {
                 const statusOrder: any = {

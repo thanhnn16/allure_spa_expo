@@ -110,82 +110,88 @@ const ServicePackageScreen = () => {
       params: {
         service_id: pkg.service_id,
         service_name: pkg.service_name,
-        package_id: pkg.id
-      }
+        package_id: pkg.id,
+      },
     });
   };
 
   return (
     <View flex bg-white>
-      <AppBar back title="Lịch hẹn sắp tới" />
+      <AppBar back title="Gói dịch vụ của tôi" />
       <ScrollView>
         <View padding-16>
-          {packages.map((pkg: any) => (
-            <Card
-              key={pkg.id}
-              elevation={2}
-              marginB-16
-              enableShadow
-              containerStyle={{ borderRadius: 16 }}
-            >
-              <Card.Section
-                content={[
-                  {
-                    text: pkg.service_name,
-                    contentType: true,
-                  },
-                ]}
-              />
-              <View padding-16>
-                {/* Header */}
-                <View row spread centerV>
-                  <View row centerV flex>
-                    <Text text65M flex>
-                      {pkg.service_name}
-                    </Text>
-                    {renderPackageType(pkg.package_type)}
+          {packages.length === 0 ? (
+            <View center padding-16>
+              <Text text70>Bạn chưa có gói dịch vụ nào</Text>
+            </View>
+          ) : (
+            packages.map((pkg: any) => (
+              <Card
+                key={pkg.id}
+                elevation={2}
+                marginB-16
+                enableShadow
+                containerStyle={{ borderRadius: 16 }}
+              >
+                <Card.Section
+                  content={[
+                    {
+                      text: pkg.service_name,
+                      contentType: true,
+                    },
+                  ]}
+                />
+                <View padding-16>
+                  {/* Header */}
+                  <View row spread centerV>
+                    <View row centerV flex>
+                      <Text text65M flex>
+                        {pkg.service_name}
+                      </Text>
+                      {renderPackageType(pkg.package_type)}
+                    </View>
                   </View>
-                </View>
 
-                <Text text80 grey40 marginT-8>
-                  Hết hạn: {pkg.formatted_expiry_date || "Không giới hạn"}
-                </Text>
+                  <Text text80 grey40 marginT-8>
+                    Hết hạn: {pkg.formatted_expiry_date || "Không giới hạn"}
+                  </Text>
 
-                {/* Progress */}
-                <View marginT-16>
-                  <ProgressBar
-                    progress={pkg.progress_percentage}
-                    progressColor={
-                      pkg.progress_percentage >= 100
-                        ? Colors.green30
-                        : Colors.blue30
-                    }
-                  />
-                </View>
-
-                {/* Sessions Info */}
-                <View row spread marginT-16>
-                  {renderSessionInfo("Tổng số buổi", pkg.total_sessions)}
-                  {renderSessionInfo("Đã sử dụng", pkg.used_sessions)}
-                  {renderSessionInfo("Còn lại", pkg.remaining_sessions)}
-                </View>
-
-                {/* Next Appointment */}
-                {renderNextAppointment(pkg.next_appointment_details)}
-
-                {/* Add booking button */}
-                {pkg.remaining_sessions > 0 && (
+                  {/* Progress */}
                   <View marginT-16>
-                    <AppButton
-                      title="Đặt lịch hẹn"
-                      type="primary"
-                      onPress={() => handleBooking(pkg)}
+                    <ProgressBar
+                      progress={pkg.progress_percentage}
+                      progressColor={
+                        pkg.progress_percentage >= 100
+                          ? Colors.green30
+                          : Colors.blue30
+                      }
                     />
                   </View>
-                )}
-              </View>
-            </Card>
-          ))}
+
+                  {/* Sessions Info */}
+                  <View row spread marginT-16>
+                    {renderSessionInfo("Tổng số buổi", pkg.total_sessions)}
+                    {renderSessionInfo("Đã sử dụng", pkg.used_sessions)}
+                    {renderSessionInfo("Còn lại", pkg.remaining_sessions)}
+                  </View>
+
+                  {/* Next Appointment */}
+                  {renderNextAppointment(pkg.next_appointment_details)}
+
+                  {/* Add booking button */}
+                  {pkg.remaining_sessions > 0 && (
+                    <View marginT-16>
+                      <AppButton
+                        title="Đặt lịch hẹn"
+                        type="primary"
+                        onPress={() => handleBooking(pkg)}
+                      />
+                    </View>
+                  )}
+                </View>
+              </Card>
+            ))
+          )}
         </View>
       </ScrollView>
     </View>

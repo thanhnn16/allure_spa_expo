@@ -78,13 +78,7 @@ const HomePage = () => {
 
   useEffect(() => {
     dispatch(getServicesThunk({ page: 1, limit: 5 }));
-  }, [dispatch]);
-
-  useEffect(() => {
     dispatch(getAllProductsThunk());
-  }, [dispatch]);
-
-  useEffect(() => {
     dispatch(fetchUnreadCount());
   }, [dispatch]);
 
@@ -271,7 +265,7 @@ const HomePage = () => {
           >
             <HomeHeaderButton
               onPress={() => {
-                router.push("notification" as Href<string>);
+                router.push("/notification");
               }}
               iconName="notifications-outline"
               showBadge={unreadCount > 0}

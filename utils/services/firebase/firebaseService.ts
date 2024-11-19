@@ -91,9 +91,11 @@ class FirebaseService {
     // Xử lý tin nhắn khi ứng dụng đang mở
     return messaging().onMessage(async remoteMessage => {
       console.log('Received foreground message:', remoteMessage);
+      const dispatch = useDispatch<AppDispatch>();
+      dispatch(fetchUnreadCount());
       remoteMessage.data = {
         ...remoteMessage.data,
-        foreground: 'true'
+        foreground: 'false'
       };
 
       if (remoteMessage.data?.type === 'chat_message') {
