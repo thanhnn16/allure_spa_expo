@@ -172,7 +172,9 @@ const NotificationDetail: React.FC = () => {
                   text80
                   color={notification.is_read ? Colors.grey30 : Colors.primary}
                 >
-                  {notification.is_read ? i18n.t("notification.read") : i18n.t("notification.unread")}
+                  {notification.is_read
+                    ? i18n.t("notification.read")
+                    : i18n.t("notification.unread")}
                 </Text>
               </View>
             </View>

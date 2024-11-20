@@ -19,6 +19,7 @@ import { Notification } from "@/redux/features/notification/types";
 import EmptyNotification from "@/components/notification/EmptyNotification";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import i18n from "@/languages/i18n";
+import { router } from "expo-router";
 
 const NotificationPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,6 +36,9 @@ const NotificationPage: React.FC = () => {
 
   const handleNotificationPress = async (id: number) => {
     await dispatch(markNotificationAsRead(id));
+    router.push(`/notification/${id}`);
+    console.log(`push to notification ${id}`);
+    
   };
 
   const handleMarkAllAsRead = async () => {

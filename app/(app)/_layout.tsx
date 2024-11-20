@@ -32,6 +32,7 @@ const AppLayout = () => {
       <Stack.Screen name="favorite/index" />
       <Stack.Screen name="cart/index" />
       <Stack.Screen name="notification/index" />
+      <Stack.Screen name="notification/[id]" />
       <Stack.Screen name="voucher/index" />
       <Stack.Screen name="check-out/index" />
       <Stack.Screen name="reward/index" />
