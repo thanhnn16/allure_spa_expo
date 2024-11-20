@@ -495,5 +495,18 @@
     "expires_on": "Expires on",
     "no_expiry": "No time limit",
     "unlimited_time": "Unlimited time"
+  },
+  "notification": {
+    "title": "Notification",
+    "all_notifications": "All notifications",
+    "mark_all_as_read": "Mark all as read",
+    "loading": "Loading notifications...",
+    "loading_more": "Loading more...",
+    "read": "Read",
+    "unread": "Unread",
+    "detail": "Notification Detail",
+    "view_detail": "View detail",
+    "type": "Notification Type",
+    "status": "Status"
   }
 }

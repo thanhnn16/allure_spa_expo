@@ -480,5 +480,18 @@
     "expires_on": "Hết hạn vào",
     "no_expiry": "Không giới hạn thời gian",
     "unlimited_time": "Không giới hạn thời gian"
+  },
+  "notification": {
+    "title": "Thông báo",
+    "all_notifications": "Tất cả thông báo",
+    "mark_all_as_read": "Đánh dấu tất cả là đã đọc",
+    "loading": "Đang tải thông báo...",
+    "loading_more": "Đang tải thêm...",
+    "read": "Đã đọc",
+    "unread": "Chưa đọc",
+    "detail": "Chi tiết thông báo",
+    "view_detail": "Xem chi tiết",
+    "type": "Loại thông báo",
+    "status": "Trạng thái"
   }
 }

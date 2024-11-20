@@ -25,7 +25,7 @@ interface NotificationItemProps {
   onPress?: () => void;
 }
 
-const notificationTypeMap: Record<
+export const notificationTypeMap: Record<
   NotificationType,
   {
     iconName: string;

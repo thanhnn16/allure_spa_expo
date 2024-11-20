@@ -593,5 +593,18 @@
     "expires_on": "期限切れ",
     "no_expiry": "時間制限なし",
     "unlimited_time": "時間制限なし"
+  },
+  "notification": {
+    "title": "通知",
+    "all_notifications": "すべての通知",
+    "mark_all_as_read": "すべてを読みました",
+    "loading": "通知を読み込んでいます...",
+    "loading_more": "さらに読み込んでいます...",
+    "read": "読みました",
+    "unread": "未読",
+    "detail": "通知詳細",
+    "view_detail": "詳細を見る",
+    "type": "通知タイプ",
+    "status": "ステータス"
   }
 }

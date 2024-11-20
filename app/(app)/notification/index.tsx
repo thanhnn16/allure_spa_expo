@@ -18,6 +18,7 @@ import { vi } from "date-fns/locale";
 import { Notification } from "@/redux/features/notification/types";
 import EmptyNotification from "@/components/notification/EmptyNotification";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import i18n from "@/languages/i18n";
 
 const NotificationPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -77,10 +78,10 @@ const NotificationPage: React.FC = () => {
 
   if (loading && !notifications?.length) {
     return (
-      <View flex center>
+      <View flex center bg-white>
         <ActivityIndicator size="large" color={Colors.primary} />
         <Text marginT-8 text70 color={Colors.grey40}>
-          Đang tải thông báo...
+          {i18n.t("notification.loading")}
         </Text>
       </View>
     );
@@ -88,7 +89,7 @@ const NotificationPage: React.FC = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title="Thông báo" />
+      <AppBar back title={i18n.t("notification.title")} />
       <View flex>
         {!loading && notifications?.length === 0 && (
           <EmptyNotification showHeader={false} />
@@ -112,7 +113,7 @@ const NotificationPage: React.FC = () => {
               }}
             >
               <Text text70BO color={Colors.text}>
-                Tất cả thông báo
+                {i18n.t("notification.all_notifications")}
               </Text>
               {notifications?.some((n: Notification) => !n.is_read) && (
                 <TouchableOpacity
@@ -124,7 +125,7 @@ const NotificationPage: React.FC = () => {
                   }}
                 >
                   <Text text80BO color={Colors.primary}>
-                    Đánh dấu tất cả là đã đọc
+                    {i18n.t("notification.mark_all_as_read")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -151,7 +152,7 @@ const NotificationPage: React.FC = () => {
                   <View center padding-16>
                     <ActivityIndicator size="small" color={Colors.primary} />
                     <Text marginT-8 text80 color={Colors.grey40}>
-                      Đang tải thêm...
+                      {i18n.t("notification.loading_more")}
                     </Text>
                   </View>
                 )
