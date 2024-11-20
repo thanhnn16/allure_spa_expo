@@ -10,37 +10,37 @@ import {
   showStyle,
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
-import { Href, router } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import { Dimensions, RefreshControl } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
 } from "react-native-reanimated";
-import { Colors, Dividers, Image, Text, View } from "react-native-ui-lib";
+import { Colors, Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
+import ServiceItem from "@/components/home/ServiceItem";
+import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import WeatherView from "@/components/home/WeatherView";
 import { useAuth } from "@/hooks/useAuth";
 import i18n from "@/languages/i18n";
+import { fetchBanners } from "@/redux/features/banner/bannerThunk";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
-import { RootState } from "@/redux/store";
-import { SkeletonView } from "react-native-ui-lib";
-import ServiceItem from "@/components/home/ServiceItem";
-import { ServiceResponeModel } from "@/types/service.type";
-import { Product } from "@/types/product.type";
-import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
-import {fetchBanners} from "@/redux/features/banner/bannerThunk";
-import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import { getServicePackagesThunk } from "@/redux/features/servicePackage/getServicePackagesThunk";
+import { RootState } from "@/redux/store";
+import { Product } from "@/types/product.type";
+import { ServiceResponeModel } from "@/types/service.type";
+import { SkeletonView } from "react-native-ui-lib";
 
 const HomePage = () => {
   const dispatch = useDispatch();
   const currentDate = new Date();
   const hours = currentDate.getHours();
   const [greeting, setGreeting] = useState<string>("");
-
-  const { loading } = useSelector((state: RootState) => state.banners);
 
   useEffect(() => {
     dispatch(fetchBanners());
@@ -61,12 +61,23 @@ const HomePage = () => {
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
     Dimensions.get("window");
   const { products } = useSelector((state: RootState) => state.product);
-
-  const { unreadCount, loading: notificationLoading } = useSelector(
-    (state: RootState) => state.notification
-  );
-
   const { packages } = useSelector((state: RootState) => state.servicePackage);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        dispatch(fetchBanners()),
+        dispatch(getServicesThunk({ page: 1, limit: 5 })),
+        dispatch(getAllProductsThunk()),
+        user?.id && dispatch(getServicePackagesThunk(user.id)),
+      ]);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   useMemo(() => {
     if (hours < 12) {
@@ -85,8 +96,6 @@ const HomePage = () => {
       dispatch(getServicePackagesThunk(user.id));
     }
   }, [dispatch, user?.id]);
-
-
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -146,59 +155,68 @@ const HomePage = () => {
 
   const renderContent = () => (
     <View flex>
-      <View>
-            <CarouselBanner />
-      </View>
-      <CategoryItem cateData={categories} />
+      <Animated.View entering={FadeIn.duration(500)}>
+        <CarouselBanner />
+      </Animated.View>
+
+      <Animated.View entering={FadeInDown.duration(600).delay(200)}>
+        <CategoryItem cateData={categories} />
+      </Animated.View>
 
       {upcomingAppointment && (
-        <View paddingH-20>
-          <View height={1} backgroundColor={Colors.primary} marginV-10 />
-          <UpcomingAppointment appointment={upcomingAppointment} />
-          <View height={1} backgroundColor={Colors.primary} marginV-10 />
-        </View>
+        <Animated.View entering={FadeInUp.duration(600).delay(300)}>
+          <View paddingH-20 gap-10>
+            <View height={0.5} backgroundColor={Colors.primary} />
+            <UpcomingAppointment appointment={upcomingAppointment} />
+            <View height={0.5} backgroundColor={Colors.primary} />
+          </View>
+        </Animated.View>
       )}
 
       {services && Array.isArray(services) && services.length > 0 && (
-        <SectionContainer
+        <Animated.View entering={FadeInUp.duration(600).delay(400)}>
+          <SectionContainer
             title={i18n.t("home.featured_services")}
-          data={services}
-          renderItem={({ item }: { item: ServiceResponeModel }) => (
-            <ServiceItem
-              item={item}
-              widthItem={WINDOW_WIDTH * 0.537}
-              heightItem={WINDOW_HEIGHT * 0.378}
-              heightImage={WINDOW_HEIGHT * 0.21}
-            />
-          )}
-          onPressMore={() => {
-            router.push({
-              pathname: "/(app)/see-more",
-              params: { type: "service" },
-            });
-          }}
-        />
+            data={services}
+            renderItem={({ item }: { item: ServiceResponeModel }) => (
+              <ServiceItem
+                item={item}
+                widthItem={WINDOW_WIDTH * 0.537}
+                heightItem={WINDOW_HEIGHT * 0.378}
+                heightImage={WINDOW_HEIGHT * 0.21}
+              />
+            )}
+            onPressMore={() => {
+              router.push({
+                pathname: "/(app)/see-more",
+                params: { type: "service" },
+              });
+            }}
+          />
+        </Animated.View>
       )}
 
       {products && products.length > 0 && (
-        <SectionContainer
-          title={i18n.t("home.featured_products")}
-          data={products}
-          renderItem={({ item }: { item: Product }) => (
-            <ProductItem
-              item={item}
-              widthItem={WINDOW_WIDTH * 0.468}
-              heightItem={WINDOW_HEIGHT * 0.378}
-              heightImage={WINDOW_HEIGHT * 0.19}
-            />
-          )}
-          onPressMore={() => {
-            router.push({
-              pathname: "/(app)/see-more",
-              params: { type: "product" },
-            });
-          }}
-        />
+        <Animated.View entering={FadeInUp.duration(600).delay(500)}>
+          <SectionContainer
+            title={i18n.t("home.featured_products")}
+            data={products}
+            renderItem={({ item }: { item: Product }) => (
+              <ProductItem
+                item={item}
+                widthItem={WINDOW_WIDTH * 0.468}
+                heightItem={WINDOW_HEIGHT * 0.378}
+                heightImage={WINDOW_HEIGHT * 0.19}
+              />
+            )}
+            onPressMore={() => {
+              router.push({
+                pathname: "/(app)/see-more",
+                params: { type: "product" },
+              });
+            }}
+          />
+        </Animated.View>
       )}
     </View>
   );
@@ -206,63 +224,55 @@ const HomePage = () => {
   const renderSkeletonContent = () => (
     <View flex paddingH-20>
       {/* Banner skeleton */}
-      <View marginT-10 marginB-20>
+      <View marginB-20>
         <SkeletonView
           height={160}
           width={WINDOW_WIDTH - 40}
-          style={{ borderRadius: 12 }}
+          borderRadius={12}
         />
       </View>
 
       {/* Category skeleton */}
-      <View row centerH marginB-20>
-        {categories.map((category) => (
-            <View key={category.id} center marginH-12>
-              <Image source={category.icon} style={{ height: 48, width: 48, borderRadius: 24 }} />
-              <Text style={{ marginTop: 5 }}>{category.name}</Text>
+      <View row centerH marginB-20 spread>
+        {Array(6)
+          .fill(0)
+          .map((_, index) => (
+            <View key={index} center marginH-8>
+              <SkeletonView
+                height={48}
+                width={48}
+                style={{ borderRadius: 24 }}
+              />
+              <SkeletonView height={16} width={60} marginT-8 />
             </View>
-        ))}
+          ))}
+      </View>
+
+      {/* Upcoming Appointment skeleton */}
+      <View marginB-20>
+        <View height={1} backgroundColor={Colors.primary} marginV-10 />
+        <SkeletonView
+          height={120}
+          width={WINDOW_WIDTH - 40}
+          borderRadius={12}
+        />
+        <View height={1} backgroundColor={Colors.primary} marginV-10 />
       </View>
 
       {/* Services section skeleton */}
-      <View marginB-20>
-        <View row spread marginB-10>
-          <SkeletonView height={20} width={120} />
-          <SkeletonView height={20} width={80} />
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {Array(3)
-            .fill(0)
-            .map((_, index) => (
-              <SkeletonView
-                key={index}
-                height={280}
-                width={230}
-                style={{ marginRight: 15, borderRadius: 16 }}
-              />
-            ))}
-        </ScrollView>
-      </View>
 
-      {/* Products section skeleton */}
       <View>
         <View row spread marginB-10>
           <SkeletonView height={20} width={120} />
           <SkeletonView height={20} width={80} />
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {Array(4)
-            .fill(0)
-            .map((_, index) => (
-              <SkeletonView
-                key={index}
-                height={270}
-                width={200}
-                marginH-15
-                borderRadius={16}
-              />
-            ))}
-        </ScrollView>
+      </View>
+
+      <View>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
       </View>
     </View>
   );
@@ -364,6 +374,9 @@ const HomePage = () => {
         showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT,
         }}
@@ -372,29 +385,6 @@ const HomePage = () => {
       </Animated.ScrollView>
     </View>
   );
-};
-
-const styles = {
-  carouselContainer: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    height: 160,
-    marginTop: 10,
-    marginHorizontal: 20,
-  },
-  carousel: {
-    height: 200,
-  },
-  slideContainer: {
-    borderRadius: 12,
-    overflow: "hidden",
-    height: 160,
-  },
-  image: {
-    height: 160,
-    width: "100%",
-    borderRadius: 12,
-  },
 };
 
 export default HomePage;

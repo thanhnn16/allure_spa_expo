@@ -25,11 +25,11 @@ const UpcomingAppointment = ({ appointment }: UpcomingAppointmentProps) => {
 
   return (
     <View marginB-20>
-      <Text text60BO marginB-12 color={Colors.text}>
+      <Text text60BO marginV-12 color={Colors.text}>
         {i18n.t("home.upcoming_appointment")}
       </Text>
 
-      <View 
+      <View
         style={{
           backgroundColor: Colors.white,
           borderRadius: 16,
