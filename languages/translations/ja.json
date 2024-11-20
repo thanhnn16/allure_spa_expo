@@ -540,7 +540,9 @@
     "no_pending": "保留中の予約がありません",
     "no_confirmed": "確認済みの予約がありません",
     "no_completed": "完了した予約がありません",
-    "no_cancelled": "キャンセルした予約がありません"
+    "no_cancelled": "キャンセルした予約がありません",
+    "book_for_service_package": "サービスパッケージの予約",
+    "find_service": "サービスを探す"
   },
   "orders": {
     "title": "注文",

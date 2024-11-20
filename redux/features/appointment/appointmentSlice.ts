@@ -48,34 +48,36 @@ export const appointmentSlice = createSlice({
     name: 'appointment',
     initialState,
     reducers: {
-        resetAppointmentState: (state) => {
+        resetAppointmentState: (state: AppointmentState) => {
             state.error = null;
+            state.appointments = [];
+            state.loading = false;
         }
     },
-    extraReducers: (builder) => {
-        builder.addCase(getAppointments.pending, (state) => {
+    extraReducers: (builder: any) => {
+        builder.addCase(getAppointments.pending, (state: AppointmentState) => {
             state.loading = true;
             state.error = null;
         });
-        builder.addCase(getAppointments.fulfilled, (state, action: PayloadAction<Appointment[]>) => {
+        builder.addCase(getAppointments.fulfilled, (state: AppointmentState, action: any) => {
             state.loading = false;
             state.appointments = action.payload;
         });
-        builder.addCase(getAppointments.rejected, (state, action: PayloadAction<string>) => {
+        builder.addCase(getAppointments.rejected, (state: AppointmentState, action: any) => {
             state.loading = false;
             state.error = action.payload;
         });
-        builder.addCase(cancelAppointment.pending, (state) => {
+        builder.addCase(cancelAppointment.pending, (state: AppointmentState) => {
             state.loading = true;
             state.error = null;
         });
-        builder.addCase(cancelAppointment.fulfilled, (state, action: PayloadAction<Appointment>) => {
+        builder.addCase(cancelAppointment.fulfilled, (state: AppointmentState, action: any) => {
             state.loading = false;
-            state.appointments = state.appointments.map(appointment =>
+            state.appointments = state.appointments.map((appointment: Appointment) =>
                 appointment.id === action.payload.id ? action.payload : appointment
             );
         });
-        builder.addCase(cancelAppointment.rejected, (state, action: PayloadAction<string>) => {
+        builder.addCase(cancelAppointment.rejected, (state: AppointmentState, action: any) => {
             state.loading = false;
             state.error = action.payload;
         });

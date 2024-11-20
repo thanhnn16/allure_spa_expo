@@ -1,6 +1,5 @@
 import {
   ScrollView,
-  TouchableOpacity,
   FlatList,
   Modal,
   TextInput,
@@ -11,10 +10,10 @@ import {
   Text,
   View,
   Image,
-  Button,
+  TouchableOpacity,
   SkeletonView,
 } from "react-native-ui-lib";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAppointments,
@@ -22,13 +21,14 @@ import {
 } from "@/redux/features/appointment/appointmentThunk";
 import i18n from "@/languages/i18n";
 import moment from "moment-timezone";
-import ClockIcon from "@/assets/icons/clock.svg";
 import AppButton from "@/components/buttons/AppButton";
 import { AppointmentResponeModelParams } from "@/types/service.type";
 import AppBar from "@/components/app-bar/AppBar";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LinearGradient from "react-native-linear-gradient";
+import { resetAppointmentState } from "@/redux/features/appointment/appointmentSlice";
+import { router } from "expo-router";
 const { width } = Dimensions.get("window");
 
 const ScheduledPage = () => {
@@ -36,16 +36,16 @@ const ScheduledPage = () => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [note, setNote] = useState("");
   const [currentItemId, setCurrentItemId] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
-  const { appointments } = useSelector((state: any) => state.appointment);
-  const loggedInUserId = useSelector((state: any) => state.auth.user.id);
+  const { appointments, loading } = useSelector(
+    (state: any) => state.appointment
+  );
 
   useEffect(() => {
-    setLoading(true);
-    dispatch(getAppointments()).finally(() => {
-      setLoading(false);
-    });
+    dispatch(getAppointments());
+    return () => {
+      dispatch(resetAppointmentState());
+    };
   }, [dispatch]);
 
   const items = [
@@ -90,7 +90,7 @@ const ScheduledPage = () => {
         status: "confirmed",
       };
     }
-
+    dispatch(resetAppointmentState());
     dispatch(getAppointments(params));
   };
 
@@ -98,67 +98,19 @@ const ScheduledPage = () => {
     handleItemPress(items[0]);
   }, []);
 
-  const flatListItems = appointments.map(
-    (appointment: AppointmentResponeModelParams) => ({
-      id: appointment.id,
-      isBanner: true,
-      name: appointment.title,
-      note: appointment.note,
-      service: appointment.service,
-      start: appointment.start,
-      end: appointment.end,
-      times: appointment.time_slot
-        ? `${i18n.t("appointment.times")}: ${moment(
-            appointment.time_slot.start_time,
-            "HH:mm:ss"
-          )
-            .tz("Asia/Ho_Chi_Minh")
-            .format("HH:mm")} - ${moment(
-            appointment.time_slot.end_time,
-            "HH:mm:ss"
-          )
-            .tz("Asia/Ho_Chi_Minh")
-            .format("HH:mm")}`
-        : "",
-      time: `${moment(appointment.start)
-        .tz("Asia/Ho_Chi_Minh")
-        .format(" HH:mm  DD/MM/YYYY ")}  -  ${moment(appointment.end)
-        .tz("Asia/Ho_Chi_Minh")
-        .format(" HH:mm  DD/MM/YYYY")}`,
-      status:
-        appointment.status === "Completed"
-          ? i18n.t("appointment.completed")
-          : appointment.status === "Pending"
-          ? i18n.t("appointment.pending")
-          : appointment.status === "Cancelled"
-          ? i18n.t("appointment.cancelled")
-          : i18n.t("appointment.confirmed"),
-    })
-  );
-
-  const renderItem = (
-    item: { id: number; name: string; status?: string },
-    index: number
-  ) => {
+  const renderItem = (item: { id: number; name: string; status?: string }) => {
     const isSelected = item.id === selectedItem;
     return (
       <TouchableOpacity
+        marginR-12
         key={item.id}
         onPress={() => handleItemPress(item)}
-        style={{
-          marginBottom: 5,
-          marginRight: 12,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 3,
-        }}
       >
         <View
           br30
           paddingH-15
-          paddingV-10
+          centerV
+          height={40}
           backgroundColor={isSelected ? Colors.primary : Colors.white}
           style={{
             borderWidth: 1,
@@ -409,32 +361,33 @@ const ScheduledPage = () => {
   return (
     <View flex bg-white>
       <AppBar title={i18n.t("appointment.scheduled")} />
-      <View padding-15>
+      <View height={46} center paddingH-24>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {items.map((item, index) => renderItem(item, index))}
+          {items.map((item) => renderItem(item))}
         </ScrollView>
-
+      </View>
+      <View flex paddingH-24>
         {loading ? (
           <View>
             {[1, 2, 3].map((_, index) => (
               <View key={index}>{renderSkeletonItem()}</View>
             ))}
           </View>
-        ) : appointments.length === 0 ? (
+        ) : !appointments || (appointments.length === 0 && !loading) ? (
           <View flex center>
-            <View center padding-20>
+            <View center gap-10>
               <MaterialCommunityIcons
                 name="calendar-blank"
                 size={64}
                 color={Colors.grey40}
               />
-              <Text h2_bold marginT-10 center>
+              <Text h2_bold center>
                 {i18n.t("appointment.no_appointments_title")}
               </Text>
-              <Text h3 marginT-5 center grey30>
+              <Text h3 center grey30>
                 {i18n.t(
                   `appointment.no_${
-                    selectedItem === 0
+                    selectedItem === 1
                       ? "appointments"
                       : selectedItem === 6
                       ? "next_7days"
@@ -448,6 +401,20 @@ const ScheduledPage = () => {
                   }`
                 )}
               </Text>
+              <AppButton
+                type="primary"
+                title={i18n.t("appointment.book_for_service_package")}
+                onPress={() => {
+                  router.push("/(app)/service-package");
+                }}
+              />
+              <AppButton
+                type="outline"
+                title={i18n.t("appointment.find_service")}
+                onPress={() => {
+                  router.push("/(app)/see-more?type=service");
+                }}
+              />
             </View>
           </View>
         ) : (

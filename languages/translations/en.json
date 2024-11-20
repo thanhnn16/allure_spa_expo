@@ -440,7 +440,9 @@
     "no_pending": "You have no pending appointments",
     "no_confirmed": "You have no confirmed appointments",
     "no_completed": "You have no completed appointments",
-    "no_cancelled": "You have no cancelled appointments"
+    "no_cancelled": "You have no cancelled appointments",
+    "book_for_service_package": "Book for service package",
+    "find_service": "Find service"
   },
   "orders": {
     "title": "Orders",

@@ -427,7 +427,9 @@
     "no_pending": "Bạn không có lịch hẹn chờ xác nhận",
     "no_confirmed": "Bạn không có lịch hẹn đã xác nhận",
     "no_completed": "Bạn không có lịch hẹn đã hoàn thành",
-    "no_cancelled": "Bạn không có lịch hẹn đã huỷ"
+    "no_cancelled": "Bạn không có lịch hẹn đã huỷ",
+    "book_for_service_package": "Đặt lịch hẹn cho gói dịch vụ",
+    "find_service": "Tìm kiếm dịch vụ"
   },
   "orders": {
     "title": "Đơn hàng",
