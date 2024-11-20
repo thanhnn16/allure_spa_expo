@@ -531,7 +531,16 @@
     "cancelled_by": "キャンセル者",
     "total_amount": "合計金額",
     "no_notes": "メモはありません",
-    "title": "予約"
+    "title": "予約",
+    "appointments": "予約",
+    "next_7days": "7日後",
+    "no_appointments_title": "予約がありません",
+    "no_appointments": "予約がありません",
+    "no_next_7days": "7日後の予約がありません",
+    "no_pending": "保留中の予約がありません",
+    "no_confirmed": "確認済みの予約がありません",
+    "no_completed": "完了した予約がありません",
+    "no_cancelled": "キャンセルした予約がありません"
   },
   "orders": {
     "title": "注文",

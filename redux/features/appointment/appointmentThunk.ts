@@ -15,10 +15,9 @@ interface CancelAppointmentParams {
 
 export const getAppointments = createAsyncThunk(
     'appointment/getAppointments',
-    async (params: AppointmentParams, { rejectWithValue }) => {
+    async (params: AppointmentParams, { rejectWithValue }: any) => {
         try {
             const response = await AxiosInstance().get('/my-appointments', { params });
-            console.log('Get appointments response:', response.data);
             if (response.data.success) {
                 return response.data.data;
             } else {
@@ -34,10 +33,9 @@ export const getAppointments = createAsyncThunk(
 
 export const cancelAppointment = createAsyncThunk(
     'appointment/cancelAppointment',
-    async ({ id, note }: CancelAppointmentParams, { rejectWithValue }) => {
+    async ({ id, note }: CancelAppointmentParams, { rejectWithValue }: any) => {
         try {
             const response = await AxiosInstance().put(`/appointments/${id}/cancel`, { note });
-            console.log('Cancel appointment response:', response.data);
             if (response.data.success) {
                 return response.data.data;
             } else {

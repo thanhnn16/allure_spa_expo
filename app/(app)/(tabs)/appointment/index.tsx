@@ -48,10 +48,6 @@ const ScheduledPage = () => {
     });
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log("Appointments State:", appointments);
-  }, [appointments]);
-
   const items = [
     { id: 1, name: i18n.t("appointment.all") },
     { id: 6, name: i18n.t("appointment.7upcoming") },
@@ -95,7 +91,6 @@ const ScheduledPage = () => {
       };
     }
 
-    console.log("Fetching appointments with params:", params);
     dispatch(getAppointments(params));
   };
 
@@ -424,6 +419,36 @@ const ScheduledPage = () => {
             {[1, 2, 3].map((_, index) => (
               <View key={index}>{renderSkeletonItem()}</View>
             ))}
+          </View>
+        ) : appointments.length === 0 ? (
+          <View flex center>
+            <View center padding-20>
+              <MaterialCommunityIcons
+                name="calendar-blank"
+                size={64}
+                color={Colors.grey40}
+              />
+              <Text h2_bold marginT-10 center>
+                {i18n.t("appointment.no_appointments_title")}
+              </Text>
+              <Text h3 marginT-5 center grey30>
+                {i18n.t(
+                  `appointment.no_${
+                    selectedItem === 0
+                      ? "appointments"
+                      : selectedItem === 6
+                      ? "next_7days"
+                      : selectedItem === 2
+                      ? "pending"
+                      : selectedItem === 5
+                      ? "confirmed"
+                      : selectedItem === 3
+                      ? "completed"
+                      : "cancelled"
+                  }`
+                )}
+              </Text>
+            </View>
           </View>
         ) : (
           <FlatList

@@ -433,7 +433,14 @@
     "total_amount": "Total amount",
     "no_notes": "No notes",
     "title": "Appointment",
-    "upcoming": "Upcoming"
+    "upcoming": "Upcoming",
+    "no_appointments_title": "No appointments",
+    "no_appointments": "You have no appointments",
+    "no_next_7days": "You have no appointments in the next 7 days",
+    "no_pending": "You have no pending appointments",
+    "no_confirmed": "You have no confirmed appointments",
+    "no_completed": "You have no completed appointments",
+    "no_cancelled": "You have no cancelled appointments"
   },
   "orders": {
     "title": "Orders",

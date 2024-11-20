@@ -418,7 +418,16 @@
     "no_notes": "Không có ghi chú",
     "cancel": "Huỷ",
     "view_details": "Nhấn xem chi tiết",
-    "7upcoming": "Sắp tới (7 ngày)"
+    "7upcoming": "Sắp tới (7 ngày)",
+    "appointments": "Lịch hẹn",
+    "next_7days": "Sắp tới (7 ngày)",
+    "no_appointments_title": "Không có lịch hẹn",
+    "no_appointments": "Bạn không có lịch hẹn nào",
+    "no_next_7days": "Bạn không có lịch hẹn nào trong 7 ngày tới",
+    "no_pending": "Bạn không có lịch hẹn chờ xác nhận",
+    "no_confirmed": "Bạn không có lịch hẹn đã xác nhận",
+    "no_completed": "Bạn không có lịch hẹn đã hoàn thành",
+    "no_cancelled": "Bạn không có lịch hẹn đã huỷ"
   },
   "orders": {
     "title": "Đơn hàng",
