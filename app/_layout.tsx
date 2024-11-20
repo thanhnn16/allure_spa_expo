@@ -17,9 +17,6 @@ import "react-native-reanimated";
 import { useSegments } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
-interface ErrorFallbackProps {
-  error: Error;
-}
 
 export default function RootLayout() {
   const segments = useSegments();
@@ -44,23 +41,13 @@ export default function RootLayout() {
   }
 
   useEffect(() => {
-    const initializeFirebase = async () => {
-      try {
-        // Request permission and get initial token
-        await FirebaseService.requestUserPermission();
-
-        // Setup message handlers
-        const unsubscribe = FirebaseService.setupMessageHandlers();
-
-        return () => {
-          unsubscribe();
-        };
-      } catch (error) {
-        console.log("Failed to initialize Firebase:", error);
-      }
+    const initializeApp = async () => {
+      await FirebaseService.requestUserPermission();
+      await FirebaseService.setupNotifications();
+      FirebaseService.setupMessageHandlers();
     };
 
-    initializeFirebase().then(() => console.log("Firebase initialized"));
+    initializeApp();
     onLayoutRootView();
   }, [onLayoutRootView]);
 
@@ -76,7 +63,10 @@ export default function RootLayout() {
                 edges={["top"]}
                 style={{ flex: 1, backgroundColor: "white" }}
               >
-                <StatusBar backgroundColor="transparent" barStyle={"dark-content"}  />
+                <StatusBar
+                  backgroundColor="transparent"
+                  barStyle={"dark-content"}
+                />
                 <Slot />
               </SafeAreaView>
             )}

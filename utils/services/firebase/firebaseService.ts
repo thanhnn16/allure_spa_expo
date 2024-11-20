@@ -6,6 +6,7 @@ import * as Notifications from 'expo-notifications';
 import { useDispatch } from 'react-redux';
 import { fetchUnreadCount } from '@/redux/features/notification/notificationThunks';
 import { AppDispatch } from '@/redux/store';
+import { BACKGROUND_NOTIFICATION_TASK, setupNotificationHandler } from '@/utils/services/notification/notificationHandler';
 
 class FirebaseService {
   private static instance: FirebaseService;
@@ -64,163 +65,52 @@ class FirebaseService {
   }
 
   async setupNotifications() {
-    Notifications.setNotificationHandler({
-      handleNotification: async (notification) => {
-        return {
-          shouldShowAlert: true,
-          shouldPlaySound: true,
-          shouldSetBadge: true,
-        };
+    // Thiết lập notification handler
+    setupNotificationHandler();
+
+    // Đăng ký task xử lý background notification
+    await Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+  }
+
+  async handleNotification(remoteMessage: any) {
+    const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    // Format notification data
+    const notificationData = {
+      title: remoteMessage.notification?.title || "Thông báo mới",
+      body: remoteMessage.notification?.body,
+      data: {
+        ...remoteMessage.data,
+        uniqueId,
+        notification_id: remoteMessage.data?.notification_id,
+        type: remoteMessage.data?.type,
       },
+      sound: 'default',
+      priority: Notifications.AndroidNotificationPriority.HIGH,
+    };
+
+    // Schedule notification
+    await Notifications.scheduleNotificationAsync({
+      content: notificationData,
+      trigger: null, // null means show immediately
     });
+
+    // Update unread count
+    const dispatch = useDispatch<AppDispatch>();
+    await dispatch(fetchUnreadCount());
   }
 
   setupMessageHandlers() {
-    // Xử lý tin nhắn khi ứng dụng ở background
+    // Background messages
     messaging().setBackgroundMessageHandler(async remoteMessage => {
-      const dispatch = useDispatch<AppDispatch>();
-      dispatch(fetchUnreadCount());
-      if (remoteMessage.data?.type === 'chat_message') {
-        await this.showChatNotification(remoteMessage);
-      }
-      if (remoteMessage.data?.type === 'appointment') {
-        await this.showAppointmentNotification(remoteMessage);
-      }
+      await this.handleNotification(remoteMessage);
     });
 
+    // Foreground messages
     return messaging().onMessage(async remoteMessage => {
-      console.log('Received foreground message:', remoteMessage);
-      const dispatch = useDispatch<AppDispatch>();
-      await dispatch(fetchUnreadCount());
-      remoteMessage.data = {
-        ...remoteMessage.data,
-      };
-
-      if (remoteMessage.data?.type === 'chat_message') {
-        await this.showChatNotification(remoteMessage);
-      }
-      if (remoteMessage.data?.type === 'appointment') {
-        await this.showAppointmentNotification(remoteMessage);
-        return remoteMessage;
-      }
-      if (remoteMessage.data?.type === 'order') {
-        await this.showOrderNotification(remoteMessage);
-      }
-      if (remoteMessage.data?.type === 'payment_success') {
-        await this.showPaymentNotification(remoteMessage);
-      }
+      await this.handleNotification(remoteMessage);
       return remoteMessage;
     });
-  }
-
-  async showAppointmentNotification(remoteMessage: any) {
-    try {
-      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      const isAppForeground = remoteMessage.data?.foreground === 'true';
-
-      let title = remoteMessage.notification?.title || "Thông báo lịch hẹn";
-      let body = remoteMessage.notification?.body;
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          data: {
-            ...remoteMessage.data,
-            uniqueId,
-            type: 'appointment',
-            isForeground: isAppForeground,
-          },
-          sound: 'default',
-          priority: Notifications.AndroidNotificationPriority.HIGH,
-        },
-        trigger: null,
-      });
-    } catch (error) {
-      console.error('Error showing appointment notification:', error);
-    }
-  }
-
-  async showChatNotification(remoteMessage: any) {
-    try {
-      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      const isAppForeground = remoteMessage.data?.foreground === 'true';
-
-      let title = remoteMessage.notification?.title || "Tin nhắn mới";
-      let body = remoteMessage.notification?.body;
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          data: {
-            ...remoteMessage.data,
-            uniqueId,
-            type: 'chat_message',
-            isForeground: isAppForeground,
-          },
-          sound: 'default',
-          priority: Notifications.AndroidNotificationPriority.HIGH,
-        },
-        trigger: null,
-      });
-    } catch (error) {
-      console.error('Error showing chat notification:', error);
-    }
-  }
-
-  async showOrderNotification(remoteMessage: any) {
-    try {
-      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-
-      let title = remoteMessage.notification?.title || "Thông báo đơn hàng";
-      let body = remoteMessage.notification?.body;
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          data: {
-            ...remoteMessage.data,
-            uniqueId,
-            type: 'order'
-          },
-          sound: 'default',
-          priority: Notifications.AndroidNotificationPriority.HIGH,
-        },
-        trigger: null,
-      });
-    } catch (error) {
-      console.error('Error showing order notification:', error);
-    }
-  }
-
-  async showPaymentNotification(remoteMessage: any) {
-    try {
-      const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      const isAppForeground = remoteMessage.data?.foreground === 'true';
-
-      let title = remoteMessage.notification?.title || "Thông báo thanh toán";
-      let body = remoteMessage.notification?.body;
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          data: {
-            ...remoteMessage.data,
-            uniqueId,
-            type: 'payment_success',
-            isForeground: isAppForeground,
-          },
-          sound: 'default',
-          priority: Notifications.AndroidNotificationPriority.HIGH,
-        },
-        trigger: null,
-      });
-    } catch (error) {
-      console.error('Error showing payment notification:', error);
-    }
   }
 }
 

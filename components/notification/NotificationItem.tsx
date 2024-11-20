@@ -3,15 +3,15 @@ import { View, Text, TouchableOpacity, Colors } from "react-native-ui-lib";
 import { Feather } from "@expo/vector-icons";
 
 export type NotificationType =
-  | "new_order" // Đơn hàng mới
-  | "order_status" // Cập nhật trạng thái đơn hàng
-  | "new_appointment" // Lịch hẹn mới
-  | "appointment_status" // Cập nhật trạng thái lịch hẹn
-  | "new_review" // Đánh giá mới
-  | "new_message" // Tin nhắn mới
-  | "promotion" // Khuyến mãi
-  | "system" // Thông báo hệ thống
-  | "payment"; // Thanh toán
+  | "new_appointment"
+  | "appointment_status"
+  | "new_order"
+  | "order_status"
+  | "new_message"
+  | "new_review"
+  | "promotion"
+  | "payment"
+  | "system";
 
 interface NotificationItemProps {
   id: number;
@@ -31,52 +31,62 @@ const notificationTypeMap: Record<
     iconName: string;
     iconColor: string;
     bgColor: string;
+    group: string;
   }
 > = {
-  new_order: {
-    iconName: "shopping-bag",
-    iconColor: Colors.primary,
-    bgColor: Colors.primary_light,
-  },
-  order_status: {
-    iconName: "package",
-    iconColor: Colors.primary,
-    bgColor: Colors.primary_light,
-  },
   new_appointment: {
     iconName: "calendar",
     iconColor: Colors.secondary,
-    bgColor: "#FFF5EE", // Light version of secondary
+    bgColor: "#FFF5EE",
+    group: "appointment",
   },
   appointment_status: {
     iconName: "clock",
     iconColor: Colors.secondary,
     bgColor: "#FFF5EE",
+    group: "appointment",
   },
-  new_review: {
-    iconName: "star",
-    iconColor: "#FFB800",
-    bgColor: "#FFF8E7",
+  new_order: {
+    iconName: "shopping-bag",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
+    group: "order",
+  },
+  order_status: {
+    iconName: "package",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
+    group: "order",
   },
   new_message: {
     iconName: "message-circle",
     iconColor: Colors.primary,
     bgColor: Colors.primary_light,
+    group: "chat",
+  },
+  new_review: {
+    iconName: "star",
+    iconColor: "#FFB800",
+    bgColor: "#FFF8E7",
+    group: "review",
   },
   promotion: {
     iconName: "tag",
     iconColor: Colors.secondary,
     bgColor: "#FFF5EE",
+    group: "promotion",
   },
   system: {
     iconName: "alert-circle",
     iconColor: Colors.text,
     bgColor: Colors.grey70,
+    group: "system",
   },
   payment: {
     iconName: "credit-card",
     iconColor: Colors.primary,
     bgColor: Colors.primary_light,
+    group: "payment",
   },
 };
 
