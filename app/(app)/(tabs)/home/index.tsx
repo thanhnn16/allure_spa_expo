@@ -60,6 +60,7 @@ const HomePage = () => {
 
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
+    
 
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
     Dimensions.get("window");
@@ -379,15 +380,7 @@ const HomePage = () => {
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={1}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            progressViewOffset={HEADER_HEIGHT}
-            progressBackgroundColor={Colors.white}
-          />
-        }
+        scrollEventThrottle={16}
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT,
         }}

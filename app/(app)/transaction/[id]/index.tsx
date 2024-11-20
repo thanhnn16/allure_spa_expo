@@ -1,10 +1,10 @@
 import { View, Text, Colors, Wizard } from "react-native-ui-lib";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { getOrderByIdThunk } from "@/redux/features/order/getOrderByIdThunk";
 import AppBar from "@/components/app-bar/AppBar";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, TextInput } from "react-native";
 import OrderStatusBadge from "@/components/order/OrderStatusBadge";
 import OrderItemCard from "@/components/order/OrderItemCard";
 import OrderActionButtons from "@/components/order/OrderActionButtons";
@@ -15,8 +15,16 @@ import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
 import TransactionHeader from "@/components/payment/TransactionHeader";
 import { PaymentMethod } from "../../check-out";
-import { method } from "lodash";
+import { method, set } from "lodash";
 import AppDialog from "@/components/dialog/AppDialog";
+import AppButton from "@/components/buttons/AppButton";
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { createRatingProductThunk } from "@/redux/features/rating/createRatingThunk";
+import SelectImagesBar from "@/components/images/SelectImagesBar";
+import OrderSelectRateItem from "@/components/order/OrderSelectRateItem";
+import { Rating } from '@kolking/react-native-rating';
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -38,6 +46,14 @@ const paymentMethods: PaymentMethod[] = [
 
 const OrderDetail = () => {
   const { id } = useLocalSearchParams();
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const selectBottomSheetRef = useRef<BottomSheet>(null);
+  const [rateDialog, setRateDialog] = useState(false);
+  const [errorDialog, setErrorDialog] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setcomment] = useState("");
+  const isRated = false;
   const dispatch = useDispatch();
   const { selectedOrder, isLoading } = useSelector(
     (state: RootState) => state.order
@@ -47,138 +63,295 @@ const OrderDetail = () => {
     dispatch(getOrderByIdThunk({ id: id }));
   }, [id]);
 
+  const handleChange = useCallback(
+    (value: number) => setRating(value),
+    [rating],
+  );
+
+  const handleOpenBottomSheet = () => {
+    selectBottomSheetRef.current?.expand();
+  };
+
+  const handleRateBottomSheet = () => {
+    selectBottomSheetRef.current?.close();
+    bottomSheetRef.current?.expand();
+  };
+
+  const sendReview = () => {
+    try {
+      console.log("sendReview", rating, comment);
+      dispatch(createRatingProductThunk({
+        rating_type: "product",
+        item_id: 3,
+        stars: rating,
+        comment: comment
+      }));
+      bottomSheetRef.current?.close();
+      setRateDialog(true);
+    } catch (error: any) {
+      console.log("sendReview error", error);
+      setErrorDialog(true);
+    }
+  }
+
   if (isLoading || !selectedOrder) {
     return <OrderSkeleton />;
   }
 
-  // const subTotal = selectedOrder.order_items.reduce(
-  //   (acc: any, item: any) => acc + item.price * item.quantity,
-  //   0
-  // );
-
-  console.log(selectedOrder);
+  const subTotal = selectedOrder.order_items.reduce(
+    (acc: any, item: any) => acc + item.price * item.quantity,
+    0
+  );
 
   const getPaymentMethod = (id: number) => {
     const method = paymentMethods.find((method) => method.id === id);
     return method;
   }
-
   const method = getPaymentMethod(selectedOrder.payment_method_id);
 
   return (
-    <View flex bg-white>
-      <AppBar back title={i18n.t("orders.detail")} />
+    <GestureHandlerRootView>
+      <View flex bg-white>
+        <AppBar back title={i18n.t("orders.detail")} />
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
-        {selectedOrder.status !== "cancelled" && (
-          <TransactionHeader status={selectedOrder.status} />
-        )}
+          {selectedOrder.status !== "cancelled" && (
+            <TransactionHeader status={selectedOrder.status} />
+          )}
 
-        {/* Order Status Section */}
-        <View style={styles.section}>
-          <View row spread centerV>
-            <Text h2_bold>
-              {i18n.t("orders.order_id")}: #{selectedOrder.id}
+          {!isRated && (
+            <View style={styles.section}>
+              <View row spread centerV>
+                <Text h2_bold>
+                  Đánh giá đơn hàng
+                </Text>
+              </View>
+              <Text h3 marginT-8 color={Colors.grey30}>
+                Bạn có 1 sản phẩm cần đánh giá. Đánh giá để nhận thêm điểm
+              </Text>
+
+              <View flex>
+                <AppButton
+                  title="Đánh giá"
+                  type="outline"
+                  onPress={() => handleOpenBottomSheet()}
+                />
+              </View>
+            </View>
+          )}
+
+          {/* Order Status Section */}
+          <View style={styles.section}>
+            <View row spread centerV>
+              <Text h2_bold>
+                {i18n.t("orders.order_id")}: #{selectedOrder.id}
+              </Text>
+              {selectedOrder.status === "cancelled" && (
+                <OrderStatusBadge status={selectedOrder.status} />
+              )}
+            </View>
+            <Text h3 marginT-8 color={Colors.grey30}>
+              {new Date(selectedOrder.created_at).toLocaleDateString()}
             </Text>
-            {selectedOrder.status === "cancelled" && (
-              <OrderStatusBadge status={selectedOrder.status} />
-            )}
-          </View>
-          <Text h3 marginT-8 color={Colors.grey30}>
-            {new Date(selectedOrder.created_at).toLocaleDateString()}
-          </Text>
 
-          <Text h3 marginT-8 color={Colors.grey30}>
-            {method?.name}
-          </Text>
-        </View>
-
-        {/* Order Items Section */}
-        <View style={styles.section}>
-          <Text h2_bold marginB-16>
-            {i18n.t("orders.items")}
-          </Text>
-          {selectedOrder.order_items?.map((item: OrderItem) => (
-            <OrderItemCard key={item.id} item={item} />
-          ))}
-        </View>
-
-        {/* Payment Info Section */}
-        <View style={styles.section}>
-          <Text h2_bold marginB-16>
-            {i18n.t("orders.payment_info")}
-          </Text>
-
-          <View row spread marginB-8>
-            <Text h3>{i18n.t("orders.subtotal")}</Text>
-            <Text h3>
-              {/* {formatCurrency({
-                price: Number(subTotal) || 0,
-              })} */}
+            <Text h3 marginT-8 color={Colors.grey30}>
+              {method?.name}
             </Text>
           </View>
 
-          {Number(selectedOrder.discount_amount) > 0 && (
+          {/* Order Items Section */}
+          <View style={styles.section}>
+            <Text h2_bold marginB-16>
+              {i18n.t("orders.items")}
+            </Text>
+            {selectedOrder.order_items?.map((item: OrderItem) => (
+              <OrderItemCard key={item.id} item={item} />
+            ))}
+          </View>
+
+          {/* Payment Info Section */}
+          <View style={styles.section}>
+            <Text h2_bold marginB-16>
+              {i18n.t("orders.payment_info")}
+            </Text>
+
             <View row spread marginB-8>
-              <Text h3>{i18n.t("orders.discount")}</Text>
-              <Text h3 color={Colors.red30}>
-                -
+              <Text h3>{i18n.t("orders.subtotal")}</Text>
+              <Text h3>
                 {formatCurrency({
-                  price: Number(selectedOrder.discount_amount) || 0,
+                  price: Number(subTotal) || 0,
                 })}
+              </Text>
+            </View>
+
+            {Number(selectedOrder.discount_amount) > 0 && (
+              <View row spread marginB-8>
+                <Text h3>{i18n.t("orders.discount")}</Text>
+                <Text h3 color={Colors.red30}>
+                  -
+                  {formatCurrency({
+                    price: Number(selectedOrder.discount_amount) || 0,
+                  })}
+                </Text>
+              </View>
+            )}
+
+            <View row spread marginT-8>
+              <Text h2>{i18n.t("orders.total")}</Text>
+              <Text h2_bold color={Colors.secondary}>
+                {formatCurrency({
+                  price:
+                    Number(subTotal) -
+                    (Number(selectedOrder.discount_amount) || 0),
+                })}
+              </Text>
+            </View>
+          </View>
+
+          {/* Shipping Info Section */}
+          {selectedOrder.shipping_address && (
+            <View style={styles.section}>
+              <Text text65L marginB-16>
+                {i18n.t("orders.shipping_info")}
+              </Text>
+              <Text h3 marginB-8>
+                {selectedOrder.user.full_name}
+              </Text>
+              <Text h3 marginB-8>
+                {selectedOrder.user.phone_number}
+              </Text>
+              <Text h3>
+                {selectedOrder.shipping_address.address},{" "}
+                {selectedOrder.shipping_address.ward},
+                {selectedOrder.shipping_address.district},{" "}
+                {selectedOrder.shipping_address.province}
               </Text>
             </View>
           )}
 
-          <View row spread marginT-8>
-            <Text h2>{i18n.t("orders.total")}</Text>
-            <Text h2_bold color={Colors.secondary}>
-              {/* {formatCurrency({
-                price:
-                  Number(subTotal) -
-                  (Number(selectedOrder.discount_amount) || 0),
-              })} */}
-            </Text>
-          </View>
-        </View>
+          {/* Note Section */}
+          {selectedOrder.note && (
+            <View style={styles.section}>
+              <Text h2_bold marginB-8>
+                {i18n.t("orders.note")}
+              </Text>
+              <Text h3>{selectedOrder.note}</Text>
+            </View>
+          )}
 
-        {/* Shipping Info Section */}
-        {selectedOrder.shipping_address && (
-          <View style={styles.section}>
-            <Text text65L marginB-16>
-              {i18n.t("orders.shipping_info")}
-            </Text>
-            <Text h3 marginB-8>
-              {selectedOrder.user.full_name}
-            </Text>
-            <Text h3 marginB-8>
-              {selectedOrder.user.phone_number}
-            </Text>
-            <Text h3>
-              {selectedOrder.shipping_address.address},{" "}
-              {selectedOrder.shipping_address.ward},
-              {selectedOrder.shipping_address.district},{" "}
-              {selectedOrder.shipping_address.province}
-            </Text>
-          </View>
-        )}
 
-        {/* Note Section */}
-        {selectedOrder.note && (
-          <View style={styles.section}>
-            <Text h2_bold marginB-8>
-              {i18n.t("orders.note")}
-            </Text>
-            <Text h3>{selectedOrder.note}</Text>
-          </View>
-        )}
-      </ScrollView>
+        </ScrollView>
 
-      {/* Action Buttons */}
-      <OrderActionButtons order={selectedOrder} />
+        {/* Action Buttons */}
+        <OrderActionButtons order={selectedOrder} />
 
-    </View>
+        <BottomSheet
+          ref={selectBottomSheetRef}
+          index={-1}
+          enablePanDownToClose={true}
+          enableHandlePanningGesture={true}
+          enableOverDrag={true}
+          keyboardBehavior="extend"
+          keyboardBlurBehavior="restore"
+        >
+          <BottomSheetView style={styles.bottomSheetView}>
+            <View center gap-10 marginV-12>
+              <Text h2_bold>Chọn sản phẩm cần đánh giá</Text>
+            </View>
+
+            {selectedOrder.order_items?.map((item: OrderItem) => (
+              <OrderSelectRateItem key={item.id} item={item} />
+            ))}
+
+            <View flex width={"100%"} bottom paddingV-20>
+              <AppButton
+                title={"Chọn sản phẩm"}
+                type="primary"
+                onPress={() => handleRateBottomSheet()}
+              />
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={["60%"]}
+          index={-1}
+          enablePanDownToClose={true}
+          enableHandlePanningGesture={true}
+          enableOverDrag={true}
+          keyboardBehavior="extend"
+          keyboardBlurBehavior="restore"
+          handleStyle={{
+            backgroundColor: "white",
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          }}
+        >
+          <BottomSheetView style={styles.bottomSheetView}>
+            <View center gap-10 marginB-10>
+              <Text h2_bold>{i18n.t("rating.how_do_you_feel")}</Text>
+              <Rating
+                size={40}
+                rating={rating}
+                onChange={handleChange}
+                variant="stars"
+              />
+            </View>
+
+            <View flex left marginT-10>
+              <Text>{i18n.t("rating.feel_about_product")}</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={comment}
+                  onChangeText={setcomment}
+                  placeholder={i18n.t("rating.type_content")}
+                  style={{ height: 150, textAlignVertical: "top" }}
+                />
+              </View>
+              <Text>{i18n.t("rating.images")}</Text>
+
+              <SelectImagesBar
+                selectedImages={selectedImages}
+                setSelectedImages={setSelectedImages}
+                isRating={true}
+              />
+            </View>
+
+            <View flex width={"100%"} bottom paddingV-20>
+              <AppButton
+                title={i18n.t("rating.send_review")}
+                type="primary"
+                onPress={() => sendReview()}
+              />
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+
+        <AppDialog
+          severity="success"
+          visible={rateDialog}
+          title="Cảm ơn bạn"
+          description="Đánh giá của bạn đã được gửi"
+          closeButton={false}
+          confirmButton
+          confirmButtonLabel="Quay lại"
+          onConfirm={() => setRateDialog(false)}
+        />
+
+        <AppDialog
+          severity="error"
+          visible={errorDialog}
+          title="Có lỗi xảy ra"
+          description="Hãy lại gửi đánh giá sau nhé"
+          closeButton={false}
+          confirmButton
+          confirmButtonLabel="Quay lại"
+          onConfirm={() => setErrorDialog(false)}
+        />
+      </View>
+    </GestureHandlerRootView >
   );
 };
 
@@ -202,6 +375,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  bottomSheetView: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+  },
+
+  inputContainer: {
+    width: "100%",
+    height: 140,
+    borderWidth: 1,
+    borderColor: "#D9D9D9",
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 10,
   },
 });
 

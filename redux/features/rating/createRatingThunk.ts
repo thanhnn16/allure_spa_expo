@@ -11,8 +11,7 @@ export const createRatingProductThunk = createAsyncThunk(
                     rating_type: body.rating_type,
                     item_id: body.item_id,
                     stars: body.stars,
-                    comment: body.comment,
-                    media_id: body.media_id
+                    comment: body.comment
                 }
             );
 
