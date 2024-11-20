@@ -19,6 +19,9 @@ import Animated, {
   FadeIn,
   FadeInDown,
   FadeInUp,
+  interpolate,
+  Extrapolation,
+  useAnimatedStyle,
 } from "react-native-reanimated";
 import { Colors, Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
@@ -277,6 +280,19 @@ const HomePage = () => {
     </View>
   );
 
+  const greetingHeaderStyle = hideStyle(
+    scrollOffset,
+    HEADER_HEIGHT,
+    SCROLL_THRESHOLD,
+    OPACITY_THRESHOLD
+  );
+
+  const searchBarStyle = showStyle(
+    scrollOffset,
+    HEADER_HEIGHT,
+    SCROLL_THRESHOLD
+  );
+
   return (
     <View bg-$white flex>
       <Animated.View
@@ -293,25 +309,16 @@ const HomePage = () => {
         ]}
       >
         <View bg-white paddingH-20>
-          <Animated.View
-            style={[
-              hideStyle(
-                scrollOffset,
-                HEADER_HEIGHT,
-                SCROLL_THRESHOLD,
-                OPACITY_THRESHOLD
-              ),
-            ]}
-          >
-            <View row spread centerV marginB-10>
-              <View row>
+          <Animated.View style={[greetingHeaderStyle]}>
+            <View row spread marginB-10>
+              <View row centerV gap-10>
                 <Image
                   width={32}
                   height={32}
                   borderRadius={30}
                   source={require("@/assets/images/logo/logo.png")}
                 />
-                <View centerV marginL-10>
+                <View centerV>
                   <Text h2_bold>
                     {user?.full_name || i18n.t("common.guest")}
                   </Text>
@@ -321,12 +328,13 @@ const HomePage = () => {
             </View>
             <WeatherView />
           </Animated.View>
+
           <View
             row
             centerV
             gap-15
             absR
-            style={{ zIndex: 1 }}
+            style={{ zIndex: 2 }}
             right-0
             top-0
             paddingV-10
@@ -350,14 +358,12 @@ const HomePage = () => {
 
           <Animated.View
             style={[
-              showStyle(scrollOffset, HEADER_HEIGHT, SCROLL_THRESHOLD),
+              searchBarStyle,
               {
                 position: "absolute",
                 bottom: 10,
-                left: 0,
-                right: 0,
-                backgroundColor: "rgba(255, 255, 255, 0.9)",
-                paddingHorizontal: 24,
+                left: 20,
+                right: 20,
               },
             ]}
           >
@@ -373,9 +379,14 @@ const HomePage = () => {
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
+        scrollEventThrottle={1}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            progressViewOffset={HEADER_HEIGHT}
+            progressBackgroundColor={Colors.white}
+          />
         }
         contentContainerStyle={{
           paddingTop: HEADER_HEIGHT,
