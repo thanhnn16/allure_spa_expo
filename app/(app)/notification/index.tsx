@@ -37,8 +37,6 @@ const NotificationPage: React.FC = () => {
   const handleNotificationPress = async (id: number) => {
     await dispatch(markNotificationAsRead(id));
     router.push(`/notification/${id}`);
-    console.log(`push to notification ${id}`);
-    
   };
 
   const handleMarkAllAsRead = async () => {

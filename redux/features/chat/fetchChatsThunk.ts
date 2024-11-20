@@ -5,9 +5,7 @@ export const fetchChatsThunk = createAsyncThunk(
     'chat/fetchChats',
     async (_: any, { rejectWithValue }: any) => {
         try {
-            console.log('Fetching chats...');
             const response = await AxiosInstance().get('/chats');
-            console.log('Fetch chats response:', response.data);
             return response.data.data;
         } catch (error: any) {
             console.error('Fetch chats error:', {
