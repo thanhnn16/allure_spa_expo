@@ -25,6 +25,7 @@ import { createRatingProductThunk } from "@/redux/features/rating/createRatingTh
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import OrderSelectRateItem from "@/components/order/OrderSelectRateItem";
 import { Rating } from '@kolking/react-native-rating';
+import { processImageForUpload } from "@/utils/helpers/imageHelper";
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -79,17 +80,41 @@ const OrderDetail = () => {
     bottomSheetRef.current?.expand();
   };
 
-  const sendReview = () => {
+  const sendReview = async () => {
     try {
-      console.log("sendReview", rating, comment);
-      dispatch(createRatingProductThunk({
-        rating_type: "product",
-        item_id: currentValue,
-        stars: rating,
-        comment: comment
-      }));
-      bottomSheetRef.current?.close();
-      setRateDialog(true);
+      if (selectedImages.length > 0) {
+        try {
+          const processedUri = await processImageForUpload(selectedImages);
+
+          const formData = new FormData();
+          formData.append("rating", {
+            uri: processedUri,
+            type: "image/jpeg",
+            name: "avatar.jpg",
+          } as any);
+
+          dispatch(createRatingProductThunk({
+            rating_type: "product",
+            item_id: currentValue,
+            stars: rating,
+            comment: comment
+          }));
+          
+          bottomSheetRef.current?.close();
+          setRateDialog(true);
+        } catch (error: any) {
+          throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
+        }
+      } else {
+        dispatch(createRatingProductThunk({
+          rating_type: "product",
+          item_id: currentValue,
+          stars: rating,
+          comment: comment
+        }));
+        bottomSheetRef.current?.close();
+        setRateDialog(true);
+      }
     } catch (error: any) {
       bottomSheetRef.current?.close();
       setErrorDialog(true);
@@ -122,19 +147,19 @@ const OrderDetail = () => {
             <TransactionHeader status={selectedOrder.status} />
           )}
 
-          {!isRated && (
+          {(!isRated && selectedOrder.status == "completed") && (
             <View style={styles.section}>
               <View row spread centerV>
                 <Text h2_bold>
-                  Đánh giá đơn hàng
+                  {i18n.t("transaction_detail.you_have")}
                 </Text>
               </View>
               <Text h3 marginV-8 color={Colors.grey30}>
-                Bạn có 1 sản phẩm cần đánh giá. Đánh giá để nhận thêm điểm
+                {i18n.t("transaction_detail.you_have")} {selectedOrder.order_items?.length} {i18n.t("transaction_detail.product_need_review")}
               </Text>
               <View flex>
                 <AppButton
-                  title="Đánh giá"
+                  title={i18n.t("transaction_detail.review_now")}
                   type="outline"
                   onPress={() => handleOpenBottomSheet()}
                 />
@@ -261,13 +286,13 @@ const OrderDetail = () => {
               <Text h2_bold>Chọn sản phẩm cần đánh giá</Text>
             </View>
 
-            
-              {selectedOrder.order_items?.map((item: OrderItem) => (
-                <RadioGroup initialValue={currentValue} onValueChange={(value: any) => { setCurrentValue(item.product?.id); }} >
+
+            {selectedOrder.order_items?.map((item: OrderItem) => (
+              <RadioGroup initialValue={currentValue} onValueChange={(value: any) => { setCurrentValue(item.product?.id); }} >
                 <OrderSelectRateItem key={item.id} item={item} />
-                </RadioGroup>
-              ))}
-            
+              </RadioGroup>
+            ))}
+
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton

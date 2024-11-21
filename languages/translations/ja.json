@@ -18,7 +18,8 @@
     "back_to_home": "ホームに戻る",
     "loading": "読み込み中...",
     "staff": "スタッフ",
-    "view_detail": "詳細を見る"
+    "view_detail": "詳細を見る",
+    "accept": "受け入れる"
   },
   "auth": {
     "login": {
@@ -167,11 +168,15 @@
     "voucher": {
       "title": "クーポン",
       "all": "すべて",
-      "birthday": "誕生日",
-      "event": "イベント",
-      "prominent": "目立つ",
-      "gift": "ギフト",
-      "many_offers_comingsoon": "多くのオファーが近日公開予定"
+      "active": "アクティブ",
+      "expired": "期限切れ",
+      "no_voucher": "クーポンがありません!",
+      "buy_product_for_voucher": "割引を受けるために商品を購入してください",
+      "discount": "割引",
+      "max": "最大",
+      "min_order": "最小注文",
+      "description": "説明",
+      "expires_on": "有効期限"
     },
     "reward": {
       "title": "報酬",
@@ -419,7 +424,13 @@
     "update_address": "住所を更新",
     "type": "住所タイプ",
     "customer_name": "顧客名",
-    "phone_number": "電話番号"
+    "phone_number": "電話番号",
+    "ward": "ワード",
+    "search_a_province": "都道府県を検索",
+    "search_a_district": "区市町村を検索",
+    "search_a_ward": "ワードを検索",
+    "set_default_address": "デフォルトの住所に設定",
+    "set_default_address_confirm": "この住所をデフォルトに設定してもよろしいですか？"
   },
   "date": {
     "formats": {
@@ -504,7 +515,11 @@
       "date_delivered": "配達日"
     },
     "buy_again": "もう一度購入",
-    "cancel_order": "注文をキャンセル"
+    "cancel_order": "注文をキャンセル",
+    "rate_product": "製品を評価",
+    "you_have": "あなたは",
+    "product_need_review": "レビューが必要です。 レビューして追加ポイントを受け取る",
+    "review_now": "今すぐレビュー"
   },
   "appointment": {
     "scheduled": "予約済み",

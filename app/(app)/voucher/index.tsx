@@ -51,8 +51,8 @@ const Voucher = () => {
             height={200}
           />
           <View marginT-20 centerH>
-            <Text h3_bold>Không có Voucher nào cả!</Text>
-            <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
+            <Text h3_bold>{i18n.t("voucher.no_voucher")}</Text>
+            <Text h3>{i18n.t("voucher.buy_product_for_voucher")}</Text>
           </View>
         </View>
       );
@@ -77,8 +77,8 @@ const Voucher = () => {
             height={200}
           />
           <View marginT-20 centerH>
-            <Text h3_bold>Không có Voucher nào cả!</Text>
-            <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
+            <Text h3_bold>{i18n.t("voucher.no_voucher")}</Text>
+            <Text h3>{i18n.t("voucher.buy_product_for_voucher")}</Text>
           </View>
         </View>
       );
@@ -103,8 +103,8 @@ const Voucher = () => {
             height={200}
           />
           <View marginT-20 centerH>
-            <Text h3_bold>Không có Voucher nào cả!</Text>
-            <Text h3>Mua thêm sản phẩm để nhận ưu đãi nhé</Text>
+            <Text h3_bold>{i18n.t("voucher.no_voucher")}</Text>
+            <Text h3>{i18n.t("voucher.buy_product_for_voucher")}</Text>
           </View>
         </View>
       );
@@ -126,7 +126,7 @@ const Voucher = () => {
         {isLoading ? (
           <VoucherSkeletonView />
         ) : (
-          <TabController items={[{ label: 'Tất cả' }, { label: 'Đang hoạt động' }, { label: 'Hết hạn' }]}>
+          <TabController items={[{ label: i18n.t("voucher.all") }, { label: i18n.t("voucher.active") }, { label: i18n.t("voucher.expired") }]}>
             <AppTabBar />
             <View flex>
               <TabController.TabPage index={0}>{renderAllPage()}</TabController.TabPage>

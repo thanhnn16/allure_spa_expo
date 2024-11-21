@@ -205,12 +205,12 @@ const Add = () => {
           </Text>
           <AddressTextInput
             value={userProfile?.full_name || ""}
-            placeholder={i18n.t("auth.login.fullname")}
+            placeholder={i18n.t("address.name")}
             onChangeText={() => { }}
           />
           <AddressTextInput
             value={userProfile?.phone_number || ""}
-            placeholder={i18n.t("address.phone")}
+            placeholder={i18n.t("address.phone_number")}
             onChangeText={(value) => handleChange("phone", value)}
             maxLength={10}
             keyboardType="phone-pad"
@@ -234,7 +234,7 @@ const Add = () => {
           </Text>
 
           <Picker
-            placeholder="Tỉnh/Thành phố"
+            placeholder={i18n.t("address.province")}
             floatingPlaceholder
             value={province?.id}
             label={province?.name}
@@ -249,9 +249,9 @@ const Add = () => {
                 }
               }
             }}
-            topBarProps={{ title: 'Tỉnh/Thành phố' }}
+            topBarProps={{ title: i18n.t("address.province") }}
             showSearch
-            searchPlaceholder={'Tìm một tỉnh/thành phố'}
+            searchPlaceholder={i18n.t("address.search_a_province")}
             searchStyle={{ placeholderTextColor: Colors.grey50 }}
             items={
               provinceList.map((item: AddressProvince) => ({
@@ -263,7 +263,9 @@ const Add = () => {
 
           {province?.id && (
             <Picker
-              placeholder="Quận/Huyện"
+              placeholder={i18n.t("address.district")}
+              searchPlaceholder={i18n.t("address.search_a_district")}
+              topBarProps={{ title: i18n.t("address.district") }}
               floatingPlaceholder
               value={district?.id}
               label={district?.name}
@@ -271,17 +273,13 @@ const Add = () => {
               onChange={(value: PickerValue) => {
                 if (typeof value === 'string') {
                   const selectedDistrict = districtList.find((item) => item.id === value);
-                  console.log("selectedDistrict", selectedDistrict);
-                  console.log("value", value);
                   if (selectedDistrict) {
                     setDistrict({ id: selectedDistrict.id, name: selectedDistrict.name } as AddressDistrict);
                     getWard(Number(selectedDistrict?.id));
                   }
                 }
               }}
-              topBarProps={{ title: 'Quận/Huyện' }}
               showSearch
-              searchPlaceholder={'Tìm một quận/huyện'}
               searchStyle={{ placeholderTextColor: Colors.grey50 }}
               items={
                 districtList.map((item: AddressDistrict) => ({
@@ -294,7 +292,7 @@ const Add = () => {
 
           {district?.id && (
             <Picker
-              placeholder="Phường/Xã"
+              placeholder={i18n.t("address.ward")}
               floatingPlaceholder
               value={ward?.id}
               label={ward?.name}
@@ -307,9 +305,9 @@ const Add = () => {
                   }
                 }
               }}
-              topBarProps={{ title: 'Phường/Xã' }}
+              topBarProps={{ title: i18n.t("address.ward") }}
               showSearch
-              searchPlaceholder={'Tìm một phường/xã'}
+              searchPlaceholder={i18n.t("address.search_a_ward")}
               searchStyle={{ placeholderTextColor: Colors.grey50 }}
               items={
                 wardList.map((item: AddressWard) => ({

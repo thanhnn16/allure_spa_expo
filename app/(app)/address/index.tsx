@@ -106,7 +106,7 @@ const AddressScreen = () => {
         )}
       </View>
 
-      <View padding-16>
+      <View width={'100%'} padding-16>
         <AppButton
           type="primary"
           title={i18n.t("address.add_new_address")}
@@ -116,21 +116,21 @@ const AddressScreen = () => {
 
       <AppDialog
         visible={errorDialogVisible}
-        title={"Có lỗi xảy ra"}
+        title={i18n.t("common.error")}
         description={errorDescription || ""}
-        closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={"Cập nhật"}
-        severity="info"
-        onClose={() => setErrorDialogVisible(false)}
+        confirmButton={true}
+        confirmButtonLabel={i18n.t("common.accept")}
+        severity="error"
+        onConfirm={() => setErrorDialogVisible(false)}
       />
 
       <AppDialog
         visible={dialogUpdateVisible}
-        title={"Đặt địa chỉ làm mặc định"}
-        description={"Bạn có muốn địa chỉ này thành địa chỉ làm mặc định không?"}
+        title={i18n.t("address.set_default_address")}
+        description={i18n.t("address.set_default_address_confirm")}
         confirmButton={true}
         closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={"Đồng ý"}
+        confirmButtonLabel={i18n.t("common.accept")}
         severity="info"
         onClose={() => setDialogUpdateVisible(false)}
         onConfirm={() => handleSelectAddress()}
@@ -138,11 +138,11 @@ const AddressScreen = () => {
 
       <AppDialog
         visible={dialogDeleteVisible}
-        title={"Xóa địa chỉ"}
-        description={"Bạn có muốn xóa 0?"}
+        title={i18n.t("address.delete_address")}
+        description={i18n.t("address.delete_address_confirm")}
         confirmButton={true}
         closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={"Đồng ý"}
+        confirmButtonLabel={i18n.t("common.accept")}
         severity="info"
         onClose={() => setdialogDeleteVisible(false)}
         onConfirm={() => deleteAddressById()}
