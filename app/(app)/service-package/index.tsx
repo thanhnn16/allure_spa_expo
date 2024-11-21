@@ -332,7 +332,7 @@ const ServicePackageScreen = () => {
                     <View marginT-24>
                       <AppButton
                         title={i18n.t("service_package.book_appointment")}
-                        type="primary"
+                        type="outline"
                         onPress={() => handleBooking(pkg)}
                       />
                     </View>
