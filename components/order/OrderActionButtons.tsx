@@ -8,13 +8,13 @@ import { getOrderByIdThunk } from "@/redux/features/order/getOrderByIdThunk";
 import { router } from "expo-router";
 import { setOrderProducts } from "@/redux/features/order/orderSlice";
 
-const OrderActionButtons = ({ order }: { order: Orders }) => {
+interface OrderActionButtonsProps {
+    order: Orders;
+    onCancel: () => void;
+}
+
+const OrderActionButtons = ({ order, onCancel }: OrderActionButtonsProps) => {
   const dispatch = useDispatch();
-  const handleCancelOrder = async () => {
-    // Implement cancel order logic
-    await dispatch(changeOrderStatusByIdThunk({ id: order.id }));
-    await dispatch(getOrderByIdThunk({ id: order.id }));
-  };
 
   const handleReorder = () => {
     dispatch(setOrderProducts({
@@ -32,7 +32,7 @@ const OrderActionButtons = ({ order }: { order: Orders }) => {
         <AppButton
           type="outline"
           title={i18n.t("orders.cancel")}
-          onPress={handleCancelOrder}
+          onPress={onCancel}
         />
       )}
 

@@ -1,4 +1,4 @@
-import { View, Text, Colors, Wizard, RadioGroup } from "react-native-ui-lib";
+import { View, Text, Colors, Wizard, RadioGroup, RadioButton, Typography } from "react-native-ui-lib";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -26,6 +26,7 @@ import SelectImagesBar from "@/components/images/SelectImagesBar";
 import OrderSelectRateItem from "@/components/order/OrderSelectRateItem";
 import { Rating } from '@kolking/react-native-rating';
 import { processImageForUpload } from "@/utils/helpers/imageHelper";
+import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -50,13 +51,16 @@ const OrderDetail = () => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const selectBottomSheetRef = useRef<BottomSheet>(null);
+  const cancelBottomSheetRef = useRef<BottomSheet>(null);
   const [rateDialog, setRateDialog] = useState(false);
   const [errorDialog, setErrorDialog] = useState(false);
   const [rating, setRating] = useState(0);
-  const [comment, setcomment] = useState("");
+  const [comment, setComment] = useState("");
+  const [note, setNote] = useState("");
   const isRated = false;
   const dispatch = useDispatch();
   const [currentValue, setCurrentValue] = useState<number | undefined>(undefined);
+  const [cancelValue, setCancelValue] = useState<string>("Chọn thêm sản phẩm khác/ Thay đổi voucher");
 
   const { selectedOrder, isLoading, error } = useSelector(
     (state: RootState) => state.order
@@ -80,6 +84,10 @@ const OrderDetail = () => {
     bottomSheetRef.current?.expand();
   };
 
+  const handleOpenCancelBottomSheet = () => {
+    cancelBottomSheetRef.current?.expand();
+  };
+
   const sendReview = async () => {
     try {
       if (selectedImages.length > 0) {
@@ -99,7 +107,7 @@ const OrderDetail = () => {
             stars: rating,
             comment: comment
           }));
-          
+
           bottomSheetRef.current?.close();
           setRateDialog(true);
         } catch (error: any) {
@@ -120,6 +128,24 @@ const OrderDetail = () => {
       setErrorDialog(true);
     }
   }
+
+  const handleCancelOrder = async () => {
+    try {
+      if (cancelValue === "Bạn có lý do khác" && note === "") {
+        throw new Error("Bạn cần nhập lý do hủy đơn hàng");
+      }
+      if (cancelValue !== "Bạn có lý do khác") {
+        await dispatch(changeOrderStatusByIdThunk({ id: selectedOrder.id, note: cancelValue }));
+        await dispatch(getOrderByIdThunk({ id: selectedOrder.id }));
+      } else {
+        await dispatch(changeOrderStatusByIdThunk({ id: selectedOrder.id, note: note }));
+        await dispatch(getOrderByIdThunk({ id: selectedOrder.id }));
+      }
+      cancelBottomSheetRef.current?.close();
+    } catch (error: any) {
+      setErrorDialog(true);
+    }
+  };
 
   if (isLoading || !selectedOrder) {
     return <OrderSkeleton />;
@@ -270,7 +296,10 @@ const OrderDetail = () => {
         </ScrollView>
 
         {/* Action Buttons */}
-        <OrderActionButtons order={selectedOrder} />
+        <OrderActionButtons
+          order={selectedOrder}
+          onCancel={() => handleOpenCancelBottomSheet()}
+        />
 
         <BottomSheet
           ref={selectBottomSheetRef}
@@ -299,6 +328,77 @@ const OrderDetail = () => {
                 title={"Chọn sản phẩm"}
                 type="primary"
                 onPress={() => handleRateBottomSheet()}
+              />
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+
+        <BottomSheet
+          ref={cancelBottomSheetRef}
+          index={-1}
+          enablePanDownToClose={true}
+          enableHandlePanningGesture={true}
+          enableOverDrag={true}
+          keyboardBehavior="extend"
+          keyboardBlurBehavior="restore"
+          snapPoints={["60%"]}
+        >
+          <BottomSheetView style={styles.bottomSheetView}>
+            <View center gap-10 marginV-12>
+              <Text h2_bold>Bạn hủy vì lí do gì</Text>
+            </View>
+
+
+            <RadioGroup initialValue={cancelValue} onValueChange={(value: any) => { setCancelValue(value) }} >
+              <View gap-12>
+                <RadioButton
+                  value={"Chọn thêm sản phẩm khác/ Thay đổi voucher"}
+                  color={Colors.primary}
+                  label="Chọn thêm sản phẩm khác/ Thay đổi voucher"
+                  labelStyle={Typography.h3}
+                />
+                <RadioButton
+                  value={"Bạn cảm thấy công dụng sản phẩm chưa tốt"}
+                  color={Colors.primary}
+                  label="Bạn cảm thấy công dụng sản phẩm chưa tốt"
+                  labelStyle={Typography.h3} />
+                <RadioButton
+                  value={"Giá sản phẩm không hợp lý"}
+                  color={Colors.primary}
+                  label="Giá sản phẩm không hợp lý"
+                  labelStyle={Typography.h3}
+                />
+                <RadioButton
+                  value={"Bạn không muốn mua nữa"}
+                  color={Colors.primary}
+                  label="Bạn không muốn mua nữa"
+                  labelStyle={Typography.h3}
+                />
+                <RadioButton
+                  value={"Bạn có lý do khác"}
+                  color={Colors.primary}
+                  label="Bạn có lý do khác"
+                  labelStyle={Typography.h3}
+                />
+              </View>
+            </RadioGroup>
+
+            {cancelValue === "Bạn có lý do khác" && (
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={note}
+                  onChangeText={setNote}
+                  placeholder={i18n.t("rating.type_content")}
+                  style={{ height: 194, textAlignVertical: "top" }}
+                />
+              </View>
+            )}
+
+            <View flex width={"100%"} bottom paddingV-20>
+              <AppButton
+                title={"Hủy đơn hàng"}
+                type="primary"
+                onPress={() => handleCancelOrder()}
               />
             </View>
           </BottomSheetView>
@@ -335,7 +435,7 @@ const OrderDetail = () => {
               <View style={styles.inputContainer}>
                 <TextInput
                   value={comment}
-                  onChangeText={setcomment}
+                  onChangeText={setComment}
                   placeholder={i18n.t("rating.type_content")}
                   style={{ height: 150, textAlignVertical: "top" }}
                 />

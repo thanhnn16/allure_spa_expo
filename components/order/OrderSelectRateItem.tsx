@@ -1,16 +1,10 @@
 import { View, Text, Image, Colors, TouchableOpacity, RadioButton } from "react-native-ui-lib";
 import { OrderItem } from "@/types/order.type";
-import { useState } from "react";
-
-// interface OrderSelectRateItemProps {
-//     item: OrderItem;
-// }
 
 const OrderSelectRateItem = ({ item }: { item: OrderItem }) => {
     const product = item.product || item.service;
     if (!product) return null;
     const imageUrl = product.media?.[0]?.full_url;
-    console.log('OrderSelectRateItem:', item.product?.id);
 
     return (
         <TouchableOpacity

@@ -98,7 +98,7 @@ export default function Checkout() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const loadUserData = async () => {
     try {
-      const userProfileStr = await AsyncStorage.getItem("userProfile");
+      const userProfileStr = JSON.stringify(user);
       if (userProfileStr) {
         setUserProfile(JSON.parse(userProfileStr));
       }
