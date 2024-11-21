@@ -262,6 +262,7 @@ export default function DetailsScreen() {
               width={windowWidth * 0.9}
               style={{
                 alignSelf: "center",
+                overflow: "hidden",
               }}
               height={200}
               br50
