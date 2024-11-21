@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getAppointments, cancelAppointment } from '@/redux/features/appointment/appointmentThunk';
+import { getAppointments, cancelAppointment, updateAppointment } from '@/redux/features/appointment/appointmentThunk';
 
 interface Service {
     id: number;
@@ -78,6 +78,20 @@ export const appointmentSlice = createSlice({
             );
         });
         builder.addCase(cancelAppointment.rejected, (state: AppointmentState, action: any) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        builder.addCase(updateAppointment.pending, (state: AppointmentState) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(updateAppointment.fulfilled, (state: AppointmentState, action: any) => {
+            state.loading = false;
+            state.appointments = state.appointments.map((appointment: Appointment) =>
+                appointment.id === action.payload.id ? action.payload : appointment
+            );
+        });
+        builder.addCase(updateAppointment.rejected, (state: AppointmentState, action: any) => {
             state.loading = false;
             state.error = action.payload;
         });

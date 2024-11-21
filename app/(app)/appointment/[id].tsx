@@ -263,30 +263,34 @@ const AppointmentDetailPage = () => {
           {appointment.status === "pending" && (
             <View marginT-20>
               <AppButton
-                type="primary"
-                onPress={() =>
-                  router.push({
-                    pathname: "/booking",
-                    params: {
-                      service_id: appointment.service.id,
-                      service_name: appointment.service.service_name,
-                      edit_mode: "true",
-                      appointment_id: appointment.id,
-                    },
-                  })
-                }
-                children={
-                  <View row gap-4 centerV>
-                    <MaterialCommunityIcons
-                      name="pencil"
-                      size={16}
-                      color={Colors.white}
-                    />
-                    <Text h4 white>
-                      {i18n.t("appointment.edit")}
-                    </Text>
-                  </View>
-                }
+                  type="primary"
+                  onPress={() =>
+                      router.push({
+                        pathname: "/booking",
+                        params: {
+                          service_id: appointment.service.id,
+                          service_name: appointment.service.service_name,
+                          edit_mode: "true",
+                          appointment_id: appointment.id,
+                          note: appointment.note,
+                          date: appointment.start,
+                          time_slot_id: appointment.time_slot.id,
+                          slots: appointment.slots,
+                        },
+                      })
+                  }
+                  children={
+                    <View row gap-4 centerV>
+                      <MaterialCommunityIcons
+                          name="pencil"
+                          size={16}
+                          color={Colors.white}
+                      />
+                      <Text h4 white>
+                        {i18n.t("appointment.edit")}
+                      </Text>
+                    </View>
+                  }
               />
             </View>
           )}

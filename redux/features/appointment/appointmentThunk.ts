@@ -13,6 +13,17 @@ interface CancelAppointmentParams {
     note: string;
 }
 
+
+interface UpdateAppointmentParams {
+    id: number;
+    staff_id: number;
+    appointment_date: string;
+    time_slot_id: number;
+    status: string;
+    appointment_type: string;
+    note: string;
+}
+
 export const getAppointments = createAsyncThunk(
     'appointment/getAppointments',
     async (params: AppointmentParams, { rejectWithValue }: any) => {
@@ -60,4 +71,17 @@ export const getAppointmentDetail = createAsyncThunk(
         }
     }
 )
+
+export const updateAppointment = createAsyncThunk(
+    'appointment/updateAppointment',
+    async (data: UpdateAppointmentParams, { rejectWithValue }: any) => {
+        try {
+            const response = await AxiosInstance().put(`/appointments/${data.id}`, data);
+            return response.data.data;
+        } catch (error: any) {
+            console.log('Update appointment error:', error);
+            return rejectWithValue(error.response?.data?.message || 'Unable to update appointment');
+        }
+    }
+);
 
