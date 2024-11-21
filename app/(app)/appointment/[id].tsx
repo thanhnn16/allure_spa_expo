@@ -1,13 +1,13 @@
-import { Colors, Text, View } from "react-native-ui-lib";
+import { Colors, Text, View, SkeletonView } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAppointmentDetail } from "@/redux/features/appointment/appointmentThunk";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
-import moment from "moment-timezone";
+import moment from "moment";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Image, ScrollView } from "react-native";
+import { Image, ScrollView, Dimensions } from "react-native";
 import { AppointmentResponeModelParams } from "@/types/service.type";
 import AppButton from "@/components/buttons/AppButton";
 
@@ -16,6 +16,7 @@ const AppointmentDetailPage = () => {
   const dispatch = useDispatch();
   const [appointment, setAppointment] =
     useState<AppointmentResponeModelParams | null>(null);
+  const { width } = Dimensions.get("window");
 
   useEffect(() => {
     if (id) {
@@ -29,9 +30,50 @@ const AppointmentDetailPage = () => {
     return (
       <View flex bg-white>
         <AppBar title={i18n.t("appointment.detail")} back />
-        <View flex center>
-          <Text h3>{i18n.t("common.loading")}</Text>
-        </View>
+        <ScrollView>
+          <View flex padding-24>
+            {/* Header SkeletonView */}
+            <View row spread centerV>
+              <SkeletonView width={80} height={30} />
+              <View row centerV>
+                <SkeletonView width={120} height={30} />
+              </View>
+            </View>
+
+            {/* Service Image SkeletonView */}
+            <View marginT-20>
+              <SkeletonView height={200} width={width - 48} borderRadius={15} />
+              <SkeletonView marginT-15 width={width - 48} height={24} />
+              <SkeletonView marginT-5 width={120} height={20} />
+            </View>
+
+            {/* Info Sections SkeletonView */}
+            {[1, 2, 3].map((_, index) => (
+              <View key={index} row centerV marginT-15>
+                <SkeletonView circle width={24} height={24} borderRadius={24} />
+                <View marginL-10>
+                  <SkeletonView width={150} height={20} />
+                  <SkeletonView marginT-5 width={100} height={16} />
+                </View>
+              </View>
+            ))}
+
+            {/* Details SkeletonView */}
+            <View marginT-20 style={{ gap: 15 }}>
+              {[1, 2].map((_, index) => (
+                <View key={index} row centerV>
+                  <SkeletonView
+                    circle
+                    width={24}
+                    height={24}
+                    borderRadius={24}
+                  />
+                  <SkeletonView marginL-10 width={120} height={16} />
+                </View>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
       </View>
     );
   }
