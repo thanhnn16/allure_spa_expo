@@ -1,80 +1,99 @@
-import { useState } from 'react'
-import { View, Text, Image, Carousel, TouchableOpacity } from 'react-native-ui-lib'
+import { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  Carousel,
+  TouchableOpacity,
+} from "react-native-ui-lib";
 
-import { Href, Link, router } from 'expo-router';
+import { Href, Link, router } from "expo-router";
 
-import StarIcon from '@/assets/icons/star.svg';
+import StarIcon from "@/assets/icons/star.svg";
+import { Rating } from "@/types/rating.type";
 
-interface RatingItemProps {
-  id: number;
-  rating: number;
-  comment: string;
-  date: string;
-  video: string;
-  images: string[];
-  user: {
-    id: number;
-    name: string;
-    avatar: string;
-  };
-};
-
-const RatingItem = ({ item }: { item: RatingItemProps }) => {
-
+const RatingItem = ({ item }: { item: Rating }) => {
   const handleImagePress = () => {
-    router.push(
-      `/pager_view?id=${item.id}`
-    );
+    if (!item?.id) return;
+    router.push(`/pager_view?id=${item.id}`);
   };
+
+  if (!item) {
+    return null;
+  }
 
   return (
-    <View 
-      margin-10 
-      padding-15 
-      backgroundColor='#F9FAFB'
+    <View
+      margin-10
+      padding-15
+      backgroundColor="#F9FAFB"
       style={{ borderRadius: 13 }}
     >
-
       <View row centerV>
         <View row gap-10 centerV>
-          <Image width={40} height={40} borderRadius={20} source={{ uri: item.user.avatar }} />
-          <Text h3_bold>{item.user.name}</Text>
+          <Image
+            width={40}
+            height={40}
+            borderRadius={20}
+            source={{ uri: item.user?.avatar_url || "default_avatar_url" }}
+          />
+          <Text h3_bold>{item.user?.full_name || "Anonymous"}</Text>
         </View>
         <View row gap-5 centerV flex right>
-          <Image source={StarIcon} width={20} height={20}/>
-          <Text h3_bold center>{item.rating}</Text>
+          <Image source={StarIcon} width={20} height={20} />
+          <Text h3_bold center>
+            {item.stars || 0}
+          </Text>
         </View>
       </View>
 
       <View marginV-10>
-        <Text h3>{item.comment}</Text>
+        <Text h3>{item.comment || ""}</Text>
       </View>
 
-      {item.images.length > 0 && (
+      {Array.isArray(item.media_urls) && item.media_urls.length > 0 && (
         <View marginT-10 row gap-10>
-          {item.images.slice(0, 3).map((image, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={handleImagePress}
-              >
-                <Image width={40} height={40} source={{ uri: image }} />
-              </TouchableOpacity>
+          {item.media_urls.slice(0, 3).map((image, index) => (
+            <TouchableOpacity key={index} onPress={handleImagePress}>
+              <Image
+                width={40}
+                height={40}
+                source={{ uri: image }}
+                defaultSource={require("@/assets/images/logo/logo.png")}
+              />
+            </TouchableOpacity>
           ))}
-          {item.images.length > 3 && (
-              <TouchableOpacity
-                key={item.images.length - 1}
-                onPress={handleImagePress}
+          {item.media_urls.length > 3 && (
+            <TouchableOpacity
+              key={item.media_urls.length - 1}
+              onPress={handleImagePress}
+            >
+              <Image
+                width={40}
+                height={40}
+                source={{ uri: item.media_urls[3] }}
+                defaultSource={require("@/assets/images/logo/logo.png")}
+              />
+              <View
+                style={{
+                  position: "absolute",
+                  width: 40,
+                  height: 40,
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                <Image width={40} height={40} source={{ uri: item.images[3] }} />
-                <View style={{ position: 'absolute', width: 40, height: 40, backgroundColor: 'rgba(0, 0, 0, 0.1)', justifyContent: 'center', alignItems: 'center' }}>
-                  <Text h2_bold secondary>{'+' + (item.images.length - 3)}</Text>
-                </View>
-              </TouchableOpacity>
+                <Text h2_bold secondary>
+                  {"+" + (item.media_urls.length - 3)}
+                </Text>
+              </View>
+            </TouchableOpacity>
           )}
         </View>
       )}
     </View>
-  )
-}
+  );
+};
 
-export default RatingItem
+export default RatingItem;
