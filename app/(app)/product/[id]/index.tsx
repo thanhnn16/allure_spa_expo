@@ -347,8 +347,7 @@ export default function DetailsScreen() {
                 </View>
                 <View flex row right>
                   <Text h3_medium>
-                    {product?.rating_summary.total_ratings}{" "}
-                    {i18n.t("productDetail.reviews")}
+                    {product?.quantity} {i18n.t("productDetail.available")}
                   </Text>
                 </View>
               </View>
