@@ -4,16 +4,18 @@ import { User } from "@/types/user.type";
 
 export const uploadAvatarUrlThunk = createAsyncThunk(
   "user/uploadAvatar",
-  async (formData: FormData, { rejectWithValue }: any) => {
+  async (formData: FormData, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
-      const res: any = await AxiosInstance().post<User>("user/avatar", formData, {
+      console.log("Sending FormData:", Array.from((formData as any)._parts));
+
+      const axiosInstance = AxiosInstance('multipart/form-data');
+
+      const res = await axiosInstance.post("user/avatar", formData, {
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
         },
-        transformRequest: (data) => {
-          return data;
-        },
+        transformRequest: [(data) => data],
+        timeout: 30000,
       });
 
       if (res.data.success) {
@@ -22,8 +24,18 @@ export const uploadAvatarUrlThunk = createAsyncThunk(
 
       return rejectWithValue(res.data.message || 'Upload avatar failed');
     } catch (error: any) {
-      console.error('Upload avatar error:', error.response?.data);
-      return rejectWithValue(error.response?.data?.message || "Upload avatar failed");
+      console.error('Upload error:', {
+        message: error.message,
+        code: error.code,
+        response: error.response,
+        request: error.request,
+      });
+
+      return rejectWithValue(
+        error.response?.data?.message ||
+        error.message ||
+        "Upload avatar failed"
+      );
     }
   }
 );
