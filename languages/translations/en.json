@@ -50,7 +50,7 @@
       "zalo_login_description": "Login with Zalo to save time and easily manage your information",
       "login_required": "Login required",
       "login_buy_product": "You need to login to buy this product",
-      "login_chat_ai": "You need to login to chat with AI",
+      "login_chat_ai": "You need to login to chat with Hana",
       "login_chat": "You need to login to chat",
       "login_chat_customer_care": "You need to login to chat with customer care",
       "login_appointment": "You need to login to make an appointment",
@@ -142,8 +142,8 @@
   },
   "chat": {
     "customer_care": "Customer care",
-    "chat_with_ai": "Chat with AI",
-    "ai_description": "Chat with AI to get advice and support",
+    "chat_with_ai": "Chat with Hana",
+    "ai_description": "Chat with Hana to get advice and support",
     "send": "Send",
     "chat_with": "Chat with",
     "no_message": "No message",
@@ -442,7 +442,22 @@
     "no_completed": "You have no completed appointments",
     "no_cancelled": "You have no cancelled appointments",
     "book_for_service_package": "Book for service package",
-    "find_service": "Find service"
+    "find_service": "Find service",
+    "detail": "Appointment Detail",
+    "staff": "Staff",
+    "customer": "Customer",
+    "slots": "Number of Slots",
+    "seats": "seats",
+    "notes": "Notes",
+    "cancel_reason": "Cancel Reason",
+    "edit": "Edit Appointment",
+    "note": "Note",
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "confirmed": "Confirmed"
+    }
   },
   "orders": {
     "title": "Orders",
@@ -516,6 +531,20 @@
     "detail": "Notification Detail",
     "view_detail": "View detail",
     "type": "Notification Type",
-    "status": "Status"
+    "status": "Status",
+    "view_appointment": "View appointment",
+    "view_order": "View order",
+    "view_conversation": "View conversation",
+    "view_payment": "View payment",
+    "view_promotion": "View promotion",
+    "view_review": "View review"
+  },
+  "search": {
+    "title": "Search",
+    "product": "Product",
+    "service": "Service",
+    "no_result": "No result",
+    "recent_searches": "Recent searches",
+    "clear_all": "Clear all"
   }
 }

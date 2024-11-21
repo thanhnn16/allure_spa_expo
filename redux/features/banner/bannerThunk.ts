@@ -2,10 +2,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 
 export const fetchBanners = createAsyncThunk(
-    'banners/fetchBanners',
-    async (_, { rejectWithValue }) => {
+    "banners/fetchBanners",
+    async (_: any, { rejectWithValue }: any) => {
         try {
-            const response = await AxiosInstance().get('/banners');
+            const response = await AxiosInstance().get("/banners");
             if (response.data.success) {
                 return response.data.data;
             } else {

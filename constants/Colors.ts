@@ -10,8 +10,10 @@ const colorScheme = {
   primary: '#717658',
   secondary: '#A85A29',
   gray: '#AAAAAA',
-  primary_blur: '#E5E5E5',
-  primary_light: '#e3e4de',
+  primary_blur: 'rgba(113, 118, 88, 0.08)',
+  primary_light: 'rgba(113, 118, 88, 0.12)',
+  surface: '#FFFFFF',
+  card_bg: '#FAFAFA',
 };
 
 Colors.loadColors(colorScheme);

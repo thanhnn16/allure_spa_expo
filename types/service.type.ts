@@ -1,6 +1,7 @@
 import { Rating } from "react-native-ratings";
 import { ResponeDefaultParams, ResponePagesParams, Timestamps } from "./commons.type";
-import {RatingSummary} from "@/types/rating.type";
+import { RatingSummary } from "@/types/rating.type";
+import { User } from "./user.type";
 
 
 
@@ -38,6 +39,7 @@ export interface RatingResponeModelParams extends Timestamps {
 export interface AppointmentResponeModelParams extends Timestamps {
     id: number;
     title: string;
+    user?: User;
     status: string;
     service: Service;
     start: string;

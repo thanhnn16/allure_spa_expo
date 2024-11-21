@@ -49,7 +49,7 @@
       "zalo_login_description": "Đăng nhập bằng Zalo để tiết kiệm thời gian và dễ dàng quản lý thông tin của bạn",
       "login_required": "Cần đăng nhập",
       "login_buy_product": "Bạn cần đăng nhập để mua sắm sản phẩm tại Allure Spa",
-      "login_chat_ai": "Bạn cần đăng nhập để chat với AI",
+      "login_chat_ai": "Bạn cần đăng nhập để chat với Hana",
       "login_chat": "Bạn cần đăng nhập để chat",
       "login_chat_customer_care": "Bạn cần đăng nhập để chat với chăm sóc khách hàng",
       "login_appointment": "Bạn cần đăng nhập để đặt lịch hẹn",
@@ -202,8 +202,8 @@
   },
   "chat": {
     "customer_care": "Chăm sóc khách hàng",
-    "chat_with_ai": "Chat với AI",
-    "ai_description": "Chat với AI để được tư vấn và hỗ trợ",
+    "chat_with_ai": "Chat với Hana",
+    "ai_description": "Chat với Hana để được tư vấn và hỗ trợ",
     "send": "Gửi",
     "chat_with": "Chat với",
     "no_message": "Không có tin nhắn",
@@ -429,7 +429,22 @@
     "no_completed": "Bạn không có lịch hẹn đã hoàn thành",
     "no_cancelled": "Bạn không có lịch hẹn đã huỷ",
     "book_for_service_package": "Đặt lịch hẹn cho gói dịch vụ",
-    "find_service": "Tìm kiếm dịch vụ"
+    "find_service": "Tìm kiếm dịch vụ",
+    "detail": "Chi tiết lịch hẹn",
+    "staff": "Nhân viên",
+    "customer": "Khách hàng",
+    "slots": "Số lượng chỗ",
+    "seats": "chỗ",
+    "notes": "Ghi chú",
+    "cancel_reason": "Lý do huỷ",
+    "edit": "Sửa lịch hẹn",
+    "note": "Ghi chú",
+    "status": {
+      "completed": "Đã hoàn thành",
+      "pending": "Chờ xác nhận",
+      "cancelled": "Đã huỷ",
+      "confirmed": "Đã xác nhận"
+    }
   },
   "orders": {
     "title": "Đơn hàng",
@@ -503,6 +518,20 @@
     "detail": "Chi tiết thông báo",
     "view_detail": "Xem chi tiết",
     "type": "Loại thông báo",
-    "status": "Trạng thái"
+    "status": "Trạng thái",
+    "view_appointment": "Xem lịch hẹn",
+    "view_order": "Xem đơn hàng",
+    "view_conversation": "Xem cuộc hội thoại",
+    "view_payment": "Xem thanh toán",
+    "view_promotion": "Xem khuyến mãi",
+    "view_review": "Xem đánh giá"
+  },
+  "search": {
+    "title": "Tìm kiếm",
+    "product": "Sản phẩm",
+    "service": "Dịch vụ",
+    "no_result": "Không tìm thấy kết quả",
+    "recent_searches": "Tìm kiếm gần đây",
+    "clear_all": "Xóa tất cả"
   }
 }

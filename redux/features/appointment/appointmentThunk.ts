@@ -47,3 +47,17 @@ export const cancelAppointment = createAsyncThunk(
         }
     }
 );
+
+export const getAppointmentDetail = createAsyncThunk(
+    'appointment/getAppointmentDetail',
+    async (id: number, { rejectWithValue }: any) => {
+        try {
+            const response = await AxiosInstance().get(`/appointments/${id}`);
+            return response.data.data;
+        } catch (error: any) {
+            console.log('Get appointment detail error:', error);
+            return rejectWithValue(error.response?.data?.message || 'Unable to fetch appointment detail');
+        }
+    }
+)
+

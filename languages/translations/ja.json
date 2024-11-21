@@ -136,7 +136,7 @@
     },
     "chat": {
       "customer_care": "カスタマーケア",
-      "chat_with_ai": "AIとチャット",
+      "chat_with_ai": "Hanaとチャット",
       "send": "送信",
       "chat_with": "チャット"
     },
@@ -247,8 +247,8 @@
   },
   "chat": {
     "customer_care": "カスタマーケア",
-    "chat_with_ai": "AIとチャット",
-    "ai_description": "AIとチャットして、アドバイスとサポートを受ける",
+    "chat_with_ai": "Hanaとチャット",
+    "ai_description": "Hanaとチャットして、アドバイスとサポートを受ける",
     "send": "送信",
     "chat_with": "チャット",
     "no_message": "メッセージがありません",
@@ -542,7 +542,22 @@
     "no_completed": "完了した予約がありません",
     "no_cancelled": "キャンセルした予約がありません",
     "book_for_service_package": "サービスパッケージの予約",
-    "find_service": "サービスを探す"
+    "find_service": "サービスを探す",
+    "detail": "予約詳細",
+    "staff": "スタッフ",
+    "customer": "顧客",
+    "slots": "席数",
+    "seats": "席",
+    "notes": "メモ",
+    "cancel_reason": "キャンセル理由",
+    "edit": "予約を編集",
+    "note": "メモ",
+    "status": {
+      "completed": "完了",
+      "pending": "保留中",
+      "cancelled": "キャンセル",
+      "confirmed": "確認済み"
+    }
   },
   "orders": {
     "title": "注文",
@@ -616,6 +631,20 @@
     "detail": "通知詳細",
     "view_detail": "詳細を見る",
     "type": "通知タイプ",
-    "status": "ステータス"
+    "status": "ステータス",
+    "view_appointment": "予約を見る",
+    "view_order": "注文を見る",
+    "view_conversation": "会話を見る",
+    "view_payment": "支払いを見る",
+    "view_promotion": "プロモーションを見る",
+    "view_review": "レビューを見る"
+  },
+  "search": {
+    "title": "検索",
+    "product": "製品",
+    "service": "サービス",
+    "no_result": "結果がありません",
+    "recent_searches": "最近の検索",
+    "clear_all": "すべてをクリア"
   }
 }

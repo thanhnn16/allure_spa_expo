@@ -23,8 +23,8 @@ import LinkIcon from "@/assets/icons/link.svg";
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
-import {useDispatch, useSelector} from "react-redux";
-import {AppDispatch, RootState} from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
 import { getProductThunk } from "@/redux/features/products/productThunk";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { Product } from "@/types/product.type";
@@ -40,13 +40,15 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
+  withSequence,
   withTiming,
 } from "react-native-reanimated";
 import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
-import {Media} from "@/types/media.type";
+import { Media } from "@/types/media.type";
 
 import { Ionicons } from "@expo/vector-icons";
-import {clearProduct} from "@/redux/features/products/productSlice";
+import { clearProduct } from "@/redux/features/products/productSlice";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -59,21 +61,22 @@ export default function DetailsScreen() {
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
-
   const user_id = useSelector((state: RootState) => state.auth.user?.id);
 
   const status = useSelector((state: RootState) => state.favorite.status);
 
-  const {product, isLoading, media} = useSelector((state: RootState) => state.product);
+  const { product, isLoading, media } = useSelector(
+    (state: RootState) => state.product
+  );
   const windowWidth = Dimensions.get("window").width;
 
   const [isFavorite, setIsFavorite] = useState(product?.is_favorite);
 
   useEffect(() => {
     dispatch(getProductThunk({ product_id: Number(id), user_id }));
-      return () => {
-        dispatch(clearProduct());
-      }
+    return () => {
+      dispatch(clearProduct());
+    };
   }, [id]);
 
   useEffect(() => {
@@ -85,27 +88,69 @@ export default function DetailsScreen() {
     setIsVisible(true);
   };
 
+  const favoriteScale = useSharedValue(1);
+
+  const favoriteAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: favoriteScale.value }],
+    };
+  });
+
   const handleFavorite = async () => {
     if (isGuest) {
       setFavoriteDialog(true);
       return;
     }
-      setIsFavorite((prev) => !prev);
-      await dispatch(
-          toggleFavoriteThunk({
-            type: "product",
-            itemId: product?.id,
-          })
+    try {
+      setIsFavorite((prev: boolean) => !prev);
+
+      favoriteScale.value = withSequence(
+        withSpring(1.3, { damping: 2, stiffness: 80 }),
+        withSpring(1, { damping: 2, stiffness: 80 })
       );
-      console.log('status', status);
-    setIsFavorite(status === "added");
+
+      const result = await dispatch(
+        toggleFavoriteThunk({
+          type: "product",
+          itemId: product?.id,
+        })
+      ).unwrap();
+
+      setIsFavorite(result.status === "added");
+    } catch (error) {
+      setIsFavorite((prev: boolean) => !prev);
+      console.error("Error toggling favorite:", error);
+      Alert.alert(
+        i18n.t("common.error"),
+        i18n.t("common.something_went_wrong")
+      );
+    }
   };
 
   const renderHeartIcon = () => {
-    return isFavorite ? (
-        <Ionicons name="heart" size={24} color={Colors.primary} />
-    ) : (
-        <Ionicons name="heart-outline" size={24} color={Colors.primary}  />
+    return (
+      <Animated.View
+        style={[
+          favoriteAnimatedStyle,
+          { transform: [{ scale: favoriteScale }] },
+        ]}
+      >
+        <Pressable
+          onPressIn={() => {
+            favoriteScale.value = withSpring(0.8);
+          }}
+          onPressOut={() => {
+            favoriteScale.value = withSpring(1);
+          }}
+          onPress={handleFavorite}
+        >
+          {isFavorite ? (
+            <Ionicons name="heart" size={24} color={Colors.primary} />
+          ) : (
+            <Ionicons name="heart-outline" size={24} color={Colors.primary} />
+          )}
+        </Pressable>
+      </Animated.View>
     );
   };
 

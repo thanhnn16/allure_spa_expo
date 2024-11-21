@@ -23,10 +23,7 @@ export const toggleFavoriteThunk = createAsyncThunk(
                 type,
                 item_id: itemId,
             });
-            console.log('response', response.data.data);
-            if (response.data.status === true) {
-                return { status: response.data.data.status };
-            }
+            return response.data.data;
         } catch (error: any) {
             console.error('Unexpected error:', error.data.data);
             return rejectWithValue(error.response.data.message);

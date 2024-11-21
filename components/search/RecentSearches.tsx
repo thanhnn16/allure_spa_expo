@@ -1,7 +1,7 @@
-import React from 'react';
 import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity } from 'react-native-ui-lib';
 import AntDesign from "@expo/vector-icons/AntDesign";
+import i18n from '@/languages/i18n';
 
 interface RecentSearchesProps {
   searches: string[];
@@ -21,9 +21,9 @@ const RecentSearches = ({
   return (
     <View>
       <View row spread centerV marginB-15>
-        <Text h2>Tìm kiếm gần đây</Text>
+        <Text h2>{i18n.t("search.recent_searches")}</Text>
         <TouchableOpacity onPress={onClearAll}>
-          <Text h3 red30>Xóa tất cả</Text>
+          <Text h3 red30>{i18n.t("search.clear_all")}</Text>
         </TouchableOpacity>
       </View>
 

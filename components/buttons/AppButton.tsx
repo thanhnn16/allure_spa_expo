@@ -12,7 +12,6 @@ export interface AppButtonProps {
   disabled?: boolean;
   loading?: boolean;
   children?: React.ReactNode;
-  leftIcon?: React.ReactNode;
 }
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
@@ -77,8 +76,7 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
   const buttonStyles = getButtonStyles();
 
   return (
-    <View>
-      {props.leftIcon}
+    <View row centerV>
       <Button
         label={props.title}
         onPress={props.onPress}
