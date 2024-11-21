@@ -265,13 +265,13 @@ export default function Checkout() {
     setDiscountedPrice(totalPrice);
   }, [totalPrice]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      loadSelectedAddress();
-    });
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     loadSelectedAddress();
+  //   });
 
-    return unsubscribe;
-  }, [navigation]);
+  //   return unsubscribe;
+  // }, [navigation]);
 
   useEffect(() => {
     if (!products || products.length === 0) {

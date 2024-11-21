@@ -345,7 +345,7 @@ const OrderDetail = () => {
         >
           <BottomSheetView style={styles.bottomSheetView}>
             <View center gap-10 marginV-12>
-              <Text h2_bold>Bạn hủy vì lí do gì</Text>
+              <Text h2_bold>{i18n.t('transaction_detail.cancel.title')}</Text>
             </View>
 
 
@@ -354,30 +354,30 @@ const OrderDetail = () => {
                 <RadioButton
                   value={"Chọn thêm sản phẩm khác/ Thay đổi voucher"}
                   color={Colors.primary}
-                  label="Chọn thêm sản phẩm khác/ Thay đổi voucher"
+                  label={i18n.t('transaction_detail.cancel.change_order_voucher')}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn cảm thấy công dụng sản phẩm chưa tốt"}
                   color={Colors.primary}
-                  label="Bạn cảm thấy công dụng sản phẩm chưa tốt"
+                  label={i18n.t('transaction_detail.cancel.product_not_good')}
                   labelStyle={Typography.h3} />
                 <RadioButton
                   value={"Giá sản phẩm không hợp lý"}
                   color={Colors.primary}
-                  label="Giá sản phẩm không hợp lý"
+                  label={i18n.t('transaction_detail.cancel.price_not_good')}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn không muốn mua nữa"}
                   color={Colors.primary}
-                  label="Bạn không muốn mua nữa"
+                  label={i18n.t('transaction_detail.cancel.no_need')}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn có lý do khác"}
                   color={Colors.primary}
-                  label="Bạn có lý do khác"
+                  label={i18n.t('transaction_detail.cancel.other')}
                   labelStyle={Typography.h3}
                 />
               </View>
@@ -388,15 +388,15 @@ const OrderDetail = () => {
                 <TextInput
                   value={note}
                   onChangeText={setNote}
-                  placeholder={i18n.t("rating.type_content")}
-                  style={{ height: 194, textAlignVertical: "top" }}
+                  placeholder={i18n.t('transaction_detail.cancel.title')}
+                  style={{ height: 192, textAlignVertical: "top" }}
                 />
               </View>
             )}
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton
-                title={"Hủy đơn hàng"}
+                title={i18n.t('transaction_detail.cancel_order')}
                 type="primary"
                 onPress={() => handleCancelOrder()}
               />

@@ -406,7 +406,15 @@
     "rate_product": "Đánh giá sản phẩm",
     "you_have": "Bạn có",
     "product_need_review": "sản phẩm cần đánh giá. Đánh giá để nhận thêm điểm",
-    "review_now": "Đánh giá ngay"
+    "review_now": "Đánh giá ngay",
+    "cancel": {
+      "title": "Bạn hủy vì lý do gì?",
+      "change_order_voucher": "Thay đổi sản phẩm khác / thay đổi voucher",
+      "product_not_good": "Bạn cảm thấy công dụng sản phẩm chưa tốt",
+      "price_not_good": "Bạn cảm thấy giá sản phẩm không hợp lý",
+      "no_need": "Bạn Không muốn mua nữa",
+      "other": "Lý do khác"
+    }
   },
   "appointment": {
     "title": "Lịch hẹn",

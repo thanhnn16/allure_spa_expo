@@ -519,7 +519,15 @@
     "rate_product": "製品を評価",
     "you_have": "あなたは",
     "product_need_review": "レビューが必要です。 レビューして追加ポイントを受け取る",
-    "review_now": "今すぐレビュー"
+    "review_now": "今すぐレビュー",
+    "cancel": {
+      "title": "なぜキャンセルしましたか?",
+      "change_order_voucher": "別の商品に変更/クーポンを変更",
+      "product_not_good": "製品の効果が良くないと感じる",
+      "price_not_good": "製品の価格が適切でないと感じる",
+      "no_need": "もう購入する必要がない",
+      "other": "その他"
+    }
   },
   "appointment": {
     "scheduled": "予約済み",

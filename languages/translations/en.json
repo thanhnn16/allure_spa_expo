@@ -415,10 +415,18 @@
       "date_delivered": "Delivery Date"
     },
     "buy_again": "Buy again",
-    "order_code": "Order Code",
+    "cancel_order": "Cancel Order",
     "you_have": "You have",
     "product_need_review": " products that need review. Review now to get more points",
-    "review_now": "Review now"
+    "review_now": "Review now",
+    "cancel": {
+      "title": "Why did you cancel?",
+      "change_order_voucher": "Change to another product / change voucher",
+      "product_not_good": "You feel the product is not good",
+      "price_not_good": "You feel the price is not reasonable",
+      "no_need": "You don't want to buy anymore",
+      "other": "Other reasons"
+    }
   },
   "appointment": {
     "scheduled": "Scheduled",
