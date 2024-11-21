@@ -2,11 +2,15 @@ import { View, Text, Image, Colors, TouchableOpacity, RadioButton } from "react-
 import { OrderItem } from "@/types/order.type";
 import { useState } from "react";
 
+// interface OrderSelectRateItemProps {
+//     item: OrderItem;
+// }
+
 const OrderSelectRateItem = ({ item }: { item: OrderItem }) => {
     const product = item.product || item.service;
-    const [value, setValue] = useState(false);
     if (!product) return null;
     const imageUrl = product.media?.[0]?.full_url;
+    console.log('OrderSelectRateItem:', item.product?.id);
 
     return (
         <TouchableOpacity
@@ -14,7 +18,7 @@ const OrderSelectRateItem = ({ item }: { item: OrderItem }) => {
             style={{ marginTop: 5 }}
         >
             <View bg-white row centerV gap-12>
-                <RadioButton color={Colors.primary} selected={value} onPress={() => setValue(!value)} />
+                <RadioButton value={item.id} color={Colors.primary} />
                 <Image
                     width={48}
                     height={48}

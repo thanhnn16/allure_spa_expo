@@ -13,6 +13,7 @@ import { Address, AddressDistrict, AddressProvince, AddressWard } from "@/types/
 import AddressTextInput from "@/components/address/AddressTextInput";
 import AppDialog from "@/components/dialog/AppDialog";
 import { User } from "@/types/user.type";
+import { useAuth } from "@/hooks/useAuth";
 
 export const addressTypeItems = [
   { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
@@ -50,6 +51,7 @@ const Add = () => {
   const [confirmButton, setConfirmButton] = useState(false);
   const [onConfirmDialog, setOnConfirmDialog] = useState<() => void>(() => () => { });
   const [userProfile, setUserProfile] = useState<User>();
+  const { user } = useAuth();
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -159,7 +161,7 @@ const Add = () => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const userProfileStr = await AsyncStorage.getItem("userProfile");
+        const userProfileStr = JSON.stringify(user);
         if (userProfileStr) {
           setUserProfile(JSON.parse(userProfileStr));
         }

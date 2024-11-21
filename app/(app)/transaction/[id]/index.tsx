@@ -1,4 +1,4 @@
-import { View, Text, Colors, Wizard } from "react-native-ui-lib";
+import { View, Text, Colors, Wizard, RadioGroup } from "react-native-ui-lib";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -55,7 +55,9 @@ const OrderDetail = () => {
   const [comment, setcomment] = useState("");
   const isRated = false;
   const dispatch = useDispatch();
-  const { selectedOrder, isLoading } = useSelector(
+  const [currentValue, setCurrentValue] = useState<number | undefined>(undefined);
+
+  const { selectedOrder, isLoading, error } = useSelector(
     (state: RootState) => state.order
   );
 
@@ -82,14 +84,14 @@ const OrderDetail = () => {
       console.log("sendReview", rating, comment);
       dispatch(createRatingProductThunk({
         rating_type: "product",
-        item_id: 3,
+        item_id: currentValue,
         stars: rating,
         comment: comment
       }));
       bottomSheetRef.current?.close();
       setRateDialog(true);
     } catch (error: any) {
-      console.log("sendReview error", error);
+      bottomSheetRef.current?.close();
       setErrorDialog(true);
     }
   }
@@ -127,10 +129,9 @@ const OrderDetail = () => {
                   Đánh giá đơn hàng
                 </Text>
               </View>
-              <Text h3 marginT-8 color={Colors.grey30}>
+              <Text h3 marginV-8 color={Colors.grey30}>
                 Bạn có 1 sản phẩm cần đánh giá. Đánh giá để nhận thêm điểm
               </Text>
-
               <View flex>
                 <AppButton
                   title="Đánh giá"
@@ -260,9 +261,13 @@ const OrderDetail = () => {
               <Text h2_bold>Chọn sản phẩm cần đánh giá</Text>
             </View>
 
-            {selectedOrder.order_items?.map((item: OrderItem) => (
-              <OrderSelectRateItem key={item.id} item={item} />
-            ))}
+            
+              {selectedOrder.order_items?.map((item: OrderItem) => (
+                <RadioGroup initialValue={currentValue} onValueChange={(value: any) => { setCurrentValue(item.product?.id); }} >
+                <OrderSelectRateItem key={item.id} item={item} />
+                </RadioGroup>
+              ))}
+            
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton

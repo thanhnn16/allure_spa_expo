@@ -16,52 +16,15 @@ import { RootState } from "@/redux/store";
 import { User } from "@/types/user.type";
 import { addressTypeItems } from "../../add";
 import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from "@/redux/features/address/getAddressThunk";
-import { get } from "lodash";
-
-const AddressInput = ({
-  value,
-  placeholder,
-  onChangeText,
-  editable = true,
-}: {
-  value: string;
-  placeholder: string;
-  onChangeText: (text: string) => void;
-  editable?: boolean;
-}) => (
-  <View
-    bg-white
-    marginB-10
-    br20
-    style={{
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
-      elevation: 3,
-    }}
-  >
-    <TextInput
-      value={value}
-      placeholder={placeholder}
-      onChangeText={onChangeText}
-      editable={editable}
-      style={{
-        fontSize: 14,
-        height: 55,
-        width: "100%",
-        paddingHorizontal: 20,
-        color: editable ? "#333333" : "#666666",
-      }}
-    />
-  </View>
-);
+import { get, set } from "lodash";
+import { useAuth } from "@/hooks/useAuth";
 
 type AddressType = "home" | "work" | "others";
 
 const UpdateScreen = () => {
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch();
+
   const [formData, setFormData] = useState<Address>({
     user_id: "",
     province: "",
@@ -73,19 +36,27 @@ const UpdateScreen = () => {
     is_default: false,
     is_temporary: false,
   });
-  const [userProfile, setUserProfile] = useState<User | null>(null);
+
+  const { user } = useAuth();
+  const [userProfile, setUserProfile] = useState<User>();
+  const [address, setAddress] = useState<Address>();
+
   const [errorDescription, setErrorDescription] = useState<string>();
   const [errorDialogVisible, setErrorDialogVisible] = useState(false);
+
   const [selectedAddressType, setSelectedAddressType] = useState<AddressType>("home");
   const [selectedItem, setSelectedItem] = useState<number | null>(1);
 
-  const [province, setProvince] = useState<AddressProvince>();
+  const [province, setProvince] = useState<AddressProvince | string >();
   const [provinceList, setProvinceList] = useState<AddressProvince[]>([]);
+
   const [district, setDistrict] = useState<AddressDistrict>();
   const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
+
+  
   const [ward, setWard] = useState<AddressWard>();
   const [wardList, setWardList] = useState<AddressWard[]>([]);
-
+  
 
   const { addresses, loading, error } = useSelector(
     (state: RootState) => state.address
@@ -99,34 +70,30 @@ const UpdateScreen = () => {
     try {
       const response = await dispatch(getAddressProvinceThunk({}));
       setProvinceList(response.payload.data);
+      setProvince(addresses?.province);
+      const selectedProvince = provinceList.find((item) => item.id === address?.province);
+      if (address) {
+        getDistrict(Number(selectedProvince?.id));
+      }
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể tải thông tin tỉnh/thành phố");
       setErrorDialogVisible(true);
     }
   };
 
-  const getProvinceFromName = async () => {
-    const selectedProvince = provinceList.find((item) => item.name === formData?.province);
-    setProvince(selectedProvince);
-
-  }
-
   const getDistrict = async (id: number) => {
     try {
       const response = await dispatch(getAddressDistrictThunk({ query: id }));
       setDistrictList(response.payload.data);
-      console.log("districtList", districtList);
+      const selectedDistrict = districtList.find((item) => item.id === address?.district);
+      // if (address) {
+      //   getWard(Number(selectedDistrict?.id));
+      // }
 
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể tải thông tin quận/huyện");
       setErrorDialogVisible(true);
     }
-  }
-
-  const getDistrictFromName = async () => {
-    const selectedDistrict = districtList.find((item) => item.name === formData.district);
-    setDistrict(selectedDistrict);
-    await getWard(Number(selectedDistrict?.id));
   }
 
   const getWard = async (id: number) => {
@@ -143,7 +110,7 @@ const UpdateScreen = () => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const userProfileStr = await AsyncStorage.getItem("userProfile");
+        const userProfileStr = JSON.stringify(user);
         if (userProfileStr) {
           setUserProfile(JSON.parse(userProfileStr));
         }
@@ -160,6 +127,7 @@ const UpdateScreen = () => {
       try {
         await dispatch(fetchAddresses()).unwrap();
         const address = addresses.find((item: Address) => Number(item.id) === Number(id));
+        setAddress(address);
         setFormData((prev) => ({
           ...prev,
           province: address.province,
@@ -183,12 +151,6 @@ const UpdateScreen = () => {
   useEffect(() => {
     getProvince();
   }, []);
-
-  useEffect(() => {
-    if (provinceList.length > 0) {
-      getProvinceFromName();
-    }
-  }, [provinceList]);
 
   return (
     <View flex bg-F5F7FA>
@@ -247,7 +209,7 @@ const UpdateScreen = () => {
             placeholder="Tỉnh/Thành phố"
             floatingPlaceholder
             value={province?.id}
-            label={province?.name}
+            label={ address?.province || province?.name }
             enableModalBlur={true}
             onChange={(value: PickerValue) => {
               if (typeof value === 'string') {
