@@ -552,6 +552,8 @@
     "cancel_reason": "キャンセル理由",
     "edit": "予約を編集",
     "note": "メモ",
+    "next_appointment": "次の予約",
+    "performed_by": "実行者",
     "status": {
       "completed": "完了",
       "pending": "保留中",

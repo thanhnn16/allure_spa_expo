@@ -143,7 +143,7 @@ const ServicePackageScreen = () => {
           </View>
           <View marginL-12 flex>
             <Text text70BO color={Colors.text}>
-              Lịch hẹn sắp tới
+              {i18n.t("appointment.next_appointment")}
             </Text>
             <Text text80 color={Colors.text} marginT-4>
               {nextAppointment.date}
@@ -190,10 +190,32 @@ const ServicePackageScreen = () => {
                   />
                 </View>
                 <Text text80 color={Colors.text}>
-                  Thực hiện bởi: {nextAppointment.staff.full_name}
+                  {i18n.t("appointment.performed_by")}:{" "}
+                  {nextAppointment.staff.full_name}
                 </Text>
               </View>
             )}
+            <View marginT-8>
+              <AppButton
+                type="text"
+                onPress={() => {
+                  router.push(`/(app)/appointment/${nextAppointment.id}`);
+                }}
+                children={
+                  <View row centerV>
+                    <Text text80 color={Colors.primary}>
+                      {i18n.t("appointment.detail")}
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={16}
+                      style={{ marginTop: 2 }}
+                      color={Colors.primary}
+                    />
+                  </View>
+                }
+              />
+            </View>
           </View>
         </View>
       </View>

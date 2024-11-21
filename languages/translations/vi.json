@@ -439,6 +439,8 @@
     "cancel_reason": "Lý do huỷ",
     "edit": "Sửa lịch hẹn",
     "note": "Ghi chú",
+    "next_appointment": "Lịch hẹn sắp tới",
+    "performed_by": "Thực hiện bởi",
     "status": {
       "completed": "Đã hoàn thành",
       "pending": "Chờ xác nhận",
