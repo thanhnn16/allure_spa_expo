@@ -542,7 +542,22 @@
     "no_completed": "完了した予約がありません",
     "no_cancelled": "キャンセルした予約がありません",
     "book_for_service_package": "サービスパッケージの予約",
-    "find_service": "サービスを探す"
+    "find_service": "サービスを探す",
+    "detail": "予約詳細",
+    "staff": "スタッフ",
+    "customer": "顧客",
+    "slots": "席数",
+    "seats": "席",
+    "notes": "メモ",
+    "cancel_reason": "キャンセル理由",
+    "edit": "予約を編集",
+    "note": "メモ",
+    "status": {
+      "completed": "完了",
+      "pending": "保留中",
+      "cancelled": "キャンセル",
+      "confirmed": "確認済み"
+    }
   },
   "orders": {
     "title": "注文",

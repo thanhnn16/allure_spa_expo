@@ -429,7 +429,22 @@
     "no_completed": "Bạn không có lịch hẹn đã hoàn thành",
     "no_cancelled": "Bạn không có lịch hẹn đã huỷ",
     "book_for_service_package": "Đặt lịch hẹn cho gói dịch vụ",
-    "find_service": "Tìm kiếm dịch vụ"
+    "find_service": "Tìm kiếm dịch vụ",
+    "detail": "Chi tiết lịch hẹn",
+    "staff": "Nhân viên",
+    "customer": "Khách hàng",
+    "slots": "Số lượng chỗ",
+    "seats": "chỗ",
+    "notes": "Ghi chú",
+    "cancel_reason": "Lý do huỷ",
+    "edit": "Sửa lịch hẹn",
+    "note": "Ghi chú",
+    "status": {
+      "completed": "Đã hoàn thành",
+      "pending": "Chờ xác nhận",
+      "cancelled": "Đã huỷ",
+      "confirmed": "Đã xác nhận"
+    }
   },
   "orders": {
     "title": "Đơn hàng",

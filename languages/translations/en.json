@@ -442,7 +442,22 @@
     "no_completed": "You have no completed appointments",
     "no_cancelled": "You have no cancelled appointments",
     "book_for_service_package": "Book for service package",
-    "find_service": "Find service"
+    "find_service": "Find service",
+    "detail": "Appointment Detail",
+    "staff": "Staff",
+    "customer": "Customer",
+    "slots": "Number of Slots",
+    "seats": "seats",
+    "notes": "Notes",
+    "cancel_reason": "Cancel Reason",
+    "edit": "Edit Appointment",
+    "note": "Note",
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "cancelled": "Cancelled",
+      "confirmed": "Confirmed"
+    }
   },
   "orders": {
     "title": "Orders",

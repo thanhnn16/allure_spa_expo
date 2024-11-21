@@ -1,34 +1,34 @@
+import AppBar from "@/components/app-bar/AppBar";
+import AppButton from "@/components/buttons/AppButton";
+import i18n from "@/languages/i18n";
+import { resetAppointmentState } from "@/redux/features/appointment/appointmentSlice";
 import {
-  ScrollView,
+  cancelAppointment,
+  getAppointments,
+} from "@/redux/features/appointment/appointmentThunk";
+import { AppointmentResponeModelParams } from "@/types/service.type";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import moment from "moment";
+import { useEffect, useState } from "react";
+import {
+  Dimensions,
   FlatList,
   Modal,
+  ScrollView,
   TextInput,
-  Dimensions,
 } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import {
   Colors,
-  Text,
-  View,
   Image,
-  TouchableOpacity,
   SkeletonView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native-ui-lib";
-import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAppointments,
-  cancelAppointment,
-} from "@/redux/features/appointment/appointmentThunk";
-import i18n from "@/languages/i18n";
-import moment from "moment-timezone";
-import AppButton from "@/components/buttons/AppButton";
-import { AppointmentResponeModelParams } from "@/types/service.type";
-import AppBar from "@/components/app-bar/AppBar";
-import Animated, { FadeInDown } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LinearGradient from "react-native-linear-gradient";
-import { resetAppointmentState } from "@/redux/features/appointment/appointmentSlice";
-import { router } from "expo-router";
 const { width } = Dimensions.get("window");
 
 const ScheduledPage = () => {
@@ -64,11 +64,8 @@ const ScheduledPage = () => {
       to_date: string | null;
       status?: string | null;
     } = {
-      from_date: moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD"),
-      to_date: moment()
-        .tz("Asia/Ho_Chi_Minh")
-        .add(7, "days")
-        .format("YYYY-MM-DD"),
+      from_date: moment().format("YYYY-MM-DD"),
+      to_date: moment().add(7, "days").format("YYYY-MM-DD"),
       status: item.status,
     };
 
@@ -82,11 +79,8 @@ const ScheduledPage = () => {
 
     if (item.id === 6) {
       params = {
-        from_date: moment().tz("Asia/Ho_Chi_Minh").format("YYYY-MM-DD"),
-        to_date: moment()
-          .tz("Asia/Ho_Chi_Minh")
-          .add(7, "days")
-          .format("YYYY-MM-DD"),
+        from_date: moment().format("YYYY-MM-DD"),
+        to_date: moment().add(7, "days").format("YYYY-MM-DD"),
         status: "confirmed",
       };
     }
@@ -242,7 +236,7 @@ const ScheduledPage = () => {
                   backgroundColor={statusConfig.bg}
                 >
                   <Text h4 color={statusConfig.text}>
-                    {item.status}
+                    {i18n.t(`appointment.status.${item.status.toLowerCase()}`)}
                   </Text>
                 </View>
               </View>
@@ -303,11 +297,30 @@ const ScheduledPage = () => {
               {item.note && (
                 <View
                   marginT-10
-                  padding-10
+                  padding-12
                   br10
                   backgroundColor={Colors.grey70}
+                  style={{
+                    borderLeftWidth: 3,
+                    borderLeftColor: Colors.primary,
+                  }}
                 >
-                  <Text h4>{item.note}</Text>
+                  <View row>
+                    <MaterialCommunityIcons
+                      name="note-text-outline"
+                      size={16}
+                      color={Colors.primary}
+                      style={{ marginTop: 2 }}
+                    />
+                    <View flex marginL-8>
+                      <Text h4_bold color={Colors.primary} marginB-4>
+                        {i18n.t("appointment.note")}:
+                      </Text>
+                      <Text h4 color={Colors.text}>
+                        {item.note}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               )}
 
@@ -338,19 +351,43 @@ const ScheduledPage = () => {
               {item.status === "pending" && (
                 <AppButton
                   type="outline"
-                  title={i18n.t("appointment.cancel_appointment")}
                   onPress={() => handleCancelOrderPress(item.id)}
-                  buttonStyle={{ marginTop: 15 }}
-                  leftIcon={
-                    <MaterialCommunityIcons
-                      name="close-circle"
-                      size={20}
-                      color={Colors.red10}
-                      style={{ marginRight: 8 }}
-                    />
+                  buttonStyle={{ marginTop: 15, width: "100%" }}
+                  children={
+                    <View row gap-4 centerV>
+                      <MaterialCommunityIcons
+                        name="close-circle"
+                        size={16}
+                        color={Colors.red10}
+                        style={{ marginTop: 2 }}
+                      />
+                      <Text h4 color={Colors.red10}>
+                        {i18n.t("appointment.cancel_appointment")}
+                      </Text>
+                    </View>
                   }
                 />
               )}
+
+              {/* Add View Details button */}
+              <AppButton
+                type="outline"
+                onPress={() => router.push(`/appointment/${item.id}`)}
+                buttonStyle={{ marginTop: 15, width: "100%" }}
+                children={
+                  <View row gap-4 centerV>
+                    <Text h4 color={Colors.primary}>
+                      {i18n.t("appointment.view_details")}
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="arrow-right"
+                      size={16}
+                      color={Colors.primary}
+                      style={{ marginTop: 2 }}
+                    />
+                  </View>
+                }
+              />
             </View>
           </View>
         </LinearGradient>
