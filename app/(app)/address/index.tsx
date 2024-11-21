@@ -13,6 +13,7 @@ import AddressSkeletonView from "@/components/address/AddressSkeletonView";
 import type { Address, UserProfile } from "@/types/address.type";
 import AddressItem from "@/components/address/AddressItem";
 import AppDialog from "@/components/dialog/AppDialog";
+import { useAuth } from "@/hooks/useAuth";
 
 const AddressScreen = () => {
   const [dialogUpdateVisible, setDialogUpdateVisible] = useState(false);
@@ -24,6 +25,8 @@ const AddressScreen = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [updateItem, setUpdateItem] = useState<Address | null>(null);
 
+  const { user } = useAuth();
+
   const dispatch = useDispatch();
   const { addresses, loading, error } = useSelector(
     (state: RootState) => state.address
@@ -31,7 +34,7 @@ const AddressScreen = () => {
   
   const loadUserData = async () => {
     try {
-      const userProfileStr = await AsyncStorage.getItem("userProfile");
+      const userProfileStr = JSON.stringify(user);
       if (userProfileStr) {
         setUserProfile(JSON.parse(userProfileStr));
       }

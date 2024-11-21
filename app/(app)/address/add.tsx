@@ -114,7 +114,7 @@ const Add = () => {
       }
 
       const payload: Address = {
-        user_id: formData.user_id,
+        user_id: userProfile?.id || "",
         province: province?.name || "",
         district: district?.name || "",
         ward: ward?.name || "",

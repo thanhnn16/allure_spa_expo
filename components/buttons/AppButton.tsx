@@ -21,8 +21,8 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
         backgroundColor: Colors.grey50,
         labelStyle: {
           color: Colors.grey30,
-          fontSize: 16,
-          fontWeight: "bold",
+          fontSize: 14,
+          fontFamily: "SFProText-Bold",
           ...props.titleStyle,
         },
       };
@@ -33,8 +33,8 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
           backgroundColor: Colors.primary,
           labelStyle: {
             color: Colors.background,
-            fontSize: 16,
-            fontWeight: "bold",
+            fontSize: 14,
+            fontFamily: "SFProText-Bold",
             ...props.titleStyle,
           },
         };
@@ -43,8 +43,8 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
           backgroundColor: Colors.secondary,
           labelStyle: {
             color: Colors.primary,
-            fontSize: 16,
-            fontWeight: "bold",
+            fontSize: 14,
+            fontFamily: "SFProText-Bold",
             ...props.titleStyle,
           },
         };
@@ -55,8 +55,8 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
           outlineWidth: 1,
           labelStyle: {
             color: Colors.primary,
-            fontSize: 16,
-            fontWeight: "bold",
+            fontSize: 14,
+            fontFamily: "SFProText-Bold",
             ...props.titleStyle,
           },
         };
@@ -65,8 +65,8 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
           backgroundColor: "transparent",
           labelStyle: {
             color: Colors.primary,
-            fontSize: 16,
-            fontWeight: "bold",
+            fontSize: 14,
+            fontFamily: "SFProText-Bold",
             ...props.titleStyle,
           },
         };
