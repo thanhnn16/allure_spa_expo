@@ -209,7 +209,8 @@ const HomePage = () => {
     for (const pkg of packages) {
       if (pkg.next_appointment_details) {
         try {
-          const [day, month, year] = pkg.next_appointment_details.date.split("/");
+          const [day, month, year] =
+            pkg.next_appointment_details.date.split("/");
           const appointmentDate = new Date(
             parseInt(year),
             parseInt(month) - 1,
@@ -219,7 +220,8 @@ const HomePage = () => {
             0
           );
 
-          const [startHour, startMinute] = pkg.next_appointment_details.time.start.split(":");
+          const [startHour, startMinute] =
+            pkg.next_appointment_details.time.start.split(":");
           appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
 
           if (
@@ -242,7 +244,10 @@ const HomePage = () => {
     return null;
   }, [packages]);
 
-  const upcomingAppointment = useMemo(() => getUpcomingAppointment(), [getUpcomingAppointment]);
+  const upcomingAppointment = useMemo(
+    () => getUpcomingAppointment(),
+    [getUpcomingAppointment]
+  );
 
   const { servicesList, isLoading } = useSelector(
     (state: RootState) => state.service
@@ -280,10 +285,20 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(getServicesThunk({ page: 1, limit: 5 }));
-    dispatch(getAllProductsThunk());
-    dispatch(fetchBanners());
-    dispatch(fetchUnreadCount());
+    const fetchInitialData = async () => {
+      try {
+        await Promise.all([
+          dispatch(getServicesThunk({ page: 1, limit: 5 })),
+          dispatch(getAllProductsThunk()),
+          dispatch(fetchBanners()),
+          dispatch(fetchUnreadCount()),
+        ]);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      }
+    };
+
+    fetchInitialData();
   }, [dispatch, user?.id]);
 
   const renderServiceItem = useCallback(
