@@ -4,12 +4,11 @@ import { ProductResponseParams } from "@/types/product.type";
 
 export const getProductThunk = createAsyncThunk(
   'products/getProduct',
-  async (params : any, { rejectWithValue }: { rejectWithValue: any }) => {
+  async (params: any, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
       const res = await AxiosInstance().get<ProductResponseParams>(`products/${params.product_id}?user_id=${params.user_id}`);
 
       if (res.data.success) {
-        console.log('Get product success:', res.data.data);
         return res.data.data;
       }
 
