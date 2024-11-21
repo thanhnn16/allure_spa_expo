@@ -517,5 +517,13 @@
     "view_detail": "View detail",
     "type": "Notification Type",
     "status": "Status"
+  },
+  "search": {
+    "title": "Search",
+    "product": "Product",
+    "service": "Service",
+    "no_result": "No result",
+    "recent_searches": "Recent searches",
+    "clear_all": "Clear all"
   }
 }

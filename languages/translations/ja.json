@@ -617,5 +617,13 @@
     "view_detail": "詳細を見る",
     "type": "通知タイプ",
     "status": "ステータス"
+  },
+  "search": {
+    "title": "検索",
+    "product": "製品",
+    "service": "サービス",
+    "no_result": "結果がありません",
+    "recent_searches": "最近の検索",
+    "clear_all": "すべてをクリア"
   }
 }

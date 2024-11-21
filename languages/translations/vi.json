@@ -504,5 +504,13 @@
     "view_detail": "Xem chi tiết",
     "type": "Loại thông báo",
     "status": "Trạng thái"
+  },
+  "search": {
+    "title": "Tìm kiếm",
+    "product": "Sản phẩm",
+    "service": "Dịch vụ",
+    "no_result": "Không tìm thấy kết quả",
+    "recent_searches": "Tìm kiếm gần đây",
+    "clear_all": "Xóa tất cả"
   }
 }

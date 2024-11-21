@@ -22,10 +22,10 @@ import {
   removeRecentSearch,
   clearRecentSearches,
 } from "@/redux/features/search/searchSlice";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AppBar from "@/components/app-bar/AppBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RecentSearches from "@/components/search/RecentSearches";
+import i18n from "@/languages/i18n";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -85,8 +85,16 @@ const SearchScreen = () => {
     return Array(3)
       .fill(0)
       .map((_, index) => (
-        <View key={`skeleton-${index}`} style={styles.skeletonContainer}>
-          <SkeletonView width={60} height={60} style={styles.skeletonImage} />
+        <View
+          key={`skeleton-${index}`}
+          center
+          marginV-4
+          br20
+          bg-grey80
+          row
+          padding-12
+        >
+          <SkeletonView width={60} height={60} borderRadius={8} />
           <View flex marginL-12>
             <SkeletonView height={20} width={SCREEN_WIDTH - 120} />
             <SkeletonView height={16} width={100} marginT-8 />
@@ -105,7 +113,7 @@ const SearchScreen = () => {
         {results.products?.length > 0 && (
           <View marginB-20>
             <Text h2_bold marginB-10>
-              Sản phẩm
+              {i18n.t("search.product")}
             </Text>
             {results.products.map((product: Product) => (
               <SearchListItem
@@ -120,7 +128,7 @@ const SearchScreen = () => {
         {results.services?.length > 0 && (
           <View>
             <Text h2_bold marginB-10>
-              Dịch vụ
+              {i18n.t("search.service")}
             </Text>
             {results.services.map((service: ServiceResponeModel) => (
               <SearchListItem
@@ -136,7 +144,7 @@ const SearchScreen = () => {
           !results.products?.length &&
           !results.services?.length && (
             <View center marginT-40>
-              <Text h3>Không tìm thấy kết quả</Text>
+              <Text h3>{i18n.t("search.no_result")}</Text>
             </View>
           )}
       </>
@@ -144,62 +152,38 @@ const SearchScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View flex bg-white>
-        <View flex marginH-20>
-          <AppBar back title="Search" />
-          <AppSearch
-            value={searchQuery}
-            onChangeText={handleSearch}
-            onClear={handleClear}
-            ref={searchInputRef}
-          />
+    <View flex bg-white>
+      <AppBar back title={i18n.t("search.title")} />
+      <View flex marginH-20>
+        <AppSearch
+          value={searchQuery}
+          onChangeText={handleSearch}
+          onClear={handleClear}
+          ref={searchInputRef}
+        />
 
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={styles.scrollView}
-            keyboardShouldPersistTaps="handled"
-          >
-            {searchQuery ? (
-              <View marginT-20>{renderSearchResults()}</View>
-            ) : (
-              <View marginT-20>
-                <RecentSearches
-                  searches={recentSearches}
-                  onSearchPress={handleRecentSearchPress}
-                  onRemoveSearch={(search) =>
-                    dispatch(removeRecentSearch(search))
-                  }
-                  onClearAll={() => dispatch(clearRecentSearches())}
-                />
-              </View>
-            )}
-          </ScrollView>
-        </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {searchQuery ? (
+            <View marginT-20>{renderSearchResults()}</View>
+          ) : (
+            <View marginT-20>
+              <RecentSearches
+                searches={recentSearches}
+                onSearchPress={handleRecentSearchPress}
+                onRemoveSearch={(search) =>
+                  dispatch(removeRecentSearch(search))
+                }
+                onClearAll={() => dispatch(clearRecentSearches())}
+              />
+            </View>
+          )}
+        </ScrollView>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  skeletonContainer: {
-    flexDirection: "row",
-    padding: 12,
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8,
-    marginBottom: 8,
-    alignItems: "center",
-  },
-  skeletonImage: {
-    borderRadius: 8,
-  },
-});
 
 export default SearchScreen;
