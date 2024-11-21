@@ -503,7 +503,13 @@
     "detail": "Chi tiết thông báo",
     "view_detail": "Xem chi tiết",
     "type": "Loại thông báo",
-    "status": "Trạng thái"
+    "status": "Trạng thái",
+    "view_appointment": "Xem lịch hẹn",
+    "view_order": "Xem đơn hàng",
+    "view_conversation": "Xem cuộc hội thoại",
+    "view_payment": "Xem thanh toán",
+    "view_promotion": "Xem khuyến mãi",
+    "view_review": "Xem đánh giá"
   },
   "search": {
     "title": "Tìm kiếm",

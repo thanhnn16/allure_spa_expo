@@ -616,7 +616,13 @@
     "detail": "通知詳細",
     "view_detail": "詳細を見る",
     "type": "通知タイプ",
-    "status": "ステータス"
+    "status": "ステータス",
+    "view_appointment": "予約を見る",
+    "view_order": "注文を見る",
+    "view_conversation": "会話を見る",
+    "view_payment": "支払いを見る",
+    "view_promotion": "プロモーションを見る",
+    "view_review": "レビューを見る"
   },
   "search": {
     "title": "検索",

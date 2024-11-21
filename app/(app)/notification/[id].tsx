@@ -15,6 +15,7 @@ import {
   notificationTypeMap,
 } from "@/components/notification/NotificationItem";
 import i18n from "@/languages/i18n";
+import AppButton from "@/components/buttons/AppButton";
 
 const NotificationDetail: React.FC = () => {
   const router = useRouter();
@@ -45,137 +46,210 @@ const NotificationDetail: React.FC = () => {
     }
   };
 
+  const renderActionButton = () => {
+    if (!notification) return null;
+
+    const type = notification.type as NotificationType;
+    let actionText = "";
+    let onActionPress = () => {};
+
+    switch (type) {
+      case "new_appointment":
+      case "appointment_status":
+        actionText = i18n.t("notification.view_appointment");
+        // onActionPress = () => router.push(`/appointments/${notification.data?.appointment_id}`);
+        break;
+
+      case "new_order":
+      case "order_status":
+        actionText = i18n.t("notification.view_order");
+        // onActionPress = () => router.push(`/(app)/order/${notification.data?.order_id}`);
+        break;
+
+      case "new_message":
+        actionText = i18n.t("notification.view_conversation");
+        onActionPress = () =>
+          router.push(`/chat/${notification.data?.conversation_id}`);
+        break;
+
+      case "payment":
+        actionText = i18n.t("notification.view_payment");
+        // onActionPress = () => router.push(`/payments/${notification.data?.payment_id}`);
+        break;
+
+      case "promotion":
+        actionText = i18n.t("notification.view_promotion");
+        onActionPress = () =>
+          router.push(`/reward/${notification.data?.promotion_id}`);
+        break;
+
+      case "new_review":
+        actionText = i18n.t("notification.view_review");
+        // onActionPress = () => router.push(`/reviews/${notification.data?.review_id}`);
+        break;
+
+      default:
+        return null;
+    }
+
+    return (
+      <AppButton
+        onPress={onActionPress}
+        type="outline"
+        buttonStyle={{ marginTop: 16 }}
+        children={
+          <View row width="100%" center gap-4 centerV>
+            <Text text70BO color={Colors.primary}>
+              {actionText}
+            </Text>
+            <Feather
+              name="arrow-right"
+              size={16}
+              style={{ marginTop: 4 }}
+              color={Colors.primary}
+            />
+          </View>
+        }
+      />
+    );
+  };
+
   return (
     <View flex bg-white>
       <AppBar back title={i18n.t("notification.detail")} />
-      <ScrollView>
+      <ScrollView style={{ backgroundColor: Colors.background }}>
         <Animated.View entering={FadeIn.duration(500)}>
-          {/* Header Section */}
-          <View padding-16 backgroundColor={bgColor}>
-            <View center marginV-16>
+          {/* Header Section - Improved Icon */}
+          <View padding-20>
+            <View center marginB-20>
               <View
                 center
-                width={60}
-                height={60}
-                br30
-                backgroundColor={Colors.white}
                 style={{
-                  shadowColor: iconColor,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 4,
-                  elevation: 4,
+                  width: 52,
+                  height: 52,
+                  borderRadius: 16,
+                  backgroundColor: Colors.primary_blur,
+                  borderWidth: 1,
+                  borderColor: Colors.primary_light,
                 }}
               >
-                <Feather name={iconName as any} size={30} color={iconColor} />
+                <Feather
+                  name={iconName as any}
+                  size={24}
+                  color={Colors.primary}
+                />
               </View>
             </View>
-            <Text text60BO center color={Colors.text} marginB-8>
+
+            <Text text50BO center color={Colors.text} marginB-12>
               {notification.title}
             </Text>
-            <Text text90 center color={Colors.grey40}>
-              {formatDistanceToNow(new Date(notification.created_at), {
-                addSuffix: true,
-                locale: vi,
-              })}
-            </Text>
+
+            <View
+              row
+              centerV
+              center
+              marginB-20
+              style={{
+                backgroundColor: Colors.primary_blur,
+                paddingVertical: 6,
+                paddingHorizontal: 12,
+                borderRadius: 12,
+                alignSelf: "center",
+              }}
+            >
+              <Feather name="clock" size={14} color={Colors.primary} />
+              <Text text90 marginL-4 color={Colors.primary}>
+                {formatDistanceToNow(new Date(notification.created_at), {
+                  addSuffix: true,
+                  locale: vi,
+                })}
+              </Text>
+            </View>
           </View>
 
-          {/* Content Section */}
-          <View padding-16>
+          {/* Content Section - Updated */}
+          <View padding-20>
             <View
-              padding-16
+              padding-20
               br20
-              backgroundColor={Colors.white}
+              backgroundColor={Colors.surface}
               style={{
-                shadowColor: Colors.grey40,
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 4,
-                elevation: 2,
+                borderWidth: 1,
+                borderColor: Colors.primary_blur,
               }}
             >
               <Text text70 color={Colors.text} style={{ lineHeight: 24 }}>
                 {notification.content}
               </Text>
 
-              {/* Media Preview if available */}
-              {notification.media && (
-                <View marginT-16>
-                  <View
-                    height={200}
-                    br20
-                    backgroundColor={Colors.grey70}
-                    style={{
-                      overflow: "hidden",
-                    }}
-                  >
-                    {/* Add Image component here if needed */}
-                  </View>
-                </View>
-              )}
+              {renderActionButton()}
 
-              {/* Action Button if URL exists */}
               {notification.url && (
-                <TouchableOpacity
-                  onPress={handleUrlPress}
-                  marginT-16
-                  padding-12
-                  br10
-                  backgroundColor={Colors.primary}
-                  center
-                >
-                  <Text text70BO white>
-                    {i18n.t("notification.view_detail")}
-                  </Text>
-                </TouchableOpacity>
+                <View row centerV>
+                  <AppButton
+                    onPress={handleUrlPress}
+                    marginT-16
+                    type="outline"
+                    title={i18n.t("notification.view_detail")}
+                  />
+                  <Feather
+                    name="external-link"
+                    size={20}
+                    color={Colors.primary}
+                  />
+                </View>
               )}
             </View>
           </View>
 
           {/* Additional Info Section */}
-          <View padding-16>
+          <View padding-20>
             <View
-              row
-              spread
-              padding-12
-              br10
-              marginB-8
-              backgroundColor={Colors.grey70}
+              padding-16
+              br20
+              backgroundColor={Colors.surface}
+              style={{
+                borderWidth: 1,
+                borderColor: Colors.primary_blur,
+              }}
             >
-              <Text text80 color={Colors.grey20}>
-                {i18n.t("notification.type")}
-              </Text>
-              <Text text80 color={Colors.text}>
-                {notification.type
-                  .split("_")
-                  .map(
-                    (word: string) =>
-                      word.charAt(0).toUpperCase() + word.slice(1)
-                  )
-                  .join(" ")}
-              </Text>
-            </View>
-            <View row spread padding-12 br10 backgroundColor={Colors.grey70}>
-              <Text text80 color={Colors.grey20}>
-                {i18n.t("notification.status")}
-              </Text>
-              <View
-                paddingH-8
-                paddingV-4
-                br20
-                backgroundColor={
-                  notification.is_read ? Colors.grey60 : Colors.primary_light
-                }
-              >
-                <Text
-                  text80
-                  color={notification.is_read ? Colors.grey30 : Colors.primary}
-                >
-                  {notification.is_read
-                    ? i18n.t("notification.read")
-                    : i18n.t("notification.unread")}
+              <View row spread marginB-12>
+                <Text text80 color={Colors.text}>
+                  {i18n.t("notification.type")}
                 </Text>
+                <Text text80 color={Colors.primary}>
+                  {notification.type
+                    .split("_")
+                    .map(
+                      (word: string) =>
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                    )
+                    .join(" ")}
+                </Text>
+              </View>
+
+              <View row spread centerV>
+                <Text text80 color={Colors.text}>
+                  {i18n.t("notification.status")}
+                </Text>
+                <View
+                  paddingH-12
+                  paddingV-6
+                  br20
+                  backgroundColor={
+                    notification.is_read ? Colors.primary_blur : Colors.primary
+                  }
+                >
+                  <Text
+                    text80
+                    color={notification.is_read ? Colors.primary : Colors.white}
+                  >
+                    {notification.is_read
+                      ? i18n.t("notification.read")
+                      : i18n.t("notification.unread")}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>

@@ -12,6 +12,15 @@ export interface Notification {
         type: string;
     } | null;
     formatted_date: string;
+    data?: {
+        appointment_id?: number;
+        order_id?: number;
+        conversation_id?: number;
+        payment_id?: number;
+        promotion_id?: number;
+        review_id?: number;
+        [key: string]: any;
+    };
 }
 
 export interface NotificationResponse {

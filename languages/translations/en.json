@@ -516,7 +516,13 @@
     "detail": "Notification Detail",
     "view_detail": "View detail",
     "type": "Notification Type",
-    "status": "Status"
+    "status": "Status",
+    "view_appointment": "View appointment",
+    "view_order": "View order",
+    "view_conversation": "View conversation",
+    "view_payment": "View payment",
+    "view_promotion": "View promotion",
+    "view_review": "View review"
   },
   "search": {
     "title": "Search",
