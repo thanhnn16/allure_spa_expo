@@ -34,8 +34,6 @@ const appUrl = process.env.EXPO_PUBLIC_SERVER_URL;
 // Tạo redirect URI dựa trên platform
 export const getRedirectUri = () => {
   if (Platform.OS === 'web') {
-    console.log('appUrl', appUrl);
-    console.log('full url', `${appUrl}zalo-login-progress`);
     return `${appUrl}zalo-login-progress`;
   }
   const scheme = Constants.expoConfig?.scheme || 'allurespa';
@@ -71,7 +69,7 @@ export const handleZaloLogin = async (
   try {
     // Thử mở app Zalo nếu được cài đặt
     const canOpenZalo = await Linking.canOpenURL('zalo://');
-    
+
     if (canOpenZalo) {
       const zaloDeepLink = Platform.select({
         ios: `zalo://oauth?${new URLSearchParams({
@@ -183,10 +181,6 @@ export const refreshAccessToken = async (refreshToken: string): Promise<AccessTo
     });
 
     const { access_token, refresh_token, expires_in } = response.data;
-    console.log('New Access Token:', access_token);
-    console.log('New Refresh Token:', refresh_token);
-    console.log('Expires In:', expires_in);
-
     return { access_token, refresh_token, expires_in };
   } catch (error) {
     console.error('Error refreshing AccessToken:', error);
@@ -208,7 +202,6 @@ export const validateRefreshToken = async (refreshToken: string): Promise<boolea
     });
 
     if (response.data.errorCode === 0) {
-      console.log('RefreshToken is valid');
       return true;
     } else {
       console.log('RefreshToken is invalid');
@@ -225,7 +218,6 @@ export const getZaloUserProfile = async (accessToken: string): Promise<UserProfi
   try {
     const response = await axios.get<UserProfile>(`${ZALO_CONSTANTS.GRAPH_URL}/me?access_token=${accessToken}`);
     const userProfile = response.data;
-    console.log('User Profile:', userProfile);
     return userProfile;
   } catch (error) {
     console.error('Error fetching user profile:', error);
