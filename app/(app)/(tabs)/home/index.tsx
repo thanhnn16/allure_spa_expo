@@ -381,8 +381,9 @@ const HomePage = () => {
             left: 0,
             right: 0,
             zIndex: 1,
-            height: HEADER_HEIGHT,
+            height: HEADER_HEIGHT + 8,
             backgroundColor: "white",
+            overflow: "hidden",
           },
         ]}
       >
@@ -400,7 +401,7 @@ const HomePage = () => {
         onScroll={scrollHandler}
         scrollEventThrottle={1}
         contentContainerStyle={{
-          paddingTop: HEADER_HEIGHT,
+          paddingTop: HEADER_HEIGHT, marginTop: 24
         }}
       >
         {isLoading ? (

@@ -317,7 +317,7 @@ const OrderDetail = () => {
 
 
             {selectedOrder.order_items?.map((item: OrderItem) => (
-              <RadioGroup initialValue={currentValue} onValueChange={(value: any) => { setCurrentValue(item.product?.id); }} >
+              <RadioGroup key={item.id} initialValue={currentValue} onValueChange={(value: any) => { setCurrentValue(item.product?.id); }} >
                 <OrderSelectRateItem key={item.id} item={item} />
               </RadioGroup>
             ))}
