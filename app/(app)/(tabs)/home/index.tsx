@@ -37,6 +37,7 @@ import { ServiceResponeModel } from "@/types/service.type";
 import { SkeletonView } from "react-native-ui-lib";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 import { HOME_CATEGORIES } from "@/constants/categories";
+import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
 interface HomeHeaderProps {
   user: any; // Replace 'any' with your user type
   greeting: string;
@@ -292,6 +293,7 @@ const HomePage = () => {
           dispatch(getAllProductsThunk()),
           dispatch(fetchBanners()),
           dispatch(fetchUnreadCount()),
+          dispatch(fetchCartItems()),
         ]);
       } catch (error) {
         console.error("Error fetching initial data:", error);
@@ -416,7 +418,8 @@ const HomePage = () => {
         onScroll={scrollHandler}
         scrollEventThrottle={1}
         contentContainerStyle={{
-          paddingTop: HEADER_HEIGHT, marginTop: 24
+          paddingTop: HEADER_HEIGHT,
+          marginTop: 24,
         }}
       >
         {isLoading ? (
