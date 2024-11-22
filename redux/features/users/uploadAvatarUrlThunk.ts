@@ -5,8 +5,6 @@ export const uploadAvatarUrlThunk = createAsyncThunk(
   "user/uploadAvatar",
   async (formData: FormData, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
-      console.log("Sending FormData:", Array.from((formData as any)._parts));
-
       const axiosInstance = AxiosInstance('multipart/form-data');
 
       const res = await axiosInstance.post("user/avatar", formData, {

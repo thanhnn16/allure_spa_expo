@@ -6,8 +6,6 @@ export const createRatingProductThunk = createAsyncThunk(
     'rating/createRating',
     async (formData: FormData, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
-            console.log("Sending FormData:", Array.from((formData as any)._parts));
-
             const res = await AxiosInstance('multipart/form-data')
                 .post<RatingResponseParams>('ratings/from-order', formData, {
                     headers: {
