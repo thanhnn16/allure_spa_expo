@@ -37,11 +37,12 @@ export interface RatingsListResponseParams extends ResponeDefaultParams {
 }
 
 export interface CreateRatingRequest {
-    "rating_type": string,
-    "item_id": number,
-    "stars": number,
-    "comment": string,
-    "media": number,
+    rating_type: 'product' | 'service';
+    item_id: number;
+    stars: number;
+    comment: string;
+    images?: string[];
+    order_item_id: number;
 }
 
 export interface RatingSummary {
