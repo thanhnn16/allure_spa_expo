@@ -427,7 +427,10 @@
       "price_not_good": "You feel the price is not reasonable",
       "no_need": "You don't want to buy anymore",
       "other": "Other reasons"
-    }
+    },
+    "review_products": "Review products",
+    "review_completed": "Review completed",
+    "thank_you_for_review": "Thank you for your review"
   },
   "appointment": {
     "scheduled": "Scheduled",

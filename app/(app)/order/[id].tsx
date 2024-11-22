@@ -209,24 +209,33 @@ const OrderDetail = () => {
           {!selectedOrder.is_rated && selectedOrder.status == "completed" && (
             <View style={styles.section}>
               <View row spread centerV>
-                <Text h2_bold>{i18n.t("transaction_detail.you_have")}</Text>
+                <Text h2_bold>
+                  {selectedOrder.order_items?.filter((item: OrderItem) => !item.is_rated).length > 0 
+                    ? i18n.t("transaction_detail.review_products")
+                    : i18n.t("transaction_detail.review_completed")
+                  }
+                </Text>
               </View>
-              <Text h3 marginV-8 color={Colors.grey30}>
-                {i18n.t("transaction_detail.you_have")}{" "}
-                {
-                  selectedOrder.order_items?.filter(
-                    (item: OrderItem) => !item.is_rated
-                  ).length
-                }{" "}
-                {i18n.t("transaction_detail.product_need_review")}
-              </Text>
-              <View flex>
-                <AppButton
-                  title={i18n.t("transaction_detail.review_now")}
-                  type="outline"
-                  onPress={() => handleOpenBottomSheet()}
-                />
-              </View>
+              {selectedOrder.order_items?.filter(
+                (item: OrderItem) => !item.is_rated
+              ).length > 0 ? (
+                <>
+                  <Text h3 marginV-8 color={Colors.grey30}>
+                    {i18n.t("transaction_detail.product_need_review")}
+                  </Text>
+                  <View flex>
+                    <AppButton
+                      title={i18n.t("transaction_detail.review_now")}
+                      type="outline"
+                      onPress={() => handleOpenBottomSheet()}
+                    />
+                  </View>
+                </>
+              ) : (
+                <Text h3 marginV-8 color={Colors.grey30}>
+                  {i18n.t("transaction_detail.thank_you_for_review")}
+                </Text>
+              )}
             </View>
           )}
 

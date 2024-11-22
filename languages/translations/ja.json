@@ -528,7 +528,10 @@
       "price_not_good": "製品の価格が適切でないと感じる",
       "no_need": "もう購入する必要がない",
       "other": "その他"
-    }
+    },
+    "review_products": "製品を評価",
+    "review_completed": "評価済み",
+    "thank_you_for_review": "ありがとうございました"
   },
   "appointment": {
     "scheduled": "予約済み",
