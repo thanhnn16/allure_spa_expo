@@ -383,7 +383,8 @@
     "2_seat": "2席",
     "back_to_home": "ホームページに戻る",
     "scheduled_successfully": "正常にスケジュールされました",
-    "propose": "割引クーポンを適用するには今すぐ支払いを行ってください"
+    "propose": "割引クーポンを適用するには今すぐ支払いを行ってください",
+    "update_information": "情報を更新する",
   },
   "system": {
     "fud": "機能は開発中です!",
