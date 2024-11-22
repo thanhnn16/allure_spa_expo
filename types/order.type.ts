@@ -66,3 +66,13 @@ export interface OrderResponse {
         total: number;
     };
 }
+
+export interface CheckoutOrderItem {
+    item_type: "product" | "service";
+    item_id: number;
+    quantity: number;
+    price: number;
+    service_type?: "combo_5" | "combo_10" | "single";
+    product?: Product;
+    service?: ServiceResponeModel;
+}

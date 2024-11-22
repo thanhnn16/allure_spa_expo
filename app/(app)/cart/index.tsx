@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
   Image,
   Button,
-  ListItem,
   Colors,
 } from "react-native-ui-lib";
 import {
@@ -14,32 +12,30 @@ import {
   TouchableOpacity,
   Pressable,
 } from "react-native";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  CartItem,
   clearCart,
   removeCartItem,
-  setCartItems
+  setCartItems,
 } from "@/redux/features/cart/cartSlice";
 import CartProductItem from "@/components/cart/CartProductItem";
 import { RootState } from "@/redux/store";
 import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
 import i18n from "@/languages/i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { FormatNumberOptions } from "i18n-js";
 import formatCurrency from "@/utils/price/formatCurrency";
 import AppDialog from "@/components/dialog/AppDialog";
-import { setOrderProducts } from '@/redux/features/order/orderSlice';
+import { setOrderProducts, clearOrder } from "@/redux/features/order/orderSlice";
 
 export default function Cart() {
   const dispatch = useDispatch();
   const [cartDialog, setCartDialog] = useState(false);
   const [setItemDelete, setsetItemDelete] = useState<Number>();
-  const { items, totalAmount } = useSelector(
-    (state: RootState) => state.cart
-  );
+  const { items, totalAmount } = useSelector((state: RootState) => state.cart);
 
   const CART_ITEMS_KEY = "@cart_items";
   useEffect(() => {
@@ -54,15 +50,19 @@ export default function Cart() {
       }
     };
     loadCart();
+
+    return () => {
+      dispatch(clearOrder());
+    };
   }, []);
 
   const handleClearCart = () => {
-    dispatch(clearCart())
+    dispatch(clearCart());
   };
 
   const handleDelete = (id: number) => {
     dispatch(removeCartItem(id));
-  }
+  };
 
   const handleDeleteConfirm = () => {
     setCartDialog(false);
@@ -74,75 +74,89 @@ export default function Cart() {
   const formattedPrice = formatCurrency({ price: totalAmount });
 
   const CartEmpty = () => {
-    return <View flex center>
-      <Pressable
-        onPress={() => router.back()}
-        style={{ alignItems: 'center' }}
-      >
-        <Image
-          source={CartEmptyIcon}
-          style={{ width: 200, height: 200 }}
-        />
-        <Text h2_bold marginT-20>Giỏ hàng trống</Text>
-        <View marginT-10>
-          <Text h3>Khám phá sản phẩm khác nhé</Text>
-        </View>
-      </Pressable>
-    </View>
-  }
+    return (
+      <View flex center>
+        <Pressable
+          onPress={() => router.back()}
+          style={{ alignItems: "center" }}
+        >
+          <Image source={CartEmptyIcon} style={{ width: 200, height: 200 }} />
+          <Text h2_bold marginT-20>
+            Giỏ hàng trống
+          </Text>
+          <View marginT-10>
+            <Text h3>Khám phá sản phẩm khác nhé</Text>
+          </View>
+        </Pressable>
+      </View>
+    );
+  };
 
   const CartHaveItems = () => {
-    return <View flex paddingH-20>
-      <View right paddingB-5>
-        <TouchableOpacity onPress={handleClearCart}>
-          <Text h3_bold secondary>Xóa tất cả</Text>
-        </TouchableOpacity>
-      </View>
-      <FlatList
-        data={items}
-        renderItem={({ item }) =>
-          <CartProductItem
-            product={item}
-            dialogVisible={setCartDialog}
-            setItemDelete={setsetItemDelete}
-          />
-        }
-        keyExtractor={(item) => item.id.toString()}
-      />
-      <View style={styles.totalContainer}>
-        <Text h3_bold>Tổng cộng: </Text>
-        <Text h3_bold secondary>{formattedPrice}</Text>
-      </View>
+    return (
+      <View flex paddingH-20>
+        <View right paddingB-5>
+          <TouchableOpacity onPress={handleClearCart}>
+            <Text h3_bold secondary>
+              Xóa tất cả
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          data={items}
+          renderItem={({ item }) => (
+            <CartProductItem
+              product={item}
+              dialogVisible={setCartDialog}
+              setItemDelete={setsetItemDelete}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
+        <View style={styles.totalContainer}>
+          <Text h3_bold>Tổng cộng: </Text>
+          <Text h3_bold secondary>
+            {formattedPrice}
+          </Text>
+        </View>
 
-      <Button
-        label='Tiếp Tục'
-        labelStyle={{ fontFamily: 'SFProText-Bold', fontSize: 16 }}
-        backgroundColor={Colors.primary}
-        padding-20
-        borderRadius={10}
-        style={{ width: 338, height: 50, alignSelf: 'center', marginVertical: 10 }}
-        onPress={handleCheckout}
-      />
-
-    </View>
-  }
+        <Button
+          label="Tiếp Tục"
+          labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+          backgroundColor={Colors.primary}
+          padding-20
+          borderRadius={10}
+          style={{
+            width: 338,
+            height: 50,
+            alignSelf: "center",
+            marginVertical: 10,
+          }}
+          onPress={handleCheckout}
+        />
+      </View>
+    );
+  };
 
   const handleCheckout = () => {
-    const checkoutProducts = items.map(item => ({
+    const checkoutItems = items.map((item: CartItem) => ({
       id: item.id,
       name: item.name,
       price: item.price,
-      priceValue: parseFloat(item.price),
+      priceValue: item.price,
       quantity: item.cart_quantity,
-      image: item.media?.[0]?.full_url || item.image,
-      type: "product"
+      image: item.media?.[0]?.full_url || item.media?.[0]?.full_url,
+      type: item.item_type,
+      service_type: item.service_type
     }));
 
-    dispatch(setOrderProducts({
-      products: checkoutProducts,
-      totalAmount: totalAmount,
-      fromCart: true
-    }));
+    dispatch(
+      setOrderProducts({
+        items: checkoutItems,
+        totalAmount: totalAmount,
+        fromCart: true,
+      })
+    );
 
     router.push("/check-out");
   };
@@ -157,7 +171,9 @@ export default function Cart() {
       <AppDialog
         visible={cartDialog}
         title={"Xác nhận xóa sản phẩm"}
-        description={"Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"}
+        description={
+          "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
+        }
         closeButtonLabel={i18n.t("common.cancel")}
         confirmButtonLabel={"Xóa"}
         severity="info"
@@ -165,7 +181,6 @@ export default function Cart() {
         onConfirm={() => handleDeleteConfirm()}
       />
     </GestureHandlerRootView>
-
   );
 }
 

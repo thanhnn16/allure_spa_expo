@@ -58,27 +58,24 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   };
 
   const handlePurchase = () => {
+    if (quantity === 0) {
+      setIsVisible(true);
+      return;
+    }
+
     if (onPurchase) {
       onPurchase();
     } else {
-      const productData = {
+      const cartItem = {
         id: product?.id,
+        item_type: "product",
         name: product?.name,
-        price: product?.price,
-        priceValue: product?.price || 0,
-        quantity: quantity,
-        image: product?.media?.[0]?.full_url || "",
-        type: "product",
+        price: product?.price ? parseFloat(product.price.toString()) : 0,
+        cart_quantity: quantity,
+        media: product?.media || [],
       };
 
-      dispatch(
-        setOrderProducts({
-          products: [productData],
-          totalAmount: Number(product?.price || 0) * quantity,
-          fromCart: false,
-        })
-      );
-
+      dispatch(addItemToCart({ item: cartItem }));
       router.push("/check-out");
     }
   };
@@ -104,10 +101,16 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       }}
     >
       <View row gap-30>
-        <TouchableOpacity onPress={() => router.push({
-          pathname: `/rating/${product?.id}`,
-          params: { type: 'product' }
-        })}>
+        <TouchableOpacity
+          onPress={() => {
+            if (product?.id) {
+              router.push({
+                pathname: `/(app)/rating/${product.id}`,
+                params: { type: "product" },
+              });
+            }
+          }}
+        >
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>

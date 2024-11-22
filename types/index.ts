@@ -1,7 +1,7 @@
 export interface OrderItem {
-  item_type: 'product' | 'service';
+  item_type: "product" | "service";
   item_id: number;
-  service_type?: 'single' | 'combo_5' | 'combo_10';
+  service_type?: "single" | "combo_5" | "combo_10";
   quantity: number;
   price: number;
   discount_amount?: number;

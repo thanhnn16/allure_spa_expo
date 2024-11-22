@@ -3,17 +3,16 @@ import {
   StyleSheet,
   ScrollView,
   ImageSourcePropType,
-  SafeAreaView,
   Alert,
   TouchableOpacity,
   TextInput,
+  Linking,
 } from "react-native";
 import { Button, Colors, Text, View } from "react-native-ui-lib";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
-import PaymentAddress from "@/components/payment/PaymentAddress";
 import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import PaymentPicker from "@/components/payment/PaymentPicker";
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
@@ -24,10 +23,9 @@ import { RootState } from "@/redux/store";
 import { Voucher } from "@/types/voucher.type";
 import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
 import AppDialog from "@/components/dialog/AppDialog";
-import { WebViewType } from "@/utils/constants/webview";
 import OrderService from "@/services/OrderService";
 import { useAuth } from "@/hooks/useAuth";
-import { clearOrder } from "@/redux";
+import { clearCart } from "@/redux/features/cart/cartSlice";
 import { OrderItem } from "@/types";
 import { Product } from "@/types/product.type";
 import { useDialog } from "@/hooks/useDialog";
@@ -35,19 +33,9 @@ import { fetchAddresses } from "@/redux/features";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppButton from "@/components/buttons/AppButton";
 import { Address, UserProfile } from "@/types/address.type";
-
-// export interface PaymentAddressProps {
-//   fullName: string;
-//   phoneNumber: string;
-//   fullAddress: string;
-//   addressType: string;
-//   isDefault: string;
-//   note: string;
-//   addressId: string;
-//   province: string;
-//   district: string;
-//   address: string;
-// }
+import { selectCheckoutItems } from "@/redux/features/cart/cartSlice";
+import { ServiceResponeModel } from "@/types/service.type";
+import { CheckoutOrderItem } from "@/types/order.type";
 
 export interface PaymentMethod {
   id: number;
@@ -78,8 +66,7 @@ export default function Checkout() {
   const { user } = useAuth();
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [selectedAddress, setSelectedAddress] =
-    useState<Address | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
   const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
   const [voucher, setVoucher] = useState<Voucher | null>(null);
@@ -89,37 +76,17 @@ export default function Checkout() {
   const { dialogConfig, showDialog, hideDialog } = useDialog();
   const [note, setNote] = useState("");
 
-  const products = useSelector((state: RootState) => state.order.orders || []);
-  const totalAmount = useSelector((state: RootState) => state.order.totalAmount || 0);
-  const { vouchers, isLoading } = useSelector(
-    (state: RootState) => state.voucher
-  );
-  const { addresses } = useSelector((state: RootState) => state.address);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const loadUserData = async () => {
-    try {
-      const userProfileStr = JSON.stringify(user);
-      if (userProfileStr) {
-        setUserProfile(JSON.parse(userProfileStr));
-      }
+  const checkoutItems = useSelector(selectCheckoutItems) as CheckoutOrderItem[];
+  const cartTotalAmount = useSelector((state: RootState) => state.cart.totalAmount);
+  const addresses = useSelector((state: RootState) => state.address.addresses);
+  const userProfile = useSelector((state: RootState) => state.auth.user);
+  const vouchers = useSelector((state: RootState) => state.voucher.vouchers);
 
-      await dispatch(fetchAddresses()).unwrap();
-    } catch (error) {
-      console.error("Lỗi khi tải dữ liệu:", error);
-      Alert.alert("Lỗi", "Không thể tải thông tin");
-    }
-  };
-
-  useEffect(() => {
-    loadUserData();
-  }, [dispatch]);
-
-  // Tính toán tổng giá dựa trên sản phẩm
   const calculateTotalPrice = () => {
-    if (!products || products.length === 0) return 0;
+    if (!checkoutItems || checkoutItems.length === 0) return 0;
 
-    return products.reduce((total: number, product: any) => {
-      return total + product.priceValue * product.quantity;
+    return checkoutItems.reduce((total: number, item: CheckoutOrderItem) => {
+      return total + (item.price * item.quantity);
     }, 0);
   };
 
@@ -177,74 +144,66 @@ export default function Checkout() {
         return;
       }
 
-      console.log("selectedAddress:", selectedAddress.id);
-
-      // Create order data
+      // Format order data theo cấu trúc API mới
       const orderData = {
         payment_method_id: selectedPayment.id,
-        total_amount: discountedPrice,
-        discount_amount: totalPrice - discountedPrice,
-        voucher_id: selectedVoucher?.id || null,
         shipping_address_id: selectedAddress.id,
+        voucher_id: selectedVoucher?.id || null,
         note: note || "",
-        order_items: products.map((item: any) => ({
-          item_type: item.type || "product",
-          item_id: item.id,
+        items: checkoutItems.map((item: CheckoutOrderItem) => ({
+          item_id: item.item_id,
+          item_type: item.item_type,
           quantity: item.quantity,
-          price: item.priceValue
-        }))
+          price: item.price,
+          ...(item.item_type === "service" && {
+            service_type: item.service_type || "single",
+          }),
+        })),
       };
 
       // Create order
       const orderResponse = await OrderService.createOrder(orderData);
-      const orderId = orderResponse.data.id;
+      const { id: orderId, total_amount: serverCalculatedAmount } =
+        orderResponse.data;
 
-      // Handle different payment methods
-      if (selectedPayment.id === 1) { // Cash payment
+      // Handle payment methods
+      if (selectedPayment.id === 1) {
+        // Cash payment
         router.replace({
           pathname: "/(app)/invoice/success",
           params: {
             order_id: orderId,
-            amount: discountedPrice.toString(),
+            amount: serverCalculatedAmount.toString(),
             payment_time: new Date().toISOString(),
-            payment_method: "cash"
-          }
+            payment_method: "cash",
+          },
         });
-        dispatch(clearOrder());
-      } else if (selectedPayment.id === 3) { // Bank transfer
+        dispatch(clearCart());
+      } else if (selectedPayment.id === 3) {
+        // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
 
         const paymentData = {
-          returnUrl: `${scheme}://invoice/success?order_id=${orderId}&amount=${discountedPrice}&payment_method=bank_transfer&payment_time=${new Date().toISOString()}`,
+          returnUrl: `${scheme}://invoice/success?order_id=${orderId}&amount=${serverCalculatedAmount}&payment_method=bank_transfer&payment_time=${new Date().toISOString()}`,
           cancelUrl: `${scheme}://invoice/failed?type=cancel&order_id=${orderId}&payment_method=bank_transfer`,
         };
 
-        const paymentResponse = await OrderService.processPayment(orderId, paymentData);
+        const paymentResponse = await OrderService.processPayment(
+          orderId,
+          paymentData
+        );
 
-        if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
-          router.push({
-            pathname: "/webview",
-            params: {
-              url: paymentResponse.data.checkoutUrl,
-              type: WebViewType.PAYMENT,
-              orderId: orderId,
-              amount: discountedPrice.toString()
-            },
-          });
-        } else {
-          throw new Error(paymentResponse.message || i18n.t("checkout.payment_error_message"));
+        if (paymentResponse.data?.checkoutUrl) {
+          await Linking.openURL(paymentResponse.data.checkoutUrl);
         }
       }
-    } catch (error: any) {
-      console.error("Payment Error:", error);
-      router.replace({
-        pathname: "/(app)/invoice/failed",
-        params: {
-          reason: error.response?.data?.message || i18n.t("checkout.payment_error_message"),
-          type: "failed",
-          payment_method: selectedPayment.id === 1 ? "cash" : "bank_transfer"
-        }
-      });
+    } catch (error) {
+      console.error("Payment error:", error);
+      showDialog(
+        i18n.t("common.error"),
+        i18n.t("checkout.payment_failed"),
+        "error"
+      );
     }
   };
 
@@ -252,7 +211,9 @@ export default function Checkout() {
     const fetchVouchers = async () => {
       try {
         await dispatch(getAllVouchersThunk());
-        setactiveVoucher(vouchers.filter((voucher: any) => voucher.is_active));
+        if (vouchers) {
+          setactiveVoucher(vouchers.filter((v: Voucher) => v.is_active));
+        }
       } catch (error) {
         console.error("Error fetching vouchers:", error);
       }
@@ -274,18 +235,15 @@ export default function Checkout() {
   }, [navigation]);
 
   useEffect(() => {
-    if (!products || products.length === 0) {
+    if (checkoutItems.length === 0) {
       router.back();
       return;
     }
 
-    setTotalPrice(totalAmount || 0);
-    setDiscountedPrice(totalAmount || 0);
-
-    return () => {
-      dispatch(clearOrder());
-    };
-  }, [products, totalAmount, dispatch]);
+    const initialTotal = calculateTotalPrice();
+    setTotalPrice(initialTotal);
+    setDiscountedPrice(initialTotal);
+  }, [checkoutItems]);
 
   useEffect(() => {
     loadAddressData();
@@ -304,29 +262,6 @@ export default function Checkout() {
     } catch (error) {
       console.error("Error loading addresses:", error);
     }
-  };
-
-  const handleProceedToPayment = () => {
-    if (!selectedAddress) {
-      Alert.alert(
-        i18n.t("checkout.address_required_title"),
-        i18n.t("checkout.address_required_message"),
-        [
-          {
-            text: i18n.t("common.add_now"),
-            onPress: () => router.push("/(app)/address/add"),
-          },
-          {
-            text: i18n.t("common.cancel"),
-            style: "cancel",
-          },
-        ]
-      );
-      return;
-    }
-
-    // Proceed with payment logic
-    // ...
   };
 
   const renderAddressSection = () => {
@@ -359,7 +294,8 @@ export default function Checkout() {
               {i18n.t("checkout.delivery_address")}
             </Text>
             <Text style={styles.addressText}>
-              {selectedAddress.address}, {selectedAddress.ward}, {selectedAddress.district}, {selectedAddress.province}
+              {selectedAddress.address}, {selectedAddress.ward},{" "}
+              {selectedAddress.district}, {selectedAddress.province}
             </Text>
             <Text style={styles.recipientText}>
               {userProfile?.full_name} | {userProfile?.phone_number}
@@ -373,6 +309,22 @@ export default function Checkout() {
         <MaterialCommunityIcons name="chevron-right" size={24} color="#666" />
       </TouchableOpacity>
     );
+  };
+
+  const renderOrderItems = () => {
+    return checkoutItems.map((item: CheckoutOrderItem) => (
+      <PaymentProductItem
+        key={`${item.item_type}-${item.item_id}`}
+        orderItem={{
+          item_id: item.item_id,
+          item_type: item.item_type,
+          quantity: item.quantity,
+          price: item.price,
+          service_type: item.service_type,
+          [item.item_type]: item.item_type === "product" ? item.product : item.service,
+        }}
+      />
+    ));
   };
 
   return (
@@ -409,9 +361,7 @@ export default function Checkout() {
 
           <View marginV-10 gap-10>
             <Text h2_bold>{i18n.t("checkout.product")}</Text>
-            {products.map((product: Product) => (
-              <PaymentProductItem key={product.id} product={product} />
-            ))}
+            {renderOrderItems()}
           </View>
 
           <View style={styles.borderInset} />
