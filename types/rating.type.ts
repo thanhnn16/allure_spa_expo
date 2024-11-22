@@ -1,15 +1,25 @@
 import { Timestamps, ResponePagesParams, ResponeDefaultParams } from "./commons.type";
+import { Media } from "./media.type";
+import { User } from "./user.type";
 
 export interface Rating extends Timestamps {
     id: number;
     user_id: string;
-    rating_type: string;
+    user?: User;
+    order_item_id: number;
+    rating_type: 'service' | 'product';
     item_id: number;
     stars: number;
     comment: string;
-    image_id: number;
-    video_id: number;
-    status: string;
+    status: 'pending' | 'approved';
+    media_urls?: MediaUrl[];
+    media?: Media[];
+}
+export interface MediaUrl {
+    id: number;
+    type: string;
+    url: string;
+    position: number;
 }
 
 export interface RatingResponseParams extends ResponeDefaultParams {
@@ -17,7 +27,12 @@ export interface RatingResponseParams extends ResponeDefaultParams {
 }
 
 export interface RatingsListResponseParams extends ResponeDefaultParams {
-    data: Rating[];
+    data: {
+        data: Rating[];
+        current_page: number;
+        total: number;
+        per_page: number;
+    };
     meta: any;
 }
 
@@ -26,7 +41,7 @@ export interface CreateRatingRequest {
     "item_id": number,
     "stars": number,
     "comment": string,
-    "media_id": number
+    "media": number,
 }
 
 export interface RatingSummary {

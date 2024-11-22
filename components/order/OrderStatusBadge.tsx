@@ -3,12 +3,11 @@ import i18n from "@/languages/i18n";
 
 const getStatusColor = (status: string) => {
   const colors = {
-    pending: Colors.orange30,
-    confirmed: Colors.blue30,
-    shipping: Colors.purple30,
-    delivered: Colors.green30,
-    completed: Colors.green10,
-    cancelled: Colors.red30,
+    pending: Colors.orange40,
+    confirmed: Colors.blue40,
+    shipping: Colors.purple40,
+    completed: Colors.green40,
+    cancelled: Colors.red40,
   };
   return colors[status as keyof typeof colors] || Colors.grey30;
 };

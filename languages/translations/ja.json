@@ -18,7 +18,8 @@
     "back_to_home": "ホームに戻る",
     "loading": "読み込み中...",
     "staff": "スタッフ",
-    "view_detail": "詳細を見る"
+    "view_detail": "詳細を見る",
+    "accept": "受け入れる"
   },
   "auth": {
     "login": {
@@ -108,7 +109,7 @@
       "add_to_cart": "カートに追加",
       "buy_now": "今すぐ購入",
       "purchases": "購入済み",
-      "available": "利用可能",
+      "available": "有効",
       "description": {
         "brand": "ブランド",
         "usage": "使用法",
@@ -167,11 +168,15 @@
     "voucher": {
       "title": "クーポン",
       "all": "すべて",
-      "birthday": "誕生日",
-      "event": "イベント",
-      "prominent": "目立つ",
-      "gift": "ギフト",
-      "many_offers_comingsoon": "多くのオファーが近日公開予定"
+      "active": "アクティブ",
+      "expired": "期限切れ",
+      "no_voucher": "クーポンがありません!",
+      "buy_product_for_voucher": "割引を受けるために商品を購入してください",
+      "discount": "割引",
+      "max": "最大",
+      "min_order": "最小注文",
+      "description": "説明",
+      "expires_on": "有効期限"
     },
     "reward": {
       "title": "報酬",
@@ -420,7 +425,13 @@
     "update_address": "住所を更新",
     "type": "住所タイプ",
     "customer_name": "顧客名",
-    "phone_number": "電話番号"
+    "phone_number": "電話番号",
+    "ward": "ワード",
+    "search_a_province": "都道府県を検索",
+    "search_a_district": "区市町村を検索",
+    "search_a_ward": "ワードを検索",
+    "set_default_address": "デフォルトの住所に設定",
+    "set_default_address_confirm": "この住所をデフォルトに設定してもよろしいですか？"
   },
   "date": {
     "formats": {
@@ -505,7 +516,19 @@
       "date_delivered": "配達日"
     },
     "buy_again": "もう一度購入",
-    "cancel_order": "注文をキャンセル"
+    "cancel_order": "注文をキャンセル",
+    "rate_product": "製品を評価",
+    "you_have": "あなたは",
+    "product_need_review": "レビューが必要です。 レビューして追加ポイントを受け取る",
+    "review_now": "今すぐレビュー",
+    "cancel": {
+      "title": "なぜキャンセルしましたか?",
+      "change_order_voucher": "別の商品に変更/クーポンを変更",
+      "product_not_good": "製品の効果が良くないと感じる",
+      "price_not_good": "製品の価格が適切でないと感じる",
+      "no_need": "もう購入する必要がない",
+      "other": "その他"
+    }
   },
   "appointment": {
     "scheduled": "予約済み",
@@ -553,6 +576,8 @@
     "cancel_reason": "キャンセル理由",
     "edit": "予約を編集",
     "note": "メモ",
+    "next_appointment": "次の予約",
+    "performed_by": "実行者",
     "status": {
       "completed": "完了",
       "pending": "保留中",

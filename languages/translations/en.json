@@ -19,7 +19,8 @@
     "back_to_home": "Back to Home",
     "loading": "Loading...",
     "staff": "Staff",
-    "view_detail": "View Detail"
+    "view_detail": "View Detail",
+    "accept": "Accept"
   },
   "auth": {
     "login": {
@@ -180,13 +181,17 @@
     "notifications": "Notifications"
   },
   "voucher": {
-    "title": "Voucher",
-    "all": "All",
-    "birthday": "Birthday",
-    "event": "Event",
-    "prominent": "Prominent",
-    "gift": "Gift",
-    "many_offers_comingsoon": "Many offers coming soon"
+    "title": "クーポン",
+    "all": "すべて",
+    "active": "アクティブ",
+    "expired": "期限切れ",
+    "no_voucher": "クーポンがありません!",
+    "buy_product_for_voucher": "割引を受けるために商品を購入してください",
+    "discount": "Discount",
+    "max": "max",
+    "min_order": "Min order",
+    "description": "Description",
+    "expires_on":"Expires on"
   },
   "reward": {
     "title": "Exchange reward",
@@ -320,7 +325,13 @@
     "update_address": "Update Address",
     "type": "Address Type",
     "customer_name": "Customer Name",
-    "phone_number": "Phone Number"
+    "phone_number": "Phone Number",
+    "ward": "Ward",
+    "search_a_province": "Search a province",
+    "search_a_district": "Search a district",
+    "search_a_ward": "Search a ward",
+    "set_default_address": "Set default address",
+    "set_default_address_confirm": "Are you sure you want to set this address as default?"
   },
   "date": {
     "formats": {
@@ -399,15 +410,25 @@
       "pending": "Pending",
       "confirmed": "Confirmed",
       "delivering": "Delivering",
-      "completes": "Completed",
+      "completed": "Completed",
       "canceled": "Canceled",
       "date_delivery": "Delivery Date",
       "date_delivered": "Delivery Date"
     },
     "buy_again": "Buy again",
-    "order_code": "Order Code"
+    "cancel_order": "Cancel Order",
+    "you_have": "You have",
+    "product_need_review": " products that need review. Review now to get more points",
+    "review_now": "Review now",
+    "cancel": {
+      "title": "Why did you cancel?",
+      "change_order_voucher": "Change to another product / change voucher",
+      "product_not_good": "You feel the product is not good",
+      "price_not_good": "You feel the price is not reasonable",
+      "no_need": "You don't want to buy anymore",
+      "other": "Other reasons"
+    }
   },
-
   "appointment": {
     "scheduled": "Scheduled",
     "all": "All",
@@ -453,6 +474,8 @@
     "cancel_reason": "Cancel Reason",
     "edit": "Edit Appointment",
     "note": "Note",
+    "next_appointment": "Next Appointment",
+    "performed_by": "Performed by",
     "status": {
       "completed": "Completed",
       "pending": "Pending",

@@ -6,9 +6,6 @@ import { router } from "expo-router";
 const OrderItemCard = ({ item }: { item: OrderItem }) => {
   const product = item.product || item.service;
   if (!product) return null;
-
-  console.log("Product:", product);
-
   const imageUrl = product.media?.[0]?.full_url;
 
   return (

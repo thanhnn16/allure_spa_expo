@@ -18,7 +18,8 @@
     "back_to_home": "Về trang chủ",
     "loading": "Đang tải...",
     "staff": "Nhân viên",
-    "view_detail": "Xem chi tiết"
+    "view_detail": "Xem chi tiết",
+    "accept": "Đồng ý"
   },
   "auth": {
     "login": {
@@ -137,11 +138,15 @@
   "voucher": {
     "title": "Giảm giá",
     "all": "Tất cả",
-    "birthday": "Sinh nhật",
-    "event": "Sự kiện",
-    "prominent": "Nổi bật",
-    "gift": "Quà tặng",
-    "many_offers_comingsoon": "Nhiều ưu đãi sắp tới"
+    "active": "Đang hoạt động",
+    "expired": "Đã hết hạn",
+    "no_voucher": "Bạn không có voucher nào cả!",
+    "buy_product_for_voucher": "Mua sản phẩm để nhận thêm ưu đãi nhé",
+    "discount": "Giảm giá",
+    "max": "Tối đa",
+    "min_order": "Đơn hàng tối thiểu",
+    "description": "Mô tả",
+    "expires_on": "Hết hạn vào"
   },
   "aboutapp": {
     "title": "Giới thiệu về ứng dụng",
@@ -174,6 +179,7 @@
     "add_to_cart": "Thêm giỏ hàng",
     "buy_now": "Mua ngay",
     "purchases": "lượt mua",
+    "available": "có sẵn",
     "description": {
       "brand": "Thương hiệu",
       "usage": "Cách sử dụng",
@@ -306,7 +312,6 @@
     "save": "Lưu",
     "cancel": "Hủy",
     "add_new_address": "Thêm địa chỉ mới",
-    "delete_address_confirm": "Bạn có chắc chắn muốn xóa địa chỉ này không?",
     "delete_address_success": "Xóa địa chỉ thành công",
     "delete_address_fail": "Xóa địa chỉ thất bại",
     "add_address_success": "Thêm địa chỉ thành công",
@@ -316,7 +321,14 @@
     "province": "Tỉnh/Thành phố",
     "district": "Quận/Huyện",
     "update_address": "Sửa địa chỉ",
-    "type": "Loại địa chỉ"
+    "type": "Loại địa chỉ",
+    "ward": "Phường/Xã",
+    "search_a_province": "Tìm kiếm tỉnh/thành phố",
+    "search_a_district": "Tìm kiếm quận/huyện",
+    "search_a_ward": "Tìm kiếm phường/xã",
+    "delete_address_confirm": "Bạn có chắc chắn muốn xóa địa chỉ này không?",
+    "set_default_address": "Đặt làm địa chỉ mặc định",
+    "set_default_address_confirm": "Bạn có chắc chắn muốn đặt địa chỉ này làm mặc định không?"
   },
   "date": {
     "formats": {
@@ -383,16 +395,28 @@
       "button": "Đánh giá ngay"
     },
     "timeline": {
-      "pending": "Order is being processed",
-      "confirmed": "Order confirmed",
-      "delivering": "Order is being delivered",
-      "completed": "Order successfully delivered",
-      "canceled": "Order canceled",
-      "date_delivery": "Estimated delivery date",
-      "date_delivered": "Delivery date"
+      "pending": "Đơn hàng chờ xác nhận",
+      "confirmed": "Đơn hàng đã xác nhận",
+      "delivering": "Đơn hàng đang được giao",
+      "completed": "Đơn hàng đã hoàn thành",
+      "canceled": "Đơn hàng đã huỷ",
+      "date_delivery": "Ngày giao hàng",
+      "date_delivered": "Ngày hoàn thành"
     },
     "buy_again": "Mua lại",
-    "cancel_order": "Huỷ đơn hàng"
+    "cancel_order": "Huỷ đơn hàng",
+    "rate_product": "Đánh giá sản phẩm",
+    "you_have": "Bạn có",
+    "product_need_review": "sản phẩm cần đánh giá. Đánh giá để nhận thêm điểm",
+    "review_now": "Đánh giá ngay",
+    "cancel": {
+      "title": "Bạn hủy vì lý do gì?",
+      "change_order_voucher": "Thay đổi sản phẩm khác / thay đổi voucher",
+      "product_not_good": "Bạn cảm thấy công dụng sản phẩm chưa tốt",
+      "price_not_good": "Bạn cảm thấy giá sản phẩm không hợp lý",
+      "no_need": "Bạn Không muốn mua nữa",
+      "other": "Lý do khác"
+    }
   },
   "appointment": {
     "title": "Lịch hẹn",
@@ -440,6 +464,8 @@
     "cancel_reason": "Lý do huỷ",
     "edit": "Sửa lịch hẹn",
     "note": "Ghi chú",
+    "next_appointment": "Lịch hẹn sắp tới",
+    "performed_by": "Thực hiện bởi",
     "status": {
       "completed": "Đã hoàn thành",
       "pending": "Chờ xác nhận",

@@ -270,7 +270,7 @@ const ServiceDetailPage = () => {
                                     alignSelf: "center",
                                 }}
                             >
-                                <Carousel
+                                {/* <Carousel
                                     key={`carousel-${images.length}`}
                                     autoplay
                                     loop={images.length > 1}
@@ -283,7 +283,11 @@ const ServiceDetailPage = () => {
                                     }}
                                 >
                                     {images.map((item, idx) => renderItem(item, idx))}
-                                </Carousel>
+                                </Carousel> */}
+                                <Image
+                                    source={require('@/assets/images/logo/logo.png')}
+                                    style={{ width: "100%", height: 200 }}
+                                />
                             </View>
 
                             {/* Image Viewer */}
@@ -338,7 +342,7 @@ const ServiceDetailPage = () => {
                                     </View>
                                 </View>
                                 {/* Package Selection */}
-                                <View padding-20 gap-20>
+                                <View gap-20>
                                     <Text h2_bold>{i18n.t("service.treatment")}</Text>
 
                                     <TouchableOpacity onPress={() => setShowActionSheet(true)}>
@@ -481,6 +485,9 @@ const ServiceDetailPage = () => {
                         closeButton={true}
                         confirmButton={true}
                         secondaryConfirmButton={true}
+                        showActionSheet={showActionSheet}
+                        setShowActionSheet={setShowActionSheet}
+                        setCombo={setCombo}
                     >
                         <Text h2_medium secondary marginL-5>
                             {formatCurrency({ price: Number(price) })}

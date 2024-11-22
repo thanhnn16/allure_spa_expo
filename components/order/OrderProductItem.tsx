@@ -11,6 +11,13 @@ import {
   Colors,
   SkeletonView,
 } from "react-native-ui-lib";
+import OrderStatusBadge from "./OrderStatusBadge";
+import AppButton from "../buttons/AppButton";
+import LinearGradient from "react-native-linear-gradient";
+import { useDispatch } from "react-redux";
+import { setOrderProducts } from "@/redux/features/order/orderSlice";
+import { ServiceResponeModel } from "@/types/service.type";
+import { Product } from "@/types/product.type";
 
 interface OrderProductItemProps {
   order: Orders;
@@ -21,6 +28,17 @@ const { width } = Dimensions.get("window");
 
 const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   const orderItems = order.order_items || [];
+  const dispatch = useDispatch();
+
+  const handleReorder = () => {
+    dispatch(setOrderProducts({
+      products: order.order_items,
+      totalAmount: order.total_amount,
+      fromCart: false
+    }));
+
+    router.push("/check-out");
+  };
 
   // Add loading skeleton
   if (!order || !orderItems.length) {
@@ -51,7 +69,8 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
 
   const renderItem = (item: OrderItem) => {
     const isService = item.service !== undefined;
-    const itemData = isService ? item.service : item.product;
+    const itemData = isService ? item.product : item.service;
+
 
     return (
       <View key={item.id} paddingH-15 paddingB-10>
@@ -75,9 +94,9 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
             )}
 
             <View flex marginL-10 gap-5>
-              <Text h3_bold numberOfLines={2}>
-                {isService ? itemData?.service_name : itemData?.name}
-              </Text>
+                <Text h3_bold numberOfLines={2}>
+                {isService ? (itemData as Product)?.name : (itemData as ServiceResponeModel)?.service_name}
+                </Text>
               <Text h3 color={Colors.grey30}>
                 {i18n.t("orders.quantity")}: {item.quantity}
               </Text>
@@ -92,6 +111,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   };
 
   return (
+
     <View
       style={{
         backgroundColor: "white",
@@ -104,65 +124,56 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
       }}
     >
       <Animated.View>
-        <View row spread centerV paddingH-15 paddingT-15>
-          <View row centerV>
-            <Text h3_bold>#{order.id}</Text>
-            <View
-              marginL-10
-              padding-5
-              br20
-              style={{
-                backgroundColor:
-                  order.status === "completed"
-                    ? Colors.green30
-                    : order.status === "cancelled"
-                    ? Colors.red30
-                    : Colors.orange30,
-              }}
-            >
-              <Text white h4>
-                {i18n.t(`orders.${order.status}`)}
-              </Text>
+        <LinearGradient
+          colors={[
+            Colors.white as string,
+            Colors.rgba(Colors.primary, 0.05) as string,
+          ]}
+        >
+          <View row spread centerV paddingH-15 paddingT-15>
+            <View row centerV>
+              <Text h3_bold>#{order.id}</Text>
+
+            </View>
+            <View row gap-10 centerV>
+              <OrderStatusBadge status={order.status} />
             </View>
           </View>
-          <View row gap-10 centerV>
-            {(order.status === "completed" || order.status === "cancelled") && (
-              <TouchableOpacity
-                onPress={() => console.log("reorder")}
-                style={{ padding: 5 }}
-              >
-                <Text h3 style={{ color: Colors.primary }}>
-                  {i18n.t("orders.repurchase")}
-                </Text>
-              </TouchableOpacity>
-            )}
+          <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
+
+          {orderItems.map(renderItem)}
+
+          <View height={1} marginT-10 bg-$backgroundPrimaryLight></View>
+
+          <View paddingH-16 paddingV-8 gap-8>
+            <View row spread marginT-10>
+              <Text h3_bold>{i18n.t("orders.total")}</Text>
+              <Text h3_bold secondary>
+                {formatCurrency({ price: Number(order.total_amount) })}
+              </Text>
+            </View>
+            {(
+              (order.status === "completed" || order.status === "cancelled") &&
+              order.order_items.some(item => item.product)
+            ) && (
+                <AppButton
+                  type="outline"
+                  title={i18n.t("orders.repurchase")}
+                  onPress={() => handleReorder()}
+                />
+              )}
             {order.status === "completed" ? (
-              <TouchableOpacity
+              <AppButton
+                type="outline"
+                title={i18n.t("orders.rate_now")}
                 onPress={() => router.push(`/transaction/${order.id}`)}
-                style={{ padding: 5 }}
-              >
-                <Text h3_bold style={{ color: "#E4A951" }}>
-                  {i18n.t("orders.rate_now")}
-                </Text>
-              </TouchableOpacity>
+              />
             ) : null}
           </View>
-        </View>
-        <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
-
-        {orderItems.map(renderItem)}
-
-        <View height={1} marginT-10 bg-$backgroundPrimaryLight></View>
-        <View paddingH-15 paddingV-5 backgroundColor={Colors.primary_light}>
-          <View row spread marginT-10>
-            <Text h3_bold>{i18n.t("orders.total")}</Text>
-            <Text h3_bold secondary>
-              {formatCurrency({ price: Number(order.total_amount) })}
-            </Text>
-          </View>
-        </View>
+        </LinearGradient>
       </Animated.View>
     </View>
+
   );
 };
 

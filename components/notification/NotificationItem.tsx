@@ -147,20 +147,20 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             <View row spread centerV marginB-4>
               <Text
                 flex-3
-                text70BO={!isRead}
-                text70={isRead}
+                h3_bold={!isRead}
+                h3={isRead}
                 color={isRead ? Colors.grey30 : Colors.text}
                 numberOfLines={1}
               >
                 {title}
               </Text>
-              <Text flex-1 right text90 color={Colors.grey40} marginL-8>
+              <Text flex-1 right h4_bold color={Colors.grey40} marginL-8>
                 {time}
               </Text>
             </View>
 
             <Text
-              text80
+              h4
               color={isRead ? Colors.grey40 : Colors.grey20}
               numberOfLines={2}
               style={{ lineHeight: 18 }}

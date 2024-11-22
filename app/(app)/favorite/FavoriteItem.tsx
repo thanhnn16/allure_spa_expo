@@ -50,6 +50,7 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
         style={{
           borderTopLeftRadius: 12,
           borderTopRightRadius: 12,
+          alignItems: "center",
         }}
       >
         {itemData.media && itemData.media.length > 0 ? (
@@ -64,7 +65,7 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
             }}
           />
         ) : (
-          <SkeletonView width={100} height={170} borderRadius={12} />
+          <SkeletonView width={170} height={170} borderRadius={12} />
         )}
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>

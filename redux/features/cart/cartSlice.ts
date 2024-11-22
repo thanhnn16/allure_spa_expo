@@ -47,7 +47,7 @@ export const cartSlice = createSlice({
       state.items = state.items.map(item => {
         if (item.id === action.payload) {
           item.cart_quantity += 1;
-          state.totalAmount += item.price;
+          state.totalAmount += parseFloat(item.price.toString());
           AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
         }
         return item;

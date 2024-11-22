@@ -29,7 +29,7 @@ const NotificationDetail: React.FC = () => {
   if (!notification) {
     return (
       <View flex center>
-        <Text text70 color={Colors.grey40}>
+        <Text h2_bold color={Colors.grey40}>
           Không tìm thấy thông báo
         </Text>
       </View>
@@ -99,13 +99,12 @@ const NotificationDetail: React.FC = () => {
         buttonStyle={{ marginTop: 16 }}
         children={
           <View row width="100%" center gap-4 centerV>
-            <Text text70BO color={Colors.primary}>
+            <Text h3_bold color={Colors.primary}>
               {actionText}
             </Text>
             <Feather
               name="arrow-right"
               size={16}
-              style={{ marginTop: 4 }}
               color={Colors.primary}
             />
           </View>
@@ -141,7 +140,7 @@ const NotificationDetail: React.FC = () => {
               </View>
             </View>
 
-            <Text text50BO center color={Colors.text} marginB-12>
+            <Text h2_bold center color={Colors.text} marginB-12>
               {notification.title}
             </Text>
 
@@ -159,7 +158,7 @@ const NotificationDetail: React.FC = () => {
               }}
             >
               <Feather name="clock" size={14} color={Colors.primary} />
-              <Text text90 marginL-4 color={Colors.primary}>
+              <Text h4 marginL-4 color={Colors.primary}>
                 {formatDistanceToNow(new Date(notification.created_at), {
                   addSuffix: true,
                   locale: vi,
@@ -179,7 +178,7 @@ const NotificationDetail: React.FC = () => {
                 borderColor: Colors.primary_blur,
               }}
             >
-              <Text text70 color={Colors.text} style={{ lineHeight: 24 }}>
+              <Text h3 color={Colors.text} style={{ lineHeight: 24 }}>
                 {notification.content}
               </Text>
 
@@ -215,10 +214,10 @@ const NotificationDetail: React.FC = () => {
               }}
             >
               <View row spread marginB-12>
-                <Text text80 color={Colors.text}>
+                <Text h3 color={Colors.text}>
                   {i18n.t("notification.type")}
                 </Text>
-                <Text text80 color={Colors.primary}>
+                <Text h3 color={Colors.primary}>
                   {notification.type
                     .split("_")
                     .map(
@@ -230,7 +229,7 @@ const NotificationDetail: React.FC = () => {
               </View>
 
               <View row spread centerV>
-                <Text text80 color={Colors.text}>
+                <Text h3 color={Colors.text}>
                   {i18n.t("notification.status")}
                 </Text>
                 <View
@@ -242,7 +241,7 @@ const NotificationDetail: React.FC = () => {
                   }
                 >
                   <Text
-                    text80
+                    h3
                     color={notification.is_read ? Colors.primary : Colors.white}
                   >
                     {notification.is_read

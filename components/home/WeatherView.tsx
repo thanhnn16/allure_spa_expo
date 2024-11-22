@@ -4,7 +4,7 @@ import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
-import { Text, View, Image } from "react-native-ui-lib";
+import { Text, View, Image, SkeletonView } from "react-native-ui-lib";
 
 interface LocationsType {
   distance: number;
@@ -47,7 +47,7 @@ const WeatherView = () => {
         setTemperature(25);
       }
     })();
-  }, []);
+  }, [weatherIcon]);
 
   useEffect(() => {
     const date = new Date();
@@ -68,6 +68,7 @@ const WeatherView = () => {
     setWeekday(`${weekday}`);
     setCurrentDate(`${dayOfMonth}/${month}`);
   }, []);
+
   return (
     <View
       row
@@ -79,14 +80,18 @@ const WeatherView = () => {
         borderWidth: 1,
       }}
     >
-      <View row centerV paddingH-10>
-        <Image
-          source={{
-            uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
-          }}
-          width={40}
-          height={40}
-        />
+      <View row centerV gap-8 paddingH-10>
+        {weatherIcon ? (
+          <Image
+            source={{
+              uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
+            }}
+            width={40}
+            height={40}
+          />
+        ) : (
+          <SkeletonView width={40} height={40} />
+        )}
         <Text text60>{temperature.toFixed(0)}°C</Text>
       </View>
       <View
@@ -100,11 +105,15 @@ const WeatherView = () => {
         <Text h3_bold>
           {weekday}, {i18n.t("days.day")} {currentDate}
         </Text>
-        <View row centerV>
+        <View row gap-8 centerV>
           <FontAwesome6 name="location-dot" size={16} color="black" />
-          <Text marginL-5 h3_medium>
-            {location?.name}
-          </Text>
+          {location ? (
+            <Text marginL-5 h3_medium>
+              {location?.name}
+            </Text>
+          ) : (
+            <SkeletonView width={100} height={20} />
+          )}
         </View>
       </View>
     </View>
