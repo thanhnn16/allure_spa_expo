@@ -16,17 +16,20 @@ import { useState } from "react";
 
 import PhoneCallIcon from "@/assets/icons/phone.svg";
 import CommentIcon from "@/assets/icons/comment.svg";
-
+import Linking from "expo-linking";
+import { ServiceDetailResponeModel, ServiceResponeModel } from "@/types/service.type";
 interface ServiceBottomComponentProps {
   isLoading: boolean;
   // product: Product | null;
   onPurchase?: () => void;
   // quantity: number;
+  service: ServiceResponeModel | ServiceDetailResponeModel;
 }
 
 const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
   isLoading = false,
-  onPurchase
+  onPurchase,
+  service
 }) => {
   const [isToastVisible, setToastIsVisible] = useState(false);
   const windowWidth = Dimensions.get("window").width;
@@ -76,15 +79,16 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
       }}
     >
       <View row gap-30>
-        <Link href="/rating/1" asChild>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => Linking.openURL(`tel:113`)}>
             <View center marginB-4>
               <Image source={PhoneCallIcon} size={24} />
             </View>
             <Text h3_medium>{i18n.t("service.contact")}</Text>
           </TouchableOpacity>
-        </Link>
-        <TouchableOpacity onPress={() => router.push('/(app)/rating/1')}>
+        <TouchableOpacity onPress={() => router.push({
+          pathname: `/(app)/rating/${service?.id}`,
+          params: { type: 'service' }
+        })}>
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>

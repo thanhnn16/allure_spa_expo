@@ -447,6 +447,7 @@ const ServiceDetailPage = () => {
                     <ServiceBottomComponent
                         isLoading={isLoading}
                         onPurchase={() => setBookingDialog(true)}
+                        service={service}
                     />
 
                     {/* Dialogs */}

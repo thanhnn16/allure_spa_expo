@@ -9,6 +9,7 @@ interface RatingState {
   ratings: Rating[];
   isLoading: boolean;
   error: string | null;
+  type: 'product' | 'service';
 }
 
 const initialState: RatingState = {
@@ -16,6 +17,7 @@ const initialState: RatingState = {
   ratings: [],
   isLoading: false,
   error: null,
+  type: 'product'
 };
 
 export const ratingSlice = createSlice({
@@ -27,6 +29,9 @@ export const ratingSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    setType(state: RatingState, action: any) {
+      state.type = action.payload;
+    }
   },
   extraReducers: (builder: any) => {
     builder
@@ -66,5 +71,5 @@ export const ratingSlice = createSlice({
   },
 });
 
-export const { clearRating } = ratingSlice.actions;
+export const { clearRating, setType } = ratingSlice.actions;
 export default ratingSlice.reducer;

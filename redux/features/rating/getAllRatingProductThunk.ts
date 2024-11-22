@@ -3,10 +3,11 @@ import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { RatingsListResponseParams } from "@/types/rating.type";
 
 export const getAllRatingProductThunk = createAsyncThunk(
-  'products/getAllRating',
-  async (params: { id: string }, { rejectWithValue }: { rejectWithValue: any }) => {
+  'ratings/getAll',
+  async (params: { id: string, type: 'product' | 'service' }, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
-      const res = await AxiosInstance().get<RatingsListResponseParams>(`products/${params.id}/ratings`);
+      const endpoint = `${params.type}s/${params.id}/ratings`;
+      const res = await AxiosInstance().get<RatingsListResponseParams>(endpoint);
 
       if (res.data.data) {
         return res.data.data.data;
