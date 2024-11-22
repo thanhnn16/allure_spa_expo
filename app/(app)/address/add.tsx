@@ -207,13 +207,15 @@ const Add = () => {
             value={userProfile?.full_name || ""}
             placeholder={i18n.t("address.name")}
             onChangeText={() => { }}
+            editable={false}
           />
           <AddressTextInput
             value={userProfile?.phone_number || ""}
             placeholder={i18n.t("address.phone_number")}
-            onChangeText={(value) => handleChange("phone", value)}
+            onChangeText={() => { }}
             maxLength={10}
             keyboardType="phone-pad"
+            editable={false}
           />
         </View>
 

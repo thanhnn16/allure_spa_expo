@@ -90,39 +90,47 @@ const OrderDetail = () => {
 
   const sendReview = async () => {
     try {
-      if (selectedImages.length > 0) {
-        try {
-          const processedUri = await processImageForUpload(selectedImages);
+      // if (selectedImages.length > 0) {
+      //   try {
+      //     const processedUri = await processImageForUpload(selectedImages);
 
-          const formData = new FormData();
-          formData.append("rating", {
-            uri: processedUri,
-            type: "image/jpeg",
-            name: "avatar.jpg",
-          } as any);
+      //     const formData = new FormData();
+      //     formData.append("rating", {
+      //       uri: processedUri,
+      //       type: "image/jpeg",
+      //       name: "avatar.jpg",
+      //     } as any);
 
-          dispatch(createRatingProductThunk({
-            rating_type: "product",
-            item_id: currentValue,
-            stars: rating,
-            comment: comment
-          }));
+      //     dispatch(createRatingProductThunk({
+      //       rating_type: "product",
+      //       item_id: currentValue,
+      //       stars: rating,
+      //       comment: comment
+      //     }));
 
-          bottomSheetRef.current?.close();
-          setRateDialog(true);
-        } catch (error: any) {
-          throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
-        }
-      } else {
-        dispatch(createRatingProductThunk({
-          rating_type: "product",
-          item_id: currentValue,
-          stars: rating,
-          comment: comment
-        }));
-        bottomSheetRef.current?.close();
-        setRateDialog(true);
-      }
+      //     bottomSheetRef.current?.close();
+      //     setRateDialog(true);
+      //   } catch (error: any) {
+      //     throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
+      //   }
+      // } else {
+      //   dispatch(createRatingProductThunk({
+      //     rating_type: "product",
+      //     item_id: currentValue,
+      //     stars: rating,
+      //     comment: comment
+      //   }));
+      //   bottomSheetRef.current?.close();
+      //   setRateDialog(true);
+      // }
+      dispatch(createRatingProductThunk({
+        rating_type: "product",
+        item_id: currentValue,
+        stars: rating,
+        comment: comment
+      }));
+      bottomSheetRef.current?.close();
+      setRateDialog(true);
     } catch (error: any) {
       bottomSheetRef.current?.close();
       setErrorDialog(true);

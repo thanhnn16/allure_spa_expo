@@ -14,6 +14,10 @@ import {
 import OrderStatusBadge from "./OrderStatusBadge";
 import AppButton from "../buttons/AppButton";
 import LinearGradient from "react-native-linear-gradient";
+import { useDispatch } from "react-redux";
+import { setOrderProducts } from "@/redux/features/order/orderSlice";
+import { ServiceResponeModel } from "@/types/service.type";
+import { Product } from "@/types/product.type";
 
 interface OrderProductItemProps {
   order: Orders;
@@ -24,6 +28,17 @@ const { width } = Dimensions.get("window");
 
 const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   const orderItems = order.order_items || [];
+  const dispatch = useDispatch();
+
+  const handleReorder = () => {
+    dispatch(setOrderProducts({
+      products: order.order_items,
+      totalAmount: order.total_amount,
+      fromCart: false
+    }));
+
+    router.push("/check-out");
+  };
 
   // Add loading skeleton
   if (!order || !orderItems.length) {
@@ -79,9 +94,9 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
             )}
 
             <View flex marginL-10 gap-5>
-              <Text h3_bold numberOfLines={2}>
-                {isService ? itemData?.name : itemData?.service_name}
-              </Text>
+                <Text h3_bold numberOfLines={2}>
+                {isService ? (itemData as Product)?.name : (itemData as ServiceResponeModel)?.service_name}
+                </Text>
               <Text h3 color={Colors.grey30}>
                 {i18n.t("orders.quantity")}: {item.quantity}
               </Text>
@@ -137,13 +152,16 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
                 {formatCurrency({ price: Number(order.total_amount) })}
               </Text>
             </View>
-            {(order.status === "completed" || order.status === "cancelled") && (
-              <AppButton
-                type="outline"
-                title={i18n.t("orders.repurchase")}
-                onPress={() => console.log("reorder")}
-              />
-            )}
+            {(
+              (order.status === "completed" || order.status === "cancelled") &&
+              order.order_items.some(item => item.product)
+            ) && (
+                <AppButton
+                  type="outline"
+                  title={i18n.t("orders.repurchase")}
+                  onPress={() => handleReorder()}
+                />
+              )}
             {order.status === "completed" ? (
               <AppButton
                 type="outline"
