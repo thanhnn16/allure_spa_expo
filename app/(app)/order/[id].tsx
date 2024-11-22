@@ -111,42 +111,31 @@ const OrderDetail = () => {
         throw new Error("Vui lòng chọn số sao và sản phẩm cần đánh giá");
       }
 
-      // Create FormData object
       const formData = new FormData();
       formData.append("rating_type", currentItem.item_type);
       formData.append("item_id", currentItem.item_id.toString());
       formData.append("stars", rating.toString());
       formData.append("comment", comment);
-      formData.append(
-        "order_item_id",
-        (
-          selectedOrder.order_items.find(
-            (item: OrderItem) => item.id === currentItem?.id
-          )?.id || 0
-        ).toString()
-      );
+      formData.append("order_item_id", currentItem.id.toString());
 
-      // Process and append images if they exist
+      // Process multiple images
       if (selectedImages.length > 0) {
-        try {
-          // Process each image before uploading
-          await Promise.all(
-            selectedImages.map(async (imageUri, index) => {
-              const processedUri = await processImageForUpload(imageUri);
-
-              formData.append("images[]", {
-                uri: processedUri,
-                name: `image_${index}.jpg`,
-                type: "image/jpeg",
-              } as any);
-            })
-          );
-        } catch (error: any) {
-          throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
+        for (let i = 0; i < selectedImages.length; i++) {
+          try {
+            const processedUri = await processImageForUpload(selectedImages[i]);
+            formData.append("images[]", {
+              uri: processedUri,
+              type: 'image/jpeg',
+              name: `image_${i}.jpg`
+            } as any);
+          } catch (error: any) {
+            console.error(`Error processing image ${i}:`, error);
+            throw new Error(`Lỗi xử lý hình ảnh ${i + 1}: ${error.message}`);
+          }
         }
       }
 
-      // Send request with FormData
+      // Send request
       await dispatch(createRatingProductThunk(formData)).unwrap();
 
       // Close bottom sheet and show success dialog

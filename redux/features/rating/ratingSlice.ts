@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Rating } from "@/types/rating.type";
-import { getAllRatingProductThunk } from "./getAllRatingProductThunk";
+import { getAllRatingThunk } from "./getAllRatingThunk";
 import { getRatingProductThunk } from "./ratingProductThunk";
 import { createRatingProductThunk } from "./createRatingThunk";
 
@@ -46,14 +46,14 @@ export const ratingSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload || "Failed to fetch rating";
       })
-      .addCase(getAllRatingProductThunk.pending, (state: RatingState) => {
+      .addCase(getAllRatingThunk.pending, (state: RatingState) => {
         state.isLoading = true;
       })
-      .addCase(getAllRatingProductThunk.fulfilled, (state: RatingState, action: any) => {
+      .addCase(getAllRatingThunk.fulfilled, (state: RatingState, action: any) => {
         state.isLoading = false;
         state.ratings = action.payload;
       })
-      .addCase(getAllRatingProductThunk.rejected, (state: RatingState, action: any) => {
+      .addCase(getAllRatingThunk.rejected, (state: RatingState, action: any) => {
         state.isLoading = false;
         state.error = action.payload || "Failed to fetch all ratings";
       })

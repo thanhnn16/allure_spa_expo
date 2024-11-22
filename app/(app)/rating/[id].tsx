@@ -9,7 +9,7 @@ import RatingStar from "@/components/rating/RatingStar";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect } from "react";
-import { getAllRatingProductThunk } from "@/redux/features/rating/getAllRatingProductThunk";
+import { getAllRatingThunk } from "@/redux/features/rating/getAllRatingThunk";
 
 interface RatingPageProps {
   type?: 'product' | 'service';
@@ -24,7 +24,7 @@ const RatingPage: React.FC<RatingPageProps> = ({ type = 'product' }) => {
 
   useEffect(() => {
     if (id) {
-      dispatch(getAllRatingProductThunk({ id: id.toString(), type: typeParam }));
+      dispatch(getAllRatingThunk({ id: id.toString(), type: typeParam }));
     }
   }, [dispatch, id, type]);
 

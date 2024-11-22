@@ -11,12 +11,19 @@ interface SelectImagesBarProps {
   isRating?: boolean;
 }
 
+const MAX_IMAGES = 5;
+
 const SelectImagesBar: React.FC<SelectImagesBarProps> = ({
   selectedImages,
   setSelectedImages,
   isRating = true,
 }) => {
   const handleSelectImages = async () => {
+    if (selectedImages.length >= MAX_IMAGES) {
+      alert(`Bạn chỉ có thể chọn tối đa ${MAX_IMAGES} ảnh`);
+      return;
+    }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
@@ -25,7 +32,17 @@ const SelectImagesBar: React.FC<SelectImagesBarProps> = ({
     });
 
     if (!result.canceled) {
-      setSelectedImages(result.assets.map((asset) => asset.uri));
+      const newImages = result.assets.map((asset) => asset.uri);
+      const totalImages = [...selectedImages, ...newImages];
+
+      if (totalImages.length > MAX_IMAGES) {
+        alert(`Bạn chỉ có thể chọn tối đa ${MAX_IMAGES} ảnh`);
+        const remainingSlots = MAX_IMAGES - selectedImages.length;
+        const limitedNewImages = newImages.slice(0, remainingSlots);
+        setSelectedImages([...selectedImages, ...limitedNewImages]);
+      } else {
+        setSelectedImages(totalImages);
+      }
     }
   };
 
