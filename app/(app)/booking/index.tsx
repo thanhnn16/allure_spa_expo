@@ -650,6 +650,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: 8,
+    flexWrap: "wrap",
   },
   primaryButton: {
     flex: 1,
@@ -722,6 +724,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 20,
     marginBottom: 10,
+    gap: 8
   },
   disabledButton: {
     opacity: 0.4,
