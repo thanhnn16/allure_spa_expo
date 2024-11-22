@@ -26,13 +26,13 @@ export const serviceSlice = createSlice({
     name: 'service',
     initialState: initialState,
     reducers: {
-        setServiceCategories(state: RootState, action: PayloadAction<ServiceCategoriesResponeParams>) {
+        setServiceCategories(state: RootState, action: any) {
             state.serviceCategories = action.payload;
         },
-        setServices(state: RootState, action: PayloadAction<ServicesResponeParams>) {
+        setServices(state: RootState, action: any) {
             state.servicesList = action.payload;
         },
-        setPage(state: RootState, action: PayloadAction<number>) {
+        setPage(state: RootState, action: any) {
             state.currentPage = action.payload;
         }
     },
@@ -41,7 +41,7 @@ export const serviceSlice = createSlice({
             .addCase(getServiceCateThunk.pending, (state: RootState) => {
                 state.isLoading = true;
             })
-            .addCase(getServiceCateThunk.fulfilled, (state: RootState, action: PayloadAction<ServiceCategoriesResponeParams>) => {
+            .addCase(getServiceCateThunk.fulfilled, (state: RootState, action: any) => {
                 state.isLoading = false;
                 state.serviceCategories = action.payload;
             })
@@ -52,10 +52,10 @@ export const serviceSlice = createSlice({
             .addCase(getServicesThunk.pending, (state: RootState) => {
                 state.isLoading = true;
             })
-            .addCase(getServicesThunk.fulfilled, (state: RootState, action: PayloadAction<any>) => {
+            .addCase(getServicesThunk.fulfilled, (state: RootState, action: any) => {
                 state.isLoading = false;
                 const { data, page, hasMore } = action.payload;
-                
+
                 if (page === 1) {
                     state.servicesList = {
                         data: data
@@ -68,7 +68,7 @@ export const serviceSlice = createSlice({
                         }
                     };
                 }
-                
+
                 state.currentPage = page;
                 state.hasMore = hasMore;
             })

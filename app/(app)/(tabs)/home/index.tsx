@@ -37,7 +37,7 @@ import { ServiceResponeModel } from "@/types/service.type";
 import { SkeletonView } from "react-native-ui-lib";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 import { HOME_CATEGORIES } from "@/constants/categories";
-import { fetchCartItems } from "@/redux/features/cart/cartSlice";
+import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
 interface HomeHeaderProps {
   user: any; // Replace 'any' with your user type
   greeting: string;

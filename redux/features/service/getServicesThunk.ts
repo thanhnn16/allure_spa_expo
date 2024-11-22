@@ -4,7 +4,7 @@ import AxiosInstance from "@/utils/services/helper/axiosInstance";
 
 export const getServicesThunk = createAsyncThunk(
     'service/getServices',
-    async ({ page, limit = 10 }: { page: number; limit?: number }, { rejectWithValue }) => {
+    async ({ page, limit = 10 }: { page: number; limit?: number }, { rejectWithValue }: any) => {
         try {
             const response = await AxiosInstance().get(`services?page=${page}&limit=${limit}`);
             const res: ServicesResponeParams = response.data;
@@ -12,7 +12,7 @@ export const getServicesThunk = createAsyncThunk(
                 return {
                     data: res.data,
                     page,
-                    hasMore: res.data.length === limit
+                    hasMore: res.data.data.length === limit
                 };
             }
             return rejectWithValue(res.message || 'Get services failed');
