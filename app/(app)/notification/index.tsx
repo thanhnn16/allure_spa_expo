@@ -6,20 +6,25 @@ import AppBar from "@/components/app-bar/AppBar";
 import NotificationItem, {
   NotificationType,
 } from "@/components/notification/NotificationItem";
-import { FlatList, ActivityIndicator, RefreshControl } from "react-native";
+import { FlatList, ActivityIndicator, RefreshControl, SectionList } from "react-native";
 import {
   fetchNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
   loadMoreNotifications,
 } from "@/redux/features/notification/notificationThunks";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, format, isToday, isYesterday, isThisWeek, isThisMonth } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Notification } from "@/redux/features/notification/types";
 import EmptyNotification from "@/components/notification/EmptyNotification";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import i18n from "@/languages/i18n";
 import { router } from "expo-router";
+
+interface GroupedNotifications {
+  title: string;
+  data: Notification[];
+}
 
 const NotificationPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -54,6 +59,48 @@ const NotificationPage: React.FC = () => {
     await dispatch(fetchNotifications());
     setRefreshing(false);
   }, [dispatch]);
+
+  const groupNotifications = (notifications: Notification[]): GroupedNotifications[] => {
+    const groups: { [key: string]: Notification[] } = {};
+    
+    notifications.forEach(notification => {
+      const date = new Date(notification.created_at);
+      let groupTitle: string;
+      
+      if (isToday(date)) {
+        groupTitle = "Hôm nay";
+      } else if (isYesterday(date)) {
+        groupTitle = "Hôm qua";
+      } else if (isThisWeek(date)) {
+        groupTitle = "Tuần này";
+      } else if (isThisMonth(date)) {
+        groupTitle = "Tháng này";
+      } else {
+        groupTitle = format(date, 'MM/yyyy');
+      }
+      
+      if (!groups[groupTitle]) {
+        groups[groupTitle] = [];
+      }
+      groups[groupTitle].push(notification);
+    });
+
+    return Object.entries(groups).map(([title, data]) => ({
+      title,
+      data,
+    }));
+  };
+
+  const renderSectionHeader = ({ section }: { section: GroupedNotifications }) => (
+    <View
+      padding-12
+      backgroundColor={Colors.grey60}
+    >
+      <Text text80M color={Colors.grey20}>
+        {section.title}
+      </Text>
+    </View>
+  );
 
   const renderItem = ({
     item,
@@ -132,9 +179,10 @@ const NotificationPage: React.FC = () => {
                 </TouchableOpacity>
               )}
             </View>
-            <FlatList
-              data={notifications}
+            <SectionList
+              sections={groupNotifications(notifications)}
               renderItem={renderItem}
+              renderSectionHeader={renderSectionHeader}
               keyExtractor={(item: Notification) => item.id.toString()}
               contentContainerStyle={{
                 paddingVertical: 12,

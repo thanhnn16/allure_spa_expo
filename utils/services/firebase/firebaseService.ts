@@ -73,31 +73,40 @@ class FirebaseService {
   }
 
   async handleNotification(remoteMessage: any) {
-    const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const uniqueId = remoteMessage.data?.notification_id || `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    
+    const existingNotifications = await Notifications.getAllScheduledNotificationsAsync();
+    const isDuplicate = existingNotifications.some(
+        notification => notification.content.data?.notification_id === uniqueId
+    );
+    
+    if (isDuplicate) return;
 
-    // Format notification data
     const notificationData = {
-      title: remoteMessage.notification?.title || "Thông báo mới",
-      body: remoteMessage.notification?.body,
-      data: {
-        ...remoteMessage.data,
-        uniqueId,
-        notification_id: remoteMessage.data?.notification_id,
-        type: remoteMessage.data?.type,
-      },
-      sound: 'default',
-      priority: Notifications.AndroidNotificationPriority.HIGH,
+        title: remoteMessage.notification?.title || "Thông báo mới",
+        body: remoteMessage.notification?.body,
+        data: {
+            ...remoteMessage.data,
+            notification_id: uniqueId,
+            type: remoteMessage.data?.type,
+        },
+        sound: 'default',
+        priority: Notifications.AndroidNotificationPriority.HIGH,
     };
 
-    // Schedule notification
     await Notifications.scheduleNotificationAsync({
-      content: notificationData,
-      trigger: null, // null means show immediately
+        content: notificationData,
+        trigger: null,
     });
 
-    // Update unread count
-    const dispatch = useDispatch<AppDispatch>();
-    await dispatch(fetchUnreadCount());
+    if (remoteMessage.data?.should_update_count) {
+        await this.updateUnreadCount();
+    }
+  }
+
+  async updateUnreadCount() {
+    const store = require('@/redux/store').default;
+    store.dispatch(fetchUnreadCount());
   }
 
   setupMessageHandlers() {
