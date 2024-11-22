@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { CART_ITEMS_KEY } from "./cartSlice";
+import { CART_ITEMS_KEY } from "./constants";
 
 export const fetchCartItems = createAsyncThunk(
     'cart/fetchItems',

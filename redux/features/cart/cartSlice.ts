@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Product } from '@/types/product.type';
 import { fetchCartItems } from './fetchCartThunk';
+import { CART_ITEMS_KEY } from './constants';
 
 export interface CartItem extends Product {
   cart_quantity: number;
@@ -16,8 +17,6 @@ const initialState: CartState = {
   items: [],
   totalAmount: 0,
 };
-
-export const CART_ITEMS_KEY = '@cart_items';
 
 export const cartSlice = createSlice({
   name: 'cart',
