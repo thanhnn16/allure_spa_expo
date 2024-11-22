@@ -7,6 +7,9 @@ export const getAllRatingProductThunk = createAsyncThunk(
   async (params: { id: string, type: 'product' | 'service' }, { rejectWithValue }: { rejectWithValue: any }) => {
     try {
       const endpoint = `${params.type}s/${params.id}/ratings`;
+
+      console.log('endpoint', endpoint);
+
       const res = await AxiosInstance().get<RatingsListResponseParams>(endpoint);
 
       if (res.data.data) {

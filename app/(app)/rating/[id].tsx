@@ -16,7 +16,7 @@ interface RatingPageProps {
 }
 
 const RatingPage: React.FC<RatingPageProps> = ({ type = 'product' }) => {
-  const { id } = useLocalSearchParams();
+  const { id, type: typeParam } = useLocalSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { ratings, isLoading: RatingLoading } = useSelector(
     (state: RootState) => state.rating
@@ -24,7 +24,7 @@ const RatingPage: React.FC<RatingPageProps> = ({ type = 'product' }) => {
 
   useEffect(() => {
     if (id) {
-      dispatch(getAllRatingProductThunk({ id: id.toString(), type }));
+      dispatch(getAllRatingProductThunk({ id: id.toString(), type: typeParam }));
     }
   }, [dispatch, id, type]);
 
