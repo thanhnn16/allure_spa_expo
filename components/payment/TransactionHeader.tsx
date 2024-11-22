@@ -1,3 +1,4 @@
+import i18n from '@/languages/i18n';
 import { Wizard } from 'react-native-ui-lib'
 
 const TransactionHeader = ({ status }: { status: string }) => {
@@ -16,10 +17,10 @@ const TransactionHeader = ({ status }: { status: string }) => {
     };
     return (
         <Wizard activeIndex={handleGetOrderStatus(status)} onActiveIndexChanged={() => handleGetOrderStatus(status)}>
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={'Chờ xác nhận'} />
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={'Chở lấy hàng'} />
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={'Đang giao hàng'} />
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={'Hoàn thành'} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.pending')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.confirmed')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.delivering')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.completed')} />
         </Wizard>
     )
 }

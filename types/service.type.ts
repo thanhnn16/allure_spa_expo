@@ -1,4 +1,3 @@
-import { Rating } from "react-native-ratings";
 import { ResponeDefaultParams, ResponePagesParams, Timestamps } from "./commons.type";
 import { RatingSummary } from "@/types/rating.type";
 import { User } from "./user.type";

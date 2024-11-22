@@ -24,13 +24,6 @@ export const uploadAvatarUrlThunk = createAsyncThunk(
 
       return rejectWithValue(res.data.message || 'Upload avatar failed');
     } catch (error: any) {
-      console.error('Upload error:', {
-        message: error.message,
-        code: error.code,
-        response: error.response,
-        request: error.request,
-      });
-
       return rejectWithValue(
         error.response?.data?.message ||
         error.message ||

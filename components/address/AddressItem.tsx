@@ -43,8 +43,8 @@ const AddressItem = ({
             }}
         >
             {item.is_default && (
-                <View width={120} br20 marginT-10 marginL-10 padding-5 backgroundColor={Colors.primary_light}>
-                    <Text h3_bold primary center>Mặc định</Text>
+                <View width={150} br20 marginT-10 marginL-10 padding-5 backgroundColor={Colors.primary_light}>
+                    <Text h3_bold primary center>{i18n.t("address.default_address")}</Text>
                 </View>
             )}
             <View row spread centerV padding-10>

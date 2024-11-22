@@ -41,7 +41,7 @@ export interface CreateRatingRequest {
     "item_id": number,
     "stars": number,
     "comment": string,
-    "media_id": number
+    "media": number,
 }
 
 export interface RatingSummary {

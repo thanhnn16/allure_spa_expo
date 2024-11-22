@@ -3,6 +3,7 @@ import { Text, View, Image, Colors } from 'react-native-ui-lib'
 
 import VoucherMoney from '@/assets/icons/money-4.svg'
 import VoucherPrecent from '@/assets/icons/ticket-discount.svg'
+import i18n from '@/languages/i18n';
 
 interface VoucherItemProps {
     voucher: Voucher;
@@ -42,7 +43,7 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
                                 { color: Colors.primary }
                                 : { color: Colors.secondary }
                         }
-                    >{voucher.is_active ? 'Đang hoạt động' : 'Hết hạn'}</Text>
+                    >{voucher.is_active ? i18n.t('voucher.active') : i18n.t('voucher.expired')}</Text>
                 </View>
             </View>
             <View height={1} bg-$backgroundPrimaryLight></View>
@@ -50,24 +51,24 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
                 <View marginT-10>
                     <View row gap-5 centerV>
                         <View row centerV>
-                            <Text h3>Giảm giá </Text>
+                            <Text h3>{i18n.t('voucher.discount')} </Text>
                             <Text h3_bold secondary>{voucher.formatted_discount}</Text>
                         </View>
                         <View row gap-3 centerV>
-                            <Text h3>tối đa: </Text>
+                            <Text h3>{i18n.t('voucher.max')}: </Text>
                             <Text h3>{voucher.max_discount_amount_formatted}</Text>
                         </View>
                     </View>
                     <View row gap-3 centerV>
-                        <Text h3_bold>Đơn hàng tối thiểu: </Text>
+                        <Text h3_bold>{i18n.t('voucher.min_order')}: </Text>
                         <Text h3>{voucher.min_order_value_formatted}</Text>
                     </View>
                     <View row gap-3 centerV>
-                        <Text h3_bold>Mô tả: </Text>
+                        <Text h3_bold>{i18n.t('voucher.description')}: </Text>
                         <Text h3>{voucher.description}</Text>
                     </View>
                     <View row centerV>
-                        <Text h3>Hết hạn ngày </Text>
+                        <Text h3>{i18n.t('voucher.expires_on')} </Text>
                         <Text h3>{voucher.end_date_formatted}</Text>
                     </View>
                 </View>

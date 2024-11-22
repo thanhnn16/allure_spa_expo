@@ -226,7 +226,7 @@ const AppointmentDetailPage = () => {
 
             {/* Notes */}
             {appointment.note && (
-              <View marginT-10 padding-15 br10 backgroundColor={Colors.grey70}>
+              <View marginT-10 padding-15 br20 backgroundColor={Colors.grey70}>
                 <Text h3_bold marginB-5>
                   {i18n.t("appointment.notes")}:
                 </Text>
@@ -282,7 +282,7 @@ const AppointmentDetailPage = () => {
                       size={16}
                       color={Colors.white}
                     />
-                    <Text h4 white>
+                    <Text h3_bold white>
                       {i18n.t("appointment.edit")}
                     </Text>
                   </View>

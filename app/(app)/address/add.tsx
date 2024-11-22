@@ -13,6 +13,7 @@ import { Address, AddressDistrict, AddressProvince, AddressWard } from "@/types/
 import AddressTextInput from "@/components/address/AddressTextInput";
 import AppDialog from "@/components/dialog/AppDialog";
 import { User } from "@/types/user.type";
+import { useAuth } from "@/hooks/useAuth";
 
 export const addressTypeItems = [
   { id: 1, name: i18n.t("address.home"), type: "home" as AddressType },
@@ -50,6 +51,7 @@ const Add = () => {
   const [confirmButton, setConfirmButton] = useState(false);
   const [onConfirmDialog, setOnConfirmDialog] = useState<() => void>(() => () => { });
   const [userProfile, setUserProfile] = useState<User>();
+  const { user } = useAuth();
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -112,7 +114,7 @@ const Add = () => {
       }
 
       const payload: Address = {
-        user_id: formData.user_id,
+        user_id: userProfile?.id || "",
         province: province?.name || "",
         district: district?.name || "",
         ward: ward?.name || "",
@@ -159,7 +161,7 @@ const Add = () => {
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const userProfileStr = await AsyncStorage.getItem("userProfile");
+        const userProfileStr = JSON.stringify(user);
         if (userProfileStr) {
           setUserProfile(JSON.parse(userProfileStr));
         }
@@ -203,15 +205,17 @@ const Add = () => {
           </Text>
           <AddressTextInput
             value={userProfile?.full_name || ""}
-            placeholder={i18n.t("auth.login.fullname")}
+            placeholder={i18n.t("address.name")}
             onChangeText={() => { }}
+            editable={false}
           />
           <AddressTextInput
             value={userProfile?.phone_number || ""}
-            placeholder={i18n.t("address.phone")}
-            onChangeText={(value) => handleChange("phone", value)}
+            placeholder={i18n.t("address.phone_number")}
+            onChangeText={() => { }}
             maxLength={10}
             keyboardType="phone-pad"
+            editable={false}
           />
         </View>
 
@@ -232,7 +236,7 @@ const Add = () => {
           </Text>
 
           <Picker
-            placeholder="Tỉnh/Thành phố"
+            placeholder={i18n.t("address.province")}
             floatingPlaceholder
             value={province?.id}
             label={province?.name}
@@ -247,9 +251,9 @@ const Add = () => {
                 }
               }
             }}
-            topBarProps={{ title: 'Tỉnh/Thành phố' }}
+            topBarProps={{ title: i18n.t("address.province") }}
             showSearch
-            searchPlaceholder={'Tìm một tỉnh/thành phố'}
+            searchPlaceholder={i18n.t("address.search_a_province")}
             searchStyle={{ placeholderTextColor: Colors.grey50 }}
             items={
               provinceList.map((item: AddressProvince) => ({
@@ -261,7 +265,9 @@ const Add = () => {
 
           {province?.id && (
             <Picker
-              placeholder="Quận/Huyện"
+              placeholder={i18n.t("address.district")}
+              searchPlaceholder={i18n.t("address.search_a_district")}
+              topBarProps={{ title: i18n.t("address.district") }}
               floatingPlaceholder
               value={district?.id}
               label={district?.name}
@@ -269,17 +275,13 @@ const Add = () => {
               onChange={(value: PickerValue) => {
                 if (typeof value === 'string') {
                   const selectedDistrict = districtList.find((item) => item.id === value);
-                  console.log("selectedDistrict", selectedDistrict);
-                  console.log("value", value);
                   if (selectedDistrict) {
                     setDistrict({ id: selectedDistrict.id, name: selectedDistrict.name } as AddressDistrict);
                     getWard(Number(selectedDistrict?.id));
                   }
                 }
               }}
-              topBarProps={{ title: 'Quận/Huyện' }}
               showSearch
-              searchPlaceholder={'Tìm một quận/huyện'}
               searchStyle={{ placeholderTextColor: Colors.grey50 }}
               items={
                 districtList.map((item: AddressDistrict) => ({
@@ -292,7 +294,7 @@ const Add = () => {
 
           {district?.id && (
             <Picker
-              placeholder="Phường/Xã"
+              placeholder={i18n.t("address.ward")}
               floatingPlaceholder
               value={ward?.id}
               label={ward?.name}
@@ -305,9 +307,9 @@ const Add = () => {
                   }
                 }
               }}
-              topBarProps={{ title: 'Phường/Xã' }}
+              topBarProps={{ title: i18n.t("address.ward") }}
               showSearch
-              searchPlaceholder={'Tìm một phường/xã'}
+              searchPlaceholder={i18n.t("address.search_a_ward")}
               searchStyle={{ placeholderTextColor: Colors.grey50 }}
               items={
                 wardList.map((item: AddressWard) => ({

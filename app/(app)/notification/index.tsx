@@ -82,7 +82,7 @@ const NotificationPage: React.FC = () => {
     return (
       <View flex center bg-white>
         <ActivityIndicator size="large" color={Colors.primary} />
-        <Text marginT-8 text70 color={Colors.grey40}>
+        <Text marginT-8 h2_bold color={Colors.grey40}>
           {i18n.t("notification.loading")}
         </Text>
       </View>
@@ -114,7 +114,7 @@ const NotificationPage: React.FC = () => {
                 elevation: 2,
               }}
             >
-              <Text text70BO color={Colors.text}>
+              <Text h2_bold color={Colors.text}>
                 {i18n.t("notification.all_notifications")}
               </Text>
               {notifications?.some((n: Notification) => !n.is_read) && (

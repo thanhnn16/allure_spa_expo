@@ -7,9 +7,11 @@ import {
   getAppointments,
 } from "@/redux/features/appointment/appointmentThunk";
 import { AppointmentResponeModelParams } from "@/types/service.type";
+import formatCurrency from "@/utils/price/formatCurrency";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
+import { format } from "path";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -217,11 +219,6 @@ const ScheduledPage = () => {
                 <Text h2_bold color={Colors.primary}>{`#${item.id
                   .toString()
                   .padStart(3)}`}</Text>
-                {item.service?.single_price && (
-                  <Text marginL-10 h3 color={Colors.secondary}>
-                    {`${item.service.single_price.toLocaleString()} ₫`}
-                  </Text>
-                )}
               </View>
               <View row centerV>
                 <MaterialCommunityIcons
@@ -261,7 +258,7 @@ const ScheduledPage = () => {
 
                   {/* Time Slot */}
                   {item.time_slot && (
-                    <View row centerV marginT-8>
+                    <View row centerV marginT-4>
                       <MaterialCommunityIcons
                         name="clock-time-four"
                         size={16}
@@ -290,6 +287,14 @@ const ScheduledPage = () => {
                       {moment(item.start).format("DD/MM/YYYY")}
                     </Text>
                   </View>
+
+                  {item.service?.single_price && (
+                    <View marginT-8>
+                      <Text h3_bold color={Colors.secondary}>
+                        {formatCurrency({ price: item.service.single_price })}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               </View>
 
@@ -333,15 +338,13 @@ const ScheduledPage = () => {
                   backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                 >
                   <Text h4 color={Colors.red10}>
-                    {`${i18n.t("appointment.cancelled_by")}: ${
-                      item.cancelled_by_user.full_name
-                    }`}
+                    {`${i18n.t("appointment.cancelled_by")}: ${item.cancelled_by_user.full_name
+                      }`}
                   </Text>
                   {item.cancellation_note && (
                     <Text marginT-5 h4 color={Colors.red10}>
-                      {`${i18n.t("appointment.cancel_reason")}: ${
-                        item.cancellation_note
-                      }`}
+                      {`${i18n.t("appointment.cancel_reason")}: ${item.cancellation_note
+                        }`}
                     </Text>
                   )}
                 </View>
@@ -359,7 +362,6 @@ const ScheduledPage = () => {
                         name="close-circle"
                         size={16}
                         color={Colors.red10}
-                        style={{ marginTop: 2 }}
                       />
                       <Text h4 color={Colors.red10}>
                         {i18n.t("appointment.cancel_appointment")}
@@ -383,7 +385,6 @@ const ScheduledPage = () => {
                       name="arrow-right"
                       size={16}
                       color={Colors.primary}
-                      style={{ marginTop: 2 }}
                     />
                   </View>
                 }
@@ -423,18 +424,17 @@ const ScheduledPage = () => {
               </Text>
               <Text h3 center grey30>
                 {i18n.t(
-                  `appointment.no_${
-                    selectedItem === 1
-                      ? "appointments"
-                      : selectedItem === 6
+                  `appointment.no_${selectedItem === 1
+                    ? "appointments"
+                    : selectedItem === 6
                       ? "next_7days"
                       : selectedItem === 2
-                      ? "pending"
-                      : selectedItem === 5
-                      ? "confirmed"
-                      : selectedItem === 3
-                      ? "completed"
-                      : "cancelled"
+                        ? "pending"
+                        : selectedItem === 5
+                          ? "confirmed"
+                          : selectedItem === 3
+                            ? "completed"
+                            : "cancelled"
                   }`
                 )}
               </Text>

@@ -6,24 +6,28 @@ export const createRatingProductThunk = createAsyncThunk(
     'rating/createRating',
     async (body: CreateRatingRequest, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
+            console.log('post data: ', body);
+
             const res = await AxiosInstance().post<RatingResponseParams>(`ratings/from-order`,
                 {
                     rating_type: body.rating_type,
                     item_id: body.item_id,
                     stars: body.stars,
                     comment: body.comment,
-                    media_id: body.media_id
+                    media: body.media,
                 }
             );
+
+            
 
             if (res.data.success) {
                 return res.data;
             }
 
-            console.log('Get rating failed:', res.data.message);
+            console.log('post rating failed:', res.data.message);
             return rejectWithValue(res.data.message || 'Get rating failed');
         } catch (error: any) {
-            console.error('Get rating error:', error);
+            console.error('Get rating error:', error.response?.data?.message);
             return rejectWithValue(error.response?.data?.message || "Get rating failed");
         }
     }

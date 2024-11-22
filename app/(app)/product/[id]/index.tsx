@@ -16,8 +16,6 @@ import {
   Carousel,
   PageControlPosition,
 } from "react-native-ui-lib/src/components/carousel";
-import HeartIcon from "@/assets/icons/heart.svg";
-import HeartFullIcon from "@/assets/icons/heart_full.svg";
 import TagIcon from "@/assets/icons/tag.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import SunIcon from "@/assets/icons/sun.svg";
@@ -26,8 +24,6 @@ import i18n from "@/languages/i18n";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getProductThunk } from "@/redux/features/products/productThunk";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { Product } from "@/types/product.type";
 import ProductDescription from "@/components/product/ProductDescription";
 import ProductBottomComponent from "@/components/product/ProductBottomComponent";
 import ProductQuantity from "@/components/product/ProductQuantity";
@@ -43,6 +39,7 @@ import Animated, {
   withSpring,
   withSequence,
   withTiming,
+  ReduceMotion,
 } from "react-native-reanimated";
 import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
 import { Media } from "@/types/media.type";
@@ -156,17 +153,12 @@ export default function DetailsScreen() {
 
   const handleShare = async () => {
     if (!product) return;
-    if (media && media.length > 0) {
-      if (media.full_url) {
-        try {
-          await Share.share({
-            // message: media.full_url,
-            message: `allurespa://product/${product.id}`,
-          });
-        } catch (error) {
-          console.error("Error sharing the link:", error);
-        }
-      }
+    try {
+      await Share.share({
+        message: `allurespa://product/${product.id}`,
+      });
+    } catch (error) {
+      console.error("Error sharing the link:", error);
     }
   };
 
@@ -214,32 +206,31 @@ export default function DetailsScreen() {
     };
   });
 
-  const handlePressAnim = () => {
+  const handlePressAnimOpacity = () => {
     "worklet";
     runOnJS(setShowAnimatedImage)(true);
     translateY.value = withTiming(
-      -Dimensions.get("window").height * 0.7,
+      -Dimensions.get("window").height * 0.1,
       {
-        duration: 1300,
-        easing: Easing.inOut(Easing.ease),
+        duration: 650,
+        easing: Easing.exp,
+        reduceMotion: ReduceMotion.System,
       },
       () => {
         runOnJS(setShowAnimatedImage)(false);
       }
     );
-    translateX.value = withTiming(Dimensions.get("window").width * 0.5, {
-      duration: 1500,
-      easing: Easing.inOut(Easing.ease),
-    });
     scale.value = withTiming(0.01, {
-      duration: 1500,
-      easing: Easing.inOut(Easing.ease),
+      duration: 300,
+      easing: Easing.exp,
+      reduceMotion: ReduceMotion.System,
     });
     opacity.value = withTiming(
       0,
       {
-        duration: 1500,
-        easing: Easing.inOut(Easing.ease),
+        duration: 1000,
+        easing: Easing.exp,
+        reduceMotion: ReduceMotion.System,
       },
       () => {
         runOnJS(setShowAnimatedImage)(false);
@@ -271,6 +262,7 @@ export default function DetailsScreen() {
               width={windowWidth * 0.9}
               style={{
                 alignSelf: "center",
+                overflow: "hidden",
               }}
               height={200}
               br50
@@ -300,7 +292,7 @@ export default function DetailsScreen() {
             </View>
           )}
           <ImageView
-            images={media}
+            images={media.map((item: Media) => ({ uri: item.full_url })) ?? []}
             imageIndex={imageViewIndex}
             visible={visible}
             onRequestClose={() => setIsVisible(false)}
@@ -391,14 +383,14 @@ export default function DetailsScreen() {
             backgroundColor={Colors.transparent}
             style={{
               position: "absolute",
-              left: windowWidth * 0.35,
-              bottom: 130,
+              right: 20,
+              top: 50,
             }}
           >
             <Animated.Image
-              source={{ uri: media[0].uri }}
+              source={{ uri: media[index].full_url }}
               style={[
-                { width: 150, height: 75, alignSelf: "flex-end" },
+                { width: 60, height: 45, alignSelf: "flex-end" },
                 animatedStyle,
               ]}
             />
@@ -410,7 +402,7 @@ export default function DetailsScreen() {
           onPurchase={isGuest ? handleGuestPurchase : undefined}
           quantity={quantity}
           onAddToCart={() => {
-            handlePressAnim();
+            handlePressAnimOpacity();
           }}
         />
 
