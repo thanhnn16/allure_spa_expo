@@ -89,4 +89,15 @@ export const {
 
 } = cartSlice.actions;
 
+export const fetchCartItems = () => async (dispatch: any) => {
+  try {
+    const cartItems = await AsyncStorage.getItem(CART_ITEMS_KEY);
+    if (cartItems) {
+      dispatch(setCartItems(JSON.parse(cartItems)));
+    }
+  } catch (error) {
+    console.error('Error fetching cart items:', error);
+  }
+};
+
 export default cartSlice.reducer;
