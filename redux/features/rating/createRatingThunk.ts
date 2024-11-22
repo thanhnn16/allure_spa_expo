@@ -1,34 +1,34 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import { CreateRatingRequest, RatingResponseParams } from "@/types/rating.type";
+import { RatingResponseParams } from "@/types/rating.type";
 
 export const createRatingProductThunk = createAsyncThunk(
     'rating/createRating',
-    async (body: CreateRatingRequest, { rejectWithValue }: { rejectWithValue: any }) => {
+    async (formData: FormData, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
-            console.log('post data: ', body);
+            console.log("Sending FormData:", Array.from((formData as any)._parts));
 
-            const res = await AxiosInstance().post<RatingResponseParams>(`ratings/from-order`,
-                {
-                    rating_type: body.rating_type,
-                    item_id: body.item_id,
-                    stars: body.stars,
-                    comment: body.comment,
-                    media: body.media,
-                }
-            );
-
-            
+            const res = await AxiosInstance('multipart/form-data')
+                .post<RatingResponseParams>('ratings/from-order', formData, {
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    transformRequest: [(data) => data],
+                    timeout: 30000,
+                });
 
             if (res.data.success) {
-                return res.data;
+                return res.data.data;
             }
 
-            console.log('post rating failed:', res.data.message);
-            return rejectWithValue(res.data.message || 'Get rating failed');
+            return rejectWithValue(res.data.message || 'Create rating failed');
         } catch (error: any) {
-            console.error('Get rating error:', error.response?.data?.message);
-            return rejectWithValue(error.response?.data?.message || "Get rating failed");
+            console.error('Create rating error:', error.response?.data?.message);
+            return rejectWithValue(
+                error.response?.data?.message ||
+                error.message ||
+                "Create rating failed"
+            );
         }
     }
 );
