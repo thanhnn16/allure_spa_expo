@@ -8,8 +8,6 @@ import {
 import { OrderItem } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
-import { Product } from "@/types/product.type";
-import { ServiceResponeModel } from "@/types/service.type";
 import i18n from "@/languages/i18n";
 
 const OrderItemCard = ({ item }: { item: OrderItem }) => {
@@ -30,19 +28,12 @@ const OrderItemCard = ({ item }: { item: OrderItem }) => {
           width={60}
           height={60}
           br20
-          source={
-            imageUrl
-              ? { uri: imageUrl }
-              : require("@/assets/images/logo/logo.png")
-          }
-          defaultSource={require("@/assets/images/logo/logo.png")}
+          source={imageUrl ? { uri: imageUrl } : require("@/assets/images/logo/logo.png")}
         />
 
         <View flex marginL-12>
           <Text h3_bold numberOfLines={2}>
-            {item.item_type === "product"
-              ? (itemData as Product).name
-              : (itemData as ServiceResponeModel).service_name}
+            {item.item_name}
           </Text>
 
           <View row spread marginT-4>

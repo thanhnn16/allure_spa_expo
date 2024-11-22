@@ -86,7 +86,11 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
           <View row spread marginT-10>
             {itemData?.media && itemData.media.length > 0 ? (
               <Animated.Image
-                source={{ uri: itemData.media[0].full_url }}
+                source={
+                  itemData.media[0].full_url
+                    ? { uri: itemData.media[0].full_url }
+                    : require("@/assets/images/logo/logo.png")
+                }
                 style={{
                   width: 100,
                   height: 100,
