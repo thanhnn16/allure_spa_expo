@@ -9,18 +9,27 @@ import { OrderItem } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
 import i18n from "@/languages/i18n";
+import { ServiceResponeModel } from "@/types/service.type";
+import { Product } from "@/types/product.type";
 
 const OrderItemCard = ({ item }: { item: OrderItem }) => {
   console.log("Received item: ", item);
 
   const isService = item.item_type === "service";
   const itemData = isService ? item.service : item.product;
-  if (!itemData) return null;
+  if (!itemData) {
+    console.warn(`No ${isService ? 'service' : 'product'} data found for item:`, item);
+    return null;
+  }
   const imageUrl = itemData.media?.[0]?.full_url;
+
+  const itemName = isService 
+    ? (itemData as ServiceResponeModel)?.service_name 
+    : (itemData as Product)?.name;
 
   return (
     <TouchableOpacity
-      onPress={() => router.push(`/(app)/${item.item_type}/${item.item_id}`)}
+      onPress={() => router.push(`/(app)/${item.item_type}/${itemData.id}`)}
       style={{ marginVertical: 6 }}
     >
       <View bg-white row centerV>
@@ -33,7 +42,7 @@ const OrderItemCard = ({ item }: { item: OrderItem }) => {
 
         <View flex marginL-12>
           <Text h3_bold numberOfLines={2}>
-            {item.item_name}
+            {itemName || item.item_name}
           </Text>
 
           <View row spread marginT-4>
@@ -45,7 +54,7 @@ const OrderItemCard = ({ item }: { item: OrderItem }) => {
             </Text>
           </View>
 
-          {item.service_type && (
+          {isService && item.service_type && (
             <View
               padding-8
               br20

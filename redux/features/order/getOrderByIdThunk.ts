@@ -11,7 +11,6 @@ export const getOrderByIdThunk = createAsyncThunk(
     async ({ id }: OrderByIdRequest, { rejectWithValue }: any) => {
         try {
             const res = await AxiosInstance().get<OrderByIdResponse>(`/orders/${id}`);
-            console.log("Get order by id response: ", res.data.data);
             if (res.data.success) {
                 return res.data.data;
             }
