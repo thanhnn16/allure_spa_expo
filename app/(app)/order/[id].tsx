@@ -4,6 +4,7 @@ import {
   Colors,
   RadioGroup,
   RadioButton,
+  Image,
   Typography,
 } from "react-native-ui-lib";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -11,7 +12,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { getOrderByIdThunk } from "@/redux/features/order/getOrderByIdThunk";
 import AppBar from "@/components/app-bar/AppBar";
-import { ScrollView, StyleSheet, TextInput } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import OrderStatusBadge from "@/components/order/OrderStatusBadge";
 import OrderItemCard from "@/components/order/OrderItemCard";
 import OrderActionButtons from "@/components/order/OrderActionButtons";
@@ -28,13 +34,14 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { createRatingProductThunk } from "@/redux/features/rating/createRatingThunk";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
-import OrderSelectRateItem from "@/components/order/OrderSelectRateItem";
 import { Rating } from "@kolking/react-native-rating";
 import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
 import {
   convertImageToBase64,
   processImageForUpload,
 } from "@/utils/helpers/imageHelper";
+import { ServiceResponeModel } from "@/types/service.type";
+import { Product } from "@/types/product.type";
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -66,9 +73,7 @@ const OrderDetail = () => {
   const [comment, setComment] = useState("");
   const [note, setNote] = useState("");
   const dispatch = useDispatch();
-  const [currentValue, setCurrentValue] = useState<number | undefined>(
-    undefined
-  );
+  const [currentItem, setCurrentItem] = useState<OrderItem | null>(null);
   const [cancelValue, setCancelValue] = useState<string>(
     "Chọn thêm sản phẩm khác/ Thay đổi voucher"
   );
@@ -102,21 +107,21 @@ const OrderDetail = () => {
   const sendReview = async () => {
     try {
       // Validate required fields
-      if (!rating || !currentValue) {
+      if (!rating || !currentItem) {
         throw new Error("Vui lòng chọn số sao và sản phẩm cần đánh giá");
       }
 
       // Create FormData object
       const formData = new FormData();
-      formData.append("rating_type", "product");
-      formData.append("item_id", currentValue.toString());
+      formData.append("rating_type", currentItem.item_type);
+      formData.append("item_id", currentItem.item_id.toString());
       formData.append("stars", rating.toString());
       formData.append("comment", comment);
       formData.append(
         "order_item_id",
         (
           selectedOrder.order_items.find(
-            (item: OrderItem) => item.product?.id === currentValue
+            (item: OrderItem) => item.id === currentItem?.id
           )?.id || 0
         ).toString()
       );
@@ -219,7 +224,11 @@ const OrderDetail = () => {
               </View>
               <Text h3 marginV-8 color={Colors.grey30}>
                 {i18n.t("transaction_detail.you_have")}{" "}
-                {selectedOrder.order_items?.length}{" "}
+                {
+                  selectedOrder.order_items?.filter(
+                    (item: OrderItem) => !item.is_rated
+                  ).length
+                }{" "}
                 {i18n.t("transaction_detail.product_need_review")}
               </Text>
               <View flex>
@@ -352,23 +361,90 @@ const OrderDetail = () => {
               <Text h2_bold>Chọn sản phẩm cần đánh giá</Text>
             </View>
 
-            {selectedOrder.order_items?.map((item: OrderItem) => (
-              <RadioGroup
-                key={item.id}
-                initialValue={currentValue}
-                onValueChange={(value: any) => {
-                  setCurrentValue(item.product?.id);
-                }}
-              >
-                <OrderSelectRateItem key={item.id} item={item} />
-              </RadioGroup>
-            ))}
+            <RadioGroup
+              initialValue={currentItem?.id}
+              onValueChange={(value: number) => {
+                const selectedItem = selectedOrder.order_items.find(
+                  (item: OrderItem) => item.id === value
+                );
+                setCurrentItem(selectedItem || null);
+              }}
+            >
+              <View gap-12>
+                {selectedOrder.order_items
+                  ?.filter((item: OrderItem) => !item.is_rated)
+                  .map((item: OrderItem) => {
+                    const isService = item.item_type === "service";
+                    const itemData = isService ? item.service : item.product;
+                    const imageUrl = itemData?.media?.[0]?.full_url;
+
+                    return (
+                      <TouchableOpacity
+                        key={item.id}
+                        onPress={() => {
+                          console.log("item: ", item);
+                          setCurrentItem(item);
+                        }}
+                        style={{ marginTop: 5 }}
+                      >
+                        <View bg-white row centerV gap-12>
+                          <RadioButton
+                            value={item.id}
+                            selected={currentItem?.id === item.id}
+                            color={Colors.primary}
+                          />
+                          <Image
+                            width={48}
+                            height={48}
+                            br20
+                            source={
+                              imageUrl
+                                ? { uri: imageUrl }
+                                : require("@/assets/images/logo/logo.png")
+                            }
+                            defaultSource={require("@/assets/images/logo/logo.png")}
+                          />
+
+                          <View flex>
+                            <Text h3 numberOfLines={2}>
+                              {item.item_name}
+                            </Text>
+
+                            {item.service_type && (
+                              <View
+                                padding-8
+                                br20
+                                center
+                                backgroundColor={Colors.primary_light}
+                                marginT-4
+                                width={"40%"}
+                              >
+                                <Text text80 color={Colors.primary}>
+                                  {item.service_type === "combo_5"
+                                    ? i18n.t("orders.combo_5")
+                                    : i18n.t("orders.combo_10")}
+                                </Text>
+                              </View>
+                            )}
+                          </View>
+                        </View>
+                        <View
+                          width={"100%"}
+                          height={1}
+                          backgroundColor={Colors.$backgroundElevatedLight}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+              </View>
+            </RadioGroup>
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton
                 title={"Chọn sản phẩm"}
                 type="primary"
                 onPress={() => handleRateBottomSheet()}
+                disabled={!currentItem}
               />
             </View>
           </BottomSheetView>
@@ -537,6 +613,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    marginBottom: 16,
   },
   section: {
     padding: 16,

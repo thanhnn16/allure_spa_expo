@@ -9,19 +9,21 @@ import { router } from "expo-router";
 import { setOrderProducts } from "@/redux/features/order/orderSlice";
 
 interface OrderActionButtonsProps {
-    order: Orders;
-    onCancel: () => void;
+  order: Orders;
+  onCancel: () => void;
 }
 
 const OrderActionButtons = ({ order, onCancel }: OrderActionButtonsProps) => {
   const dispatch = useDispatch();
 
   const handleReorder = () => {
-    dispatch(setOrderProducts({
-      products: order.order_items,
-      totalAmount: order.total_amount,
-      fromCart: false
-    }));
+    dispatch(
+      setOrderProducts({
+        items: order.order_items,
+        totalAmount: order.total_amount,
+        fromCart: false,
+      })
+    );
 
     router.push("/check-out");
   };

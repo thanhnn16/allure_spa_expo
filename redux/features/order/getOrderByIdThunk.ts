@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import { OrderResponse } from "@/types/order.type";
+import { OrderByIdResponse } from "@/types/order.type";
 
 interface OrderByIdRequest {
     id: string | number;
@@ -10,7 +10,8 @@ export const getOrderByIdThunk = createAsyncThunk(
     "orders/getOrderById",
     async ({ id }: OrderByIdRequest, { rejectWithValue }: any) => {
         try {
-            const res = await AxiosInstance().get<OrderResponse>(`/orders/${id}`);
+            const res = await AxiosInstance().get<OrderByIdResponse>(`/orders/${id}`);
+            console.log("Get order by id response: ", res.data.data);
             if (res.data.success) {
                 return res.data.data;
             }

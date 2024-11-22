@@ -31,14 +31,14 @@ const ProfileDetail = (props: ProfileDetailProps) => {
       <View flex paddingH-24>
         <View center marginT-30 gap-7>
           <Image
-            width={76}
-            height={76}
-            borderRadius={50}
-            style={{ borderColor: "#D5D6CD", borderWidth: 2 }}
+            width={128}
+            height={128}
+            borderRadius={128}
+            style={{ borderColor: "#D5D6CD", borderWidth: 1 }}
             source={
               user?.avatar_url
                 ? {
-                  uri: user.avatar_url + '?' + new Date().getTime(),
+                  uri: user.avatar_url,
                   headers: {
                     Pragma: 'no-cache'
                   }

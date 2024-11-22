@@ -15,39 +15,31 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AppBar from "@/components/app-bar/AppBar";
 import AppTabBar from "@/components/app-bar/AppTabBar";
 import OrderProductItem from "@/components/order/OrderProductItem";
-import { resetOrders } from "@/redux/features/order/orderSlice";
+import { clearOrders } from "@/redux/features/order/orderSlice";
 
 import ShoppingBagIcon from "@/assets/icons/bag.svg";
 import i18n from "@/languages/i18n";
-import Animated, {
-  FadeInDown,
-  useAnimatedStyle,
-  withTiming,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
 
 const MyOrder = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isTabChanging, setIsTabChanging] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();
-  const { orders, isLoading, isLoadingMore, pagination } = useSelector(
+  const { ordersByStatus, isLoading, isLoadingMore } = useSelector(
     (state: RootState) => state.order
   );
-  const [refreshing, setRefreshing] = useState(false);
 
-  // Thay thế fadeAnim bằng useSharedValue
-  const fadeAnim = useSharedValue(0);
+  const statuses = [
+    "pending",
+    "confirmed",
+    "shipping",
+    "completed",
+    "cancelled",
+  ];
 
-  // Tạo animated style
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: fadeAnim.value,
-    };
-  });
-
-  const fetchOrdersByStatus = async (status?: string, page: number = 1) => {
+  const fetchOrdersByStatus = async (status: string, page: number = 1) => {
     try {
       await dispatch(
         getAllOrderThunk({
@@ -58,57 +50,27 @@ const MyOrder = () => {
       ).unwrap();
     } catch (error) {
       console.error("Error fetching orders:", error);
-    } finally {
-      setIsTabChanging(false);
     }
   };
 
   useEffect(() => {
-    const statuses = [
-      "pending",
-      "confirmed",
-      "shipping",
-      "completed",
-      "cancelled",
-    ];
-    setIsTabChanging(true);
-    dispatch(resetOrders());
+    dispatch(clearOrders());
     fetchOrdersByStatus(statuses[selectedIndex], 1);
   }, [selectedIndex]);
 
   const handleLoadMore = () => {
     if (isLoadingMore) return;
 
-    const { currentPage, lastPage } = pagination;
-    if (currentPage < lastPage) {
-      const statuses = [
-        "pending",
-        "confirmed",
-        "shipping",
-        "completed",
-        "cancelled",
-      ];
-      fetchOrdersByStatus(statuses[selectedIndex], currentPage + 1);
+    const currentStatus = statuses[selectedIndex];
+    const currentPagination = ordersByStatus[currentStatus]?.pagination;
+
+    if (currentPagination?.currentPage < currentPagination?.lastPage) {
+      fetchOrdersByStatus(currentStatus, currentPagination.currentPage + 1);
     }
   };
 
-  const fadeIn = () => {
-    fadeAnim.value = withTiming(1, { duration: 500 });
-  };
-
-  useEffect(() => {
-    fadeIn();
-  }, [orders]);
-
   const onRefresh = async () => {
     setRefreshing(true);
-    const statuses = [
-      "pending",
-      "confirmed",
-      "shipping",
-      "completed",
-      "cancelled",
-    ];
     await fetchOrdersByStatus(statuses[selectedIndex], 1);
     setRefreshing(false);
   };
@@ -173,18 +135,25 @@ const MyOrder = () => {
     </View>
   );
 
-  const renderContent = () => {
-    if (isLoading || isTabChanging) {
+  const renderTabContent = (index: number) => {
+    const status = statuses[index];
+    const currentOrders = ordersByStatus[status]?.data || [];
+
+    if (isLoading && !currentOrders.length) {
       return renderSkeletonLoading();
     }
 
-    if (!isLoading && orders.length === 0) {
+    if (!isLoading && !currentOrders.length) {
       return renderEmptyState();
     }
 
     return (
       <Animated.FlatList
-        data={orders}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={5}
+        initialNumToRender={8}
+        windowSize={5}
+        data={currentOrders}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={{ padding: 16 }}
         showsVerticalScrollIndicator={false}
@@ -198,18 +167,14 @@ const MyOrder = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={() =>
-          isLoadingMore && (
+          isLoadingMore ? (
             <ActivityIndicator size="small" color={Colors.primary} />
-          )
+          ) : null
         }
         renderItem={({ item, index }) => (
-          <View>
-            <Animated.View
-              entering={FadeInDown.delay(index * 100).duration(400)}
-            >
-              <OrderProductItem order={item} />
-            </Animated.View>
-          </View>
+          <Animated.View entering={FadeInDown.delay(index * 50).duration(300)}>
+            <OrderProductItem order={item} />
+          </Animated.View>
         )}
       />
     );
@@ -220,6 +185,7 @@ const MyOrder = () => {
       <View flex bg-white>
         <AppBar back title={i18n.t("orders.title")} />
         <TabController
+          asCarousel
           items={[
             { label: i18n.t("orders.pending") },
             { label: i18n.t("orders.confirmed") },
@@ -228,27 +194,17 @@ const MyOrder = () => {
             { label: i18n.t("orders.cancelled") },
           ]}
           initialIndex={selectedIndex}
-          onChangeIndex={(index: number) => {
-            setSelectedIndex(index);
-          }}
+          onChangeIndex={setSelectedIndex}
         >
           <AppTabBar />
           <View flex>
-            <TabController.TabPage index={0}>
-              {renderContent()}
-            </TabController.TabPage>
-            <TabController.TabPage index={1}>
-              {renderContent()}
-            </TabController.TabPage>
-            <TabController.TabPage index={2}>
-              {renderContent()}
-            </TabController.TabPage>
-            <TabController.TabPage index={3}>
-              {renderContent()}
-            </TabController.TabPage>
-            <TabController.TabPage index={4}>
-              {renderContent()}
-            </TabController.TabPage>
+            <TabController.PageCarousel>
+              {[0, 1, 2, 3, 4].map((index) => (
+                <TabController.TabPage key={index} index={index} lazy>
+                  {selectedIndex === index && renderTabContent(index)}
+                </TabController.TabPage>
+              ))}
+            </TabController.PageCarousel>
           </View>
         </TabController>
       </View>

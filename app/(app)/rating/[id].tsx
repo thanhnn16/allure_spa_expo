@@ -11,7 +11,11 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect } from "react";
 import { getAllRatingProductThunk } from "@/redux/features/rating/getAllRatingProductThunk";
 
-const RatingPage = () => {
+interface RatingPageProps {
+  type?: 'product' | 'service';
+}
+
+const RatingPage: React.FC<RatingPageProps> = ({ type = 'product' }) => {
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { ratings, isLoading: RatingLoading } = useSelector(
@@ -19,10 +23,10 @@ const RatingPage = () => {
   );
 
   useEffect(() => {
-    console.log("id: ", id);
-    
-      dispatch(getAllRatingProductThunk({ id }));
-  }, [dispatch, id]);
+    if (id) {
+      dispatch(getAllRatingProductThunk({ id: id.toString(), type }));
+    }
+  }, [dispatch, id, type]);
 
   const averageRating =
     ratings?.length > 0

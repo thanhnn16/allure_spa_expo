@@ -76,7 +76,11 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
     return (
       <View key={item.id} paddingH-15 paddingB-10>
         <TouchableOpacity
-          onPress={() => router.push(`/order/${order.id}`)}
+          onPress={() =>
+            router.push(
+              `${isService ? "/service" : "/product"}/${itemData?.id}`
+            )
+          }
           activeOpacity={0.7}
         >
           <View row spread marginT-10>
@@ -132,43 +136,48 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
             Colors.rgba(Colors.primary, 0.05) as string,
           ]}
         >
-          <View row spread centerV paddingH-15 paddingT-15>
-            <View row centerV>
-              <Text h3_bold>#{order.id}</Text>
+          <TouchableOpacity
+            onPress={() => router.push(`/order/${order.id}`)}
+            activeOpacity={0.7}
+          >
+            <View row spread centerV paddingH-15 paddingT-15>
+              <View row centerV>
+                <Text h3_bold>#{order.id}</Text>
+              </View>
+              <View row gap-10 centerV>
+                <OrderStatusBadge status={order.status} />
+              </View>
             </View>
-            <View row gap-10 centerV>
-              <OrderStatusBadge status={order.status} />
-            </View>
-          </View>
-          <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
+            <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
 
-          {orderItems.map(renderItem)}
+            {orderItems.map(renderItem)}
 
-          <View height={1} marginT-10 bg-$backgroundPrimaryLight></View>
+            <View height={1} marginT-10 bg-$backgroundPrimaryLight></View>
 
-          <View paddingH-16 paddingV-8 gap-8>
-            <View row spread marginT-10>
-              <Text h3_bold>{i18n.t("orders.total")}</Text>
-              <Text h3_bold secondary>
-                {formatCurrency({ price: Number(order.total_amount) })}
-              </Text>
-            </View>
-            {(order.status === "completed" || order.status === "cancelled") &&
-              order.order_items.some((item) => item.product) && (
+            <View paddingH-16 paddingV-8 gap-8>
+              <View row spread marginT-10>
+                <Text h3_bold>{i18n.t("orders.total")}</Text>
+                <Text h3_bold secondary>
+                  {formatCurrency({ price: Number(order.total_amount) })}
+                </Text>
+              </View>
+              {(order.status === "completed" || order.status === "cancelled") &&
+                order.order_items.some((item) => item.product) && (
+                  <AppButton
+                    type="outline"
+                    title={i18n.t("orders.repurchase")}
+                    onPress={() => handleReorder()}
+                  />
+                )}
+              {order.status === "completed" ? (
                 <AppButton
                   type="outline"
-                  title={i18n.t("orders.repurchase")}
-                  onPress={() => handleReorder()}
+                  title={i18n.t("orders.rate_now")}
+                  onPress={() => router.push(`/order/${order.id}`)}
                 />
-              )}
-            {order.status === "completed" ? (
-              <AppButton
-                type="outline"
-                title={i18n.t("orders.rate_now")}
-                onPress={() => router.push(`/order/${order.id}`)}
-              />
-            ) : null}
-          </View>
+              ) : null}
+            </View>
+          </TouchableOpacity>
         </LinearGradient>
       </Animated.View>
     </View>

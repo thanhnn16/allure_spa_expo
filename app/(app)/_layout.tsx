@@ -26,7 +26,6 @@ const AppLayout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }} initialRouteName={"(tabs)"}>
       <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="transaction/[id]/index" />
       <Stack.Screen name="product/[id]/index" />
       <Stack.Screen name="search/index" />
       <Stack.Screen name="favorite/index" />
@@ -56,6 +55,7 @@ const AppLayout = () => {
       <Stack.Screen name="profile/delete-account-verify" />
       <Stack.Screen name="profile/change-password" />
       <Stack.Screen name="service-package/index" />
+      <Stack.Screen name="rating/[id]" />
     </Stack>
   );
 };

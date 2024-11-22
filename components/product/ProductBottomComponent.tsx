@@ -20,10 +20,9 @@ import { addItemToCart } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
 import { useState } from "react";
 import {
-  resetOrders,
+  clearOrders,
   setOrderProducts,
 } from "@/redux/features/order/orderSlice";
-// import { setOrderProducts } from '@/redux/features/order/orderSlice';
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -54,7 +53,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       ...product,
     };
     dispatch(addItemToCart({ product: cartItem, cart_quantity: quantity }));
-    dispatch(resetOrders());
+    dispatch(clearOrders());
     onAddToCart && onAddToCart();
   };
 
@@ -105,7 +104,10 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       }}
     >
       <View row gap-30>
-        <TouchableOpacity onPress={() => router.push(`/rating/${product?.id}`)}>
+        <TouchableOpacity onPress={() => router.push({
+          pathname: `/rating/${product?.id}`,
+          params: { type: 'product' }
+        })}>
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>
