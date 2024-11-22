@@ -10,6 +10,7 @@ export interface OrderItem {
     quantity: number;
     price: number;
     discount_amount: string;
+    is_rated: boolean;
     discount_type: string | null;
     created_at: string;
     updated_at: string;

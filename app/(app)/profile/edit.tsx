@@ -129,19 +129,12 @@ const ProfileEdit = (props: ProfileEditProps) => {
             result.assets[0].uri
           );
 
-          // Tạo FormData với thông tin file đầy đủ
           const formData = new FormData();
           formData.append("avatar", {
             uri: processedUri,
             name: "avatar.jpg",
             type: "image/jpeg",
           } as any);
-
-          // Log để debug
-          console.log(
-            "FormData entries:",
-            Array.from((formData as any)._parts)
-          );
 
           // Upload avatar
           await dispatch(uploadAvatarUrlThunk(formData)).unwrap();

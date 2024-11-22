@@ -1,4 +1,11 @@
-import { View, Text, Colors, Wizard, RadioGroup, RadioButton, Typography } from "react-native-ui-lib";
+import {
+  View,
+  Text,
+  Colors,
+  RadioGroup,
+  RadioButton,
+  Typography,
+} from "react-native-ui-lib";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -15,18 +22,19 @@ import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
 import TransactionHeader from "@/components/payment/TransactionHeader";
 import { PaymentMethod } from "../../check-out";
-import { method, set } from "lodash";
 import AppDialog from "@/components/dialog/AppDialog";
 import AppButton from "@/components/buttons/AppButton";
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { createRatingProductThunk } from "@/redux/features/rating/createRatingThunk";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import OrderSelectRateItem from "@/components/order/OrderSelectRateItem";
-import { Rating } from '@kolking/react-native-rating';
-import { processImageForUpload } from "@/utils/helpers/imageHelper";
+import { Rating } from "@kolking/react-native-rating";
 import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
+import {
+  convertImageToBase64,
+  processImageForUpload,
+} from "@/utils/helpers/imageHelper";
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -57,10 +65,13 @@ const OrderDetail = () => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [note, setNote] = useState("");
-  const isRated = false;
   const dispatch = useDispatch();
-  const [currentValue, setCurrentValue] = useState<number | undefined>(undefined);
-  const [cancelValue, setCancelValue] = useState<string>("Chọn thêm sản phẩm khác/ Thay đổi voucher");
+  const [currentValue, setCurrentValue] = useState<number | undefined>(
+    undefined
+  );
+  const [cancelValue, setCancelValue] = useState<string>(
+    "Chọn thêm sản phẩm khác/ Thay đổi voucher"
+  );
 
   const { selectedOrder, isLoading, error } = useSelector(
     (state: RootState) => state.order
@@ -72,7 +83,7 @@ const OrderDetail = () => {
 
   const handleChange = useCallback(
     (value: number) => setRating(value),
-    [rating],
+    [rating]
   );
 
   const handleOpenBottomSheet = () => {
@@ -90,52 +101,63 @@ const OrderDetail = () => {
 
   const sendReview = async () => {
     try {
-      // if (selectedImages.length > 0) {
-      //   try {
-      //     const processedUri = await processImageForUpload(selectedImages);
+      // Validate required fields
+      if (!rating || !currentValue) {
+        throw new Error("Vui lòng chọn số sao và sản phẩm cần đánh giá");
+      }
 
-      //     const formData = new FormData();
-      //     formData.append("rating", {
-      //       uri: processedUri,
-      //       type: "image/jpeg",
-      //       name: "avatar.jpg",
-      //     } as any);
+      // Create FormData object
+      const formData = new FormData();
+      formData.append("rating_type", "product");
+      formData.append("item_id", currentValue.toString());
+      formData.append("stars", rating.toString());
+      formData.append("comment", comment);
+      formData.append(
+        "order_item_id",
+        (
+          selectedOrder.order_items.find(
+            (item: OrderItem) => item.product?.id === currentValue
+          )?.id || 0
+        ).toString()
+      );
 
-      //     dispatch(createRatingProductThunk({
-      //       rating_type: "product",
-      //       item_id: currentValue,
-      //       stars: rating,
-      //       comment: comment
-      //     }));
+      // Process and append images if they exist
+      if (selectedImages.length > 0) {
+        try {
+          // Process each image before uploading
+          await Promise.all(
+            selectedImages.map(async (imageUri, index) => {
+              const processedUri = await processImageForUpload(imageUri);
 
-      //     bottomSheetRef.current?.close();
-      //     setRateDialog(true);
-      //   } catch (error: any) {
-      //     throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
-      //   }
-      // } else {
-      //   dispatch(createRatingProductThunk({
-      //     rating_type: "product",
-      //     item_id: currentValue,
-      //     stars: rating,
-      //     comment: comment
-      //   }));
-      //   bottomSheetRef.current?.close();
-      //   setRateDialog(true);
-      // }
-      dispatch(createRatingProductThunk({
-        rating_type: "product",
-        item_id: currentValue,
-        stars: rating,
-        comment: comment
-      }));
+              formData.append("images[]", {
+                uri: processedUri,
+                name: `image_${index}.jpg`,
+                type: "image/jpeg",
+              } as any);
+            })
+          );
+        } catch (error: any) {
+          throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
+        }
+      }
+
+      // Send request with FormData
+      await dispatch(createRatingProductThunk(formData)).unwrap();
+
+      // Close bottom sheet and show success dialog
       bottomSheetRef.current?.close();
       setRateDialog(true);
+
+      // Reset form
+      setSelectedImages([]);
+      setRating(0);
+      setComment("");
     } catch (error: any) {
+      console.error("Error creating rating:", error);
       bottomSheetRef.current?.close();
       setErrorDialog(true);
     }
-  }
+  };
 
   const handleCancelOrder = async () => {
     try {
@@ -143,10 +165,17 @@ const OrderDetail = () => {
         throw new Error("Bạn cần nhập lý do hủy đơn hàng");
       }
       if (cancelValue !== "Bạn có lý do khác") {
-        await dispatch(changeOrderStatusByIdThunk({ id: selectedOrder.id, note: cancelValue }));
+        await dispatch(
+          changeOrderStatusByIdThunk({
+            id: selectedOrder.id,
+            note: cancelValue,
+          })
+        );
         await dispatch(getOrderByIdThunk({ id: selectedOrder.id }));
       } else {
-        await dispatch(changeOrderStatusByIdThunk({ id: selectedOrder.id, note: note }));
+        await dispatch(
+          changeOrderStatusByIdThunk({ id: selectedOrder.id, note: note })
+        );
         await dispatch(getOrderByIdThunk({ id: selectedOrder.id }));
       }
       cancelBottomSheetRef.current?.close();
@@ -167,7 +196,7 @@ const OrderDetail = () => {
   const getPaymentMethod = (id: number) => {
     const method = paymentMethods.find((method) => method.id === id);
     return method;
-  }
+  };
   const method = getPaymentMethod(selectedOrder.payment_method_id);
 
   return (
@@ -175,21 +204,23 @@ const OrderDetail = () => {
       <View flex bg-white>
         <AppBar back title={i18n.t("orders.detail")} />
 
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-
+        <ScrollView
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+        >
           {selectedOrder.status !== "cancelled" && (
             <TransactionHeader status={selectedOrder.status} />
           )}
 
-          {(!isRated && selectedOrder.status == "completed") && (
+          {!selectedOrder.is_rated && selectedOrder.status == "completed" && (
             <View style={styles.section}>
               <View row spread centerV>
-                <Text h2_bold>
-                  {i18n.t("transaction_detail.you_have")}
-                </Text>
+                <Text h2_bold>{i18n.t("transaction_detail.you_have")}</Text>
               </View>
               <Text h3 marginV-8 color={Colors.grey30}>
-                {i18n.t("transaction_detail.you_have")} {selectedOrder.order_items?.length} {i18n.t("transaction_detail.product_need_review")}
+                {i18n.t("transaction_detail.you_have")}{" "}
+                {selectedOrder.order_items?.length}{" "}
+                {i18n.t("transaction_detail.product_need_review")}
               </Text>
               <View flex>
                 <AppButton
@@ -299,8 +330,6 @@ const OrderDetail = () => {
               <Text h3>{selectedOrder.note}</Text>
             </View>
           )}
-
-
         </ScrollView>
 
         {/* Action Buttons */}
@@ -323,13 +352,17 @@ const OrderDetail = () => {
               <Text h2_bold>Chọn sản phẩm cần đánh giá</Text>
             </View>
 
-
             {selectedOrder.order_items?.map((item: OrderItem) => (
-              <RadioGroup key={item.id} initialValue={currentValue} onValueChange={(value: any) => { setCurrentValue(item.product?.id); }} >
+              <RadioGroup
+                key={item.id}
+                initialValue={currentValue}
+                onValueChange={(value: any) => {
+                  setCurrentValue(item.product?.id);
+                }}
+              >
                 <OrderSelectRateItem key={item.id} item={item} />
               </RadioGroup>
             ))}
-
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton
@@ -353,39 +386,46 @@ const OrderDetail = () => {
         >
           <BottomSheetView style={styles.bottomSheetView}>
             <View center gap-10 marginV-12>
-              <Text h2_bold>{i18n.t('transaction_detail.cancel.title')}</Text>
+              <Text h2_bold>{i18n.t("transaction_detail.cancel.title")}</Text>
             </View>
 
-
-            <RadioGroup initialValue={cancelValue} onValueChange={(value: any) => { setCancelValue(value) }} >
+            <RadioGroup
+              initialValue={cancelValue}
+              onValueChange={(value: any) => {
+                setCancelValue(value);
+              }}
+            >
               <View gap-12>
                 <RadioButton
                   value={"Chọn thêm sản phẩm khác/ Thay đổi voucher"}
                   color={Colors.primary}
-                  label={i18n.t('transaction_detail.cancel.change_order_voucher')}
+                  label={i18n.t(
+                    "transaction_detail.cancel.change_order_voucher"
+                  )}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn cảm thấy công dụng sản phẩm chưa tốt"}
                   color={Colors.primary}
-                  label={i18n.t('transaction_detail.cancel.product_not_good')}
-                  labelStyle={Typography.h3} />
+                  label={i18n.t("transaction_detail.cancel.product_not_good")}
+                  labelStyle={Typography.h3}
+                />
                 <RadioButton
                   value={"Giá sản phẩm không hợp lý"}
                   color={Colors.primary}
-                  label={i18n.t('transaction_detail.cancel.price_not_good')}
+                  label={i18n.t("transaction_detail.cancel.price_not_good")}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn không muốn mua nữa"}
                   color={Colors.primary}
-                  label={i18n.t('transaction_detail.cancel.no_need')}
+                  label={i18n.t("transaction_detail.cancel.no_need")}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn có lý do khác"}
                   color={Colors.primary}
-                  label={i18n.t('transaction_detail.cancel.other')}
+                  label={i18n.t("transaction_detail.cancel.other")}
                   labelStyle={Typography.h3}
                 />
               </View>
@@ -396,7 +436,7 @@ const OrderDetail = () => {
                 <TextInput
                   value={note}
                   onChangeText={setNote}
-                  placeholder={i18n.t('transaction_detail.cancel.title')}
+                  placeholder={i18n.t("transaction_detail.cancel.title")}
                   style={{ height: 192, textAlignVertical: "top" }}
                 />
               </View>
@@ -404,7 +444,7 @@ const OrderDetail = () => {
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton
-                title={i18n.t('transaction_detail.cancel_order')}
+                title={i18n.t("transaction_detail.cancel_order")}
                 type="primary"
                 onPress={() => handleCancelOrder()}
               />
@@ -489,7 +529,7 @@ const OrderDetail = () => {
           onConfirm={() => setErrorDialog(false)}
         />
       </View>
-    </GestureHandlerRootView >
+    </GestureHandlerRootView>
   );
 };
 

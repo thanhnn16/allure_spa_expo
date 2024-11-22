@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import { User } from "@/types/user.type";
 
 export const uploadAvatarUrlThunk = createAsyncThunk(
   "user/uploadAvatar",
