@@ -70,8 +70,8 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   }
 
   const renderItem = (item: OrderItem) => {
-    const isService = item.service !== undefined;
-    const itemData = isService ? item.product : item.service;
+    const isService = item.item_type === "service";
+    const itemData = isService ? item.service : item.product;
 
     return (
       <View key={item.id} paddingH-15 paddingB-10>
@@ -97,8 +97,8 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
             <View flex marginL-10 gap-5>
               <Text h3_bold numberOfLines={2}>
                 {isService
-                  ? (itemData as Product)?.name
-                  : (itemData as ServiceResponeModel)?.service_name}
+                  ? (itemData as ServiceResponeModel)?.service_name
+                  : (itemData as Product)?.name}
               </Text>
               <Text h3 color={Colors.grey30}>
                 {i18n.t("orders.quantity")}: {item.quantity}
