@@ -21,7 +21,7 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
 import TransactionHeader from "@/components/payment/TransactionHeader";
-import { PaymentMethod } from "../../check-out";
+import { PaymentMethod } from "../check-out";
 import AppDialog from "@/components/dialog/AppDialog";
 import AppButton from "@/components/buttons/AppButton";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";

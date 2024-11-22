@@ -131,7 +131,9 @@ export default function InvoiceSuccess() {
           <AppButton
             title={"Xem chi tiết đơn hàng"}
             buttonStyle={{ backgroundColor: Colors.secondary }}
-            onPress={() => router.replace(`/transaction/${paymentDetails?.orderCode}`)}
+            onPress={() =>
+              router.replace(`/order/${paymentDetails?.orderCode}`)
+            }
             type="primary"
           />
           <AppButton

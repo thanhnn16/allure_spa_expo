@@ -42,6 +42,7 @@ const AppLayout = () => {
       <Stack.Screen name="service/[id]/index" />
       <Stack.Screen name="booking/index" />
       <Stack.Screen name="order/index" />
+      <Stack.Screen name="order/[id]" />
       <Stack.Screen name="invoice/failed" />
       <Stack.Screen name="invoice/success" />
       <Stack.Screen name="address/update/[id]/index" />

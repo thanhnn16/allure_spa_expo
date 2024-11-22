@@ -31,11 +31,13 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   const dispatch = useDispatch();
 
   const handleReorder = () => {
-    dispatch(setOrderProducts({
-      products: order.order_items,
-      totalAmount: order.total_amount,
-      fromCart: false
-    }));
+    dispatch(
+      setOrderProducts({
+        products: order.order_items,
+        totalAmount: order.total_amount,
+        fromCart: false,
+      })
+    );
 
     router.push("/check-out");
   };
@@ -71,11 +73,10 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
     const isService = item.service !== undefined;
     const itemData = isService ? item.product : item.service;
 
-
     return (
       <View key={item.id} paddingH-15 paddingB-10>
         <TouchableOpacity
-          onPress={() => router.push(`/transaction/${order.id}`)}
+          onPress={() => router.push(`/order/${order.id}`)}
           activeOpacity={0.7}
         >
           <View row spread marginT-10>
@@ -94,9 +95,11 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
             )}
 
             <View flex marginL-10 gap-5>
-                <Text h3_bold numberOfLines={2}>
-                {isService ? (itemData as Product)?.name : (itemData as ServiceResponeModel)?.service_name}
-                </Text>
+              <Text h3_bold numberOfLines={2}>
+                {isService
+                  ? (itemData as Product)?.name
+                  : (itemData as ServiceResponeModel)?.service_name}
+              </Text>
               <Text h3 color={Colors.grey30}>
                 {i18n.t("orders.quantity")}: {item.quantity}
               </Text>
@@ -111,7 +114,6 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   };
 
   return (
-
     <View
       style={{
         backgroundColor: "white",
@@ -133,7 +135,6 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
           <View row spread centerV paddingH-15 paddingT-15>
             <View row centerV>
               <Text h3_bold>#{order.id}</Text>
-
             </View>
             <View row gap-10 centerV>
               <OrderStatusBadge status={order.status} />
@@ -152,10 +153,8 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
                 {formatCurrency({ price: Number(order.total_amount) })}
               </Text>
             </View>
-            {(
-              (order.status === "completed" || order.status === "cancelled") &&
-              order.order_items.some(item => item.product)
-            ) && (
+            {(order.status === "completed" || order.status === "cancelled") &&
+              order.order_items.some((item) => item.product) && (
                 <AppButton
                   type="outline"
                   title={i18n.t("orders.repurchase")}
@@ -166,14 +165,13 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
               <AppButton
                 type="outline"
                 title={i18n.t("orders.rate_now")}
-                onPress={() => router.push(`/transaction/${order.id}`)}
+                onPress={() => router.push(`/order/${order.id}`)}
               />
             ) : null}
           </View>
         </LinearGradient>
       </Animated.View>
     </View>
-
   );
 };
 
