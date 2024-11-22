@@ -1,7 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Product } from '@/types/product.type';
-import { update } from 'lodash';
+import { fetchCartItems } from './fetchCartThunk';
 
 export interface CartItem extends Product {
   cart_quantity: number;
@@ -17,7 +17,7 @@ const initialState: CartState = {
   totalAmount: 0,
 };
 
-const CART_ITEMS_KEY = '@cart_items';
+export const CART_ITEMS_KEY = '@cart_items';
 
 export const cartSlice = createSlice({
   name: 'cart',
@@ -77,6 +77,11 @@ export const cartSlice = createSlice({
       AsyncStorage.removeItem(CART_ITEMS_KEY);
     },
   },
+  extraReducers: (builder: any) => {
+    builder.addCase(fetchCartItems.fulfilled, (state: any, action: any) => {
+      state.items = action.payload;
+    });
+  },
 });
 
 export const {
@@ -89,15 +94,5 @@ export const {
 
 } = cartSlice.actions;
 
-export const fetchCartItems = () => async (dispatch: any) => {
-  try {
-    const cartItems = await AsyncStorage.getItem(CART_ITEMS_KEY);
-    if (cartItems) {
-      dispatch(setCartItems(JSON.parse(cartItems)));
-    }
-  } catch (error) {
-    console.error('Error fetching cart items:', error);
-  }
-};
 
 export default cartSlice.reducer;
