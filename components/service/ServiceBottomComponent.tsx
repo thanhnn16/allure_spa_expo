@@ -13,11 +13,17 @@ import { Link, router } from "expo-router";
 import i18n from "@/languages/i18n";
 import { Dimensions } from "react-native";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import PhoneCallIcon from "@/assets/icons/phone.svg";
 import CommentIcon from "@/assets/icons/comment.svg";
 import Linking from "expo-linking";
-import { ServiceDetailResponeModel, ServiceResponeModel } from "@/types/service.type";
+import {
+  ServiceDetailResponeModel,
+  ServiceResponeModel,
+} from "@/types/service.type";
+import { setOrderProducts } from "@/redux/features/order/orderSlice";
+
 interface ServiceBottomComponentProps {
   isLoading: boolean;
   // product: Product | null;
@@ -29,32 +35,54 @@ interface ServiceBottomComponentProps {
 const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
   isLoading = false,
   onPurchase,
-  service
+  service,
 }) => {
   const [isToastVisible, setToastIsVisible] = useState(false);
   const windowWidth = Dimensions.get("window").width;
+  const dispatch = useDispatch();
 
   const handlePurchase = () => {
     if (onPurchase) {
       onPurchase();
     } else {
-      // const productData = {
-      //   id: product?.id,
-      //   name: product?.name,
-      //   price: product?.price,
-      //   quantity: quantity,
-      //   image: product?.media?.[0]?.full_url,
-      //   type: "product",
-      // };
+      const serviceData = {
+        id: service?.id,
+        name: service?.service_name,
+        price: service?.single_price
+          ? parseFloat(service.single_price.toString())
+          : 0,
+        priceValue: service?.single_price
+          ? parseFloat(service.single_price.toString())
+          : 0,
+        quantity: 1,
+        image: service?.media?.[0]?.full_url,
+        type: "service",
+        service_type: "single",
+      };
 
-      // router.push({
-      //   pathname: "/payment",
-      //   params: {
-      //     products: JSON.stringify([productData]),
-      //     total_amount: Number(product?.price || 0) * quantity,
-      //   },
-      // });
-      console.log('hehe');
+      dispatch(
+        setOrderProducts({
+          items: [
+            {
+              item_id: service?.id,
+              item_type: "service",
+              quantity: 1,
+              price: parseFloat(service?.single_price?.toString() || "0"),
+              service_type: "single",
+              service: {
+                id: service?.id,
+                service_name: service?.service_name,
+                media: service?.media || [],
+                price: parseFloat(service?.single_price?.toString() || "0"),
+              },
+            },
+          ],
+          totalAmount: serviceData.priceValue,
+          fromCart: false,
+        })
+      );
+
+      router.push("/check-out");
     }
   };
 
@@ -79,16 +107,20 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
       }}
     >
       <View row gap-30>
-          <TouchableOpacity onPress={() => Linking.openURL(`tel:113`)}>
-            <View center marginB-4>
-              <Image source={PhoneCallIcon} size={24} />
-            </View>
-            <Text h3_medium>{i18n.t("service.contact")}</Text>
-          </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push({
-          pathname: `/(app)/rating/${service?.id}`,
-          params: { type: 'service' }
-        })}>
+        <TouchableOpacity onPress={() => Linking.openURL(`tel:113`)}>
+          <View center marginB-4>
+            <Image source={PhoneCallIcon} size={24} />
+          </View>
+          <Text h3_medium>{i18n.t("service.contact")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: `/(app)/rating/${service?.id}`,
+              params: { type: "service" },
+            })
+          }
+        >
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>

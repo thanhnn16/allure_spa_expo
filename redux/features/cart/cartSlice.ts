@@ -3,9 +3,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Product } from '@/types/product.type';
 import { fetchCartItems } from './fetchCartThunk';
 import { CART_ITEMS_KEY } from './constants';
+import { CheckoutItem } from '@/types/checkout.type';
+import { RootState } from '@/redux/store';
+import { Media } from '@/types/media.type';
+import { createSelector } from '@reduxjs/toolkit';
 
-export interface CartItem extends Product {
+export interface CartItem {
+  id: number;
+  item_type: 'product' | 'service';
+  name: string;
+  price: number;
   cart_quantity: number;
+  service_type?: 'single' | 'combo_5' | 'combo_10';
+  media: Media[];
 }
 
 interface CartState {
@@ -24,22 +34,40 @@ export const cartSlice = createSlice({
   reducers: {
     setCartItems: (state: CartState, action: any) => {
       state.items = action.payload;
+      state.totalAmount = action.payload.reduce((total: number, item: CartItem) => {
+        return total + (parseFloat(item.price.toString()) * item.cart_quantity);
+      }, 0);
     },
     addItemToCart: (state: CartState, action: any) => {
-      const { product, cart_quantity } = action.payload;
-      if (!product) return;
-      const existingItem = state.items.find(item => item.id === product.id);
+      const { item, cart_quantity, item_type, service_type } = action.payload;
+      if (!item) return;
+
+      const cartItem: CartItem = {
+        id: item.id,
+        item_type: item_type || 'product',
+        name: item_type === 'service' ? item.service_name : item.name,
+        price: parseFloat(item.price),
+        cart_quantity,
+        service_type,
+        media: item.media || [],
+      };
+
+      const existingItem = state.items.find(i =>
+        i.id === cartItem.id && i.item_type === cartItem.item_type
+      );
+
       if (existingItem) {
         state.items = state.items.map(item => {
-          if (item.id === product.id) {
+          if (item.id === cartItem.id && item.item_type === cartItem.item_type) {
             item.cart_quantity += cart_quantity;
           }
           return item;
         });
       } else {
-        state.items.push({ ...product, cart_quantity });
+        state.items.push(cartItem);
       }
-      state.totalAmount += parseFloat(product.price) * cart_quantity;
+
+      state.totalAmount += cartItem.price * cart_quantity;
       AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
     },
     incrementCartItem: (state: CartState, action: any) => {
@@ -56,7 +84,7 @@ export const cartSlice = createSlice({
       state.items = state.items.map(item => {
         if (item.id === action.payload && item.cart_quantity > 1) {
           item.cart_quantity -= 1;
-          state.totalAmount -= item.price;
+          state.totalAmount -= parseFloat(item.price.toString());
           AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
         }
         return item;
@@ -77,8 +105,11 @@ export const cartSlice = createSlice({
     },
   },
   extraReducers: (builder: any) => {
-    builder.addCase(fetchCartItems.fulfilled, (state: any, action: any) => {
+    builder.addCase(fetchCartItems.fulfilled, (state: CartState, action: any) => {
       state.items = action.payload;
+      state.totalAmount = action.payload.reduce((total: number, item: CartItem) => {
+        return total + (parseFloat(item.price.toString()) * item.cart_quantity);
+      }, 0);
     });
   },
 });
@@ -93,5 +124,17 @@ export const {
 
 } = cartSlice.actions;
 
+export const selectCheckoutItems = createSelector(
+  [(state: RootState) => state.cart.items],
+  (items: CartItem[]) => items.map(item => ({
+    item_id: item.id,
+    item_type: item.item_type,
+    quantity: item.cart_quantity,
+    price: item.price,
+    service_type: item.service_type,
+    product: item.item_type === 'product' ? item : undefined,
+    service: item.item_type === 'service' ? item : undefined,
+  }))
+);
 
 export default cartSlice.reducer;

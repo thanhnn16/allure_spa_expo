@@ -1,9 +1,23 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { Orders } from '@/types/order.type';
 import { getAllOrderThunk } from './getAllOrderThunk';
 import { getOrderThunk } from './getOrderThunk';
 import { getOrderByIdThunk } from './getOrderByIdThunk';
 import { changeOrderStatusByIdThunk } from './changeOrderStatusThunk';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { CheckoutData } from '@/types/checkout.type';
+import { createOrder } from './createOrderThunk';
+
+export interface OrderItem {
+    id: number;
+    name: string;
+    price: number | string;
+    priceValue: number;
+    quantity: number;
+    image?: string;
+    type: 'product' | 'service';
+    service_type?: 'single' | 'combo_5' | 'combo_10';
+}
 
 interface OrderState {
     ordersByStatus: {
@@ -23,6 +37,7 @@ interface OrderState {
     totalAmount: number;
     fromCart: boolean;
     selectedOrder: Orders | null;
+    orders: OrderItem[];
 }
 
 const initialState: OrderState = {
@@ -32,7 +47,8 @@ const initialState: OrderState = {
     error: null,
     totalAmount: 0,
     fromCart: false,
-    selectedOrder: null
+    selectedOrder: null,
+    orders: []
 };
 
 const initialPagination = {
@@ -48,6 +64,9 @@ const orderSlice = createSlice({
     reducers: {
         clearOrders: (state: OrderState) => {
             state.ordersByStatus = {};
+            state.orders = [];
+            state.totalAmount = 0;
+            state.fromCart = false;
         },
         resetOrdersByStatus: (state: OrderState, action: any) => {
             if (state.ordersByStatus[action.payload]) {
@@ -81,8 +100,14 @@ const orderSlice = createSlice({
                 };
             }
 
+            state.orders = action.payload.products || [];
             state.totalAmount = action.payload.totalAmount;
-            state.fromCart = action.payload.fromCart;
+            state.fromCart = action.payload.fromCart || false;
+        },
+        clearOrder: (state: OrderState) => {
+            state.orders = [];
+            state.totalAmount = 0;
+            state.fromCart = false;
         },
     },
     extraReducers: (builder: any) => {
@@ -175,9 +200,20 @@ const orderSlice = createSlice({
             .addCase(changeOrderStatusByIdThunk.rejected, (state: OrderState, action: any) => {
                 state.isLoading = false;
                 state.error = action.payload;
+            })
+            .addCase(createOrder.pending, (state: OrderState) => {
+                state.isLoading = true;
+            })
+            .addCase(createOrder.fulfilled, (state: OrderState, action: any) => {
+                state.isLoading = false;
+                state.selectedOrder = action.payload;
+            })
+            .addCase(createOrder.rejected, (state: OrderState, action: any) => {
+                state.isLoading = false;
+                state.error = action.payload;
             });
     },
 });
 
-export const { clearOrders, resetOrdersByStatus, setOrderProducts } = orderSlice.actions;
+export const { clearOrders, resetOrdersByStatus, setOrderProducts, clearOrder } = orderSlice.actions;
 export default orderSlice.reducer;
