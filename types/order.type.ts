@@ -4,9 +4,9 @@ import { ServiceResponeModel } from "./service.type";
 export interface OrderItem {
     id: number;
     order_id: number;
-    item_type: string;
+    item_type: "product" | "service";
     item_id: number;
-    service_type: string;
+    service_type: "combo_5" | "combo_10";
     quantity: number;
     price: number;
     discount_amount: string;
@@ -33,6 +33,13 @@ export interface Orders {
     updated_at: string;
     order_items: OrderItem[];
     invoice: any | null;
+}
+
+export interface OrderByIdResponse {
+    message: string;
+    status_code: number;
+    success: boolean;
+    data: Orders;
 }
 
 export interface OrderResponse {

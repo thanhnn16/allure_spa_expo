@@ -513,7 +513,9 @@
       "delivered": "Delivered",
       "completed": "Completed",
       "cancelled": "Cancelled"
-    }
+    },
+    "combo_5": "Combo 5",
+    "combo_10": "Combo 10"
   },
   "favorite": {
     "title": "Favorite",
