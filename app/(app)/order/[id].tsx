@@ -587,7 +587,10 @@ const OrderDetail = () => {
           closeButton={false}
           confirmButton
           confirmButtonLabel="Quay lại"
-          onConfirm={() => setRateDialog(false)}
+          onConfirm={() => {
+            dispatch(getOrderByIdThunk({ id: id }));
+            setRateDialog(false);
+          }}
         />
 
         <AppDialog
