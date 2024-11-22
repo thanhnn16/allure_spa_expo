@@ -118,27 +118,24 @@ const OrderDetail = () => {
       formData.append("comment", comment);
       formData.append("order_item_id", currentItem.id.toString());
 
-      // Process multiple images
       if (selectedImages.length > 0) {
-        for (let i = 0; i < selectedImages.length; i++) {
+        selectedImages.forEach(async (imageUri, index) => {
           try {
-            const processedUri = await processImageForUpload(selectedImages[i]);
+            const processedUri = await processImageForUpload(imageUri);
             formData.append("images[]", {
               uri: processedUri,
-              type: 'image/jpeg',
-              name: `image_${i}.jpg`
+              type: "image/jpeg",
+              name: `image_${index}.jpg`,
             } as any);
           } catch (error: any) {
-            console.error(`Error processing image ${i}:`, error);
-            throw new Error(`Lỗi xử lý hình ảnh ${i + 1}: ${error.message}`);
+            console.error(`Error processing image ${index}:`, error);
+            throw new Error(`Lỗi xử lý hình ảnh ${index + 1}: ${error.message}`);
           }
-        }
+        });
       }
 
-      // Send request
       await dispatch(createRatingProductThunk(formData)).unwrap();
 
-      // Close bottom sheet and show success dialog
       bottomSheetRef.current?.close();
       setRateDialog(true);
 
@@ -210,10 +207,11 @@ const OrderDetail = () => {
             <View style={styles.section}>
               <View row spread centerV>
                 <Text h2_bold>
-                  {selectedOrder.order_items?.filter((item: OrderItem) => !item.is_rated).length > 0 
+                  {selectedOrder.order_items?.filter(
+                    (item: OrderItem) => !item.is_rated
+                  ).length > 0
                     ? i18n.t("transaction_detail.review_products")
-                    : i18n.t("transaction_detail.review_completed")
-                  }
+                    : i18n.t("transaction_detail.review_completed")}
                 </Text>
               </View>
               {selectedOrder.order_items?.filter(
