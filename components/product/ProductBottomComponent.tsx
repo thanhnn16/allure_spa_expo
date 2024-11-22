@@ -19,7 +19,10 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
 import { useState } from "react";
-import { resetOrders, setOrderProducts } from "@/redux/features/order/orderSlice";
+import {
+  resetOrders,
+  setOrderProducts,
+} from "@/redux/features/order/orderSlice";
 // import { setOrderProducts } from '@/redux/features/order/orderSlice';
 
 const windowWidth = Dimensions.get("window").width;
@@ -69,11 +72,13 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         type: "product",
       };
 
-      dispatch(setOrderProducts({
-        products: [productData],
-        totalAmount: Number(product?.price || 0) * quantity,
-        fromCart: false
-      }));
+      dispatch(
+        setOrderProducts({
+          products: [productData],
+          totalAmount: Number(product?.price || 0) * quantity,
+          fromCart: false,
+        })
+      );
 
       router.push("/check-out");
     }
@@ -100,14 +105,12 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       }}
     >
       <View row gap-30>
-        <Link href="/rating/1" asChild>
-          <TouchableOpacity>
-            <View center marginB-4>
-              <Image source={CommentIcon} size={24} />
-            </View>
-            <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity onPress={() => router.push(`/rating/${product?.id}`)}>
+          <View center marginB-4>
+            <Image source={CommentIcon} size={24} />
+          </View>
+          <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
+        </TouchableOpacity>
         <TouchableOpacity onPress={() => handleAddToCart()}>
           <View center marginB-4>
             <Image source={ShoppingCartIcon} size={24} />

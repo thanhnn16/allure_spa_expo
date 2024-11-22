@@ -15,64 +15,69 @@ const RatingPage = () => {
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { ratings, isLoading: RatingLoading } = useSelector(
-      (state: RootState) => state.rating
+    (state: RootState) => state.rating
   );
 
   useEffect(() => {
-    dispatch(getAllRatingProductThunk({ id: id }));
-  }, [dispatch]);
+    console.log("id: ", id);
+    
+      dispatch(getAllRatingProductThunk({ id }));
+  }, [dispatch, id]);
 
-  const averageRating = ratings.length > 0
-      ? ratings.reduce((acc: number, rating: any) => acc + rating.stars, 0) / ratings.length
+  const averageRating =
+    ratings?.length > 0
+      ? ratings.reduce((acc: number, rating: any) => acc + rating.stars, 0) /
+        ratings.length
       : 0;
-  const totalRatings = ratings.length;
+  const totalRatings = ratings?.length || 0;
 
   const getPercentage = (star: number) => {
     return totalRatings > 0
-        ? (ratings.filter((r: any) => r.stars === star).length / totalRatings) * 100
-        : 0;
+      ? (ratings.filter((r: any) => r.stars === star).length / totalRatings) *
+          100
+      : 0;
   };
 
   return (
-      <View flex bg-$backgroundDefault>
-        <AppBar back title="Đánh giá" />
-        <View padding-20 row centerV>
-          <View>
-            <Text h2_bold>{averageRating.toFixed(1)}/5</Text>
-            <View height={2}></View>
-            <Text h3_medium>
-              {i18n.t("rating.base_on")} {totalRatings} {i18n.t("rating.reviews")}
-            </Text>
-            <View height={10}></View>
-            <View left>
-              <RatingStar rating={averageRating} />
-            </View>
-          </View>
-
-          <View flex right>
-            <RatingBar star={5} percent={getPercentage(5)} />
-            <RatingBar star={4} percent={getPercentage(4)} />
-            <RatingBar star={3} percent={getPercentage(3)} />
-            <RatingBar star={2} percent={getPercentage(2)} />
-            <RatingBar star={1} percent={getPercentage(1)} />
+    <View flex bg-$backgroundDefault>
+      <AppBar back title="Đánh giá" />
+      <View padding-20 row centerV>
+        <View>
+          <Text h2_bold>{averageRating.toFixed(1)}/5</Text>
+          <View height={2}></View>
+          <Text h3_medium>
+            {i18n.t("rating.base_on")} {totalRatings} {i18n.t("rating.reviews")}
+          </Text>
+          <View height={10}></View>
+          <View left>
+            <RatingStar rating={averageRating} />
           </View>
         </View>
 
-        <View style={{ flex: 1 }}>
-          {ratings.length === 0 ? (
-              <View flex center>
-                <Text h3_medium>{i18n.t("rating.no_reviews")}</Text>
-              </View>
-          ) : (
-              <FlatList
-                  data={ratings}
-                  renderItem={({ item }) => <RatingItem item={item} />}
-                  contentContainerStyle={{ gap: 10 }}
-                  ListFooterComponent={<View height={90} />}
-              />
-          )}
+        <View flex right>
+          <RatingBar star={5} percent={getPercentage(5)} />
+          <RatingBar star={4} percent={getPercentage(4)} />
+          <RatingBar star={3} percent={getPercentage(3)} />
+          <RatingBar star={2} percent={getPercentage(2)} />
+          <RatingBar star={1} percent={getPercentage(1)} />
         </View>
       </View>
+
+      <View style={{ flex: 1 }}>
+        {ratings.length === 0 ? (
+          <View flex center>
+            <Text h3_medium>{i18n.t("rating.no_reviews")}</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={ratings}
+            renderItem={({ item }) => <RatingItem item={item} />}
+            contentContainerStyle={{ gap: 10 }}
+            ListFooterComponent={<View height={90} />}
+          />
+        )}
+      </View>
+    </View>
   );
 };
 

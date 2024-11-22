@@ -473,6 +473,8 @@
     "cancel_reason": "Cancel Reason",
     "edit": "Edit Appointment",
     "note": "Note",
+    "next_appointment": "Next Appointment",
+    "performed_by": "Performed by",
     "status": {
       "completed": "Completed",
       "pending": "Pending",

@@ -179,6 +179,7 @@
     "add_to_cart": "Thêm giỏ hàng",
     "buy_now": "Mua ngay",
     "purchases": "lượt mua",
+    "available": "có sẵn",
     "description": {
       "brand": "Thương hiệu",
       "usage": "Cách sử dụng",
@@ -462,6 +463,8 @@
     "cancel_reason": "Lý do huỷ",
     "edit": "Sửa lịch hẹn",
     "note": "Ghi chú",
+    "next_appointment": "Lịch hẹn sắp tới",
+    "performed_by": "Thực hiện bởi",
     "status": {
       "completed": "Đã hoàn thành",
       "pending": "Chờ xác nhận",

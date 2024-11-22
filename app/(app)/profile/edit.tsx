@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,16 +7,14 @@ import {
   Picker,
 } from "react-native-ui-lib";
 import { Alert } from "react-native";
-import { useNavigation } from "expo-router";
+import { router } from "expo-router";
 import i18n from "@/languages/i18n";
 import AppDialog from "@/components/dialog/AppDialog";
-import BackButton from "@/assets/icons/back.svg";
 import { TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import NameIcon from "@/assets/icons/user.svg";
 import PhoneIcon from "@/assets/icons/phone.svg";
 import EmailIcon from "@/assets/icons/sms.svg";
-import AddressIcon from "@/assets/icons/location.svg";
 import GenderIcon from "@/assets/icons/gender.svg";
 import BirthdayIcon from "@/assets/icons/birthday.svg";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,27 +26,32 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { processImageForUpload } from "@/utils/helpers/imageHelper";
+import { useDialog } from "@/hooks/useDialog";
+import AppBar from "@/components/app-bar/AppBar";
 
 interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const { user, setUser: setAuthUser } = useAuth();
 
   // Initialize state with user data
-  const [name, setName] = React.useState(user?.full_name || "");
-  const [phone, setPhone] = React.useState(user?.phone_number || "");
-  const [email, setEmail] = React.useState(user?.email || "");
-  const [gender, setGender] = React.useState(user?.gender || "");
-  const [birthday, setBirthday] = React.useState(
+  const [name, setName] = useState(user?.full_name || "");
+  const [phone, setPhone] = useState(user?.phone_number || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [gender, setGender] = useState(user?.gender || "");
+  const [birthday, setBirthday] = useState(
     user?.date_of_birth ? new Date(user.date_of_birth) : new Date()
   );
-  const [avatar, setAvatar] = React.useState<{ uri: string }>({
+  const [avatar, setAvatar] = useState<{ uri: string }>({
     uri: user?.avatar_url || "",
   });
-  const [isDatePickerVisible, setDatePickerVisible] = React.useState(false);
-  const [isDialogVisible, setDialogVisible] = React.useState(false);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [isDialogVisible, setDialogVisible] = useState(false);
+
+  const [errorDialog, setErrorDialog] = useState(false);
+  const [uploadAvatarLoading, setUploadAvatarLoading] = useState(false);
+  const [uploadAvatarSuccess, setUploadAvatarSuccess] = useState(false);
 
   React.useEffect(() => {
     const fetchUserData = async () => {
@@ -88,7 +91,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
           phone_number: phone,
           email,
           gender,
-          date_of_birth: birthday.toISOString().split("T")[0], // dòng này là để format ngày sinh thành YYYY-MM-DD
+          date_of_birth: birthday.toISOString().split("T")[0],
         })
       ).unwrap();
 
@@ -120,36 +123,45 @@ const ProfileEdit = (props: ProfileEditProps) => {
       });
 
       if (!result.canceled && result.assets[0]) {
-        const processedUri = await processImageForUpload(result.assets[0].uri);
+        setUploadAvatarLoading(true);
+        try {
+          const processedUri = await processImageForUpload(
+            result.assets[0].uri
+          );
 
-        const formData = new FormData();
-        formData.append("avatar", {
-          uri: processedUri,
-          type: "image/jpeg",
-          name: "avatar.jpg",
-        } as any);
+          // Tạo FormData với thông tin file đầy đủ
+          const formData = new FormData();
+          formData.append("avatar", {
+            uri: processedUri,
+            name: "avatar.jpg",
+            type: "image/jpeg",
+          } as any);
 
-        const uploadedUser = await dispatch(
-          uploadAvatarUrlThunk(formData)
-        ).unwrap();
-        const updatedUser = await dispatch(getUserThunk()).unwrap();
+          // Log để debug
+          console.log(
+            "FormData entries:",
+            Array.from((formData as any)._parts)
+          );
 
-        // Cập nhật state local
-        setAvatar({ uri: updatedUser.avatar_url + "?" + new Date().getTime() });
+          // Upload avatar
+          await dispatch(uploadAvatarUrlThunk(formData)).unwrap();
 
-        // Cập nhật user trong auth context
-        if (setAuthUser) {
-          setAuthUser({
-            ...updatedUser,
-            avatar_url: updatedUser.avatar_url + "?" + new Date().getTime(),
-          });
+          // Fetch updated user data
+          const updatedUser = await dispatch(getUserThunk()).unwrap();
+          setAvatar({ uri: updatedUser.avatar_url });
+
+          setUploadAvatarLoading(false);
+          setUploadAvatarSuccess(true);
+        } catch (error) {
+          console.error("Failed to upload avatar:", error);
+          setUploadAvatarLoading(false);
+          setErrorDialog(true);
         }
-
-        Alert.alert("Thành công", "Cập nhật ảnh đại diện thành công");
       }
     } catch (error: any) {
       console.error("Failed to upload avatar:", error);
-      Alert.alert("Lỗi", error.message || "Không thể tải lên ảnh đại diện");
+      setUploadAvatarLoading(false);
+      setErrorDialog(true);
     }
   };
 
@@ -172,177 +184,182 @@ const ProfileEdit = (props: ProfileEditProps) => {
   };
 
   return (
-    <View flex bg-white paddingH-24>
-      <View row centerV>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-            console.log("Back");
-          }}
-        >
-          <Image width={30} height={30} source={BackButton} />
-        </TouchableOpacity>
-        <View flex center>
-          <Text
-            text60BO
-            marginR-30
-            style={{ color: "#717658", letterSpacing: 0.75 }}
-          >
-            {i18n.t("profile.edit_profile")}
-          </Text>
-        </View>
-      </View>
-      <View center marginT-30 gap-7>
-        <Image
-          width={76}
-          height={76}
-          borderRadius={50}
-          style={{ borderColor: "#D5D6CD", borderWidth: 2 }}
-          source={
-            avatar.uri
-              ? { uri: avatar.uri }
-              : require("@/assets/images/logo/logo.png")
-          }
-        />
-        <TouchableOpacity
-          onPress={pickImage}
-          style={{
-            position: "absolute",
-            right: 120,
-            bottom: 0,
-            backgroundColor: "#FFFFFF",
-            borderRadius: 10,
-            padding: 5,
-            elevation: 5,
-          }}
-        >
+    <View flex bg-white>
+      <AppBar back title={i18n.t("profile.edit_profile")} />
+      <View paddingH-24>
+        <View center marginT-30 gap-7>
           <Image
-            width={16}
-            height={16}
-            source={require("@/assets/images/edit.png")}
+            width={128}
+            height={128}
+            borderRadius={128}
+            style={{ borderColor: "#D5D6CD", borderWidth: 1 }}
+            source={
+              avatar.uri
+                ? { uri: avatar.uri }
+                : require("@/assets/images/logo/logo.png")
+            }
           />
-        </TouchableOpacity>
-      </View>
-      <View marginT-20>
-        {[
-          {
-            placeholder: "Họ và tên",
-            value: name,
-            icon: NameIcon,
-            onChangeText: setName,
-          },
-          {
-            placeholder: "Số điện thoại",
-            value: phone,
-            icon: PhoneIcon,
-            onChangeText: setPhone,
-          },
-          {
-            placeholder: "Email",
-            value: email,
-            icon: EmailIcon,
-            onChangeText: setEmail,
-          },
-        ].map((item, index) => (
-          <View key={index} marginT-20>
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{
+              position: "absolute",
+              right: 120,
+              bottom: 0,
+              backgroundColor: "#FFFFFF",
+              borderRadius: 10,
+              padding: 5,
+              elevation: 5,
+            }}
+          >
+            <Image
+              width={16}
+              height={16}
+              source={require("@/assets/images/edit.png")}
+            />
+          </TouchableOpacity>
+        </View>
+        <View marginT-20>
+          {[
+            {
+              placeholder: "Họ và tên",
+              value: name,
+              icon: NameIcon,
+              onChangeText: setName,
+            },
+            {
+              placeholder: "Số điện thoại",
+              value: phone,
+              icon: PhoneIcon,
+              onChangeText: setPhone,
+            },
+            {
+              placeholder: "Email",
+              value: email,
+              icon: EmailIcon,
+              onChangeText: setEmail,
+            },
+          ].map((item, index) => (
+            <View key={index} marginT-20>
+              <View row centerV gap-10>
+                <Image width={24} height={24} source={item.icon} />
+                <TextInput
+                  style={{
+                    marginLeft: 10,
+                    borderBottomWidth: 0.5,
+                    flex: 1,
+                    height: 40,
+                    borderColor: "#D5D6CD",
+                  }}
+                  placeholder={item.placeholder}
+                  value={item.value}
+                  onChangeText={item.onChangeText}
+                />
+              </View>
+            </View>
+          ))}
+          <View marginT-20>
+            <View row centerV gap-20>
+              <Image width={24} height={24} source={GenderIcon} />
+              <View style={{ flex: 1 }}>
+                <Picker
+                  value={gender}
+                  onChange={(value: any) => setGender(value)}
+                  style={{
+                    borderBottomWidth: 0.5,
+                    width: "100%",
+                    height: 40,
+                    borderColor: "#D5D6CD",
+                    // backgroundColor: "red",
+                  }}
+                >
+                  <Picker.Item label="Nam" value="male" />
+                  <Picker.Item label="Nữ" value="female" />
+                  <Picker.Item label="Khác" value="other" />
+                </Picker>
+              </View>
+            </View>
+          </View>
+          <View marginT-20>
             <View row centerV gap-10>
-              <Image width={24} height={24} source={item.icon} />
-              <TextInput
+              <Image width={24} height={24} source={BirthdayIcon} />
+              <TouchableOpacity
+                centerV
+                onPress={showDatePicker}
                 style={{
-                  marginLeft: 10,
                   borderBottomWidth: 0.5,
                   flex: 1,
                   height: 40,
                   borderColor: "#D5D6CD",
-                }}
-                placeholder={item.placeholder}
-                value={item.value}
-                onChangeText={item.onChangeText}
-              />
-            </View>
-          </View>
-        ))}
-        <View marginT-20>
-          <View row centerV gap-20>
-            <Image width={24} height={24} source={GenderIcon} />
-            <View style={{ flex: 1 }}>
-              <Picker
-                value={gender}
-                onChange={(value: any) => setGender(value)}
-                style={{
-                  borderBottomWidth: 0.5,
-                  width: "100%",
-                  height: 40,
-                  borderColor: "#D5D6CD",
-                  // backgroundColor: "red",
+                  marginLeft: 10,
                 }}
               >
-                <Picker.Item label="Nam" value="male" />
-                <Picker.Item label="Nữ" value="female" />
-                <Picker.Item label="Khác" value="other" />
-              </Picker>
+                <Text>{formatDate(birthday)}</Text>
+              </TouchableOpacity>
+              {isDatePickerVisible && (
+                <DateTimePicker
+                  value={birthday}
+                  mode="date"
+                  is24Hour={true}
+                  onChange={handleDateChange}
+                />
+              )}
             </View>
           </View>
         </View>
-        <View marginT-20>
-          <View row centerV gap-10>
-            <Image width={24} height={24} source={BirthdayIcon} />
-            <TouchableOpacity
-              centerV
-              onPress={showDatePicker}
-              style={{
-                borderBottomWidth: 0.5,
-                flex: 1,
-                height: 40,
-                borderColor: "#D5D6CD",
-                marginLeft: 10,
-              }}
-            >
-              <Text>{formatDate(birthday)}</Text>
-            </TouchableOpacity>
-            {isDatePickerVisible && (
-              <DateTimePicker
-                value={birthday}
-                mode="date"
-                is24Hour={true}
-                onChange={handleDateChange}
-              />
-            )}
-          </View>
+        <View centerH marginT-30>
+          <TouchableOpacity
+            center
+            style={{
+              width: "80%",
+              height: 50,
+              backgroundColor: "#717658",
+              padding: 10,
+              borderRadius: 15,
+              elevation: 5,
+              marginTop: 20,
+            }}
+            onPress={handleSaveChanges}
+          >
+            <Text center white text70BO>
+              {i18n.t("profile.change_info")}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </View>
-      <View centerH marginT-30>
-        <TouchableOpacity
-          center
-          style={{
-            width: "80%",
-            height: 50,
-            backgroundColor: "#717658",
-            padding: 10,
-            borderRadius: 15,
-            elevation: 5,
-            marginTop: 20,
+        <AppDialog
+          visible={isDialogVisible}
+          onClose={() => setDialogVisible(false)}
+          confirmButton
+          confirmButtonLabel="OK"
+          severity="success"
+          title="Cập nhật thông tin thành công"
+          description="Thông tin của bạn đã được cập nhật thành công"
+          onConfirm={() => {
+            setDialogVisible(false);
+            router.back();
           }}
-          onPress={handleSaveChanges}
-        >
-          <Text center white text70BO>
-            {i18n.t("profile.change_info")}
-          </Text>
-        </TouchableOpacity>
+        />
+        <AppDialog
+          visible={errorDialog}
+          onClose={() => setErrorDialog(false)}
+          severity="error"
+          title="Lỗi"
+          description="Cập nhật thông tin thất bại"
+        />
+        <AppDialog
+          visible={uploadAvatarLoading}
+          severity="info"
+          title="Đang tải lên ảnh đại diện"
+        />
+        <AppDialog
+          visible={uploadAvatarSuccess}
+          severity="success"
+          title="Tải lên ảnh đại diện thành công"
+          description="Ảnh đại diện của bạn đã được cập nhật thành công"
+          onConfirm={() => {
+            setUploadAvatarSuccess(false);
+          }}
+        />
       </View>
-      <AppDialog
-        visible={isDialogVisible}
-        onClose={() => setDialogVisible(false)}
-        confirmButton
-        confirmButtonLabel="OK"
-        severity="success"
-        title="Cập nhật thông tin thành công"
-        description="Thông tin của bạn đã được cập nhật thành công"
-        onConfirm={() => {
-          setDialogVisible(false);
-          navigation.goBack();
-        }}
-      />
     </View>
   );
 };

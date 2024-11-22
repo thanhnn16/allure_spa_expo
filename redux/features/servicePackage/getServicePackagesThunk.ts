@@ -8,9 +8,6 @@ export const getServicePackagesThunk = createAsyncThunk(
             const response = await AxiosInstance().get(`/users/${userId}/service-packages`);
 
             const packages = response.data.data.map((pkg: any) => {
-                const nextAppointment = pkg.treatment_sessions?.find((session: any) =>
-                    new Date(session.start) > new Date() && session.status === 'confirmed'
-                );
 
                 return {
                     ...pkg,
@@ -18,6 +15,7 @@ export const getServicePackagesThunk = createAsyncThunk(
                         new Date(b.start_time).getTime() - new Date(a.start_time).getTime()
                     ),
                     next_appointment_details: pkg.next_appointment_details ? {
+                        id: pkg.next_appointment_details.id,
                         date: pkg.next_appointment_details.date,
                         time: {
                             start: pkg.next_appointment_details.time.start,
