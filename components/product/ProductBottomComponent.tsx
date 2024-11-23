@@ -50,10 +50,15 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       setIsVisible(true);
       return;
     }
-    const cartItem = {
-      ...product,
-    };
-    dispatch(addItemToCart({ product: cartItem, cart_quantity: quantity }));
+
+    dispatch(
+      addItemToCart({
+        item: product,
+        cart_quantity: quantity,
+        item_type: "product",
+      })
+    );
+
     dispatch(clearOrders());
     onAddToCart && onAddToCart();
   };
@@ -76,7 +81,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         priceValue: price,
         quantity: quantity,
         image: product?.media?.[0]?.full_url,
-        type: "product"
+        type: "product",
       };
 
       dispatch(
