@@ -3,7 +3,6 @@ import {
   StyleSheet,
   ScrollView,
   ImageSourcePropType,
-  Alert,
   TouchableOpacity,
   TextInput,
   Linking,
@@ -16,7 +15,9 @@ import AppBar from "@/components/app-bar/AppBar";
 import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import PaymentPicker from "@/components/payment/PaymentPicker";
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import formatCurrency from "@/utils/price/formatCurrency";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -27,15 +28,15 @@ import OrderService from "@/services/OrderService";
 import { useAuth } from "@/hooks/useAuth";
 import { clearCart } from "@/redux/features/cart/cartSlice";
 import { OrderItem } from "@/types";
-import { Product } from "@/types/product.type";
 import { useDialog } from "@/hooks/useDialog";
 import { fetchAddresses } from "@/redux/features";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import AppButton from "@/components/buttons/AppButton";
-import { Address, UserProfile } from "@/types/address.type";
+import { Address } from "@/types/address.type";
 import { selectCheckoutItems } from "@/redux/features/cart/cartSlice";
-import { ServiceResponeModel } from "@/types/service.type";
 import { CheckoutOrderItem } from "@/types/order.type";
+import { useLocalSearchParams } from "expo-router";
+import { clearTempOrder } from "@/redux/features/order/orderSlice";
 
 export interface PaymentMethod {
   id: number;
@@ -47,17 +48,17 @@ export interface PaymentMethod {
 const paymentMethods: PaymentMethod[] = [
   {
     id: 1,
-    name: i18n.t("checkout.cash"),
+    name: t("checkout.cash"),
     iconName: "cash-outline",
   },
   {
     id: 2,
-    name: i18n.t("checkout.credit_card"),
+    name: t("checkout.credit_card"),
     iconName: "card-outline",
   },
   {
     id: 3,
-    name: i18n.t("checkout.bank_transfer"),
+    name: t("checkout.bank_transfer"),
     iconName: "card-outline",
   },
 ];
@@ -75,18 +76,34 @@ export default function Checkout() {
   const [createOrderDialog, setCreateOrderDialog] = useState(false);
   const { dialogConfig, showDialog, hideDialog } = useDialog();
   const [note, setNote] = useState("");
+  const { source } = useLocalSearchParams();
 
+  const tempOrder = useSelector((state: RootState) => state.order.tempOrder);
   const checkoutItems = useSelector(selectCheckoutItems) as CheckoutOrderItem[];
-  const cartTotalAmount = useSelector((state: RootState) => state.cart.totalAmount);
+  const cartTotalAmount = useSelector(
+    (state: RootState) => state.cart.totalAmount
+  );
   const addresses = useSelector((state: RootState) => state.address.addresses);
   const userProfile = useSelector((state: RootState) => state.auth.user);
   const vouchers = useSelector((state: RootState) => state.voucher.vouchers);
 
-  const calculateTotalPrice = () => {
-    if (!checkoutItems || checkoutItems.length === 0) return 0;
+  const tempOrderItems = tempOrder.items.map((item: OrderItem) => ({
+    item_id: item.item_id,
+    item_type: item.item_type,
+    quantity: item.quantity,
+    price: item.price,
+    service_type: item.service_type,
+    product: item.item_type === "product" ? item : undefined,
+    service: item.item_type === "service" ? item : undefined,
+  }));
 
-    return checkoutItems.reduce((total: number, item: CheckoutOrderItem) => {
-      return total + (item.price * item.quantity);
+  const orderItems = source === "direct" ? tempOrderItems : checkoutItems;
+
+  const calculateTotalPrice = () => {
+    if (!orderItems || orderItems.length === 0) return 0;
+
+    return orderItems.reduce((total: number, item: CheckoutOrderItem) => {
+      return total + item.price * item.quantity;
     }, 0);
   };
 
@@ -137,8 +154,8 @@ export default function Checkout() {
     try {
       if (!selectedAddress) {
         showDialog(
-          i18n.t("checkout.address_required_title"),
-          i18n.t("checkout.address_required_message"),
+          t("checkout.address_required_title"),
+          t("checkout.address_required_message"),
           "warning"
         );
         return;
@@ -150,7 +167,7 @@ export default function Checkout() {
         shipping_address_id: selectedAddress.id,
         voucher_id: selectedVoucher?.id || null,
         note: note || "",
-        items: checkoutItems.map((item: CheckoutOrderItem) => ({
+        items: orderItems.map((item: CheckoutOrderItem) => ({
           item_id: item.item_id,
           item_type: item.item_type,
           quantity: item.quantity,
@@ -178,7 +195,9 @@ export default function Checkout() {
             payment_method: "cash",
           },
         });
-        dispatch(clearCart());
+        if (source !== "direct") {
+          dispatch(clearCart());
+        }
       } else if (selectedPayment.id === 3) {
         // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
@@ -197,13 +216,13 @@ export default function Checkout() {
           await Linking.openURL(paymentResponse.data.checkoutUrl);
         }
       }
+
+      if (source !== "direct") {
+        dispatch(clearCart());
+      }
     } catch (error) {
       console.error("Payment error:", error);
-      showDialog(
-        i18n.t("common.error"),
-        i18n.t("checkout.payment_failed"),
-        "error"
-      );
+      showDialog(t("common.error"), t("checkout.payment_failed"), "error");
     }
   };
 
@@ -235,7 +254,11 @@ export default function Checkout() {
   }, [navigation]);
 
   useEffect(() => {
-    if (checkoutItems.length === 0) {
+    if (source === "direct" && tempOrder.items.length === 0) {
+      router.back();
+      return;
+    }
+    if (source !== "direct" && checkoutItems.length === 0) {
       router.back();
       return;
     }
@@ -243,7 +266,13 @@ export default function Checkout() {
     const initialTotal = calculateTotalPrice();
     setTotalPrice(initialTotal);
     setDiscountedPrice(initialTotal);
-  }, [checkoutItems]);
+
+    return () => {
+      if (source === "direct") {
+        dispatch(clearTempOrder());
+      }
+    };
+  }, [source, tempOrder.items, checkoutItems]);
 
   useEffect(() => {
     loadAddressData();
@@ -268,15 +297,13 @@ export default function Checkout() {
     if (addresses.length === 0) {
       return (
         <View style={styles.noAddressContainer}>
-          <Text style={styles.noAddressText}>
-            {i18n.t("checkout.no_address")}
-          </Text>
+          <Text style={styles.noAddressText}>{t("checkout.no_address")}</Text>
           <AppButton
             type="primary"
             onPress={() => router.push("/(app)/address/add")}
           >
             <Text style={styles.buttonText}>
-              {i18n.t("address.add_new_address")}
+              {t("address.add_new_address")}
             </Text>
           </AppButton>
         </View>
@@ -291,7 +318,7 @@ export default function Checkout() {
         {selectedAddress ? (
           <View flexS>
             <Text style={styles.addressTitle}>
-              {i18n.t("checkout.delivery_address")}
+              {t("checkout.delivery_address")}
             </Text>
             <Text style={styles.addressText}>
               {selectedAddress.address}, {selectedAddress.ward},{" "}
@@ -303,7 +330,7 @@ export default function Checkout() {
           </View>
         ) : (
           <Text style={styles.selectAddressText}>
-            {i18n.t("checkout.select_address")}
+            {t("checkout.select_address")}
           </Text>
         )}
         <MaterialCommunityIcons name="chevron-right" size={24} color="#666" />
@@ -312,7 +339,7 @@ export default function Checkout() {
   };
 
   const renderOrderItems = () => {
-    return checkoutItems.map((item: CheckoutOrderItem) => (
+    return orderItems.map((item: CheckoutOrderItem) => (
       <PaymentProductItem
         key={`${item.item_type}-${item.item_id}`}
         orderItem={{
@@ -321,7 +348,8 @@ export default function Checkout() {
           quantity: item.quantity,
           price: item.price,
           service_type: item.service_type,
-          [item.item_type]: item.item_type === "product" ? item.product : item.service,
+          [item.item_type]:
+            item.item_type === "product" ? item.product : item.service,
         }}
       />
     ));
@@ -329,7 +357,7 @@ export default function Checkout() {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("checkout.title")} />
+      <AppBar back title={t("checkout.title")} />
       <View flex backgroundColor={Colors.white}>
         <ScrollView
           style={{ paddingHorizontal: 20 }}
@@ -338,7 +366,7 @@ export default function Checkout() {
           {renderAddressSection()}
 
           <View marginV-10 gap-10>
-            <Text h2_bold>{i18n.t("checkout.voucher")}</Text>
+            <Text h2_bold>{t("checkout.voucher")}</Text>
             <VoucherDropdown
               value={voucher}
               items={activeVouchers}
@@ -349,7 +377,7 @@ export default function Checkout() {
           <View style={styles.borderInset} />
 
           <View marginV-10 gap-10>
-            <Text h2_bold>{i18n.t("checkout.payment_method")}</Text>
+            <Text h2_bold>{t("checkout.payment_method")}</Text>
             <PaymentPicker
               value={selectedPayment}
               items={paymentMethods}
@@ -360,7 +388,7 @@ export default function Checkout() {
           <View style={styles.borderInset} />
 
           <View marginV-10 gap-10>
-            <Text h2_bold>{i18n.t("checkout.product")}</Text>
+            <Text h2_bold>{t("checkout.product")}</Text>
             {renderOrderItems()}
           </View>
 
@@ -370,7 +398,7 @@ export default function Checkout() {
             <Text h2_bold>Note</Text>
             <TextInput
               value={note}
-              placeholder={i18n.t("address.note")}
+              placeholder={t("address.note")}
               onChangeText={(value) => setNote(value)}
               multiline={true}
               numberOfLines={3}
@@ -406,15 +434,15 @@ export default function Checkout() {
         >
           <View>
             <View row centerV spread>
-              <Text h3_bold>{i18n.t("checkout.subtotal")}</Text>
+              <Text h3_bold>{t("checkout.subtotal")}</Text>
               <Text h3_bold>{formatCurrency({ price: totalPrice })}</Text>
             </View>
             <View row centerV spread marginT-10>
-              <Text h3_bold>{i18n.t("checkout.voucher")}</Text>
+              <Text h3_bold>{t("checkout.voucher")}</Text>
               <Text h3>{selectedVoucher ? selectedVoucher.code : ""}</Text>
             </View>
             <View row centerV spread marginV-10>
-              <Text h3_bold>{i18n.t("checkout.total_payment")}</Text>
+              <Text h3_bold>{t("checkout.total_payment")}</Text>
               <View>
                 {discountedPrice !== totalPrice && (
                   <Text
@@ -436,7 +464,7 @@ export default function Checkout() {
             </View>
 
             <Button
-              label={i18n.t("checkout.payment").toString()}
+              label={t("checkout.payment").toString()}
               labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
               backgroundColor={Colors.primary}
               padding-20
@@ -452,7 +480,7 @@ export default function Checkout() {
           description={
             "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
           }
-          closeButtonLabel={i18n.t("common.cancel")}
+          closeButtonLabel={t("common.cancel")}
           confirmButtonLabel={"Xóa"}
           severity="info"
           onClose={() => setPaymentDialog(false)}

@@ -10,7 +10,9 @@ import {
   Dialog,
 } from "react-native-ui-lib";
 import { Link, router } from "expo-router";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { Dimensions } from "react-native";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -22,7 +24,7 @@ import {
   ServiceDetailResponeModel,
   ServiceResponeModel,
 } from "@/types/service.type";
-import { setOrderProducts } from "@/redux/features/order/orderSlice";
+import { setTempOrder } from "@/redux/features/order/orderSlice";
 
 interface ServiceBottomComponentProps {
   isLoading: boolean;
@@ -45,15 +47,15 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
     if (onPurchase) {
       onPurchase();
     } else {
-      const serviceData = {
+      const price = service?.single_price
+        ? parseFloat(service.single_price.toString())
+        : 0;
+
+      const orderItem = {
         id: service?.id,
         name: service?.service_name,
-        price: service?.single_price
-          ? parseFloat(service.single_price.toString())
-          : 0,
-        priceValue: service?.single_price
-          ? parseFloat(service.single_price.toString())
-          : 0,
+        price: price,
+        priceValue: price,
         quantity: 1,
         image: service?.media?.[0]?.full_url,
         type: "service",
@@ -61,28 +63,13 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
       };
 
       dispatch(
-        setOrderProducts({
-          items: [
-            {
-              item_id: service?.id,
-              item_type: "service",
-              quantity: 1,
-              price: parseFloat(service?.single_price?.toString() || "0"),
-              service_type: "single",
-              service: {
-                id: service?.id,
-                service_name: service?.service_name,
-                media: service?.media || [],
-                price: parseFloat(service?.single_price?.toString() || "0"),
-              },
-            },
-          ],
-          totalAmount: serviceData.priceValue,
-          fromCart: false,
+        setTempOrder({
+          items: [orderItem],
+          totalAmount: price,
         })
       );
 
-      router.push("/check-out");
+      router.push("/check-out?source=direct");
     }
   };
 
@@ -111,25 +98,27 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
           <View center marginB-4>
             <Image source={PhoneCallIcon} size={24} />
           </View>
-          <Text h3_medium>{i18n.t("service.contact")}</Text>
+          <Text h3_medium>{t("service.contact")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: `/(app)/rating/${service?.id}`,
-              params: { type: "service" },
-            })
-          }
+          onPress={() => {
+            if (service?.id) {
+              router.push({
+                pathname: "/rating/[id]",
+                params: { id: service.id, type: "service" },
+              });
+            }
+          }}
         >
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>
-          <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
+          <Text h3_medium>{t("productDetail.reviews")}</Text>
         </TouchableOpacity>
       </View>
       <View flex right>
         <Button
-          label={i18n.t("service.serviceDetail.book_now").toString()}
+          label={t("service.serviceDetail.book_now").toString()}
           br40
           onPress={handlePurchase}
           backgroundColor={Colors.primary}

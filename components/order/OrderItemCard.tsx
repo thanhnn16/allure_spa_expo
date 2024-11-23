@@ -8,7 +8,9 @@ import {
 import { OrderItem } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
 
@@ -65,8 +67,8 @@ const OrderItemCard = ({ item }: { item: OrderItem }) => {
             >
               <Text text80 color={Colors.primary}>
                 {item.service_type === "combo_5"
-                  ? i18n.t("orders.combo_5")
-                  : i18n.t("orders.combo_10")}
+                  ? t("orders.combo_5")
+                  : t("orders.combo_10")}
               </Text>
             </View>
           )}

@@ -12,7 +12,6 @@ interface ChangePasswordProps {}
 const ChangePassword = (props: ChangePasswordProps) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const auth = useSelector((state: any) => state.auth);
 
   // State for password fields
   const [currentPassword, setCurrentPassword] = useState("");

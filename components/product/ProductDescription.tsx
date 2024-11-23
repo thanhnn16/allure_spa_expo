@@ -2,7 +2,9 @@ import { Dimensions, StyleSheet } from "react-native";
 import { View, SkeletonView } from "react-native-ui-lib";
 import React, { useState } from "react";
 import { Product } from "@/types/product.type";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 import ProductDescriptionColapable from "./ProductDescriptionColapable";
 
@@ -36,42 +38,42 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
   return (
     <View marginT-10>
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.brand")}
+        headerText={t("productDetail.description.brand")}
         childrenText={
-          product?.brand_description || i18n.t("productDetail.no_info")
+          product?.brand_description || t("productDetail.no_info")
         }
       />
 
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.usage")}
-        childrenText={product?.usage || i18n.t("productDetail.no_info")}
+        headerText={t("productDetail.description.usage")}
+        childrenText={product?.usage || t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.benefit")}
-        childrenText={product?.benefits || i18n.t("productDetail.no_info")}
+        headerText={t("productDetail.description.benefit")}
+        childrenText={product?.benefits || t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.directions")}
-        childrenText={product?.directions || i18n.t("productDetail.no_info")}
+        headerText={t("productDetail.description.directions")}
+        childrenText={product?.directions || t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.storage")}
+        headerText={t("productDetail.description.storage")}
         childrenText={
-          product?.storage_instructions || i18n.t("productDetail.no_info")
+          product?.storage_instructions || t("productDetail.no_info")
         }
       />
 
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.product_notes")}
-        childrenText={product?.product_notes || i18n.t("productDetail.no_info")}
+        headerText={t("productDetail.description.product_notes")}
+        childrenText={product?.product_notes || t("productDetail.no_info")}
       />
 
       <ProductDescriptionColapable
-        headerText={i18n.t("productDetail.description.ingredient")}
-        childrenText={product?.ingredients || i18n.t("productDetail.no_info")}
+        headerText={t("productDetail.description.ingredient")}
+        childrenText={product?.ingredients || t("productDetail.no_info")}
         keyText={product?.key_ingredients || ""}
       />
     </View>

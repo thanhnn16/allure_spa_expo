@@ -2,7 +2,9 @@ import React from "react";
 import { View, Text, TouchableOpacity, Image, Card } from "react-native-ui-lib";
 import BackButton from "@/assets/icons/back.svg";
 import ArrowRight from "@/assets/icons/arrow.svg";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { useAuth } from "@/hooks/useAuth";
 import { router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
@@ -27,7 +29,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("profile.title")} />
+      <AppBar back title={t("profile.title")} />
       <View flex paddingH-24>
         <View center marginT-30 gap-7>
           <Image
@@ -46,32 +48,32 @@ const ProfileDetail = (props: ProfileDetailProps) => {
                 : require("@/assets/images/logo/logo.png")
             }
           />
-          <Text text60>{user?.full_name || i18n.t("profile.username")}</Text>
+          <Text text60>{user?.full_name || t("profile.username")}</Text>
           <Text gray>{user?.phone_number || ""}</Text>
         </View>
         <Card width={"100%"} marginT-20>
           {[
             {
-              title: i18n.t("profile.edit_profile"),
+              title: t("profile.edit_profile"),
               icon: require("@/assets/images/edit.png"),
               onPress: () => {
                 router.push("/(app)/profile/edit");
               },
             },
             {
-              title: i18n.t("profile.change_password"),
+              title: t("profile.change_password"),
               icon: require("@/assets/images/key.png"),
               onPress: () => { },
             },
             {
-              title: i18n.t("profile.history_login"),
+              title: t("profile.history_login"),
               icon: require("@/assets/images/global.png"),
               onPress: () => {
                 console.log("Lịch sử đăng nhập");
               },
             },
             {
-              title: i18n.t("profile.dowload_information"),
+              title: t("profile.dowload_information"),
 
               icon: require("@/assets/images/dowload.png"),
               onPress: () => {
@@ -79,7 +81,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
               },
             },
             {
-              title: i18n.t("profile.delete_account"),
+              title: t("profile.delete_account"),
               icon: require("@/assets/images/deleteacount.png"),
               onPress: () => {
                 router.push("/(app)/profile/delete-account");

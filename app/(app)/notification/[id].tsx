@@ -14,7 +14,9 @@ import {
   NotificationType,
   notificationTypeMap,
 } from "@/components/notification/NotificationItem";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 
 const NotificationDetail: React.FC = () => {
@@ -56,35 +58,35 @@ const NotificationDetail: React.FC = () => {
     switch (type) {
       case "new_appointment":
       case "appointment_status":
-        actionText = i18n.t("notification.view_appointment");
+        actionText = t("notification.view_appointment");
         // onActionPress = () => router.push(`/appointments/${notification.data?.appointment_id}`);
         break;
 
       case "new_order":
       case "order_status":
-        actionText = i18n.t("notification.view_order");
+        actionText = t("notification.view_order");
         // onActionPress = () => router.push(`/(app)/order/${notification.data?.order_id}`);
         break;
 
       case "new_message":
-        actionText = i18n.t("notification.view_conversation");
+        actionText = t("notification.view_conversation");
         onActionPress = () =>
           router.push(`/chat/${notification.data?.conversation_id}`);
         break;
 
       case "payment":
-        actionText = i18n.t("notification.view_payment");
+        actionText = t("notification.view_payment");
         // onActionPress = () => router.push(`/payments/${notification.data?.payment_id}`);
         break;
 
       case "promotion":
-        actionText = i18n.t("notification.view_promotion");
+        actionText = t("notification.view_promotion");
         onActionPress = () =>
           router.push(`/reward/${notification.data?.promotion_id}`);
         break;
 
       case "new_review":
-        actionText = i18n.t("notification.view_review");
+        actionText = t("notification.view_review");
         // onActionPress = () => router.push(`/reviews/${notification.data?.review_id}`);
         break;
 
@@ -115,7 +117,7 @@ const NotificationDetail: React.FC = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("notification.detail")} />
+      <AppBar back title={t("notification.detail")} />
       <ScrollView style={{ backgroundColor: Colors.background }}>
         <Animated.View entering={FadeIn.duration(500)}>
           {/* Header Section - Improved Icon */}
@@ -190,7 +192,7 @@ const NotificationDetail: React.FC = () => {
                     onPress={handleUrlPress}
                     marginT-16
                     type="outline"
-                    title={i18n.t("notification.view_detail")}
+                    title={t("notification.view_detail")}
                   />
                   <Feather
                     name="external-link"
@@ -215,7 +217,7 @@ const NotificationDetail: React.FC = () => {
             >
               <View row spread marginB-12>
                 <Text h3 color={Colors.text}>
-                  {i18n.t("notification.type")}
+                  {t("notification.type")}
                 </Text>
                 <Text h3 color={Colors.primary}>
                   {notification.type
@@ -230,7 +232,7 @@ const NotificationDetail: React.FC = () => {
 
               <View row spread centerV>
                 <Text h3 color={Colors.text}>
-                  {i18n.t("notification.status")}
+                  {t("notification.status")}
                 </Text>
                 <View
                   paddingH-12
@@ -245,8 +247,8 @@ const NotificationDetail: React.FC = () => {
                     color={notification.is_read ? Colors.primary : Colors.white}
                   >
                     {notification.is_read
-                      ? i18n.t("notification.read")
-                      : i18n.t("notification.unread")}
+                      ? t("notification.read")
+                      : t("notification.unread")}
                   </Text>
                 </View>
               </View>

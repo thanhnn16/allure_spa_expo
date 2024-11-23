@@ -1,5 +1,7 @@
 import { Colors, Image, Picker, PickerValue, Text, TouchableOpacity, View } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { useNavigation, useLocalSearchParams } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
 import { useEffect, useState } from "react";
@@ -171,18 +173,18 @@ const UpdateScreen = () => {
           }}
         >
           <Text color="#717658" marginB-10 h2_bold>
-            {i18n.t("auth.login.personal_info")}
+            {t("auth.login.personal_info")}
           </Text>
           <AddressTextInput
             value={userProfile?.full_name || ""}
-            placeholder={i18n.t("auth.login.fullname")}
+            placeholder={t("auth.login.fullname")}
             onChangeText={(value) =>
               setFormData((prev) => ({ ...prev, name: value }))
             }
           />
           <AddressTextInput
             value={userProfile?.phone_number || ""}
-            placeholder={i18n.t("address.phone")}
+            placeholder={t("address.phone")}
             onChangeText={(value) =>
               setFormData((prev) => ({ ...prev, phone: value }))
             }
@@ -203,7 +205,7 @@ const UpdateScreen = () => {
           }}
         >
           <Text color="#717658" marginB-10 text70BO>
-            {i18n.t("address.address")}
+            {t("address.address")}
           </Text>
           <Picker
             placeholder="Tỉnh/Thành phố"
@@ -295,7 +297,7 @@ const UpdateScreen = () => {
           {/* {ward?.id && (
             <AddressTextInput
               value={formData.address}
-              placeholder={i18n.t("address.address")}
+              placeholder={t("address.address")}
               onChangeText={(value) => {
                 handleChange("address", value)
               }}
@@ -304,7 +306,7 @@ const UpdateScreen = () => {
 
           <TextInput
             value={formData.note}
-            placeholder={i18n.t("address.note")}
+            placeholder={t("address.note")}
             onChangeText={(value) =>
               setFormData((prev) => ({ ...prev, note: value }))
             }
@@ -339,7 +341,7 @@ const UpdateScreen = () => {
           }}
         >
           <Text color="#717658" marginB-10 text70BO>
-            {i18n.t("address.type")}
+            {t("address.type")}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {addressTypeItems.map((item) => (
@@ -389,7 +391,7 @@ const UpdateScreen = () => {
         }}
       >
         <AppButton
-          title={i18n.t("address.save")}
+          title={t("address.save")}
           type="primary"
           onPress={handleUpdateAddress}
           disabled={loading}
@@ -400,7 +402,7 @@ const UpdateScreen = () => {
         visible={errorDialogVisible}
         title={"Có lỗi xảy ra"}
         description={errorDescription || ""}
-        closeButtonLabel={i18n.t("common.cancel")}
+        closeButtonLabel={t("common.cancel")}
         confirmButtonLabel={"Cập nhật"}
         severity="info"
         onClose={() => setErrorDialogVisible(false)}

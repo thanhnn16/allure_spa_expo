@@ -6,14 +6,15 @@ import {
   Keyboard,
   Animated,
   Dimensions,
-  StatusBar,
 } from "react-native";
 import {
   View,
   Image,
   Text,
 } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import LoginForm from "../../components/authentication/LoginForm";
 import RegisterForm from "../../components/authentication/RegisterForm";
 import LoginZaloForm from "../../components/authentication/LoginZaloForm";
@@ -25,7 +26,7 @@ import { setLanguage } from "@/redux/features/language/languageSlice";
 import { RootState } from "@/redux/store";
 import LanguageModal from "@/components/modals/LanguageModal";
 import { useAuth } from '@/hooks/useAuth';
-import { SafeAreaView } from "react-native-safe-area-context";
+import i18n from "@/languages/i18n";
 
 const { width, height } = Dimensions.get("window");
 
@@ -145,14 +146,14 @@ const Onboarding: React.FC = () => {
                   onboarding_title={currentLanguage !== "ja"}
                   onboarding_title_ja={currentLanguage === "ja"}
                 >
-                  {i18n.t("auth.art.title")}
+                  {t("auth.art.title")}
                 </Text>
                 <View right>
                   <Text
                     onboarding_title={currentLanguage !== "ja"}
                     onboarding_title_ja={currentLanguage === "ja"}
                   >
-                    {i18n.t("auth.art.subtitle")}
+                    {t("auth.art.subtitle")}
                   </Text>
                 </View>
               </View>
@@ -175,27 +176,27 @@ const Onboarding: React.FC = () => {
               {activeView === "default" ? (
                 <View gap-12>
                   <AppButton
-                    title={i18n.t("auth.register.title")}
+                    title={t("auth.register.title")}
                     type="primary"
                     onPress={() => handleViewChange("register")}
                   />
                   <AppButton
-                    title={i18n.t("auth.login.title")}
+                    title={t("auth.login.title")}
                     type="primary"
                     onPress={() => handleViewChange("login")}
                   />
                   <AppButton
-                    title={i18n.t("auth.login.zalo")}
+                    title={t("auth.login.zalo")}
                     type="outline"
                     onPress={() => handleViewChange("zalo")}
                   />
                   <AppButton
-                    title={i18n.t("change_language")}
+                    title={t("change_language")}
                     type="outline"
                     onPress={toggleLanguageModal}
                   />
                   <AppButton
-                    title={i18n.t("auth.login.skip")}
+                    title={t("auth.login.skip")}
                     type="text"
                     onPress={handleSkip}
                   />
@@ -204,11 +205,11 @@ const Onboarding: React.FC = () => {
                 renderForm()
               )}
               <Text center text80>
-                {i18n.t("auth.login.by_continue")}
-                <Text text80H> {i18n.t("auth.login.terms")} </Text>
-                {i18n.t("auth.login.and")}
-                <Text text80H> {i18n.t("auth.login.privacy")} </Text>
-                {i18n.t("auth.login.of_us")}
+                {t("auth.login.by_continue")}
+                <Text text80H> {t("auth.login.terms")} </Text>
+                {t("auth.login.and")}
+                <Text text80H> {t("auth.login.privacy")} </Text>
+                {t("auth.login.of_us")}
               </Text>
             </Animated.View>
             <LanguageModal

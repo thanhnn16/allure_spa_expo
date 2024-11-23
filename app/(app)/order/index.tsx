@@ -18,7 +18,9 @@ import OrderProductItem from "@/components/order/OrderProductItem";
 import { clearOrders } from "@/redux/features/order/orderSlice";
 
 import ShoppingBagIcon from "@/assets/icons/bag.svg";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
@@ -126,10 +128,10 @@ const MyOrder = () => {
           style={{ opacity: 0.8, alignSelf: "center" }}
         />
         <Text h3_bold center marginT-16>
-          {i18n.t("orders.no_order")}
+          {t("orders.no_order")}
         </Text>
         <Text center h3 marginT-8 grey30>
-          {i18n.t("orders.buy_more")}
+          {t("orders.buy_more")}
         </Text>
       </Animated.View>
     </View>
@@ -183,15 +185,15 @@ const MyOrder = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View flex bg-white>
-        <AppBar back title={i18n.t("orders.title")} />
+        <AppBar back title={t("orders.title")} />
         <TabController
           asCarousel
           items={[
-            { label: i18n.t("orders.pending") },
-            { label: i18n.t("orders.confirmed") },
-            { label: i18n.t("orders.delivering") },
-            { label: i18n.t("orders.completed") },
-            { label: i18n.t("orders.cancelled") },
+            { label: t("orders.pending") },
+            { label: t("orders.confirmed") },
+            { label: t("orders.delivering") },
+            { label: t("orders.completed") },
+            { label: t("orders.cancelled") },
           ]}
           initialIndex={selectedIndex}
           onChangeIndex={setSelectedIndex}

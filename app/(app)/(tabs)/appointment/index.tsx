@@ -1,6 +1,5 @@
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
-import i18n from "@/languages/i18n";
 import { resetAppointmentState } from "@/redux/features/appointment/appointmentSlice";
 import {
   cancelAppointment,
@@ -11,7 +10,6 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
-import { format } from "path";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -19,6 +17,7 @@ import {
   Modal,
   ScrollView,
   TextInput,
+  RefreshControl,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -31,17 +30,97 @@ import {
   View,
 } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
+import { CalendarProvider, ExpandableCalendar } from "react-native-calendars";
+import { Positions } from "react-native-calendars/src/expandableCalendar";
+import { updateCalendarLocale } from "@/utils/calendar/localeConfig";
+import "moment/locale/vi";
+import "moment/locale/ja";
+import { useLanguage } from "@/hooks/useLanguage";
+import i18n from "@/languages/i18n";
+
 const { width } = Dimensions.get("window");
+const { t } = useLanguage();
+
+interface ExpandableCalendarProps {
+  initialPosition?: Positions;
+  firstDay?: number;
+  markedDates?: any;
+  allowShadow?: boolean;
+  hideArrows?: boolean;
+  disableAllTouchEventsForDisabledDays?: boolean;
+  disableAllTouchEventsForInactiveDays?: boolean;
+  showWeekNumbers?: boolean;
+  animateScroll?: boolean;
+  closeOnDayPress?: boolean;
+  disabledOpacity?: number;
+  numberOfDays?: number;
+  hideKnob?: boolean;
+  rightArrowImageSource?: any;
+  leftArrowImageSource?: any;
+  theme?: any;
+  customHeaderTitle?: React.ReactElement;
+}
+
+const ExpandableCalendarComponent: React.FC<ExpandableCalendarProps> = ({
+  initialPosition = Positions.CLOSED,
+  firstDay = 1,
+  markedDates,
+  allowShadow = false,
+  hideArrows = false,
+  disableAllTouchEventsForDisabledDays = false,
+  disableAllTouchEventsForInactiveDays = false,
+  showWeekNumbers = false,
+  animateScroll = true,
+  closeOnDayPress = true,
+  disabledOpacity = 0.6,
+  numberOfDays = 1,
+  hideKnob = false,
+  theme,
+  customHeaderTitle,
+  ...props
+}) => (
+  <ExpandableCalendar
+    initialPosition={initialPosition}
+    firstDay={firstDay}
+    markedDates={markedDates}
+    allowShadow={allowShadow}
+    hideArrows={hideArrows}
+    disableAllTouchEventsForDisabledDays={disableAllTouchEventsForDisabledDays}
+    disableAllTouchEventsForInactiveDays={disableAllTouchEventsForInactiveDays}
+    showWeekNumbers={showWeekNumbers}
+    animateScroll={animateScroll}
+    closeOnDayPress={closeOnDayPress}
+    numberOfDays={numberOfDays}
+    hideKnob={hideKnob}
+    theme={theme}
+    customHeaderTitle={customHeaderTitle}
+    {...props}
+    calendarStyle={{
+      paddingLeft: 16,
+      paddingRight: 16,
+    }}
+    headerStyle={{
+      paddingHorizontal: 16,
+    }}
+  />
+);
 
 const ScheduledPage = () => {
   const [selectedItem, setSelectedItem] = useState<number>(1);
   const [isModalVisible, setModalVisible] = useState(false);
   const [note, setNote] = useState("");
   const [currentItemId, setCurrentItemId] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [selectedDate, setSelectedDate] = useState(
+    moment().format("YYYY-MM-DD")
+  );
   const dispatch = useDispatch();
   const { appointments, loading } = useSelector(
     (state: any) => state.appointment
   );
+  const [allAppointments, setAllAppointments] = useState<
+    AppointmentResponeModelParams[]
+  >([]);
 
   useEffect(() => {
     dispatch(getAppointments());
@@ -50,13 +129,31 @@ const ScheduledPage = () => {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    const fetchAllAppointments = async () => {
+      try {
+        const response = await dispatch(
+          getAppointments({
+            from_date: null,
+            to_date: null,
+          })
+        ).unwrap();
+        setAllAppointments(response);
+      } catch (error) {
+        console.log("Error fetching all appointments:", error);
+      }
+    };
+
+    fetchAllAppointments();
+  }, []);
+
   const items = [
-    { id: 1, name: i18n.t("appointment.all") },
-    { id: 6, name: i18n.t("appointment.7upcoming") },
-    { id: 2, name: i18n.t("appointment.pending"), status: "pending" },
-    { id: 5, name: i18n.t("appointment.confirmed"), status: "confirmed" },
-    { id: 3, name: i18n.t("appointment.completed"), status: "completed" },
-    { id: 4, name: i18n.t("appointment.cancelled"), status: "cancelled" },
+    { id: 1, name: t("appointment.all") },
+    { id: 6, name: t("appointment.7upcoming") },
+    { id: 2, name: t("appointment.pending"), status: "pending" },
+    { id: 5, name: t("appointment.confirmed"), status: "confirmed" },
+    { id: 3, name: t("appointment.completed"), status: "completed" },
+    { id: 4, name: t("appointment.cancelled"), status: "cancelled" },
   ];
 
   const handleItemPress = (item: { id: number; status?: string }) => {
@@ -169,13 +266,13 @@ const ScheduledPage = () => {
   }) => {
     const statusColors = {
       completed: {
-        bg: Colors.rgba(Colors.green30, 0.15),
-        text: Colors.green10,
+        bg: Colors.rgba(Colors.primary, 0.15),
+        text: Colors.primary,
         icon: "check-circle" as const,
       },
       pending: {
-        bg: Colors.rgba(Colors.yellow30, 0.15),
-        text: Colors.yellow10,
+        bg: Colors.rgba(Colors.secondary, 0.15),
+        text: Colors.secondary,
         icon: "clock-outline" as const,
       },
       cancelled: {
@@ -184,8 +281,8 @@ const ScheduledPage = () => {
         icon: "close-circle" as const,
       },
       confirmed: {
-        bg: Colors.rgba(Colors.blue30, 0.15),
-        text: Colors.blue10,
+        bg: Colors.rgba(Colors.primary, 0.15),
+        text: Colors.primary,
         icon: "calendar-check" as const,
       },
     };
@@ -206,10 +303,7 @@ const ScheduledPage = () => {
         }}
       >
         <LinearGradient
-          colors={[
-            Colors.white as string,
-            Colors.rgba(Colors.primary, 0.05) as string,
-          ]}
+          colors={[Colors.white as string, Colors.primary_blur as string]}
           style={{ borderRadius: 20 }}
         >
           <View padding-15 br20>
@@ -233,7 +327,7 @@ const ScheduledPage = () => {
                   backgroundColor={statusConfig.bg}
                 >
                   <Text h4 color={statusConfig.text}>
-                    {i18n.t(`appointment.status.${item.status.toLowerCase()}`)}
+                    {t(`appointment.status.${item.status.toLowerCase()}`)}
                   </Text>
                 </View>
               </View>
@@ -319,7 +413,7 @@ const ScheduledPage = () => {
                     />
                     <View flex marginL-8>
                       <Text h4_bold color={Colors.primary} marginB-4>
-                        {i18n.t("appointment.note")}:
+                        {t("appointment.note")}:
                       </Text>
                       <Text h4 color={Colors.text}>
                         {item.note}
@@ -338,13 +432,15 @@ const ScheduledPage = () => {
                   backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                 >
                   <Text h4 color={Colors.red10}>
-                    {`${i18n.t("appointment.cancelled_by")}: ${item.cancelled_by_user.full_name
-                      }`}
+                    {`${t("appointment.cancelled_by")}: ${
+                      item.cancelled_by_user.full_name
+                    }`}
                   </Text>
                   {item.cancellation_note && (
                     <Text marginT-5 h4 color={Colors.red10}>
-                      {`${i18n.t("appointment.cancel_reason")}: ${item.cancellation_note
-                        }`}
+                      {`${t("appointment.cancel_reason")}: ${
+                        item.cancellation_note
+                      }`}
                     </Text>
                   )}
                 </View>
@@ -364,7 +460,7 @@ const ScheduledPage = () => {
                         color={Colors.red10}
                       />
                       <Text h4 color={Colors.red10}>
-                        {i18n.t("appointment.cancel_appointment")}
+                        {t("appointment.cancel_appointment")}
                       </Text>
                     </View>
                   }
@@ -379,7 +475,7 @@ const ScheduledPage = () => {
                 children={
                   <View row gap-4 centerV>
                     <Text h4 color={Colors.primary}>
-                      {i18n.t("appointment.view_details")}
+                      {t("appointment.view_details")}
                     </Text>
                     <MaterialCommunityIcons
                       name="arrow-right"
@@ -396,73 +492,292 @@ const ScheduledPage = () => {
     );
   };
 
+  const getMarkedDates = () => {
+    const markedDates: any = {};
+    allAppointments?.forEach((appointment: AppointmentResponeModelParams) => {
+      const date = moment(appointment.start).format("YYYY-MM-DD");
+      const statusColors = {
+        completed: Colors.green30,
+        pending: Colors.yellow30,
+        cancelled: Colors.red30,
+        confirmed: Colors.blue30,
+      };
+
+      if (!markedDates[date]) {
+        markedDates[date] = {
+          marked: true,
+          dotColor:
+            statusColors[
+              appointment.status.toLowerCase() as keyof typeof statusColors
+            ],
+          selected: date === selectedDate,
+          selectedColor:
+            date === selectedDate
+              ? Colors.rgba(
+                  statusColors[
+                    appointment.status.toLowerCase() as keyof typeof statusColors
+                  ],
+                  0.1
+                )
+              : undefined,
+        };
+      }
+    });
+    return markedDates;
+  };
+
+  const renderViewModeToggle = () => (
+    <TouchableOpacity
+      onPress={() => {
+        const newMode = viewMode === "list" ? "calendar" : "list";
+        setViewMode(newMode);
+
+        if (newMode === "list") {
+          setSelectedItem(1);
+          dispatch(resetAppointmentState());
+          dispatch(
+            getAppointments({
+              from_date: null,
+              to_date: null,
+              status: null,
+            })
+          );
+        }
+      }}
+      style={{ position: "absolute", right: 15 }}
+    >
+      <MaterialCommunityIcons
+        name={viewMode === "list" ? "calendar" : "format-list-bulleted"}
+        size={24}
+        color={Colors.primary}
+      />
+    </TouchableOpacity>
+  );
+
+  const calendarTheme = {
+    // Background
+    calendarBackground: Colors.white,
+    backgroundColor: Colors.white,
+
+    // Text colors
+    textSectionTitleColor: Colors.text,
+    selectedDayBackgroundColor: Colors.primary,
+    selectedDayTextColor: Colors.white,
+    todayTextColor: Colors.primary,
+    dayTextColor: Colors.text,
+    textDisabledColor: Colors.grey40,
+
+    // Dots & Marking
+    dotColor: Colors.primary,
+    selectedDotColor: Colors.white,
+
+    // Month navigation
+    arrowColor: Colors.primary,
+    monthTextColor: Colors.text,
+
+    // Header
+    textDayFontSize: 15,
+    textMonthFontSize: 18,
+    textDayHeaderFontSize: 13,
+
+    // General
+    todayButtonFontSize: 16,
+    todayButtonTextColor: Colors.primary,
+
+    // Additional styling
+    "stylesheet.calendar.header": {
+      dayHeader: {
+        color: Colors.text,
+        fontSize: 14,
+        fontWeight: "600",
+        paddingBottom: 8,
+        paddingTop: 8,
+      },
+      header: {
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+      },
+    },
+    todayButtonFontWeight: "600",
+    todayButtonPosition: "right",
+    todayButtonMarginRight: 16,
+    dayContainerPadding: 4,
+  };
+
+  const renderCalendarView = () => (
+    <View flex>
+      <CalendarProvider
+        date={selectedDate}
+        onDateChanged={(date) => {
+          setSelectedDate(date);
+          dispatch(
+            getAppointments({
+              from_date: date,
+              to_date: date,
+            })
+          );
+        }}
+      >
+        <ExpandableCalendarComponent
+          key="expandable-calendar"
+          markedDates={getMarkedDates()}
+          theme={calendarTheme}
+          customHeaderTitle={
+            <Text h2_bold color={Colors.text}>
+              {moment(selectedDate).format("MMMM YYYY")}
+            </Text>
+          }
+        />
+
+        <View paddingH-24 paddingV-12>
+          <Text h3_bold color={Colors.text}>
+            {moment(selectedDate).format("dddd, DD MMMM YYYY")}
+          </Text>
+        </View>
+
+        <View flex paddingH-24 marginT-10>
+          {loading ? (
+            <View paddingT-20>
+              {[1, 2].map((_, index) => (
+                <View key={index}>{renderSkeletonItem()}</View>
+              ))}
+            </View>
+          ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={appointments}
+              renderItem={renderFlatListItem}
+              keyExtractor={(item) => item.id.toString()}
+              ListEmptyComponent={() => (
+                <View center paddingT-60>
+                  <MaterialCommunityIcons
+                    name="calendar-blank"
+                    size={56}
+                    color={Colors.grey40}
+                  />
+                  <Text h2_bold center marginT-16 marginB-8>
+                    {t("appointment.no_appointments_title")}
+                  </Text>
+                  <Text h3 center grey30 marginB-24>
+                    {t("appointment.no_appointments_for_selected_date")}
+                  </Text>
+                  <AppButton
+                    type="primary"
+                    title={t("appointment.book_appointment")}
+                    onPress={() => router.push("/(app)/service-package")}
+                    buttonStyle={{ minWidth: 200 }}
+                  />
+                </View>
+              )}
+              refreshControl={
+                <RefreshControl
+                  refreshing={loading}
+                  onRefresh={() => {
+                    dispatch(
+                      getAppointments({
+                        from_date: selectedDate,
+                        to_date: selectedDate,
+                      })
+                    );
+                  }}
+                  colors={[Colors.primary]}
+                />
+              }
+            />
+          )}
+        </View>
+      </CalendarProvider>
+    </View>
+  );
+
+  // Update calendar locale when language changes
+  useEffect(() => {
+    updateCalendarLocale();
+  }, [i18n.locale]);
+
+  useEffect(() => {
+    // Update moment locale when language changes
+    moment.locale(i18n.locale);
+  }, [i18n.locale]);
+
   return (
     <View flex bg-white>
-      <AppBar title={i18n.t("appointment.scheduled")} />
-      <View height={46} center paddingH-24>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {items.map((item) => renderItem(item))}
-        </ScrollView>
-      </View>
-      <View flex paddingH-24>
-        {loading ? (
-          <View>
-            {[1, 2, 3].map((_, index) => (
-              <View key={index}>{renderSkeletonItem()}</View>
-            ))}
+      <AppBar
+        title={t("appointment.scheduled")}
+        rightComponent={renderViewModeToggle()}
+      />
+
+      {viewMode === "list" ? (
+        <>
+          <View height={46} center paddingH-24>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {items.map((item) => renderItem(item))}
+            </ScrollView>
           </View>
-        ) : !appointments || (appointments.length === 0 && !loading) ? (
-          <View flex center>
-            <View center gap-10>
-              <MaterialCommunityIcons
-                name="calendar-blank"
-                size={64}
-                color={Colors.grey40}
-              />
-              <Text h2_bold center>
-                {i18n.t("appointment.no_appointments_title")}
-              </Text>
-              <Text h3 center grey30>
-                {i18n.t(
-                  `appointment.no_${selectedItem === 1
-                    ? "appointments"
-                    : selectedItem === 6
-                      ? "next_7days"
-                      : selectedItem === 2
-                        ? "pending"
-                        : selectedItem === 5
+          <View flex paddingH-24>
+            {loading ? (
+              <View>
+                {[1, 2, 3].map((_, index) => (
+                  <View key={index}>{renderSkeletonItem()}</View>
+                ))}
+              </View>
+            ) : !appointments || (appointments.length === 0 && !loading) ? (
+              <View flex center>
+                <View center gap-10>
+                  <MaterialCommunityIcons
+                    name="calendar-blank"
+                    size={64}
+                    color={Colors.grey40}
+                  />
+                  <Text h2_bold center>
+                    {t("appointment.no_appointments_title")}
+                  </Text>
+                  <Text h3 center grey30>
+                    {t(
+                      `appointment.no_${
+                        selectedItem === 1
+                          ? "appointments"
+                          : selectedItem === 6
+                          ? "next_7days"
+                          : selectedItem === 2
+                          ? "pending"
+                          : selectedItem === 5
                           ? "confirmed"
                           : selectedItem === 3
-                            ? "completed"
-                            : "cancelled"
-                  }`
-                )}
-              </Text>
-              <AppButton
-                type="primary"
-                title={i18n.t("appointment.book_for_service_package")}
-                onPress={() => {
-                  router.push("/(app)/service-package");
-                }}
+                          ? "completed"
+                          : "cancelled"
+                      }`
+                    )}
+                  </Text>
+                  <AppButton
+                    type="primary"
+                    title={t("appointment.book_for_service_package")}
+                    onPress={() => {
+                      router.push("/(app)/service-package");
+                    }}
+                  />
+                  <AppButton
+                    type="outline"
+                    title={t("appointment.find_service")}
+                    onPress={() => {
+                      router.push("/(app)/see-more?type=service");
+                    }}
+                  />
+                </View>
+              </View>
+            ) : (
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={appointments}
+                renderItem={renderFlatListItem}
+                keyExtractor={(item) => item.id.toString()}
               />
-              <AppButton
-                type="outline"
-                title={i18n.t("appointment.find_service")}
-                onPress={() => {
-                  router.push("/(app)/see-more?type=service");
-                }}
-              />
-            </View>
+            )}
           </View>
-        ) : (
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={appointments}
-            renderItem={renderFlatListItem}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        )}
-      </View>
+        </>
+      ) : (
+        renderCalendarView()
+      )}
 
       <Modal visible={isModalVisible} transparent animationType="fade">
         <View
@@ -486,7 +801,7 @@ const ScheduledPage = () => {
             }}
           >
             <Text h2_bold marginB-15>
-              {i18n.t("appointment.cancel_appointment")}
+              {t("appointment.cancel_appointment")}
             </Text>
 
             <TextInput
@@ -499,7 +814,7 @@ const ScheduledPage = () => {
                 marginBottom: 20,
                 textAlignVertical: "top",
               }}
-              placeholder={i18n.t("appointment.cancel_appointment_reason")}
+              placeholder={t("appointment.cancel_appointment_reason")}
               value={note}
               onChangeText={setNote}
               multiline
@@ -508,12 +823,12 @@ const ScheduledPage = () => {
             <View row spread>
               <AppButton
                 type="outline"
-                title={i18n.t("appointment.cancel")}
+                title={t("appointment.cancel")}
                 onPress={() => setModalVisible(false)}
               />
               <AppButton
                 type="outline"
-                title={i18n.t("appointment.confirm")}
+                title={t("appointment.confirm")}
                 onPress={handleConfirmCancel}
               />
             </View>

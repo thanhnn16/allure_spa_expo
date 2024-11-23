@@ -22,7 +22,9 @@ import OrderStatusBadge from "@/components/order/OrderStatusBadge";
 import OrderItemCard from "@/components/order/OrderItemCard";
 import OrderActionButtons from "@/components/order/OrderActionButtons";
 import OrderSkeleton from "@/components/order/OrderSkeleton";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import formatCurrency from "@/utils/price/formatCurrency";
 import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
@@ -46,17 +48,17 @@ import { Product } from "@/types/product.type";
 const paymentMethods: PaymentMethod[] = [
   {
     id: 1,
-    name: i18n.t("checkout.cash"),
+    name: t("checkout.cash"),
     iconName: "cash-outline",
   },
   {
     id: 2,
-    name: i18n.t("checkout.credit_card"),
+    name: t("checkout.credit_card"),
     iconName: "card-outline",
   },
   {
     id: 3,
-    name: i18n.t("checkout.bank_transfer"),
+    name: t("checkout.bank_transfer"),
     iconName: "card-outline",
   },
 ];
@@ -193,7 +195,7 @@ const OrderDetail = () => {
   return (
     <GestureHandlerRootView>
       <View flex bg-white>
-        <AppBar back title={i18n.t("orders.detail")} />
+        <AppBar back title={t("orders.detail")} />
 
         <ScrollView
           style={styles.container}
@@ -210,8 +212,8 @@ const OrderDetail = () => {
                   {selectedOrder.order_items?.filter(
                     (item: OrderItem) => !item.is_rated
                   ).length > 0
-                    ? i18n.t("transaction_detail.review_products")
-                    : i18n.t("transaction_detail.review_completed")}
+                    ? t("transaction_detail.review_products")
+                    : t("transaction_detail.review_completed")}
                 </Text>
               </View>
               {selectedOrder.order_items?.filter(
@@ -219,11 +221,11 @@ const OrderDetail = () => {
               ).length > 0 ? (
                 <>
                   <Text h3 marginV-8 color={Colors.grey30}>
-                    {i18n.t("transaction_detail.product_need_review")}
+                    {t("transaction_detail.product_need_review")}
                   </Text>
                   <View flex>
                     <AppButton
-                      title={i18n.t("transaction_detail.review_now")}
+                      title={t("transaction_detail.review_now")}
                       type="outline"
                       onPress={() => handleOpenBottomSheet()}
                     />
@@ -231,7 +233,7 @@ const OrderDetail = () => {
                 </>
               ) : (
                 <Text h3 marginV-8 color={Colors.grey30}>
-                  {i18n.t("transaction_detail.thank_you_for_review")}
+                  {t("transaction_detail.thank_you_for_review")}
                 </Text>
               )}
             </View>
@@ -241,7 +243,7 @@ const OrderDetail = () => {
           <View style={styles.section}>
             <View row spread centerV>
               <Text h2_bold>
-                {i18n.t("orders.order_id")}: #{selectedOrder.id}
+                {t("orders.order_id")}: #{selectedOrder.id}
               </Text>
               {selectedOrder.status === "cancelled" && (
                 <OrderStatusBadge status={selectedOrder.status} />
@@ -259,7 +261,7 @@ const OrderDetail = () => {
           {/* Order Items Section */}
           <View style={styles.section}>
             <Text h2_bold marginB-16>
-              {i18n.t("orders.items")}
+              {t("orders.items")}
             </Text>
             {selectedOrder.order_items?.map((item: OrderItem) => (
               <OrderItemCard key={item.id} item={item} />
@@ -269,11 +271,11 @@ const OrderDetail = () => {
           {/* Payment Info Section */}
           <View style={styles.section}>
             <Text h2_bold marginB-16>
-              {i18n.t("orders.payment_info")}
+              {t("orders.payment_info")}
             </Text>
 
             <View row spread marginB-8>
-              <Text h3>{i18n.t("orders.subtotal")}</Text>
+              <Text h3>{t("orders.subtotal")}</Text>
               <Text h3>
                 {formatCurrency({
                   price: Number(subTotal) || 0,
@@ -283,7 +285,7 @@ const OrderDetail = () => {
 
             {Number(selectedOrder.discount_amount) > 0 && (
               <View row spread marginB-8>
-                <Text h3>{i18n.t("orders.discount")}</Text>
+                <Text h3>{t("orders.discount")}</Text>
                 <Text h3 color={Colors.red30}>
                   -
                   {formatCurrency({
@@ -294,7 +296,7 @@ const OrderDetail = () => {
             )}
 
             <View row spread marginT-8>
-              <Text h2>{i18n.t("orders.total")}</Text>
+              <Text h2>{t("orders.total")}</Text>
               <Text h2_bold color={Colors.secondary}>
                 {formatCurrency({
                   price:
@@ -309,7 +311,7 @@ const OrderDetail = () => {
           {selectedOrder.shipping_address && (
             <View style={styles.section}>
               <Text text65L marginB-16>
-                {i18n.t("orders.shipping_info")}
+                {t("orders.shipping_info")}
               </Text>
               <Text h3 marginB-8>
                 {selectedOrder.user.full_name}
@@ -330,7 +332,7 @@ const OrderDetail = () => {
           {selectedOrder.note && (
             <View style={styles.section}>
               <Text h2_bold marginB-8>
-                {i18n.t("orders.note")}
+                {t("orders.note")}
               </Text>
               <Text h3>{selectedOrder.note}</Text>
             </View>
@@ -417,8 +419,8 @@ const OrderDetail = () => {
                               >
                                 <Text text80 color={Colors.primary}>
                                   {item.service_type === "combo_5"
-                                    ? i18n.t("orders.combo_5")
-                                    : i18n.t("orders.combo_10")}
+                                    ? t("orders.combo_5")
+                                    : t("orders.combo_10")}
                                 </Text>
                               </View>
                             )}
@@ -458,7 +460,7 @@ const OrderDetail = () => {
         >
           <BottomSheetView style={styles.bottomSheetView}>
             <View center gap-10 marginV-12>
-              <Text h2_bold>{i18n.t("transaction_detail.cancel.title")}</Text>
+              <Text h2_bold>{t("transaction_detail.cancel.title")}</Text>
             </View>
 
             <RadioGroup
@@ -471,7 +473,7 @@ const OrderDetail = () => {
                 <RadioButton
                   value={"Chọn thêm sản phẩm khác/ Thay đổi voucher"}
                   color={Colors.primary}
-                  label={i18n.t(
+                  label={t(
                     "transaction_detail.cancel.change_order_voucher"
                   )}
                   labelStyle={Typography.h3}
@@ -479,25 +481,25 @@ const OrderDetail = () => {
                 <RadioButton
                   value={"Bạn cảm thấy công dụng sản phẩm chưa tốt"}
                   color={Colors.primary}
-                  label={i18n.t("transaction_detail.cancel.product_not_good")}
+                  label={t("transaction_detail.cancel.product_not_good")}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Giá sản phẩm không hợp lý"}
                   color={Colors.primary}
-                  label={i18n.t("transaction_detail.cancel.price_not_good")}
+                  label={t("transaction_detail.cancel.price_not_good")}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn không muốn mua nữa"}
                   color={Colors.primary}
-                  label={i18n.t("transaction_detail.cancel.no_need")}
+                  label={t("transaction_detail.cancel.no_need")}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
                   value={"Bạn có lý do khác"}
                   color={Colors.primary}
-                  label={i18n.t("transaction_detail.cancel.other")}
+                  label={t("transaction_detail.cancel.other")}
                   labelStyle={Typography.h3}
                 />
               </View>
@@ -508,7 +510,7 @@ const OrderDetail = () => {
                 <TextInput
                   value={note}
                   onChangeText={setNote}
-                  placeholder={i18n.t("transaction_detail.cancel.title")}
+                  placeholder={t("transaction_detail.cancel.title")}
                   style={{ height: 192, textAlignVertical: "top" }}
                 />
               </View>
@@ -516,7 +518,7 @@ const OrderDetail = () => {
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton
-                title={i18n.t("transaction_detail.cancel_order")}
+                title={t("transaction_detail.cancel_order")}
                 type="primary"
                 onPress={() => handleCancelOrder()}
               />
@@ -541,7 +543,7 @@ const OrderDetail = () => {
         >
           <BottomSheetView style={styles.bottomSheetView}>
             <View center gap-10 marginB-10>
-              <Text h2_bold>{i18n.t("rating.how_do_you_feel")}</Text>
+              <Text h2_bold>{t("rating.how_do_you_feel")}</Text>
               <Rating
                 size={40}
                 rating={rating}
@@ -551,16 +553,16 @@ const OrderDetail = () => {
             </View>
 
             <View flex left marginT-10>
-              <Text>{i18n.t("rating.feel_about_product")}</Text>
+              <Text>{t("rating.feel_about_product")}</Text>
               <View style={styles.inputContainer}>
                 <TextInput
                   value={comment}
                   onChangeText={setComment}
-                  placeholder={i18n.t("rating.type_content")}
+                  placeholder={t("rating.type_content")}
                   style={{ height: 150, textAlignVertical: "top" }}
                 />
               </View>
-              <Text>{i18n.t("rating.images")}</Text>
+              <Text>{t("rating.images")}</Text>
 
               <SelectImagesBar
                 selectedImages={selectedImages}
@@ -571,7 +573,7 @@ const OrderDetail = () => {
 
             <View flex width={"100%"} bottom paddingV-20>
               <AppButton
-                title={i18n.t("rating.send_review")}
+                title={t("rating.send_review")}
                 type="primary"
                 onPress={() => sendReview()}
               />

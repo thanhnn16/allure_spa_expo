@@ -1,4 +1,6 @@
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { useState } from "react";
 import { Dimensions } from "react-native";
 import {
@@ -41,7 +43,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
         alignItems: "center",
       }}
     >
-      <Text h2_medium>{i18n.t("productDetail.quantity")}</Text>
+      <Text h2_medium>{t("productDetail.quantity")}</Text>
       <View
         row
         gap-10

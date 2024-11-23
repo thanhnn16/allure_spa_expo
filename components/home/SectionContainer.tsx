@@ -1,4 +1,6 @@
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import React from "react";
 import { FlatList } from "react-native";
 import { View, Text, TouchableOpacity } from "react-native-ui-lib";
@@ -25,7 +27,7 @@ const SectionContainer: React.FC<RenderSectionProps> = ({
         <Text text60BO>{title}</Text>
         <TouchableOpacity onPress={onPressMore}>
           <Text underline style={{ color: "#717658" }}>
-            {i18n.t("home.see_more")}
+            {t("home.see_more")}
           </Text>
         </TouchableOpacity>
       </View>

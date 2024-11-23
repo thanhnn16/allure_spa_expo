@@ -1,15 +1,17 @@
 import { Colors, Text, View, SkeletonView } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getAppointmentDetail } from "@/redux/features/appointment/appointmentThunk";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
 import moment from "moment";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image, ScrollView, Dimensions } from "react-native";
 import { AppointmentResponeModelParams } from "@/types/service.type";
 import AppButton from "@/components/buttons/AppButton";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const AppointmentDetailPage = () => {
   const { id } = useLocalSearchParams();
@@ -29,7 +31,7 @@ const AppointmentDetailPage = () => {
   if (!appointment) {
     return (
       <View flex bg-white>
-        <AppBar title={i18n.t("appointment.detail")} back />
+        <AppBar title={t("appointment.detail")} back />
         <ScrollView>
           <View flex padding-24>
             {/* Header SkeletonView */}
@@ -106,7 +108,7 @@ const AppointmentDetailPage = () => {
 
   return (
     <View flex bg-white>
-      <AppBar title={i18n.t("appointment.detail")} back />
+      <AppBar title={t("appointment.detail")} back />
       <ScrollView>
         <View flex padding-24>
           {/* Header */}
@@ -156,7 +158,7 @@ const AppointmentDetailPage = () => {
                 color={Colors.primary}
               />
               <View marginL-10>
-                <Text h3_bold>{i18n.t("appointment.staff")}</Text>
+                <Text h3_bold>{t("appointment.staff")}</Text>
                 <Text h3>{appointment.staff.full_name}</Text>
               </View>
             </View>
@@ -170,7 +172,7 @@ const AppointmentDetailPage = () => {
               color={Colors.primary}
             />
             <View marginL-10>
-              <Text h3_bold>{i18n.t("appointment.customer")}</Text>
+              <Text h3_bold>{t("appointment.customer")}</Text>
               <Text h3>{appointment.user?.full_name}</Text>
             </View>
           </View>
@@ -183,9 +185,9 @@ const AppointmentDetailPage = () => {
               color={Colors.primary}
             />
             <View marginL-10>
-              <Text h3_bold>{i18n.t("appointment.slots")}</Text>
+              <Text h3_bold>{t("appointment.slots")}</Text>
               <Text h3>
-                {appointment.slots} {i18n.t("appointment.seats")}
+                {appointment.slots} {t("appointment.seats")}
               </Text>
             </View>
           </View>
@@ -228,7 +230,7 @@ const AppointmentDetailPage = () => {
             {appointment.note && (
               <View marginT-10 padding-15 br20 backgroundColor={Colors.grey70}>
                 <Text h3_bold marginB-5>
-                  {i18n.t("appointment.notes")}:
+                  {t("appointment.notes")}:
                 </Text>
                 <Text h3>{appointment.note}</Text>
               </View>
@@ -244,13 +246,13 @@ const AppointmentDetailPage = () => {
                   backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                 >
                   <Text h3 color={Colors.red10}>
-                    {`${i18n.t("appointment.cancelled_by")}: ${
+                    {`${t("appointment.cancelled_by")}: ${
                       appointment.cancelled_by_user.full_name
                     }`}
                   </Text>
                   {appointment.cancellation_note && (
                     <Text marginT-5 h3 color={Colors.red10}>
-                      {`${i18n.t("appointment.cancel_reason")}: ${
+                      {`${t("appointment.cancel_reason")}: ${
                         appointment.cancellation_note
                       }`}
                     </Text>
@@ -263,34 +265,34 @@ const AppointmentDetailPage = () => {
           {appointment.status === "pending" && (
             <View marginT-20>
               <AppButton
-                  type="primary"
-                  onPress={() =>
-                      router.push({
-                        pathname: "/booking",
-                        params: {
-                          service_id: appointment.service.id,
-                          service_name: appointment.service.service_name,
-                          edit_mode: "true",
-                          appointment_id: appointment.id,
-                          note: appointment.note,
-                          date: appointment.start,
-                          time_slot_id: appointment.time_slot.id,
-                          slots: appointment.slots,
-                        },
-                      })
-                  }
-                  children={
-                    <View row gap-4 centerV>
-                      <MaterialCommunityIcons
-                          name="pencil"
-                          size={16}
-                          color={Colors.white}
-                      />
-                      <Text h4 white>
-                        {i18n.t("appointment.edit")}
-                      </Text>
-                    </View>
-                  }
+                type="primary"
+                onPress={() =>
+                  router.push({
+                    pathname: "/booking",
+                    params: {
+                      service_id: appointment.service.id,
+                      service_name: appointment.service.service_name,
+                      edit_mode: "true",
+                      appointment_id: appointment.id,
+                      note: appointment.note,
+                      date: appointment.start,
+                      time_slot_id: appointment.time_slot.id,
+                      slots: appointment.slots,
+                    },
+                  })
+                }
+                children={
+                  <View row gap-4 centerV>
+                    <MaterialCommunityIcons
+                      name="pencil"
+                      size={16}
+                      color={Colors.white}
+                    />
+                    <Text h4 white>
+                      {t("appointment.edit")}
+                    </Text>
+                  </View>
+                }
               />
             </View>
           )}

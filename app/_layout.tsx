@@ -1,6 +1,5 @@
 import "@/constants/Colors";
 import "@/constants/Typography";
-import LanguageManager from "@/languages/LanguageManager";
 import { store } from "@/redux";
 import { persistor } from "@/redux/store";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
@@ -36,43 +35,41 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
   useEffect(() => {
     const initializeApp = async () => {
       await FirebaseService.requestUserPermission();
       await FirebaseService.setupNotifications();
       FirebaseService.setupMessageHandlers();
+      await onLayoutRootView();
     };
 
     initializeApp();
-    onLayoutRootView();
-  }, [onLayoutRootView]);
+  }, [onLayoutRootView, fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
-        <PersistGate loading={null} persistor={persistor}>
-          <LanguageManager>
-            {segments[0] === "(auth)" ? (
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          {segments[0] === "(auth)" ? (
+            <Slot />
+          ) : (
+            <SafeAreaView
+              edges={["top"]}
+              style={{ flex: 1, backgroundColor: "white" }}
+            >
+              <StatusBar
+                backgroundColor="transparent"
+                barStyle={"dark-content"}
+              />
               <Slot />
-            ) : (
-              <SafeAreaView
-                edges={["top"]}
-                style={{ flex: 1, backgroundColor: "white" }}
-              >
-                <StatusBar
-                  backgroundColor="transparent"
-                  barStyle={"dark-content"}
-                />
-                <Slot />
-              </SafeAreaView>
-            )}
-          </LanguageManager>
-        </PersistGate>
-      </SafeAreaProvider>
+            </SafeAreaView>
+          )}
+        </SafeAreaProvider>
+      </PersistGate>
     </Provider>
   );
 }

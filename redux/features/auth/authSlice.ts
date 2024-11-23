@@ -5,7 +5,6 @@ import { loginThunk } from "./loginThunk";
 import { registerThunk } from "./registerThunk";
 
 interface AuthState {
-  user: any | null;
   token: string | null;
   isAuthenticated: boolean;
   isGuest: boolean;
@@ -17,7 +16,6 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  user: null,
   token: null,
   isAuthenticated: false,
   isGuest: false,
@@ -43,14 +41,13 @@ export const authSlice = createSlice({
       AsyncStorage.removeItem('isGuest');
     },
     clearAuth: (state: AuthState) => {
-      state.user = null;
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
       state.zaloAccessToken = null;
       state.zaloRefreshToken = null;
       state.zaloExpiresIn = null;
-      AsyncStorage.multiRemove(['userToken', 'user', 'zaloTokens', 'isGuest']);
+      AsyncStorage.multiRemove(['userToken', 'zaloTokens', 'isGuest']);
     },
     setZaloTokens: (state: AuthState, action: any) => {
       state.zaloAccessToken = action.payload.access_token;
@@ -72,7 +69,6 @@ export const authSlice = createSlice({
       })
       .addCase(loginThunk.fulfilled, (state: AuthState, action: any) => {
         state.isLoading = false;
-        state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
@@ -91,7 +87,6 @@ export const authSlice = createSlice({
       })
       .addCase(registerThunk.fulfilled, (state: AuthState, action: any) => {
         state.isLoading = false;
-        state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
@@ -109,7 +104,6 @@ export const authSlice = createSlice({
       })
       .addCase(logoutThunk.fulfilled, (state: AuthState) => {
         // Reset to initial state
-        state.user = null;
         state.token = null;
         state.isAuthenticated = false;
         state.isGuest = false;
@@ -121,7 +115,6 @@ export const authSlice = createSlice({
       })
       .addCase(logoutThunk.rejected, (state: AuthState) => {
         // Still reset state even if API call fails
-        state.user = null;
         state.token = null;
         state.isAuthenticated = false;
         state.isGuest = false;

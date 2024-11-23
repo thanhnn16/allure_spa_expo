@@ -9,7 +9,9 @@ import ServiceItem from "@/components/home/ServiceItem";
 import ProductItem from "@/components/home/ProductItem";
 import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
 import { View } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const SeeMore = () => {
   const dispatch = useDispatch();
@@ -47,9 +49,9 @@ const SeeMore = () => {
 
   const renderList = useMemo(() => {
     if (type === "service") {
-      setTitle(i18n.t("home.service"));
+      setTitle(t("home.service"));
     } else if (type === "product") {
-      setTitle(i18n.t("home.product"));
+      setTitle(t("home.product"));
     }
 
     const data = type === "service" ? serviceList : productList;

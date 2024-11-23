@@ -18,11 +18,13 @@ import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
 import { router } from "expo-router";
 import { Dimensions } from "react-native";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const ServicePackageScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.user);
   const { packages, isLoading } = useSelector(
     (state: RootState) => state.servicePackage
   );
@@ -37,7 +39,7 @@ const ServicePackageScreen = () => {
   if (isLoading) {
     return (
       <View flex bg-white>
-        <AppBar back title={i18n.t("service_package.title")} />
+        <AppBar back title={t("service_package.title")} />
         <ScrollView>
           <View padding-16>
             {[1, 2].map((item) => (
@@ -143,7 +145,7 @@ const ServicePackageScreen = () => {
           </View>
           <View marginL-12 flex>
             <Text text70BO color={Colors.text}>
-              {i18n.t("appointment.next_appointment")}
+              {t("appointment.next_appointment")}
             </Text>
             <Text text80 color={Colors.text} marginT-4>
               {nextAppointment.date}
@@ -190,7 +192,7 @@ const ServicePackageScreen = () => {
                   />
                 </View>
                 <Text text80 color={Colors.text}>
-                  {i18n.t("appointment.performed_by")}:{" "}
+                  {t("appointment.performed_by")}:{" "}
                   {nextAppointment.staff.full_name}
                 </Text>
               </View>
@@ -204,7 +206,7 @@ const ServicePackageScreen = () => {
                 children={
                   <View row centerV>
                     <Text text80 color={Colors.primary}>
-                      {i18n.t("appointment.detail")}
+                      {t("appointment.detail")}
                     </Text>
                     <MaterialCommunityIcons
                       name="chevron-right"
@@ -235,7 +237,7 @@ const ServicePackageScreen = () => {
 
   return (
     <View flex bg-background>
-      <AppBar back title={i18n.t("service_package.title")} />
+      <AppBar back title={t("service_package.title")} />
       <ScrollView>
         <View padding-16>
           {packages.length === 0 ? (
@@ -246,7 +248,7 @@ const ServicePackageScreen = () => {
                 color={Colors.icon}
               />
               <Text text70 marginT-16 color={Colors.icon}>
-                {i18n.t("service_package.no_packages")}
+                {t("service_package.no_packages")}
               </Text>
             </View>
           ) : (
@@ -278,12 +280,12 @@ const ServicePackageScreen = () => {
                           color={Colors.icon}
                         />
                         {" " +
-                          i18n.t("service_package.expires_on") +
+                          t("service_package.expires_on") +
                           ": " +
                           pkg.formatted_expiry_date}
                       </>
                     ) : (
-                      i18n.t("service_package.unlimited_time")
+                      t("service_package.unlimited_time")
                     )}
                   </Text>
 
@@ -291,7 +293,7 @@ const ServicePackageScreen = () => {
                   <View marginT-24>
                     <View row spread marginB-8>
                       <Text text80 color={Colors.primary}>
-                        {i18n.t("service_package.progress")}
+                        {t("service_package.progress")}
                       </Text>
                       <Text text80 color={Colors.primary}>{`${Math.round(
                         pkg.progress_percentage
@@ -311,15 +313,15 @@ const ServicePackageScreen = () => {
                   {/* Sessions Info */}
                   <View row centerV marginH-4 marginT-24>
                     {renderSessionInfo(
-                      i18n.t("service_package.total_sessions"),
+                      t("service_package.total_sessions"),
                       pkg.total_sessions
                     )}
                     {renderSessionInfo(
-                      i18n.t("service_package.used_sessions"),
+                      t("service_package.used_sessions"),
                       pkg.used_sessions
                     )}
                     {renderSessionInfo(
-                      i18n.t("service_package.remaining_sessions"),
+                      t("service_package.remaining_sessions"),
                       pkg.remaining_sessions
                     )}
                   </View>
@@ -331,7 +333,7 @@ const ServicePackageScreen = () => {
                   {pkg.remaining_sessions > 0 && (
                     <View marginT-24>
                       <AppButton
-                        title={i18n.t("service_package.book_appointment")}
+                        title={t("service_package.book_appointment")}
                         type="outline"
                         onPress={() => handleBooking(pkg)}
                       />

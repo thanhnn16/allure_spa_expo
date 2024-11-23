@@ -26,7 +26,9 @@ import SearchIcon from "@/assets/icons/search.svg";
 import MicIcon from "@/assets/icons/mic.svg";
 import { Pressable, StyleProp, ViewStyle, Platform } from "react-native";
 import { Href, router } from "expo-router";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { RootState } from "@/redux/store";
 import { setCurrentSearchText } from "@/redux/features/search/searchSlice";
 
@@ -234,7 +236,7 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
           >
             <View flex marginL-10>
               <Text h3 gray>
-                {i18n.t("home.placeholder_search")}
+                {t("home.placeholder_search")}
               </Text>
             </View>
           </Pressable>

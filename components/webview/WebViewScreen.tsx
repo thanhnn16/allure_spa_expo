@@ -5,7 +5,9 @@ import { LoaderScreen, View } from "react-native-ui-lib";
 import { WebViewType } from "@/utils/constants/webview";
 import AppDialog from "@/components/dialog/AppDialog";
 import AppBar from "../app-bar/AppBar";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 interface WebViewScreenProps {
   url: string;
   type: WebViewType;
@@ -79,7 +81,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
 
   return (
     <View flex bg-$white>
-      <AppBar back title={i18n.t("common.back_to_home")} />
+      <AppBar back title={t("common.back_to_home")} />
       <WebView
         source={{ uri: url }}
         style={{ flex: 1 }}
@@ -98,7 +100,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         onClose={() => setDialogVisible(false)}
         closeButton={true}
         confirmButton={false}
-        closeButtonLabel={i18n.t("close")}
+        closeButtonLabel={t("close")}
       />
     </View>
   );

@@ -1,5 +1,7 @@
 import { CheckoutOrderItem } from "@/types/order.type";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import formatCurrency from "@/utils/price/formatCurrency";
 import { Dimensions, StyleSheet } from "react-native";
 import { Text, View, Image } from "react-native-ui-lib";
@@ -73,7 +75,7 @@ const PaymentProductItem = ({ orderItem }: PaymentProductItemProps) => {
           </View>
           <View>
             <Text>
-              {i18n.t("checkout.amount")}: {orderItem.quantity}
+              {t("checkout.amount")}: {orderItem.quantity}
             </Text>
           </View>
         </View>
@@ -89,7 +91,7 @@ const PaymentProductItem = ({ orderItem }: PaymentProductItemProps) => {
           paddingVertical: 5,
         }}
       >
-        <Text h3_bold>{i18n.t("checkout.total")}:</Text>
+        <Text h3_bold>{t("checkout.total")}:</Text>
         <Text h3_bold secondary>
           {formatCurrency({ price: total })}
         </Text>

@@ -1,6 +1,8 @@
 import react from "react";
 import { useFonts } from "expo-font";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 import { View, Text, Image, TouchableOpacity } from "react-native-ui-lib";
 import BackButton from "@/assets/icons/back.svg";
@@ -19,7 +21,7 @@ const AboutApp = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("aboutapp.title")} />
+      <AppBar back title={t("aboutapp.title")} />
       <ScrollView>
         <View paddingH-24 paddingV-20 flex>
           <View center>
@@ -32,21 +34,21 @@ const AboutApp = () => {
           </View>
 
           <View>
-            <Text text80BL>{i18n.t("aboutapp.title1")}</Text>
+            <Text text80BL>{t("aboutapp.title1")}</Text>
             <Text marginT-20 text70BL>
-              {i18n.t("aboutapp.title2")}
+              {t("aboutapp.title2")}
             </Text>
             <Text marginT-20 text70BL>
-              - {i18n.t("aboutapp.name_app")}: {appName}
+              - {t("aboutapp.name_app")}: {appName}
             </Text>
             <Text marginT-20 text70BL>
-              - {i18n.t("aboutapp.version")}: {appVersion} ({buildVersion})
+              - {t("aboutapp.version")}: {appVersion} ({buildVersion})
             </Text>
             <Text marginT-20 text70BL>
-              - {i18n.t("aboutapp.developer")}: Ong Lười
+              - {t("aboutapp.developer")}: Ong Lười
             </Text>
             <Text marginT-20 text70BL>
-              - {i18n.t("aboutapp.date_release")}: 2024
+              - {t("aboutapp.date_release")}: 2024
             </Text>
           </View>
         </View>

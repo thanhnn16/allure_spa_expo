@@ -38,6 +38,10 @@ interface OrderState {
     fromCart: boolean;
     selectedOrder: Orders | null;
     orders: OrderItem[];
+    tempOrder: {
+        items: OrderItem[];
+        totalAmount: number;
+    };
 }
 
 const initialState: OrderState = {
@@ -48,7 +52,11 @@ const initialState: OrderState = {
     totalAmount: 0,
     fromCart: false,
     selectedOrder: null,
-    orders: []
+    orders: [],
+    tempOrder: {
+        items: [],
+        totalAmount: 0
+    }
 };
 
 const initialPagination = {
@@ -109,6 +117,18 @@ const orderSlice = createSlice({
             state.totalAmount = 0;
             state.fromCart = false;
         },
+        setTempOrder: (state: OrderState, action: any) => {
+            state.tempOrder = {
+                items: action.payload.items,
+                totalAmount: action.payload.totalAmount
+            };
+        },
+        clearTempOrder: (state: OrderState) => {
+            state.tempOrder = {
+                items: [],
+                totalAmount: 0
+            };
+        }
     },
     extraReducers: (builder: any) => {
         builder
@@ -215,5 +235,5 @@ const orderSlice = createSlice({
     },
 });
 
-export const { clearOrders, resetOrdersByStatus, setOrderProducts, clearOrder } = orderSlice.actions;
+export const { clearOrders, resetOrdersByStatus, setOrderProducts, clearOrder, setTempOrder, clearTempOrder } = orderSlice.actions;
 export default orderSlice.reducer;

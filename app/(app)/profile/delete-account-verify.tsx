@@ -6,18 +6,20 @@ import {
   RadioButton,
   RadioGroup,
 } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppBar from "@/components/app-bar/AppBar";
 
 const DeleteAccountVerifyScreen: React.FC = () => {
   const [verify, setVerify] = useState("Có , gửi dữ liệu của tôi tới email");
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("deleteaccount.title")} />
+      <AppBar back title={t("deleteaccount.title")} />
       <View marginT-20 paddingH-24>
-        <Text text40H>{i18n.t("deleteaccount.title")}</Text>
+        <Text text40H>{t("deleteaccount.title")}</Text>
         <Text marginT-20 text70>
-          {i18n.t("deleteaccount.description2")}
+          {t("deleteaccount.description2")}
         </Text>
         <RadioGroup
           marginT-30
@@ -25,8 +27,8 @@ const DeleteAccountVerifyScreen: React.FC = () => {
           onValueChange={(value: string) => setVerify(value)}
         >
           {[
-            i18n.t("deleteaccount.verify_yes"),
-            i18n.t("deleteaccount.verify_no"),
+            t("deleteaccount.verify_yes"),
+            t("deleteaccount.verify_no"),
           ].map((lang) => (
             <View
               key={lang}
@@ -62,7 +64,7 @@ const DeleteAccountVerifyScreen: React.FC = () => {
         }}
       >
         <Text white text70H>
-          {i18n.t("deleteaccount.title")}
+          {t("deleteaccount.title")}
         </Text>
       </TouchableOpacity>
     </View>

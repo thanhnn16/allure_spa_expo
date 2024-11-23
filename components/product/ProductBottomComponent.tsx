@@ -10,7 +10,9 @@ import {
 } from "react-native-ui-lib";
 
 import { Link, router } from "expo-router";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 import CommentIcon from "@/assets/icons/comment.svg";
 import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
@@ -22,6 +24,7 @@ import { useState } from "react";
 import {
   clearOrders,
   setOrderProducts,
+  setTempOrder,
 } from "@/redux/features/order/orderSlice";
 
 const windowWidth = Dimensions.get("window").width;
@@ -49,10 +52,15 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       setIsVisible(true);
       return;
     }
-    const cartItem = {
-      ...product,
-    };
-    dispatch(addItemToCart({ product: cartItem, cart_quantity: quantity }));
+
+    dispatch(
+      addItemToCart({
+        item: product,
+        cart_quantity: quantity,
+        item_type: "product",
+      })
+    );
+
     dispatch(clearOrders());
     onAddToCart && onAddToCart();
   };
@@ -66,17 +74,26 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
     if (onPurchase) {
       onPurchase();
     } else {
-      const cartItem = {
+      const price = product?.price ? parseFloat(product.price.toString()) : 0;
+
+      const orderItem = {
         id: product?.id,
-        item_type: "product",
         name: product?.name,
-        price: product?.price ? parseFloat(product.price.toString()) : 0,
-        cart_quantity: quantity,
-        media: product?.media || [],
+        price: price,
+        priceValue: price,
+        quantity: quantity,
+        image: product?.media?.[0]?.full_url,
+        type: "product",
       };
 
-      dispatch(addItemToCart({ item: cartItem }));
-      router.push("/check-out");
+      dispatch(
+        setTempOrder({
+          items: [orderItem],
+          totalAmount: price * quantity,
+        })
+      );
+
+      router.push("/check-out?source=direct");
     }
   };
 
@@ -105,8 +122,8 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           onPress={() => {
             if (product?.id) {
               router.push({
-                pathname: `/(app)/rating/${product.id}`,
-                params: { type: "product" },
+                pathname: "/rating/[id]",
+                params: { id: product.id, type: "product" },
               });
             }
           }}
@@ -114,18 +131,18 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>
-          <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
+          <Text h3_medium>{t("productDetail.reviews")}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleAddToCart()}>
           <View center marginB-4>
             <Image source={ShoppingCartIcon} size={24} />
           </View>
-          <Text h3_medium>{i18n.t("productDetail.add_to_cart")}</Text>
+          <Text h3_medium>{t("productDetail.add_to_cart")}</Text>
         </TouchableOpacity>
       </View>
       <View flex right>
         <Button
-          label={i18n.t("productDetail.buy_now").toString()}
+          label={t("productDetail.buy_now").toString()}
           br40
           onPress={handlePurchase}
           backgroundColor={Colors.primary}

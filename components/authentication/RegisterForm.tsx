@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, Colors } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 import { Alert, ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,12 +26,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
-      setPhoneError(i18n.t("auth.register.empty_phone_number"));
+      setPhoneError(t("auth.register.empty_phone_number"));
       return false;
     }
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(phone)) {
-      setPhoneError(i18n.t("auth.register.invalid_phone_number"));
+      setPhoneError(t("auth.register.invalid_phone_number"));
       return false;
     }
     setPhoneError("");
@@ -38,12 +40,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
 
   const validateFullName = (name: string) => {
     if (!name) {
-      setFullNameError(i18n.t("auth.register.empty_full_name"));
+      setFullNameError(t("auth.register.empty_full_name"));
       return false;
     }
     const nameRegex = /^[^\d]+$/;
     if (!nameRegex.test(name)) {
-      setFullNameError(i18n.t("auth.register.invalid_full_name"));
+      setFullNameError(t("auth.register.invalid_full_name"));
       return false;
     }
     setFullNameError("");
@@ -52,16 +54,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
 
   const validatePassword = (pass: string) => {
     if (!pass) {
-      setPasswordError(i18n.t("auth.register.empty_password"));
+      setPasswordError(t("auth.register.empty_password"));
       return false;
     }
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;
     if (specialCharRegex.test(pass)) {
-      setPasswordError(i18n.t("auth.register.invalid_password_special_char"));
+      setPasswordError(t("auth.register.invalid_password_special_char"));
       return false;
     }
     if (pass.length < 8) {
-      setPasswordError(i18n.t("auth.register.invalid_password_length"));
+      setPasswordError(t("auth.register.invalid_password_length"));
       return false;
     }
     setPasswordError("");
@@ -70,7 +72,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
 
   const validateConfirmPassword = (pass: string, confirmPass: string) => {
     if (pass !== confirmPass) {
-      setConfirmPasswordError(i18n.t("auth.register.password_mismatch"));
+      setConfirmPasswordError(t("auth.register.password_mismatch"));
       return false;
     }
     setConfirmPasswordError("");
@@ -101,8 +103,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
       await signUp({ fullName, phoneNumber, password, confirmPassword });
     } catch (error: any) {
       Alert.alert(
-        i18n.t("auth.register.error"),
-        error.message || i18n.t("auth.login.unknown_error")
+        t("auth.register.error"),
+        error.message || t("auth.login.unknown_error")
       );
     } finally {
       setLoading(false);
@@ -112,8 +114,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
   return (
     <>
       <TextInput
-        title={i18n.t("auth.register.phone_number")}
-        placeholder={i18n.t("auth.register.phone_number")}
+        title={t("auth.register.phone_number")}
+        placeholder={t("auth.register.phone_number")}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
@@ -122,8 +124,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
       {phoneError ? <Text style={{ color: "red" }}>{phoneError}</Text> : null}
 
       <TextInput
-        title={i18n.t("auth.register.fullname")}
-        placeholder={i18n.t("auth.register.fullname")}
+        title={t("auth.register.fullname")}
+        placeholder={t("auth.register.fullname")}
         value={fullName}
         onChangeText={setFullName}
         onBlur={() => validateFullName(fullName)}
@@ -133,8 +135,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
       ) : null}
 
       <TextInput
-        title={i18n.t("auth.register.password")}
-        placeholder={i18n.t("auth.register.password")}
+        title={t("auth.register.password")}
+        placeholder={t("auth.register.password")}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -145,8 +147,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
       ) : null}
 
       <TextInput
-        title={i18n.t("auth.register.confirm_password")}
-        placeholder={i18n.t("auth.register.confirm_password")}
+        title={t("auth.register.confirm_password")}
+        placeholder={t("auth.register.confirm_password")}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
@@ -177,12 +179,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
                 fontWeight: "bold",
               }}
             >
-              {i18n.t("auth.register.title")}
+              {t("auth.register.title")}
             </Text>
           )}
         </AppButton>
         <AppButton
-          title={i18n.t("back")}
+          title={t("back")}
           type="outline"
           marginT-12
           onPress={onBackPress}

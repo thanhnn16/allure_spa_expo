@@ -1,4 +1,4 @@
-import {TouchableOpacity, View, Badge, Colors} from "react-native-ui-lib";
+import { TouchableOpacity, View, Badge, Colors } from "react-native-ui-lib";
 import { Ionicons } from "@expo/vector-icons";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";

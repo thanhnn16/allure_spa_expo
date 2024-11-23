@@ -191,7 +191,7 @@
     "max": "max",
     "min_order": "Min order",
     "description": "Description",
-    "expires_on":"Expires on"
+    "expires_on": "Expires on"
   },
   "reward": {
     "title": "Exchange reward",
@@ -286,7 +286,8 @@
     "serviceDetail": {
       "book_now": "Book now",
       "make_appointment": "Make an appointment"
-    }
+    },
+    "available": "slots available"
   },
   "system": {
     "fud": "Feature under development!"
@@ -336,6 +337,35 @@
   "date": {
     "formats": {
       "short": "dd/MM/yyyy"
+    },
+    "today": "Today",
+    "month": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "month_short": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
     }
   },
   "currency": {

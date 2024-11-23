@@ -1,10 +1,12 @@
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import getLocation from "@/utils/location/locationHelper";
 import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
 import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
-import { Text, View, Image, SkeletonView } from "react-native-ui-lib";
+import { Text, View, Image, SkeletonView, Colors } from "react-native-ui-lib";
 
 interface LocationsType {
   distance: number;
@@ -19,6 +21,8 @@ const WeatherView = () => {
   const [weatherIcon, setWeatherIcon] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<string>("");
   const [weekday, setWeekday] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     (async () => {
       try {
@@ -26,6 +30,7 @@ const WeatherView = () => {
         if (!nearestProvince) {
           throw new Error("Failed to get location");
         }
+        setError(null);
 
         const weatherData = await getWeather(
           nearestProvince.lat,
@@ -43,6 +48,7 @@ const WeatherView = () => {
           setTemperature(weatherData["main"]["temp"]);
         }
       } catch (error: any) {
+        setError("Không có quyền truy cập vị trí");
         setWeatherIcon("01d");
         setTemperature(25);
       }
@@ -52,13 +58,13 @@ const WeatherView = () => {
   useEffect(() => {
     const date = new Date();
     const weekdays = [
-      i18n.t("days.sun"),
-      i18n.t("days.mon"),
-      i18n.t("days.tue"),
-      i18n.t("days.wed"),
-      i18n.t("days.thu"),
-      i18n.t("days.fri"),
-      i18n.t("days.sat"),
+      t("days.sun"),
+      t("days.mon"),
+      t("days.tue"),
+      t("days.wed"),
+      t("days.thu"),
+      t("days.fri"),
+      t("days.sat"),
     ];
 
     const weekday = weekdays[date.getDay()];
@@ -80,39 +86,43 @@ const WeatherView = () => {
         borderWidth: 1,
       }}
     >
-      <View row centerV gap-8 paddingH-10>
+      <View row centerV gap-4 paddingH-4>
         {weatherIcon ? (
           <Image
             source={{
               uri: `https://openweathermap.org/img/wn/${weatherIcon}@2x.png`,
             }}
-            width={40}
-            height={40}
+            width={42}
+            height={42}
           />
         ) : (
-          <SkeletonView width={40} height={40} />
+          <SkeletonView width={42} height={42} />
         )}
-        <Text text60>{temperature.toFixed(0)}°C</Text>
+        <Text text70>{temperature.toFixed(0)}°C</Text>
       </View>
       <View
-        height={30}
-        width={2}
-        backgroundColor="#717658"
-        marginL-15
-        marginR-15
+        height={25}
+        width={1}
+        backgroundColor="#C9C9C9"
+        marginL-12
+        marginR-12
       />
       <View>
-        <Text h3_bold>
-          {weekday}, {i18n.t("days.day")} {currentDate}
+        <Text text70 color="#4A4A4A">
+          {weekday}, {t("days.day")} {currentDate}
         </Text>
-        <View row gap-8 centerV>
-          <FontAwesome6 name="location-dot" size={16} color="black" />
-          {location ? (
-            <Text marginL-5 h3_medium>
+        <View row gap-6 centerV>
+          <FontAwesome6 name="location-dot" size={12} color="#4A4A4A" />
+          {error ? (
+            <Text marginL-2 text90R color={Colors.primary}>
+              {error}
+            </Text>
+          ) : location ? (
+            <Text marginL-4 text80 color={Colors.primary}>
               {location?.name}
             </Text>
           ) : (
-            <SkeletonView width={100} height={20} />
+            <SkeletonView width={80} height={16} />
           )}
         </View>
       </View>

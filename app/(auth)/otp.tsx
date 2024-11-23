@@ -8,7 +8,8 @@ import colors from "@/constants/Colors";
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { forwardRef } from 'react-native-ui-lib';
-import i18n from '@/languages/i18n';
+import { useLanguage } from '@/hooks/useLanguage';
+const { t } = useLanguage();
 
 interface OTPProps {
   onBackPress: () => void;
@@ -81,11 +82,11 @@ const OTP: React.FC<OTPProps> = ({ onBackPress }) => {
       <View marginT-20 marginB-45>
         <AppButton
           type="primary"
-          title={i18n.t('auth.register.title')}
+          title={t('auth.register.title')}
           onPress={handleVerifyOTP}
           loading={false}
         />
-        <AppButton title={i18n.t('back')} type="outline" marginT-12 onPress={() => router.back()} />
+        <AppButton title={t('back')} type="outline" marginT-12 onPress={() => router.back()} />
       </View>
     </View>
 

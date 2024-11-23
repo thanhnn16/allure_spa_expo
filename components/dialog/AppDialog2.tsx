@@ -1,7 +1,9 @@
 import { Dialog, Text, View } from "react-native-ui-lib";
 import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "../buttons/AppButton";
 import { ActivityIndicator } from "react-native";
 import BlinkingIconText from "@/components/BlinkingIconText";
@@ -40,9 +42,9 @@ const AppDialog2 = ({
                         closeButton = true,
                         confirmButton = true,
                         secondaryConfirmButton = true,
-                        closeButtonLabel = i18n.t("common.cancel"),
-                        confirmButtonLabel = i18n.t("common.confirm"),
-                        secondaryConfirmButtonLabel = i18n.t("checkout.pay_online"),
+                        closeButtonLabel = t("common.cancel"),
+                        confirmButtonLabel = t("common.confirm"),
+                        secondaryConfirmButtonLabel = t("checkout.pay_online"),
                         loading = false,
                         children,
                         showActionSheet,
@@ -137,7 +139,7 @@ const AppDialog2 = ({
                     )}
                 </View>
                 <ActionSheet
-                    title={i18n.t("package.select_combo")}
+                    title={t("package.select_combo")}
                     cancelButtonIndex={4}
                     showCancelButton={true}
                     destructiveButtonIndex={0}
@@ -147,15 +149,15 @@ const AppDialog2 = ({
                     useNativeIOS
                     options={[
                         {
-                            label: i18n.t("package.single"),
+                            label: t("package.single"),
                             onPress: () => setCombo(0),
                         },
                         {
-                            label: i18n.t("package.combo5"),
+                            label: t("package.combo5"),
                             onPress: () => setCombo(1),
                         },
                         {
-                            label: i18n.t("package.combo10"),
+                            label: t("package.combo10"),
                             onPress: () => setCombo(2),
                         },
                     ]}

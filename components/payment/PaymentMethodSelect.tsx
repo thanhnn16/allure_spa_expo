@@ -6,7 +6,8 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { PaymentMethod } from '@/app/(app)/check-out';
 import { useEffect, useState } from 'react';
-import i18n from '@/languages/i18n';
+import { useLanguage } from '@/hooks/useLanguage';
+const { t } = useLanguage();
 
 
 interface PaymentMethodSelectProps {
@@ -37,7 +38,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
 
     return (
         <View gap-10 marginB-20>
-            <Text h2_bold>{i18n.t("checkout.payment_method")}</Text>
+            <Text h2_bold>{t("checkout.payment_method")}</Text>
             <TouchableOpacity
                 onPress={isPayment ? onPress : undefined}
             >
@@ -60,7 +61,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
                     )}
                     {!selectedPayment && (
                         <Text h3>
-                            {i18n.t("checkout.select_payment_method")}
+                            {t("checkout.select_payment_method")}
                         </Text>
                     )}
                     {isPayment && (

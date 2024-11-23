@@ -8,16 +8,18 @@ import { router } from 'expo-router';
 import { LoginCredentials, RegisterCredentials, AuthErrorCode } from '@/types/auth.type';
 import AuthService from '@/utils/services/auth/authService';
 import { useZaloAuth } from './useZaloAuth';
-import i18n from '@/languages/i18n';
+import { useLanguage } from '@/hooks/useLanguage';
+const { t } = useLanguage();
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.user);
   const { login: zaloLogin } = useZaloAuth();
 
   const handleAuthError = (error: any) => {
-    let errorMessage = i18n.t('auth.login.unknown_error');
-    
+    let errorMessage = t('auth.login.unknown_error');
+
     const errorCode = error?.code;
     const errorMsg = error?.message;
 
@@ -25,31 +27,31 @@ export const useAuth = () => {
       switch (errorCode) {
         case AuthErrorCode.USER_NOT_FOUND:
         case AuthErrorCode.WRONG_PASSWORD:
-          errorMessage = i18n.t('auth.login.invalid_credentials');
+          errorMessage = t('auth.login.invalid_credentials');
           break;
         case AuthErrorCode.INVALID_PHONE_FORMAT:
-          errorMessage = i18n.t('auth.login.invalid_phone_number');
+          errorMessage = t('auth.login.invalid_phone_number');
           break;
         case AuthErrorCode.INVALID_PASSWORD_FORMAT:
-          errorMessage = i18n.t('auth.login.invalid_password_special_char');
+          errorMessage = t('auth.login.invalid_password_special_char');
           break;
         case AuthErrorCode.INVALID_EMAIL_FORMAT:
-          errorMessage = i18n.t('auth.login.invalid_email');
+          errorMessage = t('auth.login.invalid_email');
           break;
         case AuthErrorCode.INVALID_NAME_FORMAT:
-          errorMessage = i18n.t('auth.login.invalid_full_name');
+          errorMessage = t('auth.login.invalid_full_name');
           break;
         case AuthErrorCode.PASSWORDS_NOT_MATCH:
-          errorMessage = i18n.t('auth.register.password_mismatch');
+          errorMessage = t('auth.register.password_mismatch');
           break;
         case AuthErrorCode.SERVER_ERROR:
-          errorMessage = i18n.t('auth.login.server_error');
+          errorMessage = t('auth.login.server_error');
           break;
         default:
-          errorMessage = errorMsg || i18n.t('auth.login.unknown_error');
+          errorMessage = errorMsg || t('auth.login.unknown_error');
       }
     }
-    
+
     return errorMessage;
   };
 
@@ -116,6 +118,7 @@ export const useAuth = () => {
 
   return {
     ...authState,
+    user,
     signIn,
     signUp,
     signOut,

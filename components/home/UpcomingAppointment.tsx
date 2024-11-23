@@ -3,7 +3,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { router } from "expo-router";
 import { Dimensions } from "react-native";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 interface UpcomingAppointmentProps {
   appointment: {
@@ -26,7 +28,7 @@ const UpcomingAppointment = ({ appointment }: UpcomingAppointmentProps) => {
   return (
     <View marginB-20>
       <Text text60BO marginV-12 color={Colors.text}>
-        {i18n.t("home.upcoming_appointment")}
+        {t("home.upcoming_appointment")}
       </Text>
 
       <View
@@ -92,7 +94,7 @@ const UpcomingAppointment = ({ appointment }: UpcomingAppointmentProps) => {
           </View>
           <View marginL-12>
             <Text text80 color={Colors.text}>
-              {i18n.t("common.staff")}
+              {t("common.staff")}
             </Text>
             <Text text80 color={Colors.text} marginT-4>
               {appointment.staff.full_name}
@@ -113,7 +115,7 @@ const UpcomingAppointment = ({ appointment }: UpcomingAppointmentProps) => {
             color={Colors.primary}
             onPress={() => router.push("/service-package")}
           >
-            {i18n.t("common.view_detail")} →
+            {t("common.view_detail")} →
           </Text>
         </View>
       </View>

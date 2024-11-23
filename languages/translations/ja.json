@@ -384,7 +384,12 @@
     "back_to_home": "ホームページに戻る",
     "scheduled_successfully": "正常にスケジュールされました",
     "propose": "割引クーポンを適用するには今すぐ支払いを行ってください",
-    "update_information": "情報を更新する"
+    "update_information": "情報を更新する",
+    "serviceDetail": {
+      "book_now": "今すぐ予約",
+      "make_appointment": "予約を立てる"
+    },
+    "available": "空きの席"
   },
   "system": {
     "fud": "機能は開発中です!",

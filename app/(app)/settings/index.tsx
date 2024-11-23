@@ -10,10 +10,12 @@ import {
 } from "react-native-ui-lib";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { useLanguage } from "@/hooks/useLanguage";
+import { setI18nConfig } from "@/languages/i18n";
 import { setLanguage } from "@/redux/features/language/languageSlice";
+import { router } from "expo-router";
 
 const SettingsScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const SettingsScreen: React.FC = () => {
   );
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { t } = useLanguage();
 
   const languageOptions = [
     { label: "Tiếng Việt", value: "vi" },
@@ -30,20 +33,25 @@ const SettingsScreen: React.FC = () => {
   ];
 
   const handleLanguageChange = async (value: string) => {
-    dispatch(setLanguage(value));
-    i18n.locale = value;
+    try {
+      setI18nConfig(value);
+      dispatch(setLanguage(value));
+      // TODO: Fix in tab layout. Working fine in app layout.
+    } catch (error) {
+      console.error("Error changing language:", error);
+    }
   };
 
   return (
     <View flex bg-$white>
-      <AppBar title={i18n.t("settings.title")} back />
+      <AppBar title={t("settings.title")} back />
       <View flex paddingH-20 paddingT-12>
         {/* Language Section */}
         <Card marginB-20 padding-15 borderRadius={10} bg-grey80>
           <View row centerV marginB-15>
             <Ionicons name="language" size={24} color={Colors.grey30} />
             <Text marginL-10 text70 color={Colors.grey10}>
-              {i18n.t("settings.language")}
+              {t("settings.language")}
             </Text>
           </View>
 
@@ -86,7 +94,7 @@ const SettingsScreen: React.FC = () => {
           <View row centerV>
             <Ionicons name="moon" size={24} color={Colors.grey30} />
             <Text marginL-10 text70 color={Colors.grey10}>
-              {i18n.t("settings.darkMode")}
+              {t("settings.darkMode")}
             </Text>
           </View>
           <Switch
@@ -110,7 +118,7 @@ const SettingsScreen: React.FC = () => {
           <View row centerV>
             <Ionicons name="notifications" size={24} color={Colors.grey30} />
             <Text marginL-10 text70 color={Colors.grey10}>
-              {i18n.t("settings.notifications")}
+              {t("settings.notifications")}
             </Text>
           </View>
           <Switch

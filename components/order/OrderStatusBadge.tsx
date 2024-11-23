@@ -1,5 +1,7 @@
 import { View, Text, Colors } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const getStatusColor = (status: string) => {
   const colors = {
@@ -21,7 +23,7 @@ const OrderStatusBadge = ({ status }: { status: string }) => {
       style={{ backgroundColor: getStatusColor(status) }}
     >
       <Text white h3>
-        {i18n.t(`orders.status.${status}`)}
+        {t(`orders.status.${status}`)}
       </Text>
     </View>
   );

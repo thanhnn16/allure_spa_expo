@@ -2,8 +2,8 @@ import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/to
 import { Product } from "@/types/product.type";
 import { getProductThunk } from "./productThunk";
 import { getAllProductsThunk } from "./getAllProductsThunk";
-import {toggleFavoriteThunk} from "@/redux/features/favorite/favoritesThunk";
-import {Media} from "@/types/media.type";
+import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
+import { Media } from "@/types/media.type";
 
 interface ProductState {
   product: Product | null;
@@ -18,8 +18,8 @@ interface ProductState {
 const initialState: ProductState = {
   product: null,
   products: [],
-    media: [],
-  isLoading: false,
+  media: [],
+  isLoading: true,
   toggleFavoriteLoading: false,
   error: null,
   status: null,
@@ -60,17 +60,17 @@ export const productSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload || "Failed to fetch products";
       })
-        .addCase(toggleFavoriteThunk.pending, (state: ProductState) => {
-            state.toggleFavoriteLoading = true;
-        })
-        .addCase(toggleFavoriteThunk.fulfilled, (state: ProductState, action: any) => {
-            state.toggleFavoriteLoading = false;
-            state.status = action.payload;
-        })
-        .addCase(toggleFavoriteThunk.rejected, (state: ProductState, action: any) => {
-            state.toggleFavoriteLoading = false;
-            state.error = action.payload || "Failed to toggle favorite";
-        });
+      .addCase(toggleFavoriteThunk.pending, (state: ProductState) => {
+        state.toggleFavoriteLoading = true;
+      })
+      .addCase(toggleFavoriteThunk.fulfilled, (state: ProductState, action: any) => {
+        state.toggleFavoriteLoading = false;
+        state.status = action.payload;
+      })
+      .addCase(toggleFavoriteThunk.rejected, (state: ProductState, action: any) => {
+        state.toggleFavoriteLoading = false;
+        state.error = action.payload || "Failed to toggle favorite";
+      });
   },
 });
 

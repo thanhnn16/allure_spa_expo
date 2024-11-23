@@ -6,7 +6,9 @@ import StarIcon from "@/assets/icons/star.svg";
 import formatCurrency from "@/utils/price/formatCurrency";
 import FavoriteButton from "@/components/buttons/FavoriteButton";
 import { Product } from "@/types/product.type";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 interface RenderProductItemProps {
   item: Product;
@@ -59,7 +61,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
           <Text style={{ color: "#8C8585" }}>
             {item?.rating_summary.average_rating} /{" "}
             {item?.rating_summary.total_ratings} | {item?.quantity}{" "}
-            {i18n.t("productDetail.available")}
+            {t("productDetail.available")}
           </Text>
         </View>
 

@@ -5,7 +5,9 @@ import AppBar from "@/components/app-bar/AppBar";
 import AppDialog from "@/components/dialog/AppDialog";
 import AppButton from "@/components/buttons/AppButton";
 import axios from "axios";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { Dimensions } from "react-native";
 import Constants from "expo-constants";
 import formatCurrency from "@/utils/price/formatCurrency";
@@ -68,19 +70,19 @@ export default function InvoiceSuccess() {
   const getSuccessMessage = () => {
     if (paymentDetails?.paymentMethod === "cash") {
       return {
-        title: i18n.t("invoice.order_success"),
-        description: i18n.t("invoice.order_success_message_cash"),
+        title: t("invoice.order_success"),
+        description: t("invoice.order_success_message_cash"),
       };
     }
     return {
-      title: i18n.t("invoice.payment_successful"),
-      description: i18n.t("invoice.payment_success_message"),
+      title: t("invoice.payment_successful"),
+      description: t("invoice.payment_success_message"),
     };
   };
 
   return (
     <View flex bg-white>
-      <AppBar title={i18n.t("invoice.payment_success")} />
+      <AppBar title={t("invoice.payment_success")} />
       <View flex center gap-20 paddingH-24>
         {loading ? (
           <View>
@@ -94,13 +96,13 @@ export default function InvoiceSuccess() {
           <View>
             <Text h1 primary center marginB-10>
               {paymentDetails?.paymentMethod === "cash"
-                ? i18n.t("invoice.order_details")
-                : i18n.t("invoice.payment_details")}
+                ? t("invoice.order_details")
+                : t("invoice.payment_details")}
             </Text>
 
             <View br20 gap-10>
               <View row spread>
-                <Text h3>{i18n.t("invoice.amount")}</Text>
+                <Text h3>{t("invoice.amount")}</Text>
                 <Text h3 primary>
                   {paymentDetails?.amount
                     ? formatCurrency({ price: paymentDetails.amount })
@@ -110,7 +112,7 @@ export default function InvoiceSuccess() {
 
               {paymentDetails?.paymentMethod === "bank_transfer" && (
                 <View row spread>
-                  <Text h3>{i18n.t("invoice.payment_time")}</Text>
+                  <Text h3>{t("invoice.payment_time")}</Text>
                   <Text h3>
                     {paymentDetails?.paymentTime
                       ? new Date(paymentDetails.paymentTime).toLocaleString()
@@ -120,7 +122,7 @@ export default function InvoiceSuccess() {
               )}
 
               <View row spread>
-                <Text h3>{i18n.t("invoice.order_code")}</Text>
+                <Text h3>{t("invoice.order_code")}</Text>
                 <Text h3>{paymentDetails?.orderCode || "-"}</Text>
               </View>
             </View>
@@ -137,7 +139,7 @@ export default function InvoiceSuccess() {
             type="primary"
           />
           <AppButton
-            title={i18n.t("common.back_to_home")}
+            title={t("common.back_to_home")}
             onPress={() => router.replace("/(app)/")}
             type="primary"
           />
@@ -150,7 +152,7 @@ export default function InvoiceSuccess() {
         severity="success"
         closeButton={false}
         confirmButton={true}
-        confirmButtonLabel={i18n.t("common.ok")}
+        confirmButtonLabel={t("common.ok")}
         onConfirm={() => setShowDialog(false)}
       />
     </View>

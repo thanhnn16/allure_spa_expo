@@ -2,7 +2,9 @@ import React, { useEffect, useRef } from "react";
 import { Animated, View, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const BlinkingIconText = () => {
     const blinkAnim = useRef(new Animated.Value(0)).current;
@@ -37,7 +39,7 @@ const BlinkingIconText = () => {
                 <Ionicons name="information-circle" size={32} color={Colors.primary} />
             </Animated.View>
             <Animated.Text style={[blinkStyle, { color: Colors.primary, fontSize: 16 }]}>
-                {i18n.t("service.propose")}
+                {t("service.propose")}
             </Animated.Text>
         </View>
     );

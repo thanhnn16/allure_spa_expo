@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { View, Text } from "react-native-ui-lib";
 import { router } from "expo-router";
 import { TextInput } from "react-native";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
 
@@ -10,16 +12,16 @@ const DeleteAccountScreen: React.FC = () => {
   const [value, onChangeText] = useState("");
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("deleteAccount.title")} />
+      <AppBar back title={t("deleteAccount.title")} />
       <View flex bg-white paddingH-24>
         <View marginT-20>
-          <Text text40H>{i18n.t("deleteAccount.title")}</Text>
+          <Text text40H>{t("deleteAccount.title")}</Text>
           <Text marginT-20 text70>
-            {i18n.t("deleteAccount.description")}
+            {t("deleteAccount.description")}
           </Text>
 
           <TextInput
-            placeholder={i18n.t("deleteAccount.placeholder")}
+            placeholder={t("deleteAccount.placeholder")}
             maxLength={500}
             onChangeText={(text) => onChangeText(text)}
             value={value}
@@ -39,7 +41,7 @@ const DeleteAccountScreen: React.FC = () => {
         <View  marginT-40>
           <AppButton
             type="primary"
-            title={i18n.t("deleteAccount.next")}
+            title={t("deleteAccount.next")}
             onPress={() => router.push("/(app)/profile/delete-account-verify")}
           />
         </View>
