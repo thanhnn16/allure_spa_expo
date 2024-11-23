@@ -287,7 +287,12 @@
     "back_to_home": "Quay về trang chủ",
     "scheduled_successfully": "Đặt lịch thành công",
     "propose": "Thanh toán ngay để áp dụng Voucher giảm giá",
-    "update_information": "Cập nhật thông tin dịch vụ"
+    "update_information": "Cập nhật thông tin dịch vụ",
+    "serviceDetail": {
+      "book_now": "Book now",
+      "make_appointment": "Make an appointment"
+    },
+    "available": "chỗ còn trống"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",

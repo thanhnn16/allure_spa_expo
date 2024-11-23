@@ -191,7 +191,7 @@
     "max": "max",
     "min_order": "Min order",
     "description": "Description",
-    "expires_on":"Expires on"
+    "expires_on": "Expires on"
   },
   "reward": {
     "title": "Exchange reward",
@@ -286,7 +286,8 @@
     "serviceDetail": {
       "book_now": "Book now",
       "make_appointment": "Make an appointment"
-    }
+    },
+    "available": "slots available"
   },
   "system": {
     "fud": "Feature under development!"

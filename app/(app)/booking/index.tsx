@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { FlatList, Dimensions, Modal } from "react-native";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { FlatList, Dimensions, Modal, ScrollView } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import { router, useLocalSearchParams } from "expo-router";
@@ -26,9 +26,13 @@ import Octicons from "@expo/vector-icons/Octicons";
 import { User } from "@/types/user.type";
 import { BookingPayload } from "@/types/appointment.type";
 import { updateAppointment } from "@/redux/features/appointment/appointmentThunk";
-import Animated, { withSpring, useSharedValue } from "react-native-reanimated";
+import Animated, {
+  withSpring,
+  useSharedValue,
+  FadeIn,
+} from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
-import { FadeIn } from "react-native-reanimated";
+import { View as RNView } from "react-native";
 
 const BookingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,6 +71,12 @@ const BookingPage = () => {
 
   const handleDayPress = (day: any) => {
     setSelectedDate(day.dateString.toString());
+    setTimeout(() => {
+      timeSlotRef.current?.scrollTo({
+        y: 400,
+        animated: true,
+      });
+    }, 100);
   };
 
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
@@ -240,21 +250,22 @@ const BookingPage = () => {
           <Card
             flex
             center
-            enableShadow
+            enableShadow={false}
             br40
             padding-16
             marginB-8
             style={{
               opacity: !time.available ? 0.5 : 1,
               backgroundColor:
-                selectedTime === time.id
-                  ? Colors.$backgroundPrimaryHeavy
-                  : Colors.$backgroundNeutralLight,
+                selectedTime === time.id ? Colors.primary_blur : Colors.card_bg,
+              borderWidth: selectedTime === time.id ? 1 : 0,
+              borderColor: Colors.primary_light,
             }}
           >
             <Text
-              $textDefault={selectedTime !== time.id}
-              $textPrimary={selectedTime === time.id}
+              style={{
+                color: selectedTime === time.id ? Colors.primary : Colors.text,
+              }}
               text70BO
             >
               {`${time.start_time.substring(0, 5)} - ${time.end_time.substring(
@@ -267,13 +278,16 @@ const BookingPage = () => {
               <Octicons
                 name="person"
                 size={16}
-                color={
-                  selectedTime === time.id
-                    ? Colors.$textDefaultLight
-                    : Colors.$textNeutral
-                }
+                color={selectedTime === time.id ? Colors.primary : Colors.icon}
               />
-              <Text marginL-8 text80>
+              <Text
+                marginL-8
+                text80
+                style={{
+                  color:
+                    selectedTime === time.id ? Colors.primary : Colors.text,
+                }}
+              >
                 {time.available_slots} {i18n.t("service.available")}
               </Text>
             </View>
@@ -283,25 +297,63 @@ const BookingPage = () => {
     );
   };
 
+  const timeSlotRef = useRef<Animated.ScrollView>(null);
+  const seatRef = useRef<RNView>(null);
+  const noteRef = useRef<RNView>(null);
+
+  const handleTimeSlotSelect = (time: any) => {
+    setSelectedTime(time.id);
+    Haptics.selectionAsync();
+    setTimeout(() => {
+      seatRef.current?.measureLayout(
+        // @ts-ignore
+        timeSlotRef.current,
+        (x: number, y: number) => {
+          timeSlotRef.current?.scrollTo({
+            y: y,
+            animated: true,
+          });
+        },
+        () => console.log("measurement failed")
+      );
+    }, 100);
+  };
+
+  const handleSeatSelect = (seatCount: number) => {
+    setSlot(seatCount);
+    setTimeout(() => {
+      noteRef.current?.measureLayout(
+        // @ts-ignore
+        timeSlotRef.current,
+        (x: number, y: number) => {
+          timeSlotRef.current?.scrollTo({
+            y: y,
+            animated: true,
+          });
+        },
+        () => console.log("measurement failed")
+      );
+    }, 100);
+  };
+
   return (
     <View flex bg-white>
       <AppBar back title={i18n.t("service.make_appointment")} />
       <View flex>
         <Animated.ScrollView
+          ref={timeSlotRef}
           entering={FadeIn.duration(500)}
           contentContainerStyle={{
             flexGrow: 1,
             paddingBottom: 40,
           }}
         >
-          <View flex padding-24>
+          <View flex paddingH-24>
             <Card
               flex
-              padding-16
-              marginT-16
-              bg-$backgroundDefault
-              br40
-              enableShadow
+              br20
+              enableShadow={false}
+              backgroundColor={Colors.surface}
             >
               <Calendar
                 current={today}
@@ -329,26 +381,27 @@ const BookingPage = () => {
                     header: {
                       flexDirection: "row",
                       justifyContent: "space-between",
-                      paddingHorizontal: 10,
-                      paddingVertical: 12,
+                      paddingHorizontal: 12,
+                      paddingVertical: 16,
                       alignItems: "center",
+                      backgroundColor: Colors.surface,
                     },
                     monthText: {
                       fontSize: 18,
                       fontWeight: "600",
-                      color: "#000000",
+                      color: Colors.text,
                     },
                   },
                   "stylesheet.day.basic": {
                     base: {
-                      width: 40,
-                      height: 40,
+                      width: 42,
+                      height: 42,
                       alignItems: "center",
                       justifyContent: "center",
                     },
                     text: {
                       fontSize: 16,
-                      fontWeight: "400",
+                      fontWeight: "500",
                     },
                   },
                 }}
@@ -359,14 +412,14 @@ const BookingPage = () => {
                   [selectedDate]: {
                     selected: true,
                     disableTouchEvent: true,
-                    selectedColor: "#717658",
+                    selectedColor: Colors.primary,
                   },
                   [today]: {
                     marked: true,
                     selected: today,
                     dotColor: "white",
                     borderWidth: 1,
-                    borderColor: "#717658",
+                    borderColor: Colors.primary,
                   },
                 }}
                 enableSwipeMonths={true}
@@ -384,10 +437,87 @@ const BookingPage = () => {
                   <FlatList
                     scrollEnabled={false}
                     data={timeSlots}
-                    renderItem={({ item }) => renderTimeSlot(item)}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        onPress={() => handleTimeSlotSelect(item)}
+                        disabled={!item.available}
+                      >
+                        <Animated.View
+                          entering={FadeIn.duration(500).delay(item.id * 100)}
+                          style={{
+                            transform: [{ scale: fadeAnim }],
+                          }}
+                        >
+                          <Card
+                            center
+                            enableShadow={false}
+                            br40
+                            paddingV-12
+                            paddingH-16
+                            style={{
+                              opacity: !item.available ? 0.5 : 1,
+                              backgroundColor:
+                                selectedTime === item.id
+                                  ? Colors.primary_blur
+                                  : Colors.card_bg,
+                              borderWidth: selectedTime === item.id ? 1 : 0,
+                              borderColor: Colors.primary_light,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                color:
+                                  selectedTime === item.id
+                                    ? Colors.primary
+                                    : Colors.text,
+                              }}
+                              text80BO
+                            >
+                              {`${item.start_time.substring(
+                                0,
+                                5
+                              )} - ${item.end_time.substring(0, 5)}`}
+                            </Text>
+
+                            <View row centerV marginT-8>
+                              <Octicons
+                                name="person"
+                                size={16}
+                                color={
+                                  selectedTime === item.id
+                                    ? Colors.primary
+                                    : Colors.icon
+                                }
+                              />
+                              <Text
+                                marginL-8
+                                text80
+                                style={{
+                                  color:
+                                    selectedTime === item.id
+                                      ? Colors.primary
+                                      : Colors.text,
+                                }}
+                              >
+                                {item.available_slots}{" "}
+                                {i18n.t("service.available")}
+                              </Text>
+                            </View>
+                          </Card>
+                        </Animated.View>
+                      </TouchableOpacity>
+                    )}
                     keyExtractor={(item: any) => item.id.toString()}
                     numColumns={numColumns}
-                    contentContainerStyle={{ gap: 12 }}
+                    contentContainerStyle={{
+                      gap: 8,
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                    columnWrapperStyle={{
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
                     nestedScrollEnabled
                   />
                 </View>
@@ -395,20 +525,28 @@ const BookingPage = () => {
             )}
 
             {selectedTime && (
-              <View>
+              <View ref={seatRef}>
                 <Text text60BO $textDefault marginB-10>
                   {i18n.t("service.select_seat")}
                 </Text>
                 <View row spread marginT-12>
-                  <TouchableOpacity flex-1 marginR-6 onPress={() => setSlot(1)}>
+                  <TouchableOpacity
+                    flex-1
+                    marginR-6
+                    onPress={() => handleSeatSelect(1)}
+                  >
                     <View
                       center
                       padding-16
                       br20
-                      bg-$backgroundPrimaryHeavy={slot === 1}
-                      bg-$backgroundNeutralLight={slot !== 1}
+                      style={{
+                        backgroundColor:
+                          slot === 1 ? Colors.primary_blur : Colors.card_bg,
+                        borderWidth: slot === 1 ? 1 : 0,
+                        borderColor: Colors.primary,
+                      }}
                     >
-                      <Text $textDefault={slot !== 1} $textPrimary={slot === 1}>
+                      <Text color={slot === 1 ? Colors.primary : Colors.text}>
                         {i18n.t("service.1_seat")}
                       </Text>
                     </View>
@@ -417,7 +555,7 @@ const BookingPage = () => {
                   <TouchableOpacity
                     flex-1
                     marginL-6
-                    onPress={() => setSlot(2)}
+                    onPress={() => handleSeatSelect(2)}
                     disabled={
                       timeSlots.find((item: any) => item.id === selectedTime)
                         ?.available_slots === 1
@@ -427,18 +565,14 @@ const BookingPage = () => {
                       center
                       padding-16
                       br20
-                      bg-$backgroundPrimaryHeavy={slot === 2}
-                      bg-$backgroundNeutralLight={slot !== 2}
                       style={{
-                        opacity:
-                          timeSlots.find(
-                            (item: any) => item.id === selectedTime
-                          )?.available_slots === 1
-                            ? 0.5
-                            : 1,
+                        backgroundColor:
+                          slot === 2 ? Colors.primary_blur : Colors.card_bg,
+                        borderWidth: slot === 2 ? 1 : 0,
+                        borderColor: Colors.primary,
                       }}
                     >
-                      <Text $textDefault={slot !== 2} $textPrimary={slot === 2}>
+                      <Text color={slot === 2 ? Colors.primary : Colors.text}>
                         {i18n.t("service.2_seat")}
                       </Text>
                     </View>
@@ -448,7 +582,7 @@ const BookingPage = () => {
             )}
 
             {slot !== 0 && (
-              <View marginT-20>
+              <View ref={noteRef} marginT-20>
                 <Text text60BO $textDefault marginB-12>
                   {i18n.t("service.note")}
                 </Text>
@@ -478,23 +612,6 @@ const BookingPage = () => {
             )}
           </View>
         </Animated.ScrollView>
-
-        {isChanged && (
-          <View absB absR padding-20>
-            <TouchableOpacity
-              onPress={handleShowModal}
-              bg-$backgroundPrimaryHeavy
-              padding-16
-              br30
-            >
-              <MaterialIcons
-                name="check"
-                size={24}
-                color={Colors.$iconDefaultLight}
-              />
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
 
       <Modal visible={showModal} transparent animationType="slide">
@@ -623,22 +740,22 @@ const BookingPage = () => {
 };
 
 const calendarTheme = {
-  calendarBackground: "#FFFFFF",
-  textSectionTitleColor: "#6B7280",
-  selectedDayBackgroundColor: Colors.$backgroundPrimaryHeavy,
-  selectedDayTextColor: "#ffffff",
-  todayTextColor: Colors.$textPrimary,
-  dayTextColor: "#2d4150",
-  textDisabledColor: "#d9e1e8",
-  dotColor: Colors.$iconPrimary,
-  selectedDotColor: "#ffffff",
-  arrowColor: Colors.$iconPrimary,
-  monthTextColor: "#000000",
-  textDayFontWeight: "400",
+  calendarBackground: Colors.surface,
+  textSectionTitleColor: Colors.text,
+  selectedDayBackgroundColor: Colors.primary,
+  selectedDayTextColor: Colors.background,
+  todayTextColor: Colors.primary,
+  dayTextColor: Colors.text,
+  textDisabledColor: Colors.gray,
+  dotColor: Colors.primary,
+  selectedDotColor: Colors.background,
+  arrowColor: Colors.primary,
+  monthTextColor: Colors.text,
+  textDayFontWeight: "500",
   textMonthFontWeight: "600",
   textDayHeaderFontWeight: "600",
-  textDayFontSize: 18,
-  textMonthFontSize: 20,
+  textDayFontSize: 16,
+  textMonthFontSize: 18,
   textDayHeaderFontSize: 14,
 };
 
