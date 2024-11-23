@@ -36,7 +36,7 @@ const SettingsScreen: React.FC = () => {
     try {
       setI18nConfig(value);
       dispatch(setLanguage(value));
-      router.replace("/");
+      // TODO: Fix in tab layout. Working fine in app layout.
     } catch (error) {
       console.error("Error changing language:", error);
     }
