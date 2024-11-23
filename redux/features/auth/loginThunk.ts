@@ -4,6 +4,8 @@ import FirebaseService from "@/utils/services/firebase/firebaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthResponse, AuthErrorCode } from "@/types/auth.type";
 import i18n from "@/languages/i18n";
+import { useDispatch } from "react-redux";
+import { getUserThunk } from "../users/getUserThunk";
 
 interface LoginRequest {
   phoneNumber: string;
@@ -21,6 +23,10 @@ export const loginThunk = createAsyncThunk(
 
       if (res.data.success && res.data.data) {
         const { token, user } = res.data.data;
+        const dispatch = useDispatch();
+
+        await dispatch(getUserThunk());
+
 
         if (!token) {
           return rejectWithValue({
@@ -33,7 +39,7 @@ export const loginThunk = createAsyncThunk(
 
         try {
           await FirebaseService.requestUserPermission();
-          await FirebaseService.registerTokenWithServer(user.id);
+          await FirebaseService.registerTokenWithServer();
         } catch (fcmError) {
           // Do nothing
         }

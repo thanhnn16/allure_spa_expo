@@ -22,7 +22,7 @@ import i18n from "@/languages/i18n";
 
 const ServicePackageScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.user);
   const { packages, isLoading } = useSelector(
     (state: RootState) => state.servicePackage
   );
