@@ -1,12 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  FlatList,
-  StyleSheet,
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  Modal,
-} from "react-native";
+import { FlatList, Dimensions, Modal } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import i18n from "@/languages/i18n";
 import { router, useLocalSearchParams } from "expo-router";
@@ -14,8 +7,9 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextField,
   Colors,
+  Card,
+  TextArea,
 } from "react-native-ui-lib";
 import { Calendar } from "react-native-calendars";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -30,15 +24,16 @@ import {
 import { resetBookingState } from "@/redux/features/booking/bookingSlice";
 import Octicons from "@expo/vector-icons/Octicons";
 import { User } from "@/types/user.type";
-
-import AppDialog from "@/components/dialog/AppDialog";
 import { BookingPayload } from "@/types/appointment.type";
 import { updateAppointment } from "@/redux/features/appointment/appointmentThunk";
+import Animated, { withSpring, useSharedValue } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
+import { FadeIn } from "react-native-reanimated";
 
 const BookingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { timeSlots, loading, error, bookingSuccess } = useSelector(
-      (state: RootState) => state.booking
+    (state: RootState) => state.booking
   );
   const user: User = useSelector((state: RootState) => state.auth.user);
   const windowWidth = Dimensions.get("window").width;
@@ -61,25 +56,42 @@ const BookingPage = () => {
   const [dialogTitle, setDialogTitle] = useState<string>("");
   const [dialogDescription, setDialogDescription] = useState<string>("");
 
+  const fadeAnim = useSharedValue(0);
+
+  useEffect(() => {
+    fadeAnim.value = withSpring(1, {
+      damping: 15,
+      stiffness: 100,
+    });
+  }, []);
 
   const handleDayPress = (day: any) => {
-    setSelectedDate(day.dateString);
+    setSelectedDate(day.dateString.toString());
   };
 
   const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
   const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
 
-  // const { service_id, service_name, package_id, edit_mode, appointment_id, note: initialNote, date: initialDate, time_slot_id: initialTimeSlotId, slots: initialSlots } = useLocalSearchParams();
-  const { service_id, service_name, package_id, edit_mode, appointment_id, note: initialNote = "", date: initialDate = "", time_slot_id: initialTimeSlotId, slots: initialSlots } = useLocalSearchParams();
+  const {
+    service_id,
+    service_name,
+    package_id,
+    edit_mode,
+    appointment_id,
+    note: initialNote = "",
+    date: initialDate = "",
+    time_slot_id: initialTimeSlotId,
+    slots: initialSlots,
+  } = useLocalSearchParams();
   useEffect(() => {
     if (edit_mode === "true") {
-      setNote(initialNote);
-      setSelectedDate(initialDate);
+      setNote(initialNote.toString());
+      setSelectedDate(initialDate.toString());
       setSelectedTime(Number(initialTimeSlotId));
       setSlot(Number(initialSlots));
     }
     if (initialDate) {
-      setSelectedDate(moment(initialDate).format("YYYY-MM-DD"));
+      setSelectedDate(moment(initialDate).format("YYYY-MM-DD").toString());
     }
   }, [edit_mode, initialNote, initialDate, initialTimeSlotId, initialSlots]);
 
@@ -87,17 +99,25 @@ const BookingPage = () => {
 
   useEffect(() => {
     if (
-        note !== initialNote ||
-        selectedDate !== initialDate ||
-        selectedTime !== Number(initialTimeSlotId) ||
-        slot !== Number(initialSlots)
+      note !== initialNote ||
+      selectedDate !== initialDate ||
+      selectedTime !== Number(initialTimeSlotId) ||
+      slot !== Number(initialSlots)
     ) {
       setIsChanged(true);
     } else {
       setIsChanged(false);
     }
-  }, [note, selectedDate, selectedTime, slot, initialNote, initialDate, initialTimeSlotId, initialSlots]);
-
+  }, [
+    note,
+    selectedDate,
+    selectedTime,
+    slot,
+    initialNote,
+    initialDate,
+    initialTimeSlotId,
+    initialSlots,
+  ]);
 
   useEffect(() => {
     dispatch(getTimeSlots(selectedDate));
@@ -174,7 +194,9 @@ const BookingPage = () => {
 
     try {
       if (appointment_id) {
-        await dispatch(updateAppointment({ ...bookingData, id: appointment_id }));
+        await dispatch(
+          updateAppointment({ ...bookingData, id: appointment_id })
+        );
         setShowUpdateModal(true); // Show update modal
         setSuccess(true); // Set success state to true upon successful update
       }
@@ -201,340 +223,401 @@ const BookingPage = () => {
 
   const renderTimeSlot = (time: any) => {
     return (
+      <Animated.View
+        entering={FadeIn.duration(500).delay(time.id * 100)}
+        style={{
+          transform: [{ scale: fadeAnim }],
+        }}
+      >
         <TouchableOpacity
-            key={time.id}
-            onPress={() => setSelectedTime(time.id)}
-            style={styles.timeSlotContainer}
-            disabled={!time.available}
+          key={time.id}
+          onPress={() => {
+            setSelectedTime(time.id);
+            Haptics.selectionAsync();
+          }}
+          disabled={!time.available}
         >
-          <View
-              backgroundColor={selectedTime === time.id ? "#717658" : "#F9FAFB"}
-              center
-              width={itemWidth}
-              style={[
-                styles.timeSlot,
-                selectedTime === time.id && styles.selectedTimeSlot,
-              ]}
+          <Card
+            flex
+            center
+            enableShadow
+            br40
+            padding-16
+            marginB-8
+            style={{
+              opacity: !time.available ? 0.5 : 1,
+              backgroundColor:
+                selectedTime === time.id
+                  ? Colors.$backgroundPrimaryHeavy
+                  : Colors.$backgroundNeutralLight,
+            }}
           >
             <Text
-                color={selectedTime === time.id ? "#FFFFFF" : "#6B7280"}
-                style={styles.timeText}
+              $textDefault={selectedTime !== time.id}
+              $textPrimary={selectedTime === time.id}
+              text70BO
             >
               {`${time.start_time.substring(0, 5)} - ${time.end_time.substring(
-                  0,
-                  5
+                0,
+                5
               )}`}
             </Text>
-            <Text color={selectedTime === time.id ? "#F9FAFB" : "#000000"}>
-              Còn trống {time.available_slots} chỗ
-            </Text>
-          </View>
+
+            <View row centerV marginT-8>
+              <Octicons
+                name="person"
+                size={16}
+                color={
+                  selectedTime === time.id
+                    ? Colors.$textDefaultLight
+                    : Colors.$textNeutral
+                }
+              />
+              <Text marginL-8 text80>
+                {time.available_slots} {i18n.t("service.available")}
+              </Text>
+            </View>
+          </Card>
         </TouchableOpacity>
+      </Animated.View>
     );
   };
 
   return (
-      <View style={{ flex: 1 }}>
-        <View flex bg-$white>
-          <AppBar back title={i18n.t("service.make_appointment")} />
-          <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}>
-            <View style={{ flex: 1, paddingHorizontal: 24 }}>
-              <View style={styles.calendarContainer}>
-                <Calendar
-                    current={today}
-                    renderArrow={(direction: any) => {
-                      if (direction === "left") {
-                        return (
-                            <MaterialIcons
-                                name="arrow-back-ios-new"
-                                size={20}
-                                color="#717658"
-                            />
-                        );
-                      }
-                      return (
-                          <MaterialIcons
-                              name="arrow-forward-ios"
-                              size={20}
-                              color="#717658"
-                          />
-                      );
-                    }}
-                    theme={{
-                      ...calendarTheme,
-                      "stylesheet.calendar.header": {
-                        header: {
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          paddingHorizontal: 10,
-                          paddingVertical: 12,
-                          alignItems: "center",
-                        },
-                        monthText: {
-                          fontSize: 18,
-                          fontWeight: "600",
-                          color: "#000000",
-                        },
-                      },
-                      "stylesheet.day.basic": {
-                        base: {
-                          width: 40,
-                          height: 40,
-                          alignItems: "center",
-                          justifyContent: "center",
-                        },
-                        text: {
-                          fontSize: 16,
-                          fontWeight: "400",
-                        },
-                      },
-                    }}
-                    minDate={today}
-                    maxDate={maxDate}
-                    onDayPress={handleDayPress}
-                    markedDates={{
-                      [selectedDate]: {
-                        selected: true,
-                        disableTouchEvent: true,
-                        selectedColor: "#717658",
-                      },
-                      [today]: {
-                        marked: true,
-                        selected: today,
-                        dotColor: "white",
-                        borderWidth: 1,
-                        borderColor: "#717658",
-                      },
-                    }}
-                    enableSwipeMonths={true}
-                    firstDay={1}
-                    hideExtraDays={false}
-                />
-              </View>
-
-              {timeSlots.length > 0 && (
-                  <View style={styles.sectionContainer}>
-                    <Text style={styles.sectionTitle}>
-                      {i18n.t("service.select_time")}
-                    </Text>
-                    <View marginT-16>
-                      <FlatList
-                          scrollEnabled={false}
-                          data={timeSlots}
-                          renderItem={({ item }) => renderTimeSlot(item)}
-                          keyExtractor={(item: any) => item.id.toString()}
-                          numColumns={numColumns}
-                          columnWrapperStyle={styles.timeSlotRow}
-                          contentContainerStyle={{ gap: 12 }}
-                          nestedScrollEnabled
-                      />
-                    </View>
-                  </View>
-              )}
-
-              {selectedTime && (
-                  <View gap-10>
-                    <Text style={styles.sectionTitle}>
-                      {i18n.t("service.select_seat")}
-                    </Text>
-                    <View gap-12 row flex>
-                      <TouchableOpacity
-                          onPress={() => setSlot(1)}
-                          style={styles.timeSlotContainer}
-                      >
-                        <View
-                            center
-                            backgroundColor={slot == 1 ? "#717658" : "#F9FAFB"}
-                            style={styles.timeSlot}
-                        >
-                          <Text color={slot == 1 ? "#FFFFFF" : "#000000"}>
-                            {i18n.t("service.1_seat")}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                          onPress={() => setSlot(2)}
-                          style={[
-                            styles.timeSlotContainer,
-                            timeSlots.find((item: any) => item.id === selectedTime)
-                                ?.available_slots === 1 && styles.disabledButton,
-                          ]}
-                          disabled={
-                              timeSlots.find((item: any) => item.id === selectedTime)
-                                  ?.available_slots === 1
-                          }
-                      >
-                        <View
-                            center
-                            backgroundColor={slot == 2 ? "#717658" : "#F9FAFB"}
-                            style={styles.timeSlot}
-                        >
-                          <Text color={slot == 2 ? "#FFFFFF" : "#000000"}>
-                            {i18n.t("service.2_seat")}
-                          </Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-              )}
-
-              {slot != 0 && (
-                  <>
-                    <View style={styles.noteContainer}>
-                      <Text style={styles.noteTitle}>{i18n.t("service.note")}</Text>
-                      <TextField
-                          h3
-                          value={note}
-                          onChangeText={(text) => setNote(text)}
-                          placeholder={i18n.t("service.enter_content").toString()}
-                          placeholderTextColor="#8C8585"
-                          multiline
-                          numberOfLines={10}
-                          maxLength={200}
-                          style={styles.enhancedNoteInput}
-                      />
-                    </View>
-                    <View style={{ paddingVertical: 10 }}>
-                      <AppButton
-                          title={i18n.t("service.continue")}
-                          type="primary"
-                          onPress={() => {
-                            handleShowModal();
-                          }}
-                      />
-                    </View>
-                  </>
-              )}
-            </View>
-          </ScrollView>
-        </View>
-        <Modal
-            visible={showModal}
-            transparent
-            onRequestClose={() => setShowModal(false)}
-            style={styles.modal}
+    <View flex bg-white>
+      <AppBar back title={i18n.t("service.make_appointment")} />
+      <View flex>
+        <Animated.ScrollView
+          entering={FadeIn.duration(500)}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingBottom: 40,
+          }}
         >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View style={styles.iconContainer}>
-                <MaterialIcons name="info" size={48} color={Colors.primary} />
-              </View>
-              <Text style={styles.modalTitle}>
-                {edit_mode === "true"
-                    ? i18n.t("service.update_information")
-                    : i18n.t("service.confirm_information")}
-              </Text>
+          <View flex padding-24>
+            <Card
+              flex
+              padding-16
+              marginT-16
+              bg-$backgroundDefault
+              br40
+              enableShadow
+            >
+              <Calendar
+                current={today}
+                renderArrow={(direction: any) => {
+                  if (direction === "left") {
+                    return (
+                      <MaterialIcons
+                        name="arrow-back-ios-new"
+                        size={20}
+                        color="#717658"
+                      />
+                    );
+                  }
+                  return (
+                    <MaterialIcons
+                      name="arrow-forward-ios"
+                      size={20}
+                      color="#717658"
+                    />
+                  );
+                }}
+                theme={{
+                  ...calendarTheme,
+                  "stylesheet.calendar.header": {
+                    header: {
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      paddingHorizontal: 10,
+                      paddingVertical: 12,
+                      alignItems: "center",
+                    },
+                    monthText: {
+                      fontSize: 18,
+                      fontWeight: "600",
+                      color: "#000000",
+                    },
+                  },
+                  "stylesheet.day.basic": {
+                    base: {
+                      width: 40,
+                      height: 40,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                    text: {
+                      fontSize: 16,
+                      fontWeight: "400",
+                    },
+                  },
+                }}
+                minDate={today}
+                maxDate={maxDate}
+                onDayPress={handleDayPress}
+                markedDates={{
+                  [selectedDate]: {
+                    selected: true,
+                    disableTouchEvent: true,
+                    selectedColor: "#717658",
+                  },
+                  [today]: {
+                    marked: true,
+                    selected: today,
+                    dotColor: "white",
+                    borderWidth: 1,
+                    borderColor: "#717658",
+                  },
+                }}
+                enableSwipeMonths={true}
+                firstDay={1}
+                hideExtraDays={false}
+              />
+            </Card>
 
-              <View style={styles.modalTextContainer}>
-                <Text style={styles.modalText}>
-                  {i18n.t("service.customer_name")}:{" "}
-                  <Text style={styles.modalTextBold}>{user.full_name}</Text>
+            {timeSlots.length > 0 && (
+              <View marginT-20 marginB-20>
+                <Text text60BO $textDefault marginB-10>
+                  {i18n.t("service.select_time")}
                 </Text>
-                <Text style={styles.modalText}>
-                  {i18n.t("service.service_name")}:{" "}
-                  <Text style={styles.modalTextBold}>{service_name}</Text>
-                </Text>
-                <Text style={styles.modalText}>
-                  {i18n.t("service.time")}:{" "}
-                  <Text style={styles.modalTextBold}>{timeString}</Text>
-                </Text>
-                <Text style={styles.modalText}>
-                  {i18n.t("service.date")}:{" "}
-                  <Text style={styles.modalTextBold}>
-                    {moment(selectedDate).format("DD/MM/YYYY")}
-                  </Text>
-                </Text>
-                <Text style={styles.modalText}>
-                  {i18n.t("service.note")}:{" "}
-                  <Text style={styles.modalTextBold}>{note}</Text>
-                </Text>
+                <View marginT-16>
+                  <FlatList
+                    scrollEnabled={false}
+                    data={timeSlots}
+                    renderItem={({ item }) => renderTimeSlot(item)}
+                    keyExtractor={(item: any) => item.id.toString()}
+                    numColumns={numColumns}
+                    contentContainerStyle={{ gap: 12 }}
+                    nestedScrollEnabled
+                  />
+                </View>
               </View>
-              <View style={styles.buttonContainer}>
-                <AppButton
-                    title={i18n.t("service.agree")}
+            )}
+
+            {selectedTime && (
+              <View>
+                <Text text60BO $textDefault marginB-10>
+                  {i18n.t("service.select_seat")}
+                </Text>
+                <View row spread marginT-12>
+                  <TouchableOpacity flex-1 marginR-6 onPress={() => setSlot(1)}>
+                    <View
+                      center
+                      padding-16
+                      br20
+                      bg-$backgroundPrimaryHeavy={slot === 1}
+                      bg-$backgroundNeutralLight={slot !== 1}
+                    >
+                      <Text $textDefault={slot !== 1} $textPrimary={slot === 1}>
+                        {i18n.t("service.1_seat")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    flex-1
+                    marginL-6
+                    onPress={() => setSlot(2)}
+                    disabled={
+                      timeSlots.find((item: any) => item.id === selectedTime)
+                        ?.available_slots === 1
+                    }
+                  >
+                    <View
+                      center
+                      padding-16
+                      br20
+                      bg-$backgroundPrimaryHeavy={slot === 2}
+                      bg-$backgroundNeutralLight={slot !== 2}
+                      style={{
+                        opacity:
+                          timeSlots.find(
+                            (item: any) => item.id === selectedTime
+                          )?.available_slots === 1
+                            ? 0.5
+                            : 1,
+                      }}
+                    >
+                      <Text $textDefault={slot !== 2} $textPrimary={slot === 2}>
+                        {i18n.t("service.2_seat")}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {slot !== 0 && (
+              <View marginT-20>
+                <Text text60BO $textDefault marginB-12>
+                  {i18n.t("service.note")}
+                </Text>
+                <TextArea
+                  value={note}
+                  onChangeText={setNote}
+                  placeholder={i18n.t("service.enter_content")}
+                  multiline
+                  numberOfLines={5}
+                  maxLength={200}
+                  br20
+                  bg-$backgroundNeutralLight
+                  padding-16
+                  style={{
+                    height: 120,
+                    textAlignVertical: "top",
+                  }}
+                />
+                <View marginT-20>
+                  <AppButton
+                    title={i18n.t("service.continue")}
                     type="primary"
-                    onPress={() => {
-                      if (edit_mode === "true") {
-                        handleUpdate();
-                      } else {
-                        handleBooking();
-                      }
-                    }}
-                />
-                <AppButton
-                    title={i18n.t("service.cancel")}
-                    type="outline"
-                    onPress={() => {
-                      setShowModal(false);
-                    }}
-                />
+                    onPress={handleShowModal}
+                  />
+                </View>
               </View>
-            </View>
+            )}
           </View>
-        </Modal>
+        </Animated.ScrollView>
 
+        {isChanged && (
+          <View absB absR padding-20>
+            <TouchableOpacity
+              onPress={handleShowModal}
+              bg-$backgroundPrimaryHeavy
+              padding-16
+              br30
+            >
+              <MaterialIcons
+                name="check"
+                size={24}
+                color={Colors.$iconDefaultLight}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
 
-        <Modal visible={showConfirmModal} transparent style={styles.modal}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View style={styles.iconContainer}>
-                <MaterialIcons name="done" size={64} color={Colors.primary} />
-              </View>
-              <Text style={styles.successTitle}>
-                {i18n.t("service.confirm_information")}
+      <Modal visible={showModal} transparent animationType="slide">
+        <View flex center bg-$backgroundDefault>
+          <Card padding-20 width="80%" br20>
+            <View center marginB-20>
+              <MaterialIcons name="info" size={48} color={Colors.primary} />
+            </View>
+            <Text text60BO center marginB-10>
+              {edit_mode === "true"
+                ? i18n.t("service.update_information")
+                : i18n.t("service.confirm_information")}
+            </Text>
+
+            <View marginB-20>
+              <Text text70 marginB-5>
+                {i18n.t("service.customer_name")}:{" "}
+                <Text text70BO>{user.full_name}</Text>
               </Text>
-              <View style={styles.buttonContainer2}>
-                <AppButton
-                    title={i18n.t("service.back_to_home")}
-                    type="primary"
-                    onPress={() => {
-                      setShowConfirmModal(false);
-                      router.push("/home");
-                    }}
-                />
-                <AppButton
-                    title={i18n.t("service.view_appointments")}
-                    type="outline"
-                    onPress={() => {
-                      setShowConfirmModal(false);
-                      router.push("/(app)/(tabs)/appointment");
-                    }}
-                />
-              </View>
-            </View>
-          </View>
-        </Modal>
-
-        <Modal visible={showUpdateModal} transparent style={styles.modal}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <View style={styles.iconContainer}>
-                <MaterialIcons name="done" size={64} color={Colors.primary} />
-              </View>
-              <Text style={styles.successTitle}>
-                {i18n.t("service.update_information")}
+              <Text text70 marginB-5>
+                {i18n.t("service.service_name")}:{" "}
+                <Text text70BO>{service_name}</Text>
               </Text>
-              <View style={styles.buttonContainer2}>
-                <AppButton
-                    title={i18n.t("service.back_to_home")}
-                    type="primary"
-                    onPress={() => {
-                      setShowUpdateModal(false);
-                      router.push("/home");
-                    }}
-                />
-                <AppButton
-                    title={i18n.t("service.view_appointments")}
-                    type="outline"
-                    onPress={() => {
-                      setShowUpdateModal(false);
-                      router.push("/(app)/(tabs)/appointment");
-                    }}
-                />
-              </View>
+              <Text text70 marginB-5>
+                {i18n.t("service.time")}: <Text text70BO>{timeString}</Text>
+              </Text>
+              <Text text70 marginB-5>
+                {i18n.t("service.date")}:{" "}
+                <Text text70BO>
+                  {moment(selectedDate).format("DD/MM/YYYY")}
+                </Text>
+              </Text>
+              <Text text70 marginB-5>
+                {i18n.t("service.note")}: <Text text70BO>{note}</Text>
+              </Text>
             </View>
-          </View>
-        </Modal>
+            <View row spread marginT-20 paddingH-20 marginB-10>
+              <AppButton
+                title={i18n.t("service.agree")}
+                type="primary"
+                onPress={() => {
+                  if (edit_mode === "true") {
+                    handleUpdate();
+                  } else {
+                    handleBooking();
+                  }
+                }}
+              />
+              <AppButton
+                title={i18n.t("service.cancel")}
+                type="outline"
+                onPress={() => {
+                  setShowModal(false);
+                }}
+              />
+            </View>
+          </Card>
+        </View>
+      </Modal>
+
+      <Modal visible={showConfirmModal} transparent>
+        <View flex center bg-$backgroundDefault>
+          <Card padding-20 width="80%" br20>
+            <View center marginB-20>
+              <MaterialIcons name="done" size={64} color={Colors.primary} />
+            </View>
+            <Text text60BO center marginB-20>
+              {i18n.t("service.confirm_information")}
+            </Text>
+            <View paddingH-20 marginB-10>
+              <AppButton
+                title={i18n.t("service.back_to_home")}
+                type="primary"
+                marginB-10
+                onPress={() => {
+                  setShowConfirmModal(false);
+                  router.push("/home");
+                }}
+              />
+              <AppButton
+                title={i18n.t("service.view_appointments")}
+                type="outline"
+                onPress={() => {
+                  setShowConfirmModal(false);
+                  router.push("/(app)/(tabs)/appointment");
+                }}
+              />
+            </View>
+          </Card>
+        </View>
+      </Modal>
+
+      <Modal visible={showUpdateModal} transparent>
+        <View flex center bg-$backgroundDefault>
+          <Card padding-20 width="80%" br20>
+            <View center marginB-20>
+              <MaterialIcons name="done" size={64} color={Colors.primary} />
+            </View>
+            <Text text60BO center marginB-20>
+              {i18n.t("service.update_information")}
+            </Text>
+            <View paddingH-20 marginB-10>
+              <AppButton
+                title={i18n.t("service.back_to_home")}
+                type="primary"
+                marginB-10
+                onPress={() => {
+                  setShowUpdateModal(false);
+                  router.push("/home");
+                }}
+              />
+              <AppButton
+                title={i18n.t("service.view_appointments")}
+                type="outline"
+                onPress={() => {
+                  setShowUpdateModal(false);
+                  router.push("/(app)/(tabs)/appointment");
+                }}
+              />
+            </View>
+          </Card>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -542,196 +625,21 @@ const BookingPage = () => {
 const calendarTheme = {
   calendarBackground: "#FFFFFF",
   textSectionTitleColor: "#6B7280",
-  selectedDayBackgroundColor: "#717658",
+  selectedDayBackgroundColor: Colors.$backgroundPrimaryHeavy,
   selectedDayTextColor: "#ffffff",
-  todayTextColor: "#717658",
+  todayTextColor: Colors.$textPrimary,
   dayTextColor: "#2d4150",
   textDisabledColor: "#d9e1e8",
-  dotColor: "#717658",
+  dotColor: Colors.$iconPrimary,
   selectedDotColor: "#ffffff",
-  arrowColor: "#717658",
+  arrowColor: Colors.$iconPrimary,
   monthTextColor: "#000000",
   textDayFontWeight: "400",
   textMonthFontWeight: "600",
   textDayHeaderFontWeight: "600",
-  textDayFontSize: 16,
-  textMonthFontSize: 18,
+  textDayFontSize: 18,
+  textMonthFontSize: 20,
   textDayHeaderFontSize: 14,
 };
 
-const styles = StyleSheet.create({
-  calendarContainer: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    padding: 12,
-  },
-  sectionContainer: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#000000",
-    marginBottom: 10,
-  },
-  timeSlotContainer: {
-    flex: 1,
-    paddingBottom: 5,
-  },
-  timeSlot: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    paddingVertical: 10,
-    gap: 5,
-  },
-  selectedTimeSlot: {
-    borderColor: "#717658",
-  },
-  timeText: {
-    fontSize: 15,
-    fontWeight: "500",
-  },
-  timeSlotRow: {
-    justifyContent: "space-between",
-  },
-  modal: {
-    flex: 1,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-    alignItems: "center",
-  },
-  iconContainer: {
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    color: Colors.text,
-  },
-  modalTextContainer: {
-    marginBottom: 20,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  modalTextBold: {
-    fontWeight: "bold",
-  },
-  buttonContainer: {
-    width: "100%",
-    marginTop: 20,
-    paddingHorizontal: 20,
-    marginBottom: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  primaryButton: {
-    flex: 1,
-    marginRight: 10,
-  },
-  outlineButton: {
-    flex: 1,
-    marginLeft: 10,
-  },
-  successTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: Colors.text,
-  },
-  centeredButtonContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    marginTop: 20,
-  },
-  primaryButton2: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  buttonText: {
-    textAlign: "center",
-  },
-
-  noteContainer: {
-    marginBottom: 10,
-  },
-  noteTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 12,
-    marginTop: 10,
-    color: "#000",
-  },
-  noteInput: {
-    borderWidth: 1,
-    borderColor: "#D9D9D9",
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    textAlignVertical: "top",
-    height: 100,
-    backgroundColor: "#F9FAFB",
-  },
-  enhancedNoteInput: {
-    borderWidth: 2,
-    borderColor: "#D9D9D9",
-    borderRadius: 12,
-    paddingTop: 4,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    textAlignVertical: "top",
-    height: 100,
-    backgroundColor: "#F9FAFB",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 1,
-    elevation: 2,
-  },
-  buttonContainer2: {
-    width: "100%",
-    marginTop: 20,
-    paddingHorizontal: 20,
-    marginBottom: 10,
-  },
-  disabledButton: {
-    opacity: 0.4,
-  },
-});
-
 export default BookingPage;
-
-
-
-
-
-
