@@ -36,6 +36,8 @@ import { Address, UserProfile } from "@/types/address.type";
 import { selectCheckoutItems } from "@/redux/features/cart/cartSlice";
 import { ServiceResponeModel } from "@/types/service.type";
 import { CheckoutOrderItem } from "@/types/order.type";
+import { useLocalSearchParams } from "expo-router";
+import { clearTempOrder } from "@/redux/features/order/orderSlice";
 
 export interface PaymentMethod {
   id: number;
@@ -75,18 +77,34 @@ export default function Checkout() {
   const [createOrderDialog, setCreateOrderDialog] = useState(false);
   const { dialogConfig, showDialog, hideDialog } = useDialog();
   const [note, setNote] = useState("");
+  const { source } = useLocalSearchParams();
 
+  const tempOrder = useSelector((state: RootState) => state.order.tempOrder);
   const checkoutItems = useSelector(selectCheckoutItems) as CheckoutOrderItem[];
-  const cartTotalAmount = useSelector((state: RootState) => state.cart.totalAmount);
+  const cartTotalAmount = useSelector(
+    (state: RootState) => state.cart.totalAmount
+  );
   const addresses = useSelector((state: RootState) => state.address.addresses);
   const userProfile = useSelector((state: RootState) => state.auth.user);
   const vouchers = useSelector((state: RootState) => state.voucher.vouchers);
 
-  const calculateTotalPrice = () => {
-    if (!checkoutItems || checkoutItems.length === 0) return 0;
+  const tempOrderItems = tempOrder.items.map((item: OrderItem) => ({
+    item_id: item.item_id,
+    item_type: item.item_type,
+    quantity: item.quantity,
+    price: item.price,
+    service_type: item.service_type,
+    product: item.item_type === "product" ? item : undefined,
+    service: item.item_type === "service" ? item : undefined,
+  }));
 
-    return checkoutItems.reduce((total: number, item: CheckoutOrderItem) => {
-      return total + (item.price * item.quantity);
+  const orderItems = source === "direct" ? tempOrderItems : checkoutItems;
+
+  const calculateTotalPrice = () => {
+    if (!orderItems || orderItems.length === 0) return 0;
+
+    return orderItems.reduce((total: number, item: CheckoutOrderItem) => {
+      return total + item.price * item.quantity;
     }, 0);
   };
 
@@ -150,7 +168,7 @@ export default function Checkout() {
         shipping_address_id: selectedAddress.id,
         voucher_id: selectedVoucher?.id || null,
         note: note || "",
-        items: checkoutItems.map((item: CheckoutOrderItem) => ({
+        items: orderItems.map((item: CheckoutOrderItem) => ({
           item_id: item.item_id,
           item_type: item.item_type,
           quantity: item.quantity,
@@ -178,7 +196,9 @@ export default function Checkout() {
             payment_method: "cash",
           },
         });
-        dispatch(clearCart());
+        if (source !== "direct") {
+          dispatch(clearCart());
+        }
       } else if (selectedPayment.id === 3) {
         // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
@@ -196,6 +216,10 @@ export default function Checkout() {
         if (paymentResponse.data?.checkoutUrl) {
           await Linking.openURL(paymentResponse.data.checkoutUrl);
         }
+      }
+
+      if (source !== "direct") {
+        dispatch(clearCart());
       }
     } catch (error) {
       console.error("Payment error:", error);
@@ -235,7 +259,7 @@ export default function Checkout() {
   }, [navigation]);
 
   useEffect(() => {
-    if (checkoutItems.length === 0) {
+    if (orderItems.length === 0) {
       router.back();
       return;
     }
@@ -243,7 +267,13 @@ export default function Checkout() {
     const initialTotal = calculateTotalPrice();
     setTotalPrice(initialTotal);
     setDiscountedPrice(initialTotal);
-  }, [checkoutItems]);
+
+    return () => {
+      if (source === "direct") {
+        dispatch(clearTempOrder());
+      }
+    };
+  }, [orderItems]);
 
   useEffect(() => {
     loadAddressData();
@@ -312,7 +342,7 @@ export default function Checkout() {
   };
 
   const renderOrderItems = () => {
-    return checkoutItems.map((item: CheckoutOrderItem) => (
+    return orderItems.map((item: CheckoutOrderItem) => (
       <PaymentProductItem
         key={`${item.item_type}-${item.item_id}`}
         orderItem={{
@@ -321,7 +351,8 @@ export default function Checkout() {
           quantity: item.quantity,
           price: item.price,
           service_type: item.service_type,
-          [item.item_type]: item.item_type === "product" ? item.product : item.service,
+          [item.item_type]:
+            item.item_type === "product" ? item.product : item.service,
         }}
       />
     ));

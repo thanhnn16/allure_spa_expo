@@ -22,6 +22,7 @@ import { useState } from "react";
 import {
   clearOrders,
   setOrderProducts,
+  setTempOrder,
 } from "@/redux/features/order/orderSlice";
 
 const windowWidth = Dimensions.get("window").width;
@@ -68,30 +69,24 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
     } else {
       const price = product?.price ? parseFloat(product.price.toString()) : 0;
 
-      const cartItem = {
+      const orderItem = {
         id: product?.id,
-        item_type: "product",
         name: product?.name,
         price: price,
-        cart_quantity: quantity,
-        media: product?.media || [],
+        priceValue: price,
+        quantity: quantity,
+        image: product?.media?.[0]?.full_url,
+        type: "product"
       };
 
       dispatch(
-        setOrderProducts({
-          items: [
-            {
-              ...cartItem,
-              price: price * quantity,
-              totalAmount: price * quantity,
-            },
-          ],
+        setTempOrder({
+          items: [orderItem],
           totalAmount: price * quantity,
-          fromCart: false,
         })
       );
 
-      router.push("/check-out");
+      router.push("/check-out?source=direct");
     }
   };
 

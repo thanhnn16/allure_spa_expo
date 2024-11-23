@@ -22,7 +22,7 @@ import {
   ServiceDetailResponeModel,
   ServiceResponeModel,
 } from "@/types/service.type";
-import { setOrderProducts } from "@/redux/features/order/orderSlice";
+import { setTempOrder } from "@/redux/features/order/orderSlice";
 
 interface ServiceBottomComponentProps {
   isLoading: boolean;
@@ -49,7 +49,7 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
         ? parseFloat(service.single_price.toString())
         : 0;
 
-      const serviceData = {
+      const orderItem = {
         id: service?.id,
         name: service?.service_name,
         price: price,
@@ -61,28 +61,13 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
       };
 
       dispatch(
-        setOrderProducts({
-          items: [
-            {
-              item_id: service?.id,
-              item_type: "service",
-              quantity: 1,
-              price: price,
-              service_type: "single",
-              service: {
-                id: service?.id,
-                service_name: service?.service_name,
-                media: service?.media || [],
-                price: price,
-              },
-            },
-          ],
+        setTempOrder({
+          items: [orderItem],
           totalAmount: price,
-          fromCart: false,
         })
       );
 
-      router.push("/check-out");
+      router.push("/check-out?source=direct");
     }
   };
 
