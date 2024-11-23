@@ -37,9 +37,7 @@ const CartProductItem = ({
   };
 
   const handleIncreaseQuantity = (id: number) => {
-    if (product.cart_quantity < product.quantity) {
-      dispatch(incrementCartItem(id));
-    }
+    dispatch(incrementCartItem(id));
   };
   const handleDecreaseQuantity = (id: number) => {
     if (product.cart_quantity == 1) {
