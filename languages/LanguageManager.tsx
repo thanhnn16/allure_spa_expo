@@ -1,22 +1,29 @@
 import { RootState } from "@/redux/store";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
-import i18n from "./i18n";
+import { useSelector, useDispatch } from "react-redux";
+import i18n, { getInitialLanguage } from "./i18n";
+import { setLanguage } from "@/redux/features/language/languageSlice";
 
 const LanguageManager: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const dispatch = useDispatch();
   const language = useSelector(
     (state: RootState) => state.language.currentLanguage
   );
 
   useEffect(() => {
-    const updateLanguage = async () => {
-      i18n.locale = language;
-    };
+    // Set initial language on first load
+    if (!language) {
+      const initialLang = getInitialLanguage();
+      dispatch(setLanguage(initialLang));
+    }
 
-    updateLanguage();
-  }, [language]);
+    // Update i18n locale whenever language changes
+    if (language) {
+      i18n.locale = language;
+    }
+  }, [language, dispatch]);
 
   return <>{children}</>;
 };

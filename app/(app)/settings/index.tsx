@@ -29,9 +29,8 @@ const SettingsScreen: React.FC = () => {
     { label: "日本語", value: "ja" },
   ];
 
-  const handleLanguageChange = async (value: string) => {
+  const handleLanguageChange = (value: string) => {
     dispatch(setLanguage(value));
-    i18n.locale = value;
   };
 
   return (

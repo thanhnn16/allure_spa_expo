@@ -1,26 +1,28 @@
-import { createSlice, PayloadAction, ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import { REHYDRATE } from 'redux-persist';
+import { getInitialLanguage } from '@/languages/i18n';
 
 interface LanguageState {
     currentLanguage: string;
 }
 
 const initialState: LanguageState = {
-    currentLanguage: 'en'
+    currentLanguage: getInitialLanguage() || 'en'
 }
 
 export const languageSlice = createSlice({
     name: 'language',
-    initialState: initialState,
+    initialState,
     reducers: {
-        setLanguage: (state: LanguageState, action: PayloadAction<string>) => {
-            state.currentLanguage = action.payload
+        setLanguage: (state: LanguageState, action: any) => {
+            state.currentLanguage = action.payload;
         }
     },
-    extraReducers: (builder: ActionReducerMapBuilder<LanguageState>) => {
+    extraReducers: (builder: any) => {
         builder.addCase(REHYDRATE, (state: LanguageState, action: any) => {
             return action.payload?.language || state;
-        })
+        });
     }
 });
 

@@ -39,6 +39,70 @@ import "moment/locale/ja";
 
 const { width } = Dimensions.get("window");
 
+interface ExpandableCalendarProps {
+  initialPosition?: Positions;
+  firstDay?: number;
+  markedDates?: any;
+  allowShadow?: boolean;
+  hideArrows?: boolean;
+  disableAllTouchEventsForDisabledDays?: boolean;
+  disableAllTouchEventsForInactiveDays?: boolean;
+  showWeekNumbers?: boolean;
+  animateScroll?: boolean;
+  closeOnDayPress?: boolean;
+  disabledOpacity?: number;
+  numberOfDays?: number;
+  hideKnob?: boolean;
+  rightArrowImageSource?: any;
+  leftArrowImageSource?: any;
+  theme?: any;
+  customHeaderTitle?: React.ReactElement;
+}
+
+const ExpandableCalendarComponent: React.FC<ExpandableCalendarProps> = ({
+  initialPosition = Positions.CLOSED,
+  firstDay = 1,
+  markedDates,
+  allowShadow = false,
+  hideArrows = false,
+  disableAllTouchEventsForDisabledDays = false,
+  disableAllTouchEventsForInactiveDays = false,
+  showWeekNumbers = false,
+  animateScroll = true,
+  closeOnDayPress = true,
+  disabledOpacity = 0.6,
+  numberOfDays = 1,
+  hideKnob = false,
+  theme,
+  customHeaderTitle,
+  ...props
+}) => (
+  <ExpandableCalendar
+    initialPosition={initialPosition}
+    firstDay={firstDay}
+    markedDates={markedDates}
+    allowShadow={allowShadow}
+    hideArrows={hideArrows}
+    disableAllTouchEventsForDisabledDays={disableAllTouchEventsForDisabledDays}
+    disableAllTouchEventsForInactiveDays={disableAllTouchEventsForInactiveDays}
+    showWeekNumbers={showWeekNumbers}
+    animateScroll={animateScroll}
+    closeOnDayPress={closeOnDayPress}
+    numberOfDays={numberOfDays}
+    hideKnob={hideKnob}
+    theme={theme}
+    customHeaderTitle={customHeaderTitle}
+    {...props}
+    calendarStyle={{
+      paddingLeft: 16,
+      paddingRight: 16,
+    }}
+    headerStyle={{
+      paddingHorizontal: 16,
+    }}
+  />
+);
+
 const ScheduledPage = () => {
   const [selectedItem, setSelectedItem] = useState<number>(1);
   const [isModalVisible, setModalVisible] = useState(false);
@@ -510,9 +574,9 @@ const ScheduledPage = () => {
     monthTextColor: Colors.text,
 
     // Header
-    textDayFontSize: 16,
-    textMonthFontSize: 16,
-    textDayHeaderFontSize: 14,
+    textDayFontSize: 15,
+    textMonthFontSize: 18,
+    textDayHeaderFontSize: 13,
 
     // General
     todayButtonFontSize: 16,
@@ -523,10 +587,19 @@ const ScheduledPage = () => {
       dayHeader: {
         color: Colors.text,
         fontSize: 14,
-        fontWeight: "500",
-        paddingBottom: 5,
+        fontWeight: "600",
+        paddingBottom: 8,
+        paddingTop: 8,
+      },
+      header: {
+        paddingHorizontal: 16,
+        paddingVertical: 12,
       },
     },
+    todayButtonFontWeight: "600",
+    todayButtonPosition: "right",
+    todayButtonMarginRight: 16,
+    dayContainerPadding: 4,
   };
 
   const renderCalendarView = () => (
@@ -542,30 +615,20 @@ const ScheduledPage = () => {
             })
           );
         }}
-        theme={calendarTheme}
       >
-        <ExpandableCalendar
+        <ExpandableCalendarComponent
           key="expandable-calendar"
-          initialPosition={Positions.CLOSED}
-          firstDay={1}
           markedDates={getMarkedDates()}
-          allowShadow={false}
-          hideArrows={false}
-          disableAllTouchEventsForDisabledDays={false}
-          disableAllTouchEventsForInactiveDays={false}
-          showWeekNumbers={false}
-          animateScroll={true}
-          closeOnDayPress={true}
           theme={calendarTheme}
           customHeaderTitle={
-            <Text h3 color={Colors.text}>
+            <Text h2_bold color={Colors.text}>
               {moment(selectedDate).format("MMMM YYYY")}
             </Text>
           }
         />
 
-        <View paddingH-24 paddingT-10>
-          <Text h3 color={Colors.grey30}>
+        <View paddingH-24 paddingV-12>
+          <Text h3_bold color={Colors.text}>
             {moment(selectedDate).format("dddd, DD MMMM YYYY")}
           </Text>
         </View>
@@ -584,20 +647,23 @@ const ScheduledPage = () => {
               renderItem={renderFlatListItem}
               keyExtractor={(item) => item.id.toString()}
               ListEmptyComponent={() => (
-                <View center paddingT-50>
+                <View center paddingT-60>
                   <MaterialCommunityIcons
                     name="calendar-blank"
-                    size={48}
+                    size={56}
                     color={Colors.grey40}
                   />
-                  <Text h3 grey30 marginT-10 center>
+                  <Text h2_bold center marginT-16 marginB-8>
+                    {i18n.t("appointment.no_appointments_title")}
+                  </Text>
+                  <Text h3 center grey30 marginB-24>
                     {i18n.t("appointment.no_appointments_for_selected_date")}
                   </Text>
                   <AppButton
-                    type="outline"
+                    type="primary"
                     title={i18n.t("appointment.book_appointment")}
                     onPress={() => router.push("/(app)/service-package")}
-                    buttonStyle={{ marginTop: 20 }}
+                    buttonStyle={{ minWidth: 200 }}
                   />
                 </View>
               )}
