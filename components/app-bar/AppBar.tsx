@@ -5,13 +5,13 @@ import { BlurView } from "expo-blur";
 import { Href, router } from "expo-router";
 import BackIcon from "@/assets/icons/arrow_left.svg";
 import ShoppingBagIcon from "@/assets/icons/shopping_bag.svg";
-import {Ionicons} from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 
 interface AppBarProps {
   back?: boolean;
   title: string;
-  rightComponent?: boolean;
+  rightComponent?: React.ReactNode | boolean;
 }
 
 const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
@@ -29,19 +29,24 @@ const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
       <Text h2_bold primary flex center>
         {title}
       </Text>
-      {rightComponent ? (
-        <Pressable onPress={() => router.push('/(app)/cart' as Href)}>
-          <View width={48} height={48} centerV right>
+      {typeof rightComponent === 'boolean' ? (
+        rightComponent ? (
+          <Pressable onPress={() => router.push("/(app)/cart" as Href)}>
+            <View width={48} height={48} centerV right>
               <HomeHeaderButton
-                  onPress={() => {
-                      router.push("cart" as Href<string>);
-                  }}
-                  iconName="cart-outline"
+                onPress={() => {
+                  router.push("cart" as Href<string>);
+                }}
+                iconName="cart-outline"
+                type="cart"
               />
-          </View>
-        </Pressable>
+            </View>
+          </Pressable>
+        ) : (
+          <View width={48} height={48} />
+        )
       ) : (
-        <View width={48} height={48} />
+        rightComponent || <View width={48} height={48} />
       )}
     </View>
   );
