@@ -1,4 +1,6 @@
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { Address, UserProfile } from "@/types/address.type";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Href, router } from "expo-router";
@@ -44,7 +46,7 @@ const AddressItem = ({
         >
             {item.is_default && (
                 <View width={150} br20 marginT-10 marginL-10 padding-5 backgroundColor={Colors.primary_light}>
-                    <Text h3_bold primary center>{i18n.t("address.default_address")}</Text>
+                    <Text h3_bold primary center>{t("address.default_address")}</Text>
                 </View>
             )}
             <View row spread centerV padding-10>
@@ -55,7 +57,7 @@ const AddressItem = ({
                         color={Colors.primary}
                     />
                     <Text h2_bold primary marginL-4>
-                        {i18n.t(`address.${item.address_type}`)}
+                        {t(`address.${item.address_type}`)}
                     </Text>
                 </View>
 
@@ -93,7 +95,7 @@ const AddressItem = ({
                         style={{ marginRight: 8 }}
                     />
                     <View flexS>
-                        <Text h3_bold>{i18n.t("address.address")}: {" "}
+                        <Text h3_bold>{t("address.address")}: {" "}
                             <Text h3 numberOfLines={2}>
                                 {item.address}, {item.ward}, {item.district}, {item.province}
                             </Text>
@@ -108,7 +110,7 @@ const AddressItem = ({
                         color="#666"
                         style={{ marginRight: 8 }}
                     />
-                    <Text h3_bold>{i18n.t("address.customer_name")}: </Text>
+                    <Text h3_bold>{t("address.customer_name")}: </Text>
                     <Text h3 grey10 flex>
                         {userProfile?.full_name}
                     </Text>
@@ -121,7 +123,7 @@ const AddressItem = ({
                         color="#666"
                         style={{ marginRight: 8 }}
                     />
-                    <Text h3_bold>{i18n.t("address.phone_number")}: </Text>
+                    <Text h3_bold>{t("address.phone_number")}: </Text>
                     <Text h3 flex>
                         {userProfile?.phone_number}
                     </Text>

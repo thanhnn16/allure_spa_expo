@@ -1,7 +1,9 @@
 import { View, Button, Colors } from "react-native-ui-lib";
 import { useDispatch } from "react-redux";
 import { Orders } from "@/types/order.type";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "../buttons/AppButton";
 import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
 import { getOrderByIdThunk } from "@/redux/features/order/getOrderByIdThunk";
@@ -33,7 +35,7 @@ const OrderActionButtons = ({ order, onCancel }: OrderActionButtonsProps) => {
       {order.status === "pending" && (
         <AppButton
           type="outline"
-          title={i18n.t("orders.cancel")}
+          title={t("orders.cancel")}
           onPress={onCancel}
         />
       )}
@@ -41,7 +43,7 @@ const OrderActionButtons = ({ order, onCancel }: OrderActionButtonsProps) => {
       {(order.status === "completed" || order.status === "cancelled") && (
         <AppButton
           type="primary"
-          title={i18n.t("orders.reorder")}
+          title={t("orders.reorder")}
           onPress={handleReorder}
         />
       )}

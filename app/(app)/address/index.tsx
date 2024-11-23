@@ -1,5 +1,4 @@
 import { View } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
 import { router } from "expo-router";
 import { ScrollView } from "react-native";
 import { useState, useEffect } from "react";
@@ -14,6 +13,9 @@ import type { Address, UserProfile } from "@/types/address.type";
 import AddressItem from "@/components/address/AddressItem";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const AddressScreen = () => {
   const [dialogUpdateVisible, setDialogUpdateVisible] = useState(false);
@@ -28,10 +30,10 @@ const AddressScreen = () => {
   const { user } = useAuth();
 
   const dispatch = useDispatch();
-  const { addresses, loading, error } = useSelector(
+  const { addresses, loading } = useSelector(
     (state: RootState) => state.address
   );
-  
+
   const loadUserData = async () => {
     try {
       const userProfileStr = JSON.stringify(user);
@@ -60,12 +62,12 @@ const AddressScreen = () => {
   const handleSelectAddress = async () => {
     try {
       const updateData = {
-        "province": updateItem?.province,
-        "district": updateItem?.district,
-        "ward": updateItem?.ward,
-        "address": updateItem?.address,
-        "address_type": updateItem?.address_type,
-        "is_default": true,
+        province: updateItem?.province,
+        district: updateItem?.district,
+        ward: updateItem?.ward,
+        address: updateItem?.address,
+        address_type: updateItem?.address_type,
+        is_default: true,
       };
       setDialogUpdateVisible(false);
       await dispatch(
@@ -76,7 +78,6 @@ const AddressScreen = () => {
       ).unwrap();
       await dispatch(fetchAddresses()).unwrap();
       await AsyncStorage.setItem("selectedAddress", JSON.stringify(updateItem));
-
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
       setErrorDialogVisible(true);
@@ -89,7 +90,7 @@ const AddressScreen = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("address.address")} />
+      <AppBar back title={t("address.address")} />
       <View flex>
         {loading ? (
           <AddressSkeletonView />
@@ -109,31 +110,31 @@ const AddressScreen = () => {
         )}
       </View>
 
-      <View width={'100%'} padding-16>
+      <View width={"100%"} padding-16>
         <AppButton
           type="primary"
-          title={i18n.t("address.add_new_address")}
+          title={t("address.add_new_address")}
           onPress={() => router.push("/(app)/address/add")}
         />
       </View>
 
       <AppDialog
         visible={errorDialogVisible}
-        title={i18n.t("common.error")}
+        title={t("common.error")}
         description={errorDescription || ""}
         confirmButton={true}
-        confirmButtonLabel={i18n.t("common.accept")}
+        confirmButtonLabel={t("common.accept")}
         severity="error"
         onConfirm={() => setErrorDialogVisible(false)}
       />
 
       <AppDialog
         visible={dialogUpdateVisible}
-        title={i18n.t("address.set_default_address")}
-        description={i18n.t("address.set_default_address_confirm")}
+        title={t("address.set_default_address")}
+        description={t("address.set_default_address_confirm")}
         confirmButton={true}
-        closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={i18n.t("common.accept")}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("common.accept")}
         severity="info"
         onClose={() => setDialogUpdateVisible(false)}
         onConfirm={() => handleSelectAddress()}
@@ -141,11 +142,11 @@ const AddressScreen = () => {
 
       <AppDialog
         visible={dialogDeleteVisible}
-        title={i18n.t("address.delete_address")}
-        description={i18n.t("address.delete_address_confirm")}
+        title={t("address.delete_address")}
+        description={t("address.delete_address_confirm")}
         confirmButton={true}
-        closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={i18n.t("common.accept")}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("common.accept")}
         severity="info"
         onClose={() => setdialogDeleteVisible(false)}
         onConfirm={() => deleteAddressById()}

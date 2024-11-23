@@ -4,7 +4,9 @@ import RatingBar from "@/components/rating/RatingBar";
 import RatingItem from "./RatingItem";
 import { FlatList } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import RatingStar from "@/components/rating/RatingStar";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -47,7 +49,7 @@ const RatingPage: React.FC = () => {
           <Text h2_bold>{averageRating.toFixed(1)}/5</Text>
           <View height={2}></View>
           <Text h3_medium>
-            {i18n.t("rating.base_on")} {totalRatings} {i18n.t("rating.reviews")}
+            {t("rating.base_on")} {totalRatings} {t("rating.reviews")}
           </Text>
           <View height={10}></View>
           <View left>
@@ -67,7 +69,7 @@ const RatingPage: React.FC = () => {
       <View style={{ flex: 1 }}>
         {ratings.length === 0 ? (
           <View flex center>
-            <Text h3_medium>{i18n.t("rating.no_reviews")}</Text>
+            <Text h3_medium>{t("rating.no_reviews")}</Text>
           </View>
         ) : (
           <FlatList

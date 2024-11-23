@@ -6,7 +6,9 @@ import { fetchFavoritesThunkByType } from "@/redux/features/favorite/favoritesTh
 import { FlatList } from "react-native";
 import FavoriteItem from "./FavoriteItem";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppTabBar from "@/components/app-bar/AppTabBar";
 
 export default function FavoriteScreen() {
@@ -62,7 +64,7 @@ export default function FavoriteScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={() => (
           <View center padding-20>
-            <Text>{i18n.t("favorite.empty")}</Text>
+            <Text>{t("favorite.empty")}</Text>
           </View>
         )}
       />
@@ -71,7 +73,7 @@ export default function FavoriteScreen() {
 
   return (
     <View flex bg-$white>
-      <AppBar back title={i18n.t("favorite.title")} />
+      <AppBar back title={t("favorite.title")} />
 
       <TabController
         initialIndex={selectedTabIndex}
@@ -80,8 +82,8 @@ export default function FavoriteScreen() {
           setSelectedTab(index === 0 ? "product" : "service");
         }}
         items={[
-          { label: i18n.t("favorite.products") },
-          { label: i18n.t("favorite.services") },
+          { label: t("favorite.products") },
+          { label: t("favorite.services") },
         ]}
       >
         <AppTabBar />

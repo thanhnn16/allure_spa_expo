@@ -1,5 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { ActionReducerMapBuilder } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { REHYDRATE } from 'redux-persist';
 import { getInitialLanguage } from '@/languages/i18n';
 
@@ -15,7 +14,7 @@ export const languageSlice = createSlice({
     name: 'language',
     initialState,
     reducers: {
-        setLanguage: (state: LanguageState, action: any) => {
+        setLanguage: (state: LanguageState, action: { payload: string }) => {
             state.currentLanguage = action.payload;
         }
     },

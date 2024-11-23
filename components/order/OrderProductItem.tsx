@@ -1,4 +1,6 @@
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { OrderItem, Orders } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
@@ -109,7 +111,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
                   : (itemData as Product)?.name}
               </Text>
               <Text h3 color={Colors.grey30}>
-                {i18n.t("orders.quantity")}: {item.quantity}
+                {t("orders.quantity")}: {item.quantity}
               </Text>
               <Text h3_bold primary>
                 {formatCurrency({ price: Number(item.price) })}
@@ -160,7 +162,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
 
             <View paddingH-16 paddingV-8 gap-8>
               <View row spread marginT-10>
-                <Text h3_bold>{i18n.t("orders.total")}</Text>
+                <Text h3_bold>{t("orders.total")}</Text>
                 <Text h3_bold secondary>
                   {formatCurrency({ price: Number(order.total_amount) })}
                 </Text>
@@ -169,14 +171,14 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
                 order.order_items.some((item) => item.product) && (
                   <AppButton
                     type="outline"
-                    title={i18n.t("orders.repurchase")}
+                    title={t("orders.repurchase")}
                     onPress={() => handleReorder()}
                   />
                 )}
               {order.status === "completed" ? (
                 <AppButton
                   type="outline"
-                  title={i18n.t("orders.rate_now")}
+                  title={t("orders.rate_now")}
                   onPress={() => router.push(`/order/${order.id}`)}
                 />
               ) : null}

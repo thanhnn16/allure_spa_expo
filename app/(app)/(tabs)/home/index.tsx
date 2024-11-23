@@ -11,7 +11,7 @@ import {
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
 import { router } from "expo-router";
-import { useEffect, useMemo, useState, useCallback, memo } from "react";
+import { useEffect, useMemo, useCallback, memo } from "react";
 import { Dimensions } from "react-native";
 import Animated, {
   useAnimatedScrollHandler,
@@ -27,10 +27,8 @@ import ServiceItem from "@/components/home/ServiceItem";
 import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import WeatherView from "@/components/home/WeatherView";
 import { useAuth } from "@/hooks/useAuth";
-import i18n from "@/languages/i18n";
 import { fetchBanners } from "@/redux/features/banner/bannerThunk";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
-import { getServicePackagesThunk } from "@/redux/features/servicePackage/getServicePackagesThunk";
 import { RootState } from "@/redux/store";
 import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
@@ -38,8 +36,12 @@ import { SkeletonView } from "react-native-ui-lib";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 import { HOME_CATEGORIES } from "@/constants/categories";
 import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
+import { useLanguage } from "@/hooks/useLanguage";
+import { User } from "@/types/user.type";
+const { t } = useLanguage();
+
 interface HomeHeaderProps {
-  user: any; // Replace 'any' with your user type
+  user: User;
   greeting: string;
   greetingHeaderStyle: {
     opacity: number;
@@ -74,7 +76,7 @@ const HomeHeader = memo(
                 source={require("@/assets/images/logo/logo.png")}
               />
               <View centerV>
-                <Text h2_bold>{user?.full_name || i18n.t("common.guest")}</Text>
+                <Text h2_bold>{user?.full_name || t("common.guest")}</Text>
                 <Text h4>{greeting}</Text>
               </View>
             </View>
@@ -121,7 +123,7 @@ const HomeHeader = memo(
           ]}
         >
           <Text h0_bold color="#717658" marginB-10>
-            {i18n.t("home.discover")}
+            {t("home.discover")}
           </Text>
           <AppSearch isHome />
         </Animated.View>
@@ -161,24 +163,22 @@ const HomeSkeletonContent = memo(
 
         {/* Upcoming Appointment skeleton */}
         <View marginB-20>
-          <View height={1} backgroundColor={Colors.primary} marginV-10 />
           <SkeletonView
             height={120}
             width={WINDOW_WIDTH - 40}
             borderRadius={12}
           />
-          <View height={1} backgroundColor={Colors.primary} marginV-10 />
         </View>
 
         {/* Services section skeleton */}
-
-        <View>
+        <View marginB-20>
           <View row spread marginB-10>
             <SkeletonView height={20} width={120} />
             <SkeletonView height={20} width={80} />
           </View>
         </View>
 
+        {/* Products section skeleton */}
         <View>
           <View row spread marginB-10>
             <SkeletonView height={20} width={120} />
@@ -192,16 +192,32 @@ const HomeSkeletonContent = memo(
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const currentDate = new Date();
-  const hours = currentDate.getHours();
   const { user } = useAuth();
   const scrollOffset = useSharedValue(0);
   const { packages } = useSelector((state: RootState) => state.servicePackage);
+  const { servicesList, isLoading } = useSelector(
+    (state: RootState) => state.service
+  );
+  const { products } = useSelector((state: RootState) => state.product);
+  const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
+    useHeaderDimensions();
+
+  const greeting = () => {
+    const hours = new Date().getHours();
+    if (hours < 12) return t("greeting.morning");
+    if (hours < 18) return t("greeting.afternoon");
+    return t("greeting.evening");
+  };
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      "worklet";
+      scrollOffset.value = event.contentOffset.y;
+    },
+  });
 
   const getUpcomingAppointment = useCallback(() => {
-    if (!packages || !Array.isArray(packages)) {
-      return null;
-    }
+    if (!packages || !Array.isArray(packages)) return null;
 
     const now = new Date();
     const threeDaysFromNow = new Date();
@@ -250,33 +266,8 @@ const HomePage = () => {
     [getUpcomingAppointment]
   );
 
-  const { servicesList, isLoading } = useSelector(
-    (state: RootState) => state.service
-  );
-  const services = servicesList?.data?.data || [];
-
-  const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
-    useHeaderDimensions();
-
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
     Dimensions.get("window");
-  const { products } = useSelector((state: RootState) => state.product);
-
-  const greeting = useMemo(() => {
-    if (hours < 12) return i18n.t("greeting.morning");
-    if (hours < 18) return i18n.t("greeting.afternoon");
-    return i18n.t("greeting.evening");
-  }, [hours]);
-
-  const scrollHandler = useCallback(
-    useAnimatedScrollHandler({
-      onScroll: (event) => {
-        "worklet";
-        scrollOffset.value = event.contentOffset.y;
-      },
-    }),
-    []
-  );
 
   const handlePressMore = useCallback((type: "service" | "product") => {
     router.push({
@@ -347,23 +338,25 @@ const HomePage = () => {
         </Animated.View>
       )}
 
-      {services && Array.isArray(services) && services.length > 0 && (
-        <Animated.View entering={FadeInUp.duration(600).delay(400)}>
-          <SectionContainer
-            title={i18n.t("home.featured_services")}
-            data={services}
-            renderItem={renderServiceItem}
-            onPressMore={() => {
-              handlePressMore("service");
-            }}
-          />
-        </Animated.View>
-      )}
+      {servicesList &&
+        Array.isArray(servicesList) &&
+        servicesList.length > 0 && (
+          <Animated.View entering={FadeInUp.duration(600).delay(400)}>
+            <SectionContainer
+              title={t("home.featured_services")}
+              data={servicesList}
+              renderItem={renderServiceItem}
+              onPressMore={() => {
+                handlePressMore("service");
+              }}
+            />
+          </Animated.View>
+        )}
 
       {products && products.length > 0 && (
         <Animated.View entering={FadeInUp.duration(600).delay(500)}>
           <SectionContainer
-            title={i18n.t("home.featured_products")}
+            title={t("home.featured_products")}
             data={products}
             renderItem={renderProductItem}
             onPressMore={() => {
@@ -388,6 +381,8 @@ const HomePage = () => {
     SCROLL_THRESHOLD
   );
 
+  const currentGreeting = greeting();
+
   return (
     <View bg-$white flex>
       <Animated.View
@@ -406,7 +401,7 @@ const HomePage = () => {
       >
         <HomeHeader
           user={user}
-          greeting={greeting}
+          greeting={currentGreeting}
           greetingHeaderStyle={greetingHeaderStyle}
           searchBarStyle={searchBarStyle}
         />

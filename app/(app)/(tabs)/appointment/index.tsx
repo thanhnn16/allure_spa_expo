@@ -1,6 +1,5 @@
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
-import i18n from "@/languages/i18n";
 import { resetAppointmentState } from "@/redux/features/appointment/appointmentSlice";
 import {
   cancelAppointment,
@@ -36,8 +35,11 @@ import { Positions } from "react-native-calendars/src/expandableCalendar";
 import { updateCalendarLocale } from "@/utils/calendar/localeConfig";
 import "moment/locale/vi";
 import "moment/locale/ja";
+import { useLanguage } from "@/hooks/useLanguage";
+import i18n from "@/languages/i18n";
 
 const { width } = Dimensions.get("window");
+const { t } = useLanguage();
 
 interface ExpandableCalendarProps {
   initialPosition?: Positions;
@@ -146,12 +148,12 @@ const ScheduledPage = () => {
   }, []);
 
   const items = [
-    { id: 1, name: i18n.t("appointment.all") },
-    { id: 6, name: i18n.t("appointment.7upcoming") },
-    { id: 2, name: i18n.t("appointment.pending"), status: "pending" },
-    { id: 5, name: i18n.t("appointment.confirmed"), status: "confirmed" },
-    { id: 3, name: i18n.t("appointment.completed"), status: "completed" },
-    { id: 4, name: i18n.t("appointment.cancelled"), status: "cancelled" },
+    { id: 1, name: t("appointment.all") },
+    { id: 6, name: t("appointment.7upcoming") },
+    { id: 2, name: t("appointment.pending"), status: "pending" },
+    { id: 5, name: t("appointment.confirmed"), status: "confirmed" },
+    { id: 3, name: t("appointment.completed"), status: "completed" },
+    { id: 4, name: t("appointment.cancelled"), status: "cancelled" },
   ];
 
   const handleItemPress = (item: { id: number; status?: string }) => {
@@ -325,7 +327,7 @@ const ScheduledPage = () => {
                   backgroundColor={statusConfig.bg}
                 >
                   <Text h4 color={statusConfig.text}>
-                    {i18n.t(`appointment.status.${item.status.toLowerCase()}`)}
+                    {t(`appointment.status.${item.status.toLowerCase()}`)}
                   </Text>
                 </View>
               </View>
@@ -411,7 +413,7 @@ const ScheduledPage = () => {
                     />
                     <View flex marginL-8>
                       <Text h4_bold color={Colors.primary} marginB-4>
-                        {i18n.t("appointment.note")}:
+                        {t("appointment.note")}:
                       </Text>
                       <Text h4 color={Colors.text}>
                         {item.note}
@@ -430,13 +432,13 @@ const ScheduledPage = () => {
                   backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                 >
                   <Text h4 color={Colors.red10}>
-                    {`${i18n.t("appointment.cancelled_by")}: ${
+                    {`${t("appointment.cancelled_by")}: ${
                       item.cancelled_by_user.full_name
                     }`}
                   </Text>
                   {item.cancellation_note && (
                     <Text marginT-5 h4 color={Colors.red10}>
-                      {`${i18n.t("appointment.cancel_reason")}: ${
+                      {`${t("appointment.cancel_reason")}: ${
                         item.cancellation_note
                       }`}
                     </Text>
@@ -458,7 +460,7 @@ const ScheduledPage = () => {
                         color={Colors.red10}
                       />
                       <Text h4 color={Colors.red10}>
-                        {i18n.t("appointment.cancel_appointment")}
+                        {t("appointment.cancel_appointment")}
                       </Text>
                     </View>
                   }
@@ -473,7 +475,7 @@ const ScheduledPage = () => {
                 children={
                   <View row gap-4 centerV>
                     <Text h4 color={Colors.primary}>
-                      {i18n.t("appointment.view_details")}
+                      {t("appointment.view_details")}
                     </Text>
                     <MaterialCommunityIcons
                       name="arrow-right"
@@ -654,14 +656,14 @@ const ScheduledPage = () => {
                     color={Colors.grey40}
                   />
                   <Text h2_bold center marginT-16 marginB-8>
-                    {i18n.t("appointment.no_appointments_title")}
+                    {t("appointment.no_appointments_title")}
                   </Text>
                   <Text h3 center grey30 marginB-24>
-                    {i18n.t("appointment.no_appointments_for_selected_date")}
+                    {t("appointment.no_appointments_for_selected_date")}
                   </Text>
                   <AppButton
                     type="primary"
-                    title={i18n.t("appointment.book_appointment")}
+                    title={t("appointment.book_appointment")}
                     onPress={() => router.push("/(app)/service-package")}
                     buttonStyle={{ minWidth: 200 }}
                   />
@@ -701,7 +703,7 @@ const ScheduledPage = () => {
   return (
     <View flex bg-white>
       <AppBar
-        title={i18n.t("appointment.scheduled")}
+        title={t("appointment.scheduled")}
         rightComponent={renderViewModeToggle()}
       />
 
@@ -728,10 +730,10 @@ const ScheduledPage = () => {
                     color={Colors.grey40}
                   />
                   <Text h2_bold center>
-                    {i18n.t("appointment.no_appointments_title")}
+                    {t("appointment.no_appointments_title")}
                   </Text>
                   <Text h3 center grey30>
-                    {i18n.t(
+                    {t(
                       `appointment.no_${
                         selectedItem === 1
                           ? "appointments"
@@ -749,14 +751,14 @@ const ScheduledPage = () => {
                   </Text>
                   <AppButton
                     type="primary"
-                    title={i18n.t("appointment.book_for_service_package")}
+                    title={t("appointment.book_for_service_package")}
                     onPress={() => {
                       router.push("/(app)/service-package");
                     }}
                   />
                   <AppButton
                     type="outline"
-                    title={i18n.t("appointment.find_service")}
+                    title={t("appointment.find_service")}
                     onPress={() => {
                       router.push("/(app)/see-more?type=service");
                     }}
@@ -799,7 +801,7 @@ const ScheduledPage = () => {
             }}
           >
             <Text h2_bold marginB-15>
-              {i18n.t("appointment.cancel_appointment")}
+              {t("appointment.cancel_appointment")}
             </Text>
 
             <TextInput
@@ -812,7 +814,7 @@ const ScheduledPage = () => {
                 marginBottom: 20,
                 textAlignVertical: "top",
               }}
-              placeholder={i18n.t("appointment.cancel_appointment_reason")}
+              placeholder={t("appointment.cancel_appointment_reason")}
               value={note}
               onChangeText={setNote}
               multiline
@@ -821,12 +823,12 @@ const ScheduledPage = () => {
             <View row spread>
               <AppButton
                 type="outline"
-                title={i18n.t("appointment.cancel")}
+                title={t("appointment.cancel")}
                 onPress={() => setModalVisible(false)}
               />
               <AppButton
                 type="outline"
-                title={i18n.t("appointment.confirm")}
+                title={t("appointment.confirm")}
                 onPress={handleConfirmCancel}
               />
             </View>

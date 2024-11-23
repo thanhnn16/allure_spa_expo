@@ -1,4 +1,5 @@
-import i18n from '@/languages/i18n';
+import { useLanguage } from '@/hooks/useLanguage';
+const { t } = useLanguage();
 import { Wizard } from 'react-native-ui-lib'
 
 const TransactionHeader = ({ status }: { status: string }) => {
@@ -17,10 +18,10 @@ const TransactionHeader = ({ status }: { status: string }) => {
     };
     return (
         <Wizard activeIndex={handleGetOrderStatus(status)} onActiveIndexChanged={() => handleGetOrderStatus(status)}>
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.pending')} />
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.confirmed')} />
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.delivering')} />
-            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={i18n.t('transaction_detail.timeline.completed')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={t('transaction_detail.timeline.pending')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={t('transaction_detail.timeline.confirmed')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={t('transaction_detail.timeline.delivering')} />
+            <Wizard.Step state={Wizard.States.ENABLED} enabled={false} label={t('transaction_detail.timeline.completed')} />
         </Wizard>
     )
 }

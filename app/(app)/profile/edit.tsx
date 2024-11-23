@@ -8,7 +8,9 @@ import {
 } from "react-native-ui-lib";
 import { Alert } from "react-native";
 import { router } from "expo-router";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppDialog from "@/components/dialog/AppDialog";
 import { TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -178,7 +180,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("profile.edit_profile")} />
+      <AppBar back title={t("profile.edit_profile")} />
       <View paddingH-24>
         <View center marginT-30 gap-7>
           <Image
@@ -314,7 +316,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
             onPress={handleSaveChanges}
           >
             <Text center white text70BO>
-              {i18n.t("profile.change_info")}
+              {t("profile.change_info")}
             </Text>
           </TouchableOpacity>
         </View>

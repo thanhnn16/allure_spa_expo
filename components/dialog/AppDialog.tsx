@@ -1,7 +1,9 @@
 import { Dialog, Text, View } from "react-native-ui-lib";
 import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "../buttons/AppButton";
 import { ActivityIndicator } from "react-native";
 
@@ -32,8 +34,8 @@ const AppDialog = ({
   description,
   closeButton = true,
   confirmButton = true,
-  closeButtonLabel = i18n.t("common.cancel"),
-  confirmButtonLabel = i18n.t("common.confirm"),
+  closeButtonLabel = t("common.cancel"),
+  confirmButtonLabel = t("common.confirm"),
   loading = false,
 }: AppDialogProps) => {
   const iconMap = {

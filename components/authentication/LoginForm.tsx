@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Colors, View, Text } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
@@ -25,12 +27,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
-      setPhoneError(i18n.t("auth.login.empty_phone_number"));
+      setPhoneError(t("auth.login.empty_phone_number"));
       return false;
     }
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(phone)) {
-      setPhoneError(i18n.t("auth.login.invalid_phone_number"));
+      setPhoneError(t("auth.login.invalid_phone_number"));
       return false;
     }
     setPhoneError("");
@@ -39,16 +41,16 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
 
   const validatePassword = (pass: string) => {
     if (!pass) {
-      setPasswordError(i18n.t("auth.login.empty_password"));
+      setPasswordError(t("auth.login.empty_password"));
       return false;
     }
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;
     if (specialCharRegex.test(pass)) {
-      setPasswordError(i18n.t("auth.login.invalid_password_special_char"));
+      setPasswordError(t("auth.login.invalid_password_special_char"));
       return false;
     }
     if (pass.length < 8) {
-      setPasswordError(i18n.t("auth.login.invalid_password_length"));
+      setPasswordError(t("auth.login.invalid_password_length"));
       return false;
     }
     setPasswordError("");
@@ -68,7 +70,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
     try {
       await signIn({ phoneNumber, password });
     } catch (error: any) {
-      showDialog(i18n.t("auth.login.error"), error.message, "error");
+      showDialog(t("auth.login.error"), error.message, "error");
     } finally {
       setLoading(false);
     }
@@ -77,8 +79,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   return (
     <>
       <TextInput
-        title={i18n.t("auth.register.phone_number")}
-        placeholder={i18n.t("auth.register.phone_number")}
+        title={t("auth.register.phone_number")}
+        placeholder={t("auth.register.phone_number")}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
@@ -87,8 +89,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
       {phoneError ? <Text style={{ color: "red" }}>{phoneError}</Text> : null}
 
       <TextInput
-        title={i18n.t("auth.login.password")}
-        placeholder={i18n.t("auth.login.password")}
+        title={t("auth.login.password")}
+        placeholder={t("auth.login.password")}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -106,7 +108,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
         }}
       >
         <Text style={{ color: Colors.primary, fontSize: 16 }}>
-          {i18n.t("auth.login.forgot_password")}
+          {t("auth.login.forgot_password")}
         </Text>
       </View>
 
@@ -131,12 +133,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
                 fontWeight: "bold",
               }}
             >
-              {i18n.t("auth.login.title")}
+              {t("auth.login.title")}
             </Text>
           )}
         </AppButton>
         <AppButton
-          title={i18n.t("back")}
+          title={t("back")}
           type="outline"
           marginT-12
           onPress={onBackPress}

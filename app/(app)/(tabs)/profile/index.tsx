@@ -8,7 +8,9 @@ import {
   Colors,
 } from "react-native-ui-lib";
 import { useAuth } from "@/hooks/useAuth";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { Href, router } from "expo-router";
 import { useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
@@ -65,7 +67,7 @@ const ProfilePage = () => {
                 }
               />
               <View>
-                <Text h2_bold>{user?.full_name || i18n.t("common.guest")}</Text>
+                <Text h2_bold>{user?.full_name || t("common.guest")}</Text>
                 <Text h3>{user?.phone_number || ""}</Text>
               </View>
             </View>
@@ -106,45 +108,45 @@ const ProfilePage = () => {
           <Card width={"100%"} marginT-20>
             {[
               {
-                title: i18n.t("profile.my_account"),
-                description: i18n.t("profile.edit_personal_info"),
+                title: t("profile.my_account"),
+                description: t("profile.edit_personal_info"),
                 icon: require("@/assets/images/people.png"),
                 onPress: () => handleNavigation("/(app)/profile/detail"),
               },
               {
-                title: i18n.t("profile.service_package"),
-                description: i18n.t("profile.service_package_description"),
+                title: t("profile.service_package"),
+                description: t("profile.service_package_description"),
                 icon: require("@/assets/images/service-package.png"),
                 onPress: () => handleNavigation("/(app)/service-package"),
               },
               {
-                title: i18n.t("pageTitle.order"),
-                description: i18n.t("pageTitle.order_description"),
+                title: t("pageTitle.order"),
+                description: t("pageTitle.order_description"),
                 icon: require("@/assets/images/ic_favorite.png"),
                 onPress: () => handleNavigation("/(app)/order"),
               },
               {
-                title: i18n.t("pageTitle.favorite"),
-                description: i18n.t("pageTitle.favorite_description"),
+                title: t("pageTitle.favorite"),
+                description: t("pageTitle.favorite_description"),
                 icon: require("@/assets/images/heart.png"),
                 onPress: () => handleNavigation("/(app)/favorite"),
               },
               {
-                title: i18n.t("profile.voucher"),
-                description: i18n.t("profile.voucher_description"),
+                title: t("profile.voucher"),
+                description: t("profile.voucher_description"),
                 icon: VoucherIcon,
                 onPress: () => handleNavigation("/(app)/voucher"),
               },
               {
-                title: i18n.t("profile.order_address"),
-                description: i18n.t("profile.address_list"),
+                title: t("profile.order_address"),
+                description: t("profile.address_list"),
                 icon: require("@/assets/images/location.png"),
                 onPress: () => handleNavigation("/(app)/address"),
               },
               {
                 title: isGuest
-                  ? i18n.t("auth.login.login_now")
-                  : i18n.t("profile.logout"),
+                  ? t("auth.login.login_now")
+                  : t("profile.logout"),
                 description: "",
                 icon: require("@/assets/images/logout.png"),
                 onPress: handleSignOut,
@@ -178,27 +180,27 @@ const ProfilePage = () => {
             ))}
           </Card>
           <Text text80BO gray style={{ letterSpacing: 1 }} marginT-10>
-            {i18n.t("profile.more")}
+            {t("profile.more")}
           </Text>
           <Card width={"100%"} marginT-20>
             {[
               {
-                title: i18n.t("profile.purchase_policy"),
+                title: t("profile.purchase_policy"),
                 icon: require("@/assets/images/chamhoi.png"),
                 onPress: () => console.log("Purchase Policy"),
               },
               {
-                title: i18n.t("profile.help_support"),
+                title: t("profile.help_support"),
                 icon: require("@/assets/images/ring.png"),
                 onPress: () => console.log("Help & Support"),
               },
               {
-                title: i18n.t("profile.about_app"),
+                title: t("profile.about_app"),
                 icon: require("@/assets/images/heart.png"),
                 onPress: () => handleNavigation("/profile/about-app", false),
               },
               {
-                title: i18n.t("profile.settings"),
+                title: t("profile.settings"),
                 icon: require("@/assets/images/setting.png"),
                 onPress: () => handleNavigation("/settings", false),
               },
@@ -229,10 +231,10 @@ const ProfilePage = () => {
       </ScrollView>
       <AppDialog
         visible={loginDialogVisible}
-        title={i18n.t("auth.login.login_required")}
-        description={i18n.t("auth.login.login_profile")}
-        closeButtonLabel={i18n.t("common.cancel")}
-        confirmButtonLabel={i18n.t("auth.login.login_now")}
+        title={t("auth.login.login_required")}
+        description={t("auth.login.login_profile")}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("auth.login.login_now")}
         severity="info"
         onClose={() => setLoginDialogVisible(false)}
         onConfirm={handleLoginConfirm}

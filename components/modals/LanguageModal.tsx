@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Animated, TouchableWithoutFeedback } from 'react-native';
 import { View, Text, Colors, TouchableOpacity } from 'react-native-ui-lib';
-import i18n from '@/languages/i18n';
+import { useLanguage } from '@/hooks/useLanguage';
+const { t } = useLanguage();
 
 interface LanguageModalProps {
   isVisible: boolean;
@@ -87,7 +88,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
               }
             ]}
           >
-            <Text style={styles.title}>{i18n.t('language')}</Text>
+            <Text style={styles.title}>{t('language')}</Text>
             {languages.map((lang) => (
               <TouchableOpacity
                 key={lang.code}
@@ -108,7 +109,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
               </TouchableOpacity>
             ))}
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Text style={styles.closeButtonText}>{i18n.t('close')}</Text>
+              <Text style={styles.closeButtonText}>{t('close')}</Text>
             </TouchableOpacity>
           </Animated.View>
         </TouchableWithoutFeedback>

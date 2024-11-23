@@ -4,7 +4,9 @@ import { router, useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 export default function InvoiceFailed() {
   const params = useLocalSearchParams<{
@@ -16,23 +18,23 @@ export default function InvoiceFailed() {
   const getContent = () => {
     if (params.payment_method === 'cash') {
       return {
-        title: i18n.t("invoice.order_failed"),
-        message: params.reason || i18n.t("invoice.order_failed_message"),
+        title: t("invoice.order_failed"),
+        message: params.reason || t("invoice.order_failed_message"),
         icon: "error",
         iconColor: Colors.red30,
       };
     }
     if (params.type === "cancel") {
       return {
-        title: i18n.t("invoice.payment_cancelled"),
-        message: i18n.t("invoice.payment_cancel_message"),
+        title: t("invoice.payment_cancelled"),
+        message: t("invoice.payment_cancel_message"),
         icon: "cancel",
         iconColor: Colors.orange30,
       };
     }
     return {
-      title: i18n.t("invoice.payment_failed"),
-      message: params.reason || i18n.t("invoice.payment_failed_message"),
+      title: t("invoice.payment_failed"),
+      message: params.reason || t("invoice.payment_failed_message"),
       icon: "error",
       iconColor: Colors.red30,
     };
@@ -66,7 +68,7 @@ export default function InvoiceFailed() {
             type="primary"
           />
           <AppButton
-            title={i18n.t("common.back_to_home")}
+            title={t("common.back_to_home")}
             onPress={() => router.replace("/(app)/")}
             type="primary"
           />

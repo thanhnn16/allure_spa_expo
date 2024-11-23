@@ -6,7 +6,8 @@ import { Href, router } from 'expo-router';
 
 import MicIcon from '@/assets/icons/mic.svg';
 import CameraIcon from '@/assets/icons/camera.svg';
-import i18n from '@/languages/i18n';
+import { useLanguage } from '@/hooks/useLanguage';
+const { t } = useLanguage();
 import {push} from "expo-router/build/global-state/routing";
 
 
@@ -81,7 +82,7 @@ const MessageTextInput = ({
 
             <Button
                 size={Button.sizes.small}
-                label={i18n.t('chat.send').toString()}
+                label={t('chat.send').toString()}
                 backgroundColor={Colors.primary}
                 onPress={handleSend}
             />

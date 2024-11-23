@@ -5,7 +5,9 @@ import {
   TabController,
   Image
 } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
@@ -51,8 +53,8 @@ const Voucher = () => {
             height={200}
           />
           <View marginT-20 centerH>
-            <Text h3_bold>{i18n.t("voucher.no_voucher")}</Text>
-            <Text h3>{i18n.t("voucher.buy_product_for_voucher")}</Text>
+            <Text h3_bold>{t("voucher.no_voucher")}</Text>
+            <Text h3>{t("voucher.buy_product_for_voucher")}</Text>
           </View>
         </View>
       );
@@ -77,8 +79,8 @@ const Voucher = () => {
             height={200}
           />
           <View marginT-20 centerH>
-            <Text h3_bold>{i18n.t("voucher.no_voucher")}</Text>
-            <Text h3>{i18n.t("voucher.buy_product_for_voucher")}</Text>
+            <Text h3_bold>{t("voucher.no_voucher")}</Text>
+            <Text h3>{t("voucher.buy_product_for_voucher")}</Text>
           </View>
         </View>
       );
@@ -103,8 +105,8 @@ const Voucher = () => {
             height={200}
           />
           <View marginT-20 centerH>
-            <Text h3_bold>{i18n.t("voucher.no_voucher")}</Text>
-            <Text h3>{i18n.t("voucher.buy_product_for_voucher")}</Text>
+            <Text h3_bold>{t("voucher.no_voucher")}</Text>
+            <Text h3>{t("voucher.buy_product_for_voucher")}</Text>
           </View>
         </View>
       );
@@ -122,11 +124,11 @@ const Voucher = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View flex bg-white>
-        <AppBar back title={i18n.t("voucher.title")} />
+        <AppBar back title={t("voucher.title")} />
         {isLoading ? (
           <VoucherSkeletonView />
         ) : (
-          <TabController items={[{ label: i18n.t("voucher.all") }, { label: i18n.t("voucher.active") }, { label: i18n.t("voucher.expired") }]}>
+          <TabController items={[{ label: t("voucher.all") }, { label: t("voucher.active") }, { label: t("voucher.expired") }]}>
             <AppTabBar />
             <View flex>
               <TabController.TabPage index={0}>{renderAllPage()}</TabController.TabPage>

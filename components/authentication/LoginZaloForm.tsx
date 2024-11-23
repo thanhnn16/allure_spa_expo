@@ -1,5 +1,7 @@
 import React from "react";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 import { useZaloAuth } from "@/hooks/useZaloAuth";
 import { Text, View } from "react-native-ui-lib";
@@ -13,16 +15,16 @@ const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ onBackPress }) => {
 
   return (
     <View>
-      <Text text70H>{i18n.t("auth.login.zalo_login_description")}</Text>
+      <Text text70H>{t("auth.login.zalo_login_description")}</Text>
       <View marginV-20 gap-12>
         <AppButton
           type="primary"
-          title={i18n.t("continue")}
+          title={t("continue")}
           loading={loading}
           onPress={login}
         />
         <AppButton
-          title={i18n.t("back")}
+          title={t("back")}
           type="outline"
           onPress={onBackPress}
         />

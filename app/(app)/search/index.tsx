@@ -25,7 +25,9 @@ import {
 import AppBar from "@/components/app-bar/AppBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RecentSearches from "@/components/search/RecentSearches";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -113,7 +115,7 @@ const SearchScreen = () => {
         {results.products?.length > 0 && (
           <View marginB-20>
             <Text h2_bold marginB-10>
-              {i18n.t("search.product")}
+              {t("search.product")}
             </Text>
             {results.products.map((product: Product) => (
               <SearchListItem
@@ -128,7 +130,7 @@ const SearchScreen = () => {
         {results.services?.length > 0 && (
           <View>
             <Text h2_bold marginB-10>
-              {i18n.t("search.service")}
+              {t("search.service")}
             </Text>
             {results.services.map((service: ServiceResponeModel) => (
               <SearchListItem
@@ -144,7 +146,7 @@ const SearchScreen = () => {
           !results.products?.length &&
           !results.services?.length && (
             <View center marginT-40>
-              <Text h3>{i18n.t("search.no_result")}</Text>
+              <Text h3>{t("search.no_result")}</Text>
             </View>
           )}
       </>
@@ -153,7 +155,7 @@ const SearchScreen = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("search.title")} />
+      <AppBar back title={t("search.title")} />
       <View flex marginH-20>
         <AppSearch
           value={searchQuery}

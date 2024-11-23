@@ -22,7 +22,9 @@ import { toggleFavoriteThunk } from '@/redux/features/favorite/favoritesThunk';
 import { router, useLocalSearchParams, Href } from "expo-router";
 import { MediaResponeModelParams, ServiceDetailResponeModel, ServiceDetailResponeParams } from "@/types/service.type";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import AppBar from "@/components/app-bar/AppBar";
 import ImageView from "react-native-image-viewing";
 import AppButton from "@/components/buttons/AppButton";
@@ -201,15 +203,15 @@ const ServiceDetailPage = () => {
         switch (combo) {
             case 1:
                 setPrice(service?.combo_5_price);
-                setComboName(i18n.t("package.commbo5"));
+                setComboName(t("package.commbo5"));
                 break;
             case 2:
                 setPrice(service?.combo_10_price);
-                setComboName(i18n.t("package.combo10"));
+                setComboName(t("package.combo10"));
                 break;
             default:
                 setPrice(service?.single_price);
-                setComboName(i18n.t("package.single"));
+                setComboName(t("package.single"));
                 break;
         }
     }, [combo]);
@@ -254,7 +256,7 @@ const ServiceDetailPage = () => {
 
     return (
         <View flex bg-$white>
-            <AppBar back title={i18n.t("service.service_details")} />
+            <AppBar back title={t("service.service_details")} />
             {isLoading ? renderSkeletonView() : service && (
                 <View flex>
                     <View flex>
@@ -337,13 +339,13 @@ const ServiceDetailPage = () => {
                                     <View flex row right>
                                         <Text h3_medium>
                                             {service?.rating_summary.total_ratings}{" "}
-                                            {i18n.t("productDetail.reviews")}
+                                            {t("productDetail.reviews")}
                                         </Text>
                                     </View>
                                 </View>
                                 {/* Package Selection */}
                                 <View gap-20>
-                                    <Text h2_bold>{i18n.t("service.treatment")}</Text>
+                                    <Text h2_bold>{t("service.treatment")}</Text>
 
                                     <TouchableOpacity onPress={() => setShowActionSheet(true)}>
                                         <View
@@ -417,7 +419,7 @@ const ServiceDetailPage = () => {
 
                             {/* Package Selection Sheet */}
                             <ActionSheet
-                                title={i18n.t("package.select_combo")}
+                                title={t("package.select_combo")}
                                 cancelButtonIndex={4}
                                 showCancelButton={true}
                                 destructiveButtonIndex={0}
@@ -427,15 +429,15 @@ const ServiceDetailPage = () => {
                                 useNativeIOS
                                 options={[
                                     {
-                                        label: i18n.t("package.single"),
+                                        label: t("package.single"),
                                         onPress: () => setCombo(0),
                                     },
                                     {
-                                        label: i18n.t("package.combo5"),
+                                        label: t("package.combo5"),
                                         onPress: () => setCombo(1),
                                     },
                                     {
-                                        label: i18n.t("package.combo10"),
+                                        label: t("package.combo10"),
                                         onPress: () => setCombo(2),
                                     },
                                 ]}
@@ -453,10 +455,10 @@ const ServiceDetailPage = () => {
                     {/* Dialogs */}
                     <AppDialog
                         visible={buyProductDialog}
-                        title={i18n.t("auth.login.login_required")}
-                        description={i18n.t("auth.login.login_buy_product")}
-                        closeButtonLabel={i18n.t("common.cancel")}
-                        confirmButtonLabel={i18n.t("auth.login.login_now")}
+                        title={t("auth.login.login_required")}
+                        description={t("auth.login.login_buy_product")}
+                        closeButtonLabel={t("common.cancel")}
+                        confirmButtonLabel={t("auth.login.login_now")}
                         severity="info"
                         onClose={() => setBuyProductDialog(false)}
                         onConfirm={handleLoginConfirm}
@@ -464,10 +466,10 @@ const ServiceDetailPage = () => {
 
                     <AppDialog
                         visible={favoriteDialog}
-                        title={i18n.t("auth.login.login_required")}
-                        description={i18n.t("auth.login.login_favorite")}
-                        closeButtonLabel={i18n.t("common.cancel")}
-                        confirmButtonLabel={i18n.t("auth.login.login_now")}
+                        title={t("auth.login.login_required")}
+                        description={t("auth.login.login_favorite")}
+                        closeButtonLabel={t("common.cancel")}
+                        confirmButtonLabel={t("auth.login.login_now")}
                         severity="info"
                         onClose={() => setFavoriteDialog(false)}
                         onConfirm={handleLoginConfirm}
@@ -475,10 +477,10 @@ const ServiceDetailPage = () => {
 
                     <AppDialog2
                         visible={bookingDialog}
-                        title={i18n.t("service.serviceDetail.book_now")}
-                        closeButtonLabel={i18n.t("common.cancel")}
-                        confirmButtonLabel={i18n.t("service.book_now")}
-                        secondaryConfirmButtonLabel={i18n.t("checkout.pay_online")}
+                        title={t("service.serviceDetail.book_now")}
+                        closeButtonLabel={t("common.cancel")}
+                        confirmButtonLabel={t("service.book_now")}
+                        secondaryConfirmButtonLabel={t("checkout.pay_online")}
                         severity="info"
                         onClose={() => setBookingDialog(false)}
                         onConfirm={handleBooking}
@@ -503,7 +505,7 @@ const ServiceDetailPage = () => {
                             Combo 10 giảm 30% - tặng 3 lần sử dụng.
                         </Text>
                         <ActionSheet
-                            title={i18n.t("package.select_combo")}
+                            title={t("package.select_combo")}
                             cancelButtonIndex={4}
                             showCancelButton={true}
                             destructiveButtonIndex={0}
@@ -513,15 +515,15 @@ const ServiceDetailPage = () => {
                             useNativeIOS
                             options={[
                                 {
-                                    label: i18n.t("package.single"),
+                                    label: t("package.single"),
                                     onPress: () => setCombo(0),
                                 },
                                 {
-                                    label: i18n.t("package.combo5"),
+                                    label: t("package.combo5"),
                                     onPress: () => setCombo(1),
                                 },
                                 {
-                                    label: i18n.t("package.combo10"),
+                                    label: t("package.combo10"),
                                     onPress: () => setCombo(2),
                                 },
                             ]}

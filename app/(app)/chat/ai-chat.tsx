@@ -7,7 +7,6 @@ import AppBar from "@/components/app-bar/AppBar";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import MessageBubble from "@/components/message/MessageBubble";
 import MessageTextInput from "@/components/message/MessageTextInput";
-import i18n from "@/languages/i18n";
 import {
   fetchAiConfigs,
   sendImageMessage,
@@ -16,10 +15,13 @@ import {
 import { AppDispatch, RootState } from "@/redux/store";
 import { useAuth } from "@/hooks/useAuth";
 import { convertImageToBase64 } from "@/utils/helpers/imageHelper";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const AIChatScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, isLoading, isThinking, error, configs } = useSelector(
+  const { messages, isThinking, error, configs } = useSelector(
     (state: RootState) => state.ai
   );
   const [message, setMessage] = useState("");
@@ -194,7 +196,7 @@ const AIChatScreen = () => {
       )}
 
       <MessageTextInput
-        placeholder={i18n.t("chat.chat_with_ai") + "..."}
+        placeholder={t("chat.chat_with_ai") + "..."}
         message={message}
         setMessage={setMessage}
         handleSend={handleSend}
@@ -224,10 +226,6 @@ const AIChatScreen = () => {
 
   const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    dispatch(fetchAiConfigs()).finally(() => setRefreshing(false));
-  }, []);
 
   return (
     <KeyboardTrackingView
@@ -235,7 +233,7 @@ const AIChatScreen = () => {
       trackInteractive
       useSafeArea
     >
-      <AppBar back title={i18n.t("chat.chat_with_ai")} />
+      <AppBar back title={t("chat.chat_with_ai")} />
       {renderChatUI()}
     </KeyboardTrackingView>
   );

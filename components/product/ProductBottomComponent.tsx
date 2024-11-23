@@ -10,7 +10,9 @@ import {
 } from "react-native-ui-lib";
 
 import { Link, router } from "expo-router";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 import CommentIcon from "@/assets/icons/comment.svg";
 import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
@@ -129,18 +131,18 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />
           </View>
-          <Text h3_medium>{i18n.t("productDetail.reviews")}</Text>
+          <Text h3_medium>{t("productDetail.reviews")}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleAddToCart()}>
           <View center marginB-4>
             <Image source={ShoppingCartIcon} size={24} />
           </View>
-          <Text h3_medium>{i18n.t("productDetail.add_to_cart")}</Text>
+          <Text h3_medium>{t("productDetail.add_to_cart")}</Text>
         </TouchableOpacity>
       </View>
       <View flex right>
         <Button
-          label={i18n.t("productDetail.buy_now").toString()}
+          label={t("productDetail.buy_now").toString()}
           br40
           onPress={handlePurchase}
           backgroundColor={Colors.primary}

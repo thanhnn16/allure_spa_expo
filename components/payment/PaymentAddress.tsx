@@ -11,7 +11,9 @@ import React from "react";
 
 import BackIcon from "@/assets/icons/arrow_left.svg";
 import { Ionicons } from "@expo/vector-icons";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { PaymentAddressProps } from "@/app/(app)/check-out";
 
 interface PaymentAddressComponentProps {
@@ -27,7 +29,7 @@ const PaymentAddress = ({
 }: PaymentAddressComponentProps) => {
   return (
     <View marginV-10>
-      <Text h2_bold>{i18n.t("checkout.customer_info")}</Text>
+      <Text h2_bold>{t("checkout.customer_info")}</Text>
       <TouchableOpacity onPress={onPress}>
         <View
           row

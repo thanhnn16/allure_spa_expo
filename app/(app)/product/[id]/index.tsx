@@ -20,7 +20,9 @@ import TagIcon from "@/assets/icons/tag.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getProductThunk } from "@/redux/features/products/productThunk";
@@ -125,8 +127,8 @@ export default function DetailsScreen() {
       setIsFavorite((prev: boolean) => !prev);
       console.error("Error toggling favorite:", error);
       Alert.alert(
-        i18n.t("common.error"),
-        i18n.t("common.something_went_wrong")
+        t("common.error"),
+        t("common.something_went_wrong")
       );
     }
   };
@@ -252,7 +254,7 @@ export default function DetailsScreen() {
   if (isInitialLoading || isLoading) {
     return (
       <View flex bg-$white>
-        <AppBar back rightComponent title={i18n.t("productDetail.title")} />
+        <AppBar back rightComponent title={t("productDetail.title")} />
         <View flex>
           <SkeletonView
             height={200}
@@ -275,7 +277,7 @@ export default function DetailsScreen() {
 
   return (
     <View flex bg-$white>
-      <AppBar back rightComponent title={i18n.t("productDetail.title")} />
+      <AppBar back rightComponent title={t("productDetail.title")} />
       <View flex>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
@@ -349,7 +351,7 @@ export default function DetailsScreen() {
               </View>
               <View flex row right>
                 <Text h3_medium>
-                  {product?.quantity} {i18n.t("productDetail.available")}
+                  {product?.quantity} {t("productDetail.available")}
                 </Text>
               </View>
             </View>
@@ -361,10 +363,10 @@ export default function DetailsScreen() {
               <View>
                 {product?.benefits
                   ? createBulletPoints(product.benefits.split("\n"))
-                  : createBulletPoints([i18n.t("productDetail.no_info")])}
+                  : createBulletPoints([t("productDetail.no_info")])}
                 {product?.benefits
                   ? createBulletPoints(product?.product_notes?.split("\n"))
-                  : createBulletPoints([i18n.t("productDetail.no_info")])}
+                  : createBulletPoints([t("productDetail.no_info")])}
               </View>
             </View>
           </View>
@@ -381,7 +383,7 @@ export default function DetailsScreen() {
               <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
             ) : (
               <Text h2_medium>
-                {i18n.t("productDetail.product_description")}
+                {t("productDetail.product_description")}
               </Text>
             )}
             <ProductDescription product={product} isLoading={isLoading} />
@@ -417,20 +419,20 @@ export default function DetailsScreen() {
 
         <AppDialog
           visible={buyProductDialog}
-          title={i18n.t("auth.login.login_required")}
-          description={i18n.t("auth.login.login_buy_product")}
-          closeButtonLabel={i18n.t("common.cancel")}
-          confirmButtonLabel={i18n.t("auth.login.login_now")}
+          title={t("auth.login.login_required")}
+          description={t("auth.login.login_buy_product")}
+          closeButtonLabel={t("common.cancel")}
+          confirmButtonLabel={t("auth.login.login_now")}
           severity="info"
           onClose={() => setBuyProductDialog(false)}
           onConfirm={handleLoginConfirm}
         />
         <AppDialog
           visible={favoriteDialog}
-          title={i18n.t("auth.login.login_required")}
-          description={i18n.t("auth.login.login_favorite")}
-          closeButtonLabel={i18n.t("common.cancel")}
-          confirmButtonLabel={i18n.t("auth.login.login_now")}
+          title={t("auth.login.login_required")}
+          description={t("auth.login.login_favorite")}
+          closeButtonLabel={t("common.cancel")}
+          confirmButtonLabel={t("auth.login.login_now")}
           severity="info"
           onClose={() => setFavoriteDialog(false)}
           onConfirm={handleLoginConfirm}

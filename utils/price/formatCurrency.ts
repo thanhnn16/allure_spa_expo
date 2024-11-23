@@ -1,4 +1,5 @@
 import i18n from "@/languages/i18n";
+
 import { FormatNumberOptions } from "i18n-js";
 
 interface PriceProps {

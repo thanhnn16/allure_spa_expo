@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { FlatList, Dimensions, Modal, ScrollView } from "react-native";
+import { FlatList, Dimensions, Modal } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   View,
@@ -33,6 +32,9 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { View as RNView } from "react-native";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const BookingPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -143,20 +145,20 @@ const BookingPage = () => {
 
   const handleShowModal = () => {
     if (selectedDate === "") {
-      setDialogTitle(i18n.t("service.error"));
-      setDialogDescription(i18n.t("service.plase_select_date"));
+      setDialogTitle(t("service.error"));
+      setDialogDescription(t("service.plase_select_date"));
       setDialogVisible(true);
       return;
     }
     if (selectedTime === undefined) {
-      setDialogTitle(i18n.t("service.error"));
-      setDialogDescription(i18n.t("service.plase_select_time"));
+      setDialogTitle(t("service.error"));
+      setDialogDescription(t("service.plase_select_time"));
       setDialogVisible(true);
       return;
     }
     if (slot === 0) {
-      setDialogTitle(i18n.t("service.error"));
-      setDialogDescription(i18n.t("service.minimum_slot_error"));
+      setDialogTitle(t("service.error"));
+      setDialogDescription(t("service.minimum_slot_error"));
       setDialogVisible(true);
       return;
     }
@@ -182,7 +184,7 @@ const BookingPage = () => {
       setShowConfirmModal(true); // Show confirm modal
       setSuccess(true); // Set success state to true upon successful booking
     } catch (error: any) {
-      setDialogTitle(i18n.t("service.error"));
+      setDialogTitle(t("service.error"));
       setDialogDescription(error.message);
       setDialogVisible(true);
     }
@@ -211,7 +213,7 @@ const BookingPage = () => {
         setSuccess(true); // Set success state to true upon successful update
       }
     } catch (error: any) {
-      setDialogTitle(i18n.t("service.error"));
+      setDialogTitle(t("service.error"));
       setDialogDescription(error.message);
       setDialogVisible(true);
     }
@@ -224,7 +226,7 @@ const BookingPage = () => {
       dispatch(resetBookingState());
     }
     if (error) {
-      setDialogTitle(i18n.t("service.error"));
+      setDialogTitle(t("service.error"));
       setDialogDescription(error.message);
       setDialogVisible(true);
       dispatch(resetBookingState());
@@ -288,7 +290,7 @@ const BookingPage = () => {
                     selectedTime === time.id ? Colors.primary : Colors.text,
                 }}
               >
-                {time.available_slots} {i18n.t("service.available")}
+                {time.available_slots} {t("service.available")}
               </Text>
             </View>
           </Card>
@@ -338,7 +340,7 @@ const BookingPage = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("service.make_appointment")} />
+      <AppBar back title={t("service.make_appointment")} />
       <View flex>
         <Animated.ScrollView
           ref={timeSlotRef}
@@ -431,7 +433,7 @@ const BookingPage = () => {
             {timeSlots.length > 0 && (
               <View marginT-20 marginB-20>
                 <Text text60BO $textDefault marginB-10>
-                  {i18n.t("service.select_time")}
+                  {t("service.select_time")}
                 </Text>
                 <View marginT-16>
                   <FlatList
@@ -499,8 +501,7 @@ const BookingPage = () => {
                                       : Colors.text,
                                 }}
                               >
-                                {item.available_slots}{" "}
-                                {i18n.t("service.available")}
+                                {item.available_slots} {t("service.available")}
                               </Text>
                             </View>
                           </Card>
@@ -527,7 +528,7 @@ const BookingPage = () => {
             {selectedTime && (
               <View ref={seatRef}>
                 <Text text60BO $textDefault marginB-10>
-                  {i18n.t("service.select_seat")}
+                  {t("service.select_seat")}
                 </Text>
                 <View row spread marginT-12>
                   <TouchableOpacity
@@ -547,7 +548,7 @@ const BookingPage = () => {
                       }}
                     >
                       <Text color={slot === 1 ? Colors.primary : Colors.text}>
-                        {i18n.t("service.1_seat")}
+                        {t("service.1_seat")}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -573,7 +574,7 @@ const BookingPage = () => {
                       }}
                     >
                       <Text color={slot === 2 ? Colors.primary : Colors.text}>
-                        {i18n.t("service.2_seat")}
+                        {t("service.2_seat")}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -584,12 +585,12 @@ const BookingPage = () => {
             {slot !== 0 && (
               <View ref={noteRef} marginT-20>
                 <Text text60BO $textDefault marginB-12>
-                  {i18n.t("service.note")}
+                  {t("service.note")}
                 </Text>
                 <TextArea
                   value={note}
                   onChangeText={setNote}
-                  placeholder={i18n.t("service.enter_content")}
+                  placeholder={t("service.enter_content")}
                   multiline
                   numberOfLines={5}
                   maxLength={200}
@@ -603,7 +604,7 @@ const BookingPage = () => {
                 />
                 <View marginT-20>
                   <AppButton
-                    title={i18n.t("service.continue")}
+                    title={t("service.continue")}
                     type="primary"
                     onPress={handleShowModal}
                   />
@@ -622,35 +623,35 @@ const BookingPage = () => {
             </View>
             <Text text60BO center marginB-10>
               {edit_mode === "true"
-                ? i18n.t("service.update_information")
-                : i18n.t("service.confirm_information")}
+                ? t("service.update_information")
+                : t("service.confirm_information")}
             </Text>
 
             <View marginB-20>
               <Text text70 marginB-5>
-                {i18n.t("service.customer_name")}:{" "}
+                {t("service.customer_name")}:{" "}
                 <Text text70BO>{user.full_name}</Text>
               </Text>
               <Text text70 marginB-5>
-                {i18n.t("service.service_name")}:{" "}
+                {t("service.service_name")}:{" "}
                 <Text text70BO>{service_name}</Text>
               </Text>
               <Text text70 marginB-5>
-                {i18n.t("service.time")}: <Text text70BO>{timeString}</Text>
+                {t("service.time")}: <Text text70BO>{timeString}</Text>
               </Text>
               <Text text70 marginB-5>
-                {i18n.t("service.date")}:{" "}
+                {t("service.date")}:{" "}
                 <Text text70BO>
                   {moment(selectedDate).format("DD/MM/YYYY")}
                 </Text>
               </Text>
               <Text text70 marginB-5>
-                {i18n.t("service.note")}: <Text text70BO>{note}</Text>
+                {t("service.note")}: <Text text70BO>{note}</Text>
               </Text>
             </View>
             <View row spread marginT-20 paddingH-20 marginB-10>
               <AppButton
-                title={i18n.t("service.agree")}
+                title={t("service.agree")}
                 type="primary"
                 onPress={() => {
                   if (edit_mode === "true") {
@@ -661,7 +662,7 @@ const BookingPage = () => {
                 }}
               />
               <AppButton
-                title={i18n.t("service.cancel")}
+                title={t("service.cancel")}
                 type="outline"
                 onPress={() => {
                   setShowModal(false);
@@ -679,11 +680,11 @@ const BookingPage = () => {
               <MaterialIcons name="done" size={64} color={Colors.primary} />
             </View>
             <Text text60BO center marginB-20>
-              {i18n.t("service.confirm_information")}
+              {t("service.confirm_information")}
             </Text>
             <View paddingH-20 marginB-10>
               <AppButton
-                title={i18n.t("service.back_to_home")}
+                title={t("service.back_to_home")}
                 type="primary"
                 marginB-10
                 onPress={() => {
@@ -692,7 +693,7 @@ const BookingPage = () => {
                 }}
               />
               <AppButton
-                title={i18n.t("service.view_appointments")}
+                title={t("service.view_appointments")}
                 type="outline"
                 onPress={() => {
                   setShowConfirmModal(false);
@@ -711,11 +712,11 @@ const BookingPage = () => {
               <MaterialIcons name="done" size={64} color={Colors.primary} />
             </View>
             <Text text60BO center marginB-20>
-              {i18n.t("service.update_information")}
+              {t("service.update_information")}
             </Text>
             <View paddingH-20 marginB-10>
               <AppButton
-                title={i18n.t("service.back_to_home")}
+                title={t("service.back_to_home")}
                 type="primary"
                 marginB-10
                 onPress={() => {
@@ -724,7 +725,7 @@ const BookingPage = () => {
                 }}
               />
               <AppButton
-                title={i18n.t("service.view_appointments")}
+                title={t("service.view_appointments")}
                 type="outline"
                 onPress={() => {
                   setShowUpdateModal(false);

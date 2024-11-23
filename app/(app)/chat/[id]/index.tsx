@@ -14,13 +14,14 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useAuth } from "@/hooks/useAuth";
 import MessageTextInput from "@/components/message/MessageTextInput";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
 import MessageBubble from "@/components/message/MessageBubble";
 import { fetchMessagesThunk } from "@/redux/features/chat/fetchMessagesThunk";
 import { sendMessageThunk } from "@/redux/features/chat/sendMessageThunk";
 import { markAsReadThunk } from "@/redux/features/chat/markAsReadThunk";
 import { addMessage, addTempMessage } from "@/redux/features/chat/chatSlice";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const ChatScreen = () => {
   const { id } = useLocalSearchParams();
@@ -134,7 +135,7 @@ const ChatScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppBar title={i18n.t("chat.customer_care")} back />
+      <AppBar title={t("chat.customer_care")} back />
       {isLoading ? (
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
@@ -175,11 +176,11 @@ const ChatScreen = () => {
             message={message}
             setMessage={setMessage}
             handleSend={handleSend}
-            placeholder={i18n.t("chat.type_message")}
+            placeholder={t("chat.type_message")}
             isAI={false}
             isCamera={true}
             selectedImages={[]}
-            setSelectedImages={() => { }}
+            setSelectedImages={() => {}}
           />
         </KeyboardAvoidingView>
       )}

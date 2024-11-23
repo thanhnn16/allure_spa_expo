@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  Button,
-  Colors,
-} from "react-native-ui-lib";
+import { View, Text, Image, Button, Colors } from "react-native-ui-lib";
 import {
   StyleSheet,
   FlatList,
@@ -25,11 +19,16 @@ import {
 import CartProductItem from "@/components/cart/CartProductItem";
 import { RootState } from "@/redux/store";
 import CartEmptyIcon from "@/assets/icons/cart_empty.svg";
-import i18n from "@/languages/i18n";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import formatCurrency from "@/utils/price/formatCurrency";
 import AppDialog from "@/components/dialog/AppDialog";
-import { setOrderProducts, clearOrder } from "@/redux/features/order/orderSlice";
+import {
+  setOrderProducts,
+  clearOrder,
+} from "@/redux/features/order/orderSlice";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 export default function Cart() {
   const dispatch = useDispatch();
@@ -147,7 +146,7 @@ export default function Cart() {
       quantity: item.cart_quantity,
       image: item.media?.[0]?.full_url || item.media?.[0]?.full_url,
       type: item.item_type,
-      service_type: item.service_type
+      service_type: item.service_type,
     }));
 
     dispatch(
@@ -174,7 +173,7 @@ export default function Cart() {
         description={
           "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
         }
-        closeButtonLabel={i18n.t("common.cancel")}
+        closeButtonLabel={t("common.cancel")}
         confirmButtonLabel={"Xóa"}
         severity="info"
         onClose={() => setCartDialog(false)}

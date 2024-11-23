@@ -18,7 +18,9 @@ import { vi } from "date-fns/locale";
 import { Notification } from "@/redux/features/notification/types";
 import EmptyNotification from "@/components/notification/EmptyNotification";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import i18n from "@/languages/i18n";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 import { router } from "expo-router";
 
 interface GroupedNotifications {
@@ -130,7 +132,7 @@ const NotificationPage: React.FC = () => {
       <View flex center bg-white>
         <ActivityIndicator size="large" color={Colors.primary} />
         <Text marginT-8 h2_bold color={Colors.grey40}>
-          {i18n.t("notification.loading")}
+          {t("notification.loading")}
         </Text>
       </View>
     );
@@ -138,7 +140,7 @@ const NotificationPage: React.FC = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={i18n.t("notification.title")} />
+      <AppBar back title={t("notification.title")} />
       <View flex>
         {!loading && notifications?.length === 0 && (
           <EmptyNotification showHeader={false} />
@@ -162,7 +164,7 @@ const NotificationPage: React.FC = () => {
               }}
             >
               <Text h2_bold color={Colors.text}>
-                {i18n.t("notification.all_notifications")}
+                {t("notification.all_notifications")}
               </Text>
               {notifications?.some((n: Notification) => !n.is_read) && (
                 <TouchableOpacity
@@ -174,7 +176,7 @@ const NotificationPage: React.FC = () => {
                   }}
                 >
                   <Text text80BO color={Colors.primary}>
-                    {i18n.t("notification.mark_all_as_read")}
+                    {t("notification.mark_all_as_read")}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -202,7 +204,7 @@ const NotificationPage: React.FC = () => {
                   <View center padding-16>
                     <ActivityIndicator size="small" color={Colors.primary} />
                     <Text marginT-8 text80 color={Colors.grey40}>
-                      {i18n.t("notification.loading_more")}
+                      {t("notification.loading_more")}
                     </Text>
                   </View>
                 )

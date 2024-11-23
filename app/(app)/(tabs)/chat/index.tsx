@@ -5,19 +5,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchChatsThunk } from "@/redux/features/chat/fetchChatsThunk";
-import * as Notifications from "expo-notifications";
 import messaging from "@react-native-firebase/messaging";
-import FirebaseService from "@/utils/services/firebase/firebaseService";
 
 import IconCskh from "@/assets/icons/cskh.svg";
 import AppBar from "@/components/app-bar/AppBar";
-import i18n from "@/languages/i18n";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { updateChatLastMessage } from "@/redux/features/chat/chatSlice";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
+import { useLanguage } from "@/hooks/useLanguage";
+
+const { t } = useLanguage();
 
 const ChatListScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,9 +29,10 @@ const ChatListScreen = () => {
       dispatch(fetchChatsThunk());
 
       const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-        if (remoteMessage.data?.type === "chat_message" && remoteMessage.messageId) {
-          await FirebaseService.showChatNotification(remoteMessage);
-
+        if (
+          remoteMessage.data?.type === "chat_message" &&
+          remoteMessage.messageId
+        ) {
           const newMessage = {
             id: remoteMessage.messageId,
             chat_id: remoteMessage.data.chat_id,
@@ -82,9 +82,9 @@ const ChatListScreen = () => {
         >
           <Image source={IconCskh} style={styles.avatar} />
           <View style={styles.messageContainer}>
-            <Text h3_bold>{i18n.t("chat.chat_with_ai")}</Text>
+            <Text h3_bold>{t("chat.chat_with_ai")}</Text>
             <Text h3 numberOfLines={1}>
-              {i18n.t("chat.ai_description")}
+              {t("chat.ai_description")}
             </Text>
           </View>
         </TouchableOpacity>
@@ -92,8 +92,7 @@ const ChatListScreen = () => {
     }
 
     // Nếu là chat với admin/staff
-    const lastMessage =
-      item.messages?.[0]?.message || i18n.t("chat.no_messages");
+    const lastMessage = item.messages?.[0]?.message || t("chat.no_messages");
     const lastMessageTime = item.messages?.[0]?.created_at;
 
     return (
@@ -103,7 +102,7 @@ const ChatListScreen = () => {
       >
         <Image source={IconCskh} style={styles.avatar} />
         <View style={styles.messageContainer}>
-          <Text h3_bold>{i18n.t("chat.customer_care")}</Text>
+          <Text h3_bold>{t("chat.customer_care")}</Text>
           <Text h3 numberOfLines={1}>
             {lastMessage}
           </Text>
@@ -126,14 +125,14 @@ const ChatListScreen = () => {
 
   return (
     <View flex bg-$backgroundDefault>
-      <AppBar title={i18n.t("pageTitle.chat")} />
+      <AppBar title={t("pageTitle.chat")} />
       {isGuest ? (
         <AppDialog
           visible={loginDialogVisible}
-          title={i18n.t("auth.login.login_required")}
-          description={i18n.t("auth.login.login_chat")}
-          closeButtonLabel={i18n.t("common.cancel")}
-          confirmButtonLabel={i18n.t("auth.login.login_now")}
+          title={t("auth.login.login_required")}
+          description={t("auth.login.login_chat")}
+          closeButtonLabel={t("common.cancel")}
+          confirmButtonLabel={t("auth.login.login_now")}
           severity="info"
           onClose={() => setLoginDialogVisible(false)}
           onConfirm={handleLoginConfirm}
