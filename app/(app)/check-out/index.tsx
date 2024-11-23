@@ -259,7 +259,11 @@ export default function Checkout() {
   }, [navigation]);
 
   useEffect(() => {
-    if (orderItems.length === 0) {
+    if (source === "direct" && tempOrder.items.length === 0) {
+      router.back();
+      return;
+    }
+    if (source !== "direct" && checkoutItems.length === 0) {
       router.back();
       return;
     }
@@ -273,7 +277,7 @@ export default function Checkout() {
         dispatch(clearTempOrder());
       }
     };
-  }, [orderItems]);
+  }, [source, tempOrder.items, checkoutItems]);
 
   useEffect(() => {
     loadAddressData();
