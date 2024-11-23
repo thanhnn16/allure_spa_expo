@@ -11,7 +11,6 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
-import { format } from "path";
 import { useEffect, useState } from "react";
 import {
   Dimensions,
@@ -19,7 +18,6 @@ import {
   Modal,
   ScrollView,
   TextInput,
-  ActivityIndicator,
   RefreshControl,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
@@ -35,6 +33,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { CalendarProvider, ExpandableCalendar } from "react-native-calendars";
 import { Positions } from "react-native-calendars/src/expandableCalendar";
+import { updateCalendarLocale } from "@/utils/calendar/localeConfig";
+import "moment/locale/vi";
+import "moment/locale/ja";
+
 const { width } = Dimensions.get("window");
 
 const ScheduledPage = () => {
@@ -198,13 +200,13 @@ const ScheduledPage = () => {
   }) => {
     const statusColors = {
       completed: {
-        bg: Colors.rgba(Colors.green30, 0.15),
-        text: Colors.green10,
+        bg: Colors.rgba(Colors.primary, 0.15),
+        text: Colors.primary,
         icon: "check-circle" as const,
       },
       pending: {
-        bg: Colors.rgba(Colors.yellow30, 0.15),
-        text: Colors.yellow10,
+        bg: Colors.rgba(Colors.secondary, 0.15),
+        text: Colors.secondary,
         icon: "clock-outline" as const,
       },
       cancelled: {
@@ -213,8 +215,8 @@ const ScheduledPage = () => {
         icon: "close-circle" as const,
       },
       confirmed: {
-        bg: Colors.rgba(Colors.blue30, 0.15),
-        text: Colors.blue10,
+        bg: Colors.rgba(Colors.primary, 0.15),
+        text: Colors.primary,
         icon: "calendar-check" as const,
       },
     };
@@ -235,10 +237,7 @@ const ScheduledPage = () => {
         }}
       >
         <LinearGradient
-          colors={[
-            Colors.white as string,
-            Colors.rgba(Colors.primary, 0.05) as string,
-          ]}
+          colors={[Colors.white as string, Colors.primary_blur as string]}
           style={{ borderRadius: 20 }}
         >
           <View padding-15 br20>
@@ -489,6 +488,47 @@ const ScheduledPage = () => {
     </TouchableOpacity>
   );
 
+  const calendarTheme = {
+    // Background
+    calendarBackground: Colors.white,
+    backgroundColor: Colors.white,
+
+    // Text colors
+    textSectionTitleColor: Colors.text,
+    selectedDayBackgroundColor: Colors.primary,
+    selectedDayTextColor: Colors.white,
+    todayTextColor: Colors.primary,
+    dayTextColor: Colors.text,
+    textDisabledColor: Colors.grey40,
+
+    // Dots & Marking
+    dotColor: Colors.primary,
+    selectedDotColor: Colors.white,
+
+    // Month navigation
+    arrowColor: Colors.primary,
+    monthTextColor: Colors.text,
+
+    // Header
+    textDayFontSize: 16,
+    textMonthFontSize: 16,
+    textDayHeaderFontSize: 14,
+
+    // General
+    todayButtonFontSize: 16,
+    todayButtonTextColor: Colors.primary,
+
+    // Additional styling
+    "stylesheet.calendar.header": {
+      dayHeader: {
+        color: Colors.text,
+        fontSize: 14,
+        fontWeight: "500",
+        paddingBottom: 5,
+      },
+    },
+  };
+
   const renderCalendarView = () => (
     <View flex>
       <CalendarProvider
@@ -502,13 +542,10 @@ const ScheduledPage = () => {
             })
           );
         }}
-        theme={{
-          todayButtonTextColor: Colors.primary,
-          selectedDayBackgroundColor: Colors.primary,
-          selectedDayTextColor: Colors.white,
-        }}
+        theme={calendarTheme}
       >
         <ExpandableCalendar
+          key="expandable-calendar"
           initialPosition={Positions.CLOSED}
           firstDay={1}
           markedDates={getMarkedDates()}
@@ -516,54 +553,15 @@ const ScheduledPage = () => {
           hideArrows={false}
           disableAllTouchEventsForDisabledDays={false}
           disableAllTouchEventsForInactiveDays={false}
-          onDayPress={(day) => {
-            setSelectedDate(day.dateString);
-            dispatch(
-              getAppointments({
-                from_date: day.dateString,
-                to_date: day.dateString,
-              })
-            );
-          }}
-          renderArrow={(direction) => (
-            <MaterialCommunityIcons
-              name={direction === "left" ? "chevron-left" : "chevron-right"}
-              size={24}
-              color={Colors.primary}
-            />
-          )}
-          renderHeader={(date) => {
-            const month = moment(date).format("MMMM YYYY");
-            return (
-              <View row centerV spread paddingH-16>
-                <Text h2_bold>{month}</Text>
-                {loading && (
-                  <ActivityIndicator size="small" color={Colors.primary} />
-                )}
-              </View>
-            );
-          }}
-          theme={{
-            calendarBackground: Colors.white,
-            textSectionTitleColor: Colors.grey30,
-            selectedDayBackgroundColor: Colors.primary,
-            selectedDayTextColor: Colors.white,
-            todayTextColor: Colors.primary,
-            dayTextColor: Colors.text,
-            textDisabledColor: Colors.grey60,
-            arrowColor: Colors.primary,
-            monthTextColor: Colors.text,
-            textMonthFontWeight: "bold",
-            textDayFontSize: 14,
-            textMonthFontSize: 16,
-            textDayHeaderFontSize: 14,
-            dotStyle: {
-              width: 6,
-              height: 6,
-              borderRadius: 3,
-              marginTop: 2,
-            },
-          }}
+          showWeekNumbers={false}
+          animateScroll={true}
+          closeOnDayPress={true}
+          theme={calendarTheme}
+          customHeaderTitle={
+            <Text h3 color={Colors.text}>
+              {moment(selectedDate).format("MMMM YYYY")}
+            </Text>
+          }
         />
 
         <View paddingH-24 paddingT-10>
@@ -623,6 +621,16 @@ const ScheduledPage = () => {
       </CalendarProvider>
     </View>
   );
+
+  // Update calendar locale when language changes
+  useEffect(() => {
+    updateCalendarLocale();
+  }, [i18n.locale]);
+
+  useEffect(() => {
+    // Update moment locale when language changes
+    moment.locale(i18n.locale);
+  }, [i18n.locale]);
 
   return (
     <View flex bg-white>
