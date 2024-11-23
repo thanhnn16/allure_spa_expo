@@ -45,15 +45,15 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
     if (onPurchase) {
       onPurchase();
     } else {
+      const price = service?.single_price
+        ? parseFloat(service.single_price.toString())
+        : 0;
+
       const serviceData = {
         id: service?.id,
         name: service?.service_name,
-        price: service?.single_price
-          ? parseFloat(service.single_price.toString())
-          : 0,
-        priceValue: service?.single_price
-          ? parseFloat(service.single_price.toString())
-          : 0,
+        price: price,
+        priceValue: price,
         quantity: 1,
         image: service?.media?.[0]?.full_url,
         type: "service",
@@ -67,17 +67,17 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
               item_id: service?.id,
               item_type: "service",
               quantity: 1,
-              price: parseFloat(service?.single_price?.toString() || "0"),
+              price: price,
               service_type: "single",
               service: {
                 id: service?.id,
                 service_name: service?.service_name,
                 media: service?.media || [],
-                price: parseFloat(service?.single_price?.toString() || "0"),
+                price: price,
               },
             },
           ],
-          totalAmount: serviceData.priceValue,
+          totalAmount: price,
           fromCart: false,
         })
       );
@@ -114,12 +114,14 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
           <Text h3_medium>{i18n.t("service.contact")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: `/(app)/rating/${service?.id}`,
-              params: { type: "service" },
-            })
-          }
+          onPress={() => {
+            if (service?.id) {
+              router.push({
+                pathname: "/rating/[id]",
+                params: { id: service.id, type: "service" },
+              });
+            }
+          }}
         >
           <View center marginB-4>
             <Image source={CommentIcon} size={24} />

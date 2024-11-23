@@ -66,16 +66,31 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
     if (onPurchase) {
       onPurchase();
     } else {
+      const price = product?.price ? parseFloat(product.price.toString()) : 0;
+
       const cartItem = {
         id: product?.id,
         item_type: "product",
         name: product?.name,
-        price: product?.price ? parseFloat(product.price.toString()) : 0,
+        price: price,
         cart_quantity: quantity,
         media: product?.media || [],
       };
 
-      dispatch(addItemToCart({ item: cartItem }));
+      dispatch(
+        setOrderProducts({
+          items: [
+            {
+              ...cartItem,
+              price: price * quantity,
+              totalAmount: price * quantity,
+            },
+          ],
+          totalAmount: price * quantity,
+          fromCart: false,
+        })
+      );
+
       router.push("/check-out");
     }
   };
@@ -105,8 +120,8 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           onPress={() => {
             if (product?.id) {
               router.push({
-                pathname: `/(app)/rating/${product.id}`,
-                params: { type: "product" },
+                pathname: "/rating/[id]",
+                params: { id: product.id, type: "product" },
               });
             }
           }}
