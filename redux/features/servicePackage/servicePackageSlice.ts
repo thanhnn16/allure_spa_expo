@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getServicePackagesThunk } from './getServicePackagesThunk';
-import { getUpcomingAppointmentThunk } from './upcomingAppointmentThunk';
 
 interface ServicePackageState {
     packages: any[];
@@ -35,19 +34,6 @@ export const servicePackageSlice = createSlice({
             .addCase(getServicePackagesThunk.rejected, (state: any, action: any) => {
                 state.error = action.error.message || 'Failed to load service packages';
                 state.isLoading = false;
-            });
-
-        builder
-            .addCase(getUpcomingAppointmentThunk.pending, (state: any) => {
-                state.loadingUpcoming = true;
-            })
-            .addCase(getUpcomingAppointmentThunk.fulfilled, (state: any, action: any) => {
-                state.loadingUpcoming = false;
-                state.upcomingAppointment = action.payload;
-            })
-            .addCase(getUpcomingAppointmentThunk.rejected, (state: any) => {
-                state.loadingUpcoming = false;
-                state.upcomingAppointment = null;
             });
     },
 });
