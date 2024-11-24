@@ -10,7 +10,7 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
-import React, { useEffect, useState, useCallback, memo } from "react";
+import { useEffect, useState } from "react";
 import {
   Dimensions,
   FlatList,
@@ -104,257 +104,6 @@ const ExpandableCalendarComponent: React.FC<ExpandableCalendarProps> = ({
     }}
   />
 );
-
-// Fix the memo implementation
-const AppointmentListItem = memo(({ 
-  item, 
-  index, 
-  onCancelPress, 
-  t 
-}: { 
-  item: AppointmentResponeModelParams;
-  index: number;
-  onCancelPress: (id: number) => void;
-  t: (key: string) => string;
-}) => {
-  if (!item) return null;
-
-  const statusColors = {
-    completed: {
-      bg: Colors.rgba(Colors.primary, 0.15),
-      text: Colors.primary,
-      icon: "check-circle" as const,
-    },
-    pending: {
-      bg: Colors.rgba(Colors.secondary, 0.15),
-      text: Colors.secondary,
-      icon: "clock-outline" as const,
-    },
-    cancelled: {
-      bg: Colors.rgba(Colors.red30, 0.15),
-      text: Colors.red10,
-      icon: "close-circle" as const,
-    },
-    confirmed: {
-      bg: Colors.rgba(Colors.primary, 0.15),
-      text: Colors.primary,
-      icon: "calendar-check" as const,
-    },
-  };
-
-  const statusConfig =
-    statusColors[item.status.toLowerCase() as keyof typeof statusColors];
-
-  return (
-    <Animated.View
-      entering={FadeInDown.delay(index * 100).springify()}
-      style={{
-        marginBottom: 15,
-        backgroundColor: Colors.white,
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
-        elevation: Platform.OS === 'android' ? 8 : 0,
-      }}
-    >
-      <LinearGradient
-        colors={[Colors.white, Colors.primary_blur]}
-        style={{ 
-          borderRadius: 20,
-          overflow: 'hidden',
-          ...(Platform.OS === 'ios' && {
-            borderWidth: 1,
-            borderColor: Colors.rgba(Colors.grey60, 0.2),
-          })
-        }}
-      >
-        <View padding-15 br20>
-          {/* Header */}
-          <View row spread centerV>
-            <View row centerV>
-              <Text h2_bold color={Colors.primary}>{`#${item.id
-                .toString()
-                .padStart(3)}`}</Text>
-            </View>
-            <View row centerV>
-              <MaterialCommunityIcons
-                name={statusConfig.icon}
-                size={20}
-                color={statusConfig.text}
-              />
-              <View
-                marginL-8
-                padding-8
-                br30
-                backgroundColor={statusConfig.bg}
-              >
-                <Text h4 color={statusConfig.text}>
-                  {t(`appointment.status.${item.status.toLowerCase()}`)}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Content */}
-          <View paddingT-15>
-            <View row>
-              <Image
-                source={require("@/assets/images/banner.png")}
-                style={{
-                  width: 110,
-                  height: 110,
-                  borderRadius: 15,
-                  backgroundColor: Colors.grey60,
-                }}
-              />
-              <View flex marginL-15>
-                <Text h3_bold numberOfLines={2}>
-                  {item.title}
-                </Text>
-
-                {/* Time Slot */}
-                {item.time_slot && (
-                  <View row centerV marginT-4>
-                    <MaterialCommunityIcons
-                      name="clock-time-four"
-                      size={16}
-                      color={Colors.primary}
-                    />
-                    <Text marginL-5 h4 color={Colors.text}>
-                      {`${moment(
-                        item.time_slot.start_time,
-                        "HH:mm:ss"
-                      ).format("HH:mm")} - ${moment(
-                        item.time_slot.end_time,
-                        "HH:mm:ss"
-                      ).format("HH:mm")}`}
-                    </Text>
-                  </View>
-                )}
-
-                {/* Date */}
-                <View row centerV marginT-5>
-                  <MaterialCommunityIcons
-                    name="calendar"
-                    size={16}
-                    color={Colors.primary}
-                  />
-                  <Text marginL-5 h4 color={Colors.text}>
-                    {moment(item.start).format("DD/MM/YYYY")}
-                  </Text>
-                </View>
-
-                {item.service?.single_price && (
-                  <View marginT-8>
-                    <Text h3_bold color={Colors.secondary}>
-                      {formatCurrency({ price: item.service.single_price })}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-
-            {/* Notes if exists */}
-            {item.note && (
-              <View
-                marginT-10
-                padding-12
-                br10
-                backgroundColor={Colors.grey70}
-                style={{
-                  borderLeftWidth: 3,
-                  borderLeftColor: Colors.primary,
-                }}
-              >
-                <View row>
-                  <MaterialCommunityIcons
-                    name="note-text-outline"
-                    size={16}
-                    color={Colors.primary}
-                    style={{ marginTop: 2 }}
-                  />
-                  <View flex marginL-8>
-                    <Text h4_bold color={Colors.primary} marginB-4>
-                      {t("appointment.note")}:
-                    </Text>
-                    <Text h4 color={Colors.text}>
-                      {item.note}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            )}
-
-            {/* Cancellation info */}
-            {item.status === "cancelled" && item.cancelled_by_user && (
-              <View
-                marginT-10
-                padding-10
-                br10
-                backgroundColor={Colors.rgba(Colors.red30, 0.1)}
-              >
-                <Text h4 color={Colors.red10}>
-                  {`${t("appointment.cancelled_by")}: ${
-                    item.cancelled_by_user.full_name
-                  }`}
-                </Text>
-                {item.cancellation_note && (
-                  <Text marginT-5 h4 color={Colors.red10}>
-                    {`${t("appointment.cancel_reason")}: ${
-                      item.cancellation_note
-                    }`}
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {/* Cancel button */}
-            {item.status === "pending" && (
-              <AppButton
-                type="outline"
-                onPress={() => onCancelPress(item.id)}
-                buttonStyle={{ marginTop: 15, width: "100%" }}
-                children={
-                  <View row gap-4 centerV>
-                    <MaterialCommunityIcons
-                      name="close-circle"
-                      size={16}
-                      color={Colors.red10}
-                    />
-                    <Text h4 color={Colors.red10}>
-                      {t("appointment.cancel_appointment")}
-                    </Text>
-                  </View>
-                }
-              />
-            )}
-
-            {/* Add View Details button */}
-            <AppButton
-              type="outline"
-              onPress={() => router.push(`/appointment/${item.id}`)}
-              buttonStyle={{ marginTop: 15, width: "100%" }}
-              children={
-                <View row gap-4 centerV>
-                  <Text h4 color={Colors.primary}>
-                    {t("appointment.view_details")}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name="arrow-right"
-                    size={16}
-                    color={Colors.primary}
-                  />
-                </View>
-              }
-            />
-          </View>
-        </View>
-      </LinearGradient>
-    </Animated.View>
-  );
-});
 
 const ScheduledPage = () => {
 const { t } = useLanguage();
@@ -510,20 +259,236 @@ const { t } = useLanguage();
     }
   };
 
-  // Replace the renderFlatListItem function with:
-  const renderFlatListItem = useCallback(({ item, index }: {
+  const renderFlatListItem = ({
+    item,
+    index,
+  }: {
     item: AppointmentResponeModelParams;
     index: number;
   }) => {
+    const statusColors = {
+      completed: {
+        bg: Colors.rgba(Colors.primary, 0.08),
+        text: Colors.primary,
+        icon: "check-circle" as const,
+      },
+      pending: {
+        bg: Colors.rgba(Colors.secondary, 0.08),
+        text: Colors.secondary,
+        icon: "clock-outline" as const,
+      },
+      cancelled: {
+        bg: Colors.rgba(Colors.red30, 0.08),
+        text: Colors.red10,
+        icon: "close-circle" as const,
+      },
+      confirmed: {
+        bg: Colors.rgba(Colors.primary, 0.08),
+        text: Colors.primary,
+        icon: "calendar-check" as const,
+      },
+    };
+
+    const statusConfig =
+      statusColors[item.status.toLowerCase() as keyof typeof statusColors];
+
     return (
-      <AppointmentListItem
-        item={item}
-        index={index}
-        onCancelPress={handleCancelOrderPress}
-        t={t}
-      />
+      <Animated.View
+        entering={FadeInDown.delay(index * 100).springify()}
+        style={{
+          marginBottom: 15,
+          backgroundColor: Colors.white,
+          borderRadius: 20,
+          ...(Platform.OS === 'ios' && {
+            borderWidth: 0.5,
+            borderColor: Colors.rgba(Colors.primary, 0.25),
+          }),
+        }}
+      >
+        <View padding-15 br20>
+          {/* Header */}
+          <View row spread centerV>
+            <View row centerV>
+              <Text h2_bold color={Colors.primary}>{`#${item.id
+                .toString()
+                .padStart(3)}`}</Text>
+            </View>
+            <View row centerV>
+              <MaterialCommunityIcons
+                name={statusConfig.icon}
+                size={20}
+                color={statusConfig.text}
+              />
+              <View
+                marginL-8
+                padding-8
+                br30
+                backgroundColor={statusConfig.bg}
+              >
+                <Text h4 color={statusConfig.text}>
+                  {t(`appointment.status.${item.status.toLowerCase()}`)}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Content */}
+          <View paddingT-15>
+            <View row>
+              <Image
+                source={require("@/assets/images/banner.png")}
+                style={{
+                  width: 110,
+                  height: 110,
+                  borderRadius: 15,
+                  backgroundColor: Colors.grey60,
+                }}
+              />
+              <View flex marginL-15>
+                <Text h3_bold numberOfLines={2}>
+                  {item.title}
+                </Text>
+
+                {/* Time Slot */}
+                {item.time_slot && (
+                  <View row centerV marginT-4>
+                    <MaterialCommunityIcons
+                      name="clock-time-four"
+                      size={16}
+                      color={Colors.primary}
+                    />
+                    <Text marginL-5 h4 color={Colors.text}>
+                      {`${moment(
+                        item.time_slot.start_time,
+                        "HH:mm:ss"
+                      ).format("HH:mm")} - ${moment(
+                        item.time_slot.end_time,
+                        "HH:mm:ss"
+                      ).format("HH:mm")}`}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Date */}
+                <View row centerV marginT-5>
+                  <MaterialCommunityIcons
+                    name="calendar"
+                    size={16}
+                    color={Colors.primary}
+                  />
+                  <Text marginL-5 h4 color={Colors.text}>
+                    {moment(item.start).format("DD/MM/YYYY")}
+                  </Text>
+                </View>
+
+                {item.service?.single_price && (
+                  <View marginT-8>
+                    <Text h3_bold color={Colors.secondary}>
+                      {formatCurrency({ price: item.service.single_price })}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Notes if exists */}
+            {item.note && (
+              <View
+                marginT-10
+                padding-12
+                br10
+                backgroundColor={Colors.grey70}
+                style={{
+                  borderLeftWidth: 3,
+                  borderLeftColor: Colors.primary,
+                }}
+              >
+                <View row>
+                  <MaterialCommunityIcons
+                    name="note-text-outline"
+                    size={16}
+                    color={Colors.primary}
+                    style={{ marginTop: 2 }}
+                  />
+                  <View flex marginL-8>
+                    <Text h4_bold color={Colors.primary} marginB-4>
+                      {t("appointment.note")}:
+                    </Text>
+                    <Text h4 color={Colors.text}>
+                      {item.note}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            )}
+
+            {/* Cancellation info */}
+            {item.status === "cancelled" && item.cancelled_by_user && (
+              <View
+                marginT-10
+                padding-10
+                br10
+                backgroundColor={Colors.rgba(Colors.red30, 0.1)}
+              >
+                <Text h4 color={Colors.red10}>
+                  {`${t("appointment.cancelled_by")}: ${
+                    item.cancelled_by_user.full_name
+                  }`}
+                </Text>
+                {item.cancellation_note && (
+                  <Text marginT-5 h4 color={Colors.red10}>
+                    {`${t("appointment.cancel_reason")}: ${
+                      item.cancellation_note
+                    }`}
+                  </Text>
+                )}
+              </View>
+            )}
+
+            {/* Cancel button */}
+            {item.status === "pending" && (
+              <AppButton
+                type="outline"
+                onPress={() => handleCancelOrderPress(item.id)}
+                buttonStyle={{ marginTop: 15, width: "100%" }}
+                children={
+                  <View row gap-4 centerV>
+                    <MaterialCommunityIcons
+                      name="close-circle"
+                      size={16}
+                      color={Colors.red10}
+                    />
+                    <Text h4 color={Colors.red10}>
+                      {t("appointment.cancel_appointment")}
+                    </Text>
+                  </View>
+                }
+              />
+            )}
+
+            {/* Add View Details button */}
+            <AppButton
+              type="outline"
+              onPress={() => router.push(`/appointment/${item.id}`)}
+              buttonStyle={{ marginTop: 15, width: "100%" }}
+              children={
+                <View row gap-4 centerV>
+                  <Text h4 color={Colors.primary}>
+                    {t("appointment.view_details")}
+                  </Text>
+                  <MaterialCommunityIcons
+                    name="arrow-right"
+                    size={16}
+                    color={Colors.primary}
+                  />
+                </View>
+              }
+            />
+          </View>
+        </View>
+      </Animated.View>
     );
-  }, [handleCancelOrderPress, t]);
+  };
 
   const getMarkedDates = () => {
     const markedDates: any = {};
@@ -698,10 +663,7 @@ const { t } = useLanguage();
               showsVerticalScrollIndicator={false}
               data={appointments}
               renderItem={renderFlatListItem}
-              keyExtractor={useCallback((item: AppointmentResponeModelParams) => item.id.toString(), [])}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-              removeClippedSubviews={true}
+              keyExtractor={(item) => item.id.toString()}
               ListEmptyComponent={() => (
                 <View center paddingT-60>
                   <MaterialCommunityIcons
@@ -869,7 +831,7 @@ const { t } = useLanguage();
                   </Text>
                   <AppButton
                     type="primary"
-                    title={t("appointment.book_appointment")}
+                    title={t("appointment.book_for_service_package")}
                     onPress={() => {
                       router.push("/(app)/service-package");
                     }}
@@ -888,10 +850,7 @@ const { t } = useLanguage();
                 showsVerticalScrollIndicator={false}
                 data={appointments}
                 renderItem={renderFlatListItem}
-                keyExtractor={useCallback((item: AppointmentResponeModelParams) => item.id.toString(), [])}
-                maxToRenderPerBatch={10}
-                windowSize={5}
-                removeClippedSubviews={true}
+                keyExtractor={(item) => item.id.toString()}
               />
             )}
           </View>
