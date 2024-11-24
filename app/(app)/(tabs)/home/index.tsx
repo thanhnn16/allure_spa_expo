@@ -35,7 +35,7 @@ import { RootState } from "@/redux/store";
 import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
 import { SkeletonView } from "react-native-ui-lib";
-import i18n from "@/languages/i18n";
+import { translate } from '@/languages/i18n';
 
 const HomePage = () => {
   const { t } = useLanguage();
@@ -118,9 +118,9 @@ const HomePage = () => {
 
   const currentGreeting = (() => {
     const hours = new Date().getHours();
-    if (hours < 12) return i18n.t("greeting.morning");
-    if (hours < 18) return i18n.t("greeting.afternoon");
-    return i18n.t("greeting.evening");
+    if (hours < 12) return translate("greeting.morning");
+    if (hours < 18) return translate("greeting.afternoon");
+    return translate("greeting.evening");
   })();
 
   const renderHeader = () => (
@@ -136,7 +136,7 @@ const HomePage = () => {
               source={require("@/assets/images/logo/logo.png")}
             />
             <View centerV>
-              <Text h2_bold>{user?.full_name || i18n.t("common.guest")}</Text>
+              <Text h2_bold>{user?.full_name || translate("common.guest")}</Text>
               <Text h4>{currentGreeting}</Text>
             </View>
           </View>
@@ -181,7 +181,7 @@ const HomePage = () => {
         ]}
       >
         <Text h0_bold color="#717658" marginB-10>
-          {i18n.t("home.discover")}
+          {translate("home.discover")}
         </Text>
         <AppSearch isHome />
       </Animated.View>

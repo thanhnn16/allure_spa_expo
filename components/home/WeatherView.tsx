@@ -1,4 +1,4 @@
-import i18n from "@/languages/i18n";
+import { translate } from "@/languages/i18n";
 import getLocation from "@/utils/location/locationHelper";
 import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
@@ -56,13 +56,13 @@ const WeatherView = () => {
   useEffect(() => {
     const date = new Date();
     const weekdays = [
-      i18n.t("days.sun"),
-      i18n.t("days.mon"),
-      i18n.t("days.tue"),
-      i18n.t("days.wed"),
-      i18n.t("days.thu"),
-      i18n.t("days.fri"),
-      i18n.t("days.sat"),
+      translate("days.sun"),
+      translate("days.mon"),
+      translate("days.tue"),
+      translate("days.wed"),
+      translate("days.thu"),
+      translate("days.fri"),
+      translate("days.sat"),
     ];
 
     const weekday = weekdays[date.getDay()];
@@ -107,7 +107,7 @@ const WeatherView = () => {
       />
       <View>
         <Text text70 color="#4A4A4A">
-          {weekday}, {i18n.t("days.day")} {currentDate}
+          {weekday}, {translate("days.day")} {currentDate}
         </Text>
         <View row gap-6 centerV>
           <FontAwesome6 name="location-dot" size={12} color="#4A4A4A" />

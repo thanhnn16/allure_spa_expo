@@ -3,7 +3,7 @@ import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthResponse, AuthErrorCode } from "@/types/auth.type";
-import i18n from "@/languages/i18n";
+import { translate } from "@/languages/i18n";
 import { setUser } from "../users/userSlice";
 
 interface LoginRequest {
@@ -45,7 +45,7 @@ export const loginThunk = createAsyncThunk(
 
       return rejectWithValue({
         code: res.data.status_code || 'UNKNOWN_ERROR',
-        message: res.data.message || i18n.t('auth.login.unknown_error')
+        message: res.data.message || translate('auth.login.unknown_error')
       });
 
     } catch (error: any) {
@@ -71,19 +71,19 @@ export const loginThunk = createAsyncThunk(
           case AuthErrorCode.WRONG_PASSWORD:
             return rejectWithValue({
               code: error.response.data.status_code,
-              message: i18n.t('auth.login.invalid_credentials')
+              message: translate('auth.login.invalid_credentials')
             });
           default:
             return rejectWithValue({
               code: error.response.data.status_code,
-              message: error.response.data.message || i18n.t('auth.login.unknown_error')
+              message: error.response.data.message || translate('auth.login.unknown_error')
             });
         }
       }
 
       return rejectWithValue({
         code: AuthErrorCode.SERVER_ERROR,
-        message: i18n.t('auth.login.server_error')
+        message: translate('auth.login.server_error')
       });
     }
   }

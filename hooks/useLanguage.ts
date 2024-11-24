@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '@/redux/features/language/languageSlice';
-import i18n, { setI18nConfig } from '@/languages/i18n';
+import { setI18nConfig } from '@/languages/i18n';
+import { translate } from '@/languages/i18n';
 import { RootState } from '@/redux/store';
 
 export const useLanguage = () => {
@@ -20,14 +21,14 @@ export const useLanguage = () => {
         return {
             changeLanguage,
             currentLanguage,
-            t: i18n.t,
+            t: translate,
         };
     } catch (error) {
         console.error('Redux context not available:', error);
         return {
             changeLanguage: async () => {},
             currentLanguage: 'en',
-            t: i18n.t,
+            t: translate,
         };
     }
 }; 

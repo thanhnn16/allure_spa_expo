@@ -7,7 +7,7 @@ import { setGuestUser, clearGuestUser, clearAuth } from '@/redux/features/auth/a
 import { router } from 'expo-router';
 import { LoginCredentials, RegisterCredentials, AuthErrorCode } from '@/types/auth.type';
 import AuthService from '@/utils/services/auth/authService';
-import i18n from '@/languages/i18n';
+import { translate } from '@/languages/i18n';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +15,7 @@ export const useAuth = () => {
   const { user } = useSelector((state: RootState) => state.user);
 
   const handleAuthError = (error: any) => {
-    let errorMessage = i18n.t('auth.login.unknown_error');
+    let errorMessage = translate('auth.login.unknown_error');
     const errorCode = error?.code;
     const errorMsg = error?.message;
 
@@ -24,19 +24,19 @@ export const useAuth = () => {
     switch (errorCode) {
       case AuthErrorCode.USER_NOT_FOUND:
       case AuthErrorCode.WRONG_PASSWORD:
-        return i18n.t('auth.login.invalid_credentials');
+        return translate('auth.login.invalid_credentials');
       case AuthErrorCode.INVALID_PHONE_FORMAT:
-        return i18n.t('auth.login.invalid_phone_number');
+        return translate('auth.login.invalid_phone_number');
       case AuthErrorCode.INVALID_PASSWORD_FORMAT:
-        return i18n.t('auth.login.invalid_password_special_char');
+        return translate('auth.login.invalid_password_special_char');
       case AuthErrorCode.INVALID_EMAIL_FORMAT:
-        return i18n.t('auth.login.invalid_email');
+        return translate('auth.login.invalid_email');
       case AuthErrorCode.INVALID_NAME_FORMAT:
-        return i18n.t('auth.login.invalid_full_name');
+        return translate('auth.login.invalid_full_name');
       case AuthErrorCode.PASSWORDS_NOT_MATCH:
-        return i18n.t('auth.register.password_mismatch');
+        return translate('auth.register.password_mismatch');
       case AuthErrorCode.SERVER_ERROR:
-        return i18n.t('auth.login.server_error');
+        return translate('auth.login.server_error');
       default:
         return errorMsg || errorMessage;
     }
