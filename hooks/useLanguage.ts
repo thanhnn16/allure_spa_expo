@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from '@/languages/i18n';
 import { getInitialLanguage } from '@/languages/i18n';
@@ -6,10 +6,16 @@ import { getInitialLanguage } from '@/languages/i18n';
 const LANGUAGE_KEY = '@app_language';
 
 export const useLanguage = () => {
-    const [currentLanguage, setCurrentLanguage] = useState(getInitialLanguage());
+    const initialLanguage = useMemo(() => {
+        const initial = getInitialLanguage();
+        return initial || 'en';
+    }, []);
+
+    const [currentLanguage, setCurrentLanguage] = useState<string>(initialLanguage);
 
     useEffect(() => {
-        // Load saved language when component mounts
+        i18n.locale = currentLanguage;
+        
         const loadSavedLanguage = async () => {
             try {
                 const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
@@ -35,14 +41,9 @@ export const useLanguage = () => {
         }
     };
 
-    const t = (key: string, options?: any) => {
-        try {
-            return i18n.t(key, options);
-        } catch (error) {
-            console.error('Translation error:', error);
-            return key;
-        }
-    };
+    const t = useMemo(() => {
+        return (key: string, options?: any) => i18n.t(key, options);
+    }, [currentLanguage]);
 
     return {
         currentLanguage,

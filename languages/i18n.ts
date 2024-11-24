@@ -16,8 +16,22 @@ i18n.enableFallback = true;
 // Set default locale
 i18n.defaultLocale = 'en';
 
+// Safely get device language
+const getDeviceLanguage = (): string => {
+  try {
+    const locales = getLocales();
+    if (locales && locales.length > 0 && locales[0].languageCode) {
+      return locales[0].languageCode;
+    }
+    return 'en';
+  } catch (error) {
+    console.error('Error getting device language:', error);
+    return 'en';
+  }
+};
+
 // Set initial locale based on device language
-const deviceLanguage = getLocales()[0].languageCode;
+const deviceLanguage = getDeviceLanguage();
 i18n.locale = deviceLanguage && ['en', 'vi', 'ja'].includes(deviceLanguage) ? deviceLanguage : 'en';
 
 export const setI18nConfig = (language: string) => {
@@ -27,9 +41,9 @@ export const setI18nConfig = (language: string) => {
   });
 };
 
-export const getInitialLanguage = () => {
-  const deviceLanguage = getLocales()[0].languageCode;
-  return ['en', 'vi', 'ja'].includes(deviceLanguage || '') ? deviceLanguage : 'en';
+export const getInitialLanguage = (): string => {
+  const deviceLanguage = getDeviceLanguage();
+  return deviceLanguage && ['en', 'vi', 'ja'].includes(deviceLanguage) ? deviceLanguage : 'en';
 };
 
 export default i18n;
