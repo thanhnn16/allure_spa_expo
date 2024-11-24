@@ -25,7 +25,7 @@ import servicePackageReducer from './features/servicePackage/servicePackageSlice
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['zalo', 'auth'],
+    whitelist: ['zalo', 'auth', 'user'],
     timeout: 10000,
 }
 

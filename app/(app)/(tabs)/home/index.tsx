@@ -216,6 +216,7 @@ const HomePage = () => {
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const { user } = useAuth();
+  const { showDialog } = useDialog();
   
   const scrollOffset = useSharedValue(0);
   const { packages } = useSelector((state: RootState) => state.servicePackage);
@@ -242,11 +243,11 @@ const HomePage = () => {
 
   const getUpcomingAppointment = (packages: any[]) => {
     if (!packages || !Array.isArray(packages)) return null;
-
+    
     const now = new Date();
     const threeDaysFromNow = new Date();
     threeDaysFromNow.setDate(now.getDate() + 7);
-
+    
     for (const pkg of packages) {
       if (pkg.next_appointment_details) {
         try {
@@ -288,6 +289,18 @@ const HomePage = () => {
     [packages]
   );
 
+  useEffect(() => {
+    Promise.all([
+      dispatch(getServicesThunk({ page: 1, limit: 5 })),
+      dispatch(getAllProductsThunk()),
+      dispatch(fetchBanners()),
+      dispatch(fetchUnreadCount()),
+      dispatch(fetchCartItems()),
+    ]).catch((error) => {
+      console.error("Error fetching initial data:", error);
+    });
+  }, [dispatch, user?.id]);
+
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
     Dimensions.get("window");
 
@@ -297,24 +310,6 @@ const HomePage = () => {
       params: { type },
     });
   }, []);
-
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        await Promise.all([
-          dispatch(getServicesThunk({ page: 1, limit: 5 })),
-          dispatch(getAllProductsThunk()),
-          dispatch(fetchBanners()),
-          dispatch(fetchUnreadCount()),
-          dispatch(fetchCartItems()),
-        ]);
-      } catch (error) {
-        console.error("Error fetching initial data:", error);
-      }
-    };
-
-    fetchInitialData();
-  }, [dispatch, user?.id]);
 
   const renderServiceItem = useCallback(
     ({ item }: { item: ServiceResponeModel }) => (

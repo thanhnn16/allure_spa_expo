@@ -11,14 +11,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
 import { Href, router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
 import { ScrollView } from "react-native";
 import VoucherIcon from "@/assets/icons/discount-shape.svg";
+import { getUserThunk } from "@/redux/features/users/getUserThunk";
+import { useDispatch } from "react-redux";
 
 const ProfilePage = () => {
   const { t } = useLanguage();
-
+  const dispatch = useDispatch();
   const { user, signOut, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
 
@@ -26,6 +28,10 @@ const ProfilePage = () => {
     setLoginDialogVisible(false);
     router.replace("/(auth)");
   };
+
+  useEffect(() => {
+    dispatch(getUserThunk());
+  }, [dispatch]);
 
   const handleNavigation = (path: Href<string>, showDialog: boolean = true) => {
     if (isGuest && showDialog) {

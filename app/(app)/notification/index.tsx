@@ -1,19 +1,37 @@
 import React, { useEffect, useState } from "react";
-import { Colors, Text, View, TouchableOpacity } from "react-native-ui-lib";
+import {
+  Colors,
+  Text,
+  View,
+  TouchableOpacity,
+  SkeletonView,
+} from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import AppBar from "@/components/app-bar/AppBar";
 import NotificationItem, {
   NotificationType,
 } from "@/components/notification/NotificationItem";
-import { ActivityIndicator, RefreshControl, SectionList } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  SectionList,
+} from "react-native";
 import {
   fetchNotifications,
   markNotificationAsRead,
   markAllNotificationsAsRead,
   loadMoreNotifications,
 } from "@/redux/features/notification/notificationThunks";
-import { formatDistanceToNow, format, isToday, isYesterday, isThisWeek, isThisMonth } from "date-fns";
+import {
+  formatDistanceToNow,
+  format,
+  isToday,
+  isYesterday,
+  isThisWeek,
+  isThisMonth,
+} from "date-fns";
 import { vi } from "date-fns/locale";
 import { Notification } from "@/redux/features/notification/types";
 import EmptyNotification from "@/components/notification/EmptyNotification";
@@ -43,12 +61,22 @@ const NotificationPage: React.FC = () => {
   }, [dispatch]);
 
   const handleNotificationPress = async (id: number) => {
-    await dispatch(markNotificationAsRead(id));
-    router.push(`/notification/${id}`);
+    try {
+      await dispatch(markNotificationAsRead(id));
+      router.push(`/notification/${id}`);
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+      // Optionally show error message to user
+    }
   };
 
   const handleMarkAllAsRead = async () => {
-    await dispatch(markAllNotificationsAsRead());
+    try {
+      await dispatch(markAllNotificationsAsRead());
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error);
+      // Optionally show error message to user
+    }
   };
 
   const handleLoadMore = () => {
@@ -58,15 +86,23 @@ const NotificationPage: React.FC = () => {
   };
 
   const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    await dispatch(fetchNotifications());
-    setRefreshing(false);
+    try {
+      setRefreshing(true);
+      await dispatch(fetchNotifications());
+    } catch (error) {
+      console.error("Failed to refresh notifications:", error);
+      // Optionally show error message to user
+    } finally {
+      setRefreshing(false);
+    }
   }, [dispatch]);
 
-  const groupNotifications = (notifications: Notification[]): GroupedNotifications[] => {
+  const groupNotifications = (
+    notifications: Notification[]
+  ): GroupedNotifications[] => {
     const groups: { [key: string]: Notification[] } = {};
 
-    notifications.forEach(notification => {
+    notifications.forEach((notification) => {
       const date = new Date(notification.created_at);
       let groupTitle: string;
 
@@ -79,7 +115,7 @@ const NotificationPage: React.FC = () => {
       } else if (isThisMonth(date)) {
         groupTitle = "Tháng này";
       } else {
-        groupTitle = format(date, 'MM/yyyy');
+        groupTitle = format(date, "MM/yyyy");
       }
 
       if (!groups[groupTitle]) {
@@ -94,11 +130,12 @@ const NotificationPage: React.FC = () => {
     }));
   };
 
-  const renderSectionHeader = ({ section }: { section: GroupedNotifications }) => (
-    <View
-      padding-12
-      backgroundColor={Colors.grey60}
-    >
+  const renderSectionHeader = ({
+    section,
+  }: {
+    section: GroupedNotifications;
+  }) => (
+    <View padding-12 backgroundColor={Colors.grey60}>
       <Text text80M color={Colors.grey20}>
         {section.title}
       </Text>
@@ -130,11 +167,21 @@ const NotificationPage: React.FC = () => {
 
   if (loading && !notifications?.length) {
     return (
-      <View flex center bg-white>
-        <ActivityIndicator size="large" color={Colors.primary} />
-        <Text marginT-8 h2_bold color={Colors.grey40}>
-          {t("notification.loading")}
-        </Text>
+      <View flex bg-white>
+        <AppBar back title={t("notification.title")} />
+        <View centerH flex>
+          {[...Array(8)].map((_, index) => (
+            <SkeletonView
+              key={index}
+              showContent={false}
+              borderRadius={8}
+              height={80}
+              width={Dimensions.get("window").width - 32}
+              marginV-8
+              center
+            />
+          ))}
+        </View>
       </View>
     );
   }
