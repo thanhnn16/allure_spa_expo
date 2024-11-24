@@ -18,6 +18,7 @@ import {
   ScrollView,
   TextInput,
   RefreshControl,
+  Platform,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -39,7 +40,6 @@ import { useLanguage } from "@/hooks/useLanguage";
 import i18n from "@/languages/i18n";
 
 const { width } = Dimensions.get("window");
-const { t } = useLanguage();
 
 interface ExpandableCalendarProps {
   initialPosition?: Positions;
@@ -106,6 +106,8 @@ const ExpandableCalendarComponent: React.FC<ExpandableCalendarProps> = ({
 );
 
 const ScheduledPage = () => {
+const { t } = useLanguage();
+
   const [selectedItem, setSelectedItem] = useState<number>(1);
   const [isModalVisible, setModalVisible] = useState(false);
   const [note, setNote] = useState("");
@@ -295,16 +297,22 @@ const ScheduledPage = () => {
         entering={FadeInDown.delay(index * 100).springify()}
         style={{
           marginBottom: 15,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 12,
-          elevation: 8,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          elevation: Platform.OS === 'android' ? 8 : 0,
         }}
       >
         <LinearGradient
           colors={[Colors.white as string, Colors.primary_blur as string]}
-          style={{ borderRadius: 20 }}
+          style={{ 
+            borderRadius: 20,
+            ...(Platform.OS === 'ios' && {
+              borderWidth: 1,
+              borderColor: Colors.rgba(Colors.grey60, 0.2),
+            })
+          }}
         >
           <View padding-15 br20>
             {/* Header */}
@@ -576,9 +584,9 @@ const ScheduledPage = () => {
     monthTextColor: Colors.text,
 
     // Header
-    textDayFontSize: 15,
-    textMonthFontSize: 18,
-    textDayHeaderFontSize: 13,
+    textDayFontSize: Platform.OS === 'ios' ? 14 : 15,
+    textMonthFontSize: Platform.OS === 'ios' ? 16 : 18,
+    textDayHeaderFontSize: Platform.OS === 'ios' ? 12 : 13,
 
     // General
     todayButtonFontSize: 16,
@@ -588,20 +596,27 @@ const ScheduledPage = () => {
     "stylesheet.calendar.header": {
       dayHeader: {
         color: Colors.text,
-        fontSize: 14,
-        fontWeight: "600",
+        fontSize: Platform.OS === 'ios' ? 12 : 14,
+        fontWeight: '600',
         paddingBottom: 8,
         paddingTop: 8,
       },
       header: {
         paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingVertical: Platform.OS === 'ios' ? 8 : 12,
       },
     },
     todayButtonFontWeight: "600",
     todayButtonPosition: "right",
     todayButtonMarginRight: 16,
     dayContainerPadding: 4,
+
+    ...(Platform.OS === 'ios' && {
+      textDayFontSize: 14,
+      textMonthFontSize: 16,
+      textDayHeaderFontSize: 12,
+      selectedDayBackgroundColor: Colors.rgba(Colors.primary, 0.9),
+    }),
   };
 
   const renderCalendarView = () => (
@@ -700,6 +715,70 @@ const ScheduledPage = () => {
     moment.locale(i18n.locale);
   }, [i18n.locale]);
 
+  const renderCancelModal = () => (
+    <Modal visible={isModalVisible} transparent animationType="fade">
+      <View
+        flex
+        center
+        backgroundColor={Colors.rgba(Colors.black, 0.5)}
+      >
+        <Animated.View
+          entering={FadeInDown}
+          style={{
+            width: '85%',
+            backgroundColor: Colors.white,
+            borderRadius: 20,
+            padding: 20,
+            ...(Platform.OS === 'ios' 
+              ? {
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 10,
+                }
+              : {
+                  elevation: 8,
+                }
+            ),
+          }}
+        >
+          <Text h2_bold marginB-15>
+            {t("appointment.cancel_appointment")}
+          </Text>
+
+          <TextInput
+            style={{
+              minHeight: 100,
+              borderColor: Colors.grey40,
+              borderWidth: 1,
+              borderRadius: 15,
+              padding: 15,
+              marginBottom: 20,
+              textAlignVertical: "top",
+            }}
+            placeholder={t("appointment.cancel_appointment_reason")}
+            value={note}
+            onChangeText={setNote}
+            multiline
+          />
+
+          <View row spread>
+            <AppButton
+              type="outline"
+              title={t("appointment.cancel")}
+              onPress={() => setModalVisible(false)}
+            />
+            <AppButton
+              type="outline"
+              title={t("appointment.confirm")}
+              onPress={handleConfirmCancel}
+            />
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
+  );
+
   return (
     <View flex bg-white>
       <AppBar
@@ -779,62 +858,7 @@ const ScheduledPage = () => {
         renderCalendarView()
       )}
 
-      <Modal visible={isModalVisible} transparent animationType="fade">
-        <View
-          flex
-          center
-          backgroundColor={Colors.rgba(Colors.black, 0.5)}
-          style={{}}
-        >
-          <Animated.View
-            entering={FadeInDown}
-            style={{
-              width: "85%",
-              backgroundColor: Colors.white,
-              borderRadius: 20,
-              padding: 20,
-              shadowColor: Colors.black,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 8,
-              elevation: 8,
-            }}
-          >
-            <Text h2_bold marginB-15>
-              {t("appointment.cancel_appointment")}
-            </Text>
-
-            <TextInput
-              style={{
-                minHeight: 100,
-                borderColor: Colors.grey40,
-                borderWidth: 1,
-                borderRadius: 15,
-                padding: 15,
-                marginBottom: 20,
-                textAlignVertical: "top",
-              }}
-              placeholder={t("appointment.cancel_appointment_reason")}
-              value={note}
-              onChangeText={setNote}
-              multiline
-            />
-
-            <View row spread>
-              <AppButton
-                type="outline"
-                title={t("appointment.cancel")}
-                onPress={() => setModalVisible(false)}
-              />
-              <AppButton
-                type="outline"
-                title={t("appointment.confirm")}
-                onPress={handleConfirmCancel}
-              />
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
+      {renderCancelModal()}
     </View>
   );
 };

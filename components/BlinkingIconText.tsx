@@ -1,12 +1,13 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, View, Text } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const BlinkingIconText = () => {
+    const { t } = useLanguage();
+
     const blinkAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {

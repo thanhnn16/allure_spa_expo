@@ -7,12 +7,10 @@ import {
   SkeletonView,
   Incubator,
   Colors,
-  Dialog,
 } from "react-native-ui-lib";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { Dimensions } from "react-native";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -39,6 +37,8 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
   onPurchase,
   service,
 }) => {
+  const { t } = useLanguage();
+
   const [isToastVisible, setToastIsVisible] = useState(false);
   const windowWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();

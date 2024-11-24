@@ -1,10 +1,8 @@
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import getLocation from "@/utils/location/locationHelper";
 import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
-import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import { Text, View, Image, SkeletonView, Colors } from "react-native-ui-lib";
 
@@ -16,6 +14,8 @@ interface LocationsType {
 }
 
 const WeatherView = () => {
+const { t } = useLanguage();
+
   const [temperature, setTemperature] = useState<number>(0);
   const [location, setLocation] = useState<LocationsType | null>(null);
   const [weatherIcon, setWeatherIcon] = useState<string>("");

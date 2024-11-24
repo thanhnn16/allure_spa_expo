@@ -9,10 +9,9 @@ import {
   Colors,
 } from "react-native-ui-lib";
 
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 import CommentIcon from "@/assets/icons/comment.svg";
 import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
@@ -23,7 +22,6 @@ import { Product } from "@/types/product.type";
 import { useState } from "react";
 import {
   clearOrders,
-  setOrderProducts,
   setTempOrder,
 } from "@/redux/features/order/orderSlice";
 
@@ -44,6 +42,8 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
   quantity,
   onAddToCart,
 }) => {
+  const { t } = useLanguage();
+
   const [isVisible, setIsVisible] = useState(false);
   const dispatch = useDispatch();
 

@@ -1,10 +1,7 @@
-import React, { useEffect, useMemo, useState, useRef } from "react";
-import { Animated, Pressable, ScrollView, Dimensions, Share } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useMemo, useState } from "react";
+import { Pressable, ScrollView, Dimensions, Share, StyleSheet } from "react-native";
 import {
     AnimatedImage,
-    Carousel,
-    PageControlPosition,
     View,
     Text,
     Image,
@@ -13,21 +10,18 @@ import {
     SkeletonView,
     Colors,
 } from "react-native-ui-lib";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { toggleFavoriteThunk } from '@/redux/features/favorite/favoritesThunk';
-import { router, useLocalSearchParams, Href } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { MediaResponeModelParams, ServiceDetailResponeModel, ServiceDetailResponeParams } from "@/types/service.type";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppBar from "@/components/app-bar/AppBar";
 import ImageView from "react-native-image-viewing";
-import AppButton from "@/components/buttons/AppButton";
 import ServiceBottomComponent from "@/components/service/ServiceBottomComponent";
 import RatingStar from "@/components/rating/RatingStar";
 import AppDialog from "@/components/dialog/AppDialog";
@@ -35,20 +29,18 @@ import { useAuth } from "@/hooks/useAuth";
 import formatCurrency from "@/utils/price/formatCurrency";
 
 // Icons
-import CommentIcon from "@/assets/icons/comment.svg";
 import SunIcon from "@/assets/icons/sun.svg";
-import TicketIcon from "@/assets/icons/ticket.svg";
-import HeartIcon from "@/assets/icons/heart.svg";
 import MapMarkerIcon from "@/assets/icons/map_marker.svg";
-import HeartFullIcon from "@/assets/icons/heart_full.svg";
 import TagIcon from "@/assets/icons/tag.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import PhoneCallIcon from "@/assets/icons/phone.svg";
 import BlinkingIconText from "@/components/BlinkingIconText";
-import AppDialog2 from "@/components/dialog/AppDialog2";
+import ServiceBookingDialog from "@/components/dialog/ServiceBookingDialog";
 
-// Main component
+
 const ServiceDetailPage = () => {
+    const { t } = useLanguage();
+
     // Hooks and state
     const { id } = useLocalSearchParams();
     const dispatch = useDispatch<AppDispatch>();
@@ -173,8 +165,16 @@ const ServiceDetailPage = () => {
     };
 
     const handlePayment = () => {
-        console.log('Payment');
         setBookingDialog(false);
+        router.push({
+            pathname: "/(app)/check-out",
+            params: {
+                service_id: service?.id,
+                service_name: service?.service_name,
+                combo: combo,
+                price: price
+            },
+        });
     };
 
     // Components
@@ -475,7 +475,7 @@ const ServiceDetailPage = () => {
                         onConfirm={handleLoginConfirm}
                     />
 
-                    <AppDialog2
+                    <ServiceBookingDialog
                         visible={bookingDialog}
                         title={t("service.serviceDetail.book_now")}
                         closeButtonLabel={t("common.cancel")}
@@ -528,11 +528,32 @@ const ServiceDetailPage = () => {
                                 },
                             ]}
                         />
-                    </AppDialog2>
+                    </ServiceBookingDialog>
                 </View>
             )}
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    comboSection: {
+        backgroundColor: Colors.grey60,
+        padding: 16,
+        borderRadius: 8,
+        marginBottom: 16
+    },
+    comboOption: {
+        backgroundColor: Colors.white,
+        padding: 16,
+        borderRadius: 8,
+        marginBottom: 12
+    },
+    singleBooking: {
+        padding: 16,
+        borderWidth: 1,
+        borderColor: Colors.grey40,
+        borderRadius: 8
+    }
+});
 
 export default ServiceDetailPage;

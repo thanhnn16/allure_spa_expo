@@ -60,6 +60,12 @@ const notificationSlice = createSlice({
                 state.unreadCount = action.payload;
             }
         },
+        clearNotifications: (state: NotificationState) => {
+            state.notifications = [];
+            state.unreadCount = 0;
+            state.hasMore = false;
+            state.currentPage = 1;
+        },
     },
 });
 
@@ -71,6 +77,7 @@ export const {
     setLoading,
     setError,
     setUnreadCount,
+    clearNotifications,
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer; 

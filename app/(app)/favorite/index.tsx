@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, TabController } from "react-native-ui-lib";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
@@ -8,10 +8,11 @@ import FavoriteItem from "./FavoriteItem";
 import AppBar from "@/components/app-bar/AppBar";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppTabBar from "@/components/app-bar/AppTabBar";
 
 export default function FavoriteScreen() {
+  const { t } = useLanguage();
+
   const [selectedTab, setSelectedTab] = useState<"product" | "service">(
     "product"
   );

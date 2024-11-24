@@ -10,12 +10,11 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
 
 const OrderItemCard = ({ item }: { item: OrderItem }) => {
-  console.log("Received item: ", item);
+  const { t } = useLanguage();
 
   const isService = item.item_type === "service";
   const itemData = isService ? item.service : item.product;
@@ -25,8 +24,8 @@ const OrderItemCard = ({ item }: { item: OrderItem }) => {
   }
   const imageUrl = itemData.media?.[0]?.full_url;
 
-  const itemName = isService 
-    ? (itemData as ServiceResponeModel)?.service_name 
+  const itemName = isService
+    ? (itemData as ServiceResponeModel)?.service_name
     : (itemData as Product)?.name;
 
   return (

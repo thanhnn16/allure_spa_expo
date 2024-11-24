@@ -10,7 +10,6 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { Href, router } from "expo-router";
 import { useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
@@ -18,6 +17,8 @@ import { ScrollView } from "react-native";
 import VoucherIcon from "@/assets/icons/discount-shape.svg";
 
 const ProfilePage = () => {
+  const { t } = useLanguage();
+
   const { user, signOut, signOutGuest, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
 

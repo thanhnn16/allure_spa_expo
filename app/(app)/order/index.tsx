@@ -20,12 +20,13 @@ import { clearOrders } from "@/redux/features/order/orderSlice";
 import ShoppingBagIcon from "@/assets/icons/bag.svg";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import Animated, { FadeInDown } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
 
 const MyOrder = () => {
+  const { t } = useLanguage();
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const dispatch = useDispatch();

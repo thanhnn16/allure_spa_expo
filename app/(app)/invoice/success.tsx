@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, Colors, SkeletonView } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
@@ -7,7 +7,6 @@ import AppButton from "@/components/buttons/AppButton";
 import axios from "axios";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { Dimensions } from "react-native";
 import Constants from "expo-constants";
 import formatCurrency from "@/utils/price/formatCurrency";
@@ -22,6 +21,8 @@ interface PaymentDetails {
 }
 
 export default function InvoiceSuccess() {
+  const { t } = useLanguage();
+
   const params = useLocalSearchParams<{
     order_id: string;
     invoice_id: string;

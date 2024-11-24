@@ -8,10 +8,11 @@ import {
 } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppBar from "@/components/app-bar/AppBar";
 
 const DeleteAccountVerifyScreen: React.FC = () => {
+  const { t } = useLanguage();
+
   const [verify, setVerify] = useState("Có , gửi dữ liệu của tôi tới email");
   return (
     <View flex bg-white>

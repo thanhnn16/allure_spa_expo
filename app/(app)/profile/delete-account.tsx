@@ -4,11 +4,12 @@ import { router } from "expo-router";
 import { TextInput } from "react-native";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
 
 const DeleteAccountScreen: React.FC = () => {
+  const { t } = useLanguage();
+
   const [value, onChangeText] = useState("");
   return (
     <View flex bg-white>
@@ -38,7 +39,7 @@ const DeleteAccountScreen: React.FC = () => {
             }}
           />
         </View>
-        <View  marginT-40>
+        <View marginT-40>
           <AppButton
             type="primary"
             title={t("deleteAccount.next")}

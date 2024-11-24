@@ -2,13 +2,14 @@ import React from "react";
 import { View, Text } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
+
 import PagerView from "react-native-pager-view";
 import AppBar from "@/components/app-bar/AppBar";
 
-interface RewardProps {}
+interface RewardProps { }
 
 const Reward: React.FC<RewardProps> = () => {
+  const { t } = useLanguage();
   const [selectedPage, setSelectedPage] = React.useState(0);
   const pagerRef = React.useRef<PagerView>(null);
   const handlePageChange = (page: number) => {

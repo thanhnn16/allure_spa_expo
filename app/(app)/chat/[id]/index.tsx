@@ -21,13 +21,14 @@ import { markAsReadThunk } from "@/redux/features/chat/markAsReadThunk";
 import { addMessage, addTempMessage } from "@/redux/features/chat/chatSlice";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const ChatScreen = () => {
+  const { t } = useLanguage();
+
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useAuth();
-  const { messages, isLoading, isSending, error } = useSelector(
+  const { messages, isLoading, error } = useSelector(
     (state: RootState) => state.chat
   );
   const [message, setMessage] = useState("");
@@ -36,7 +37,6 @@ const ChatScreen = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const processedMessages = useRef(new Set());
 
   useEffect(() => {
     const setupChat = async () => {
@@ -180,7 +180,7 @@ const ChatScreen = () => {
             isAI={false}
             isCamera={true}
             selectedImages={[]}
-            setSelectedImages={() => {}}
+            setSelectedImages={() => { }}
           />
         </KeyboardAvoidingView>
       )}

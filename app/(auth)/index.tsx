@@ -14,7 +14,6 @@ import {
 } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import LoginForm from "../../components/authentication/LoginForm";
 import RegisterForm from "../../components/authentication/RegisterForm";
 import LoginZaloForm from "../../components/authentication/LoginZaloForm";
@@ -31,6 +30,8 @@ import i18n from "@/languages/i18n";
 const { width, height } = Dimensions.get("window");
 
 const Onboarding: React.FC = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
 
   const currentLanguage = useSelector(

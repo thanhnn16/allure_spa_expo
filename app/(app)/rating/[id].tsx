@@ -6,7 +6,6 @@ import { FlatList } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import RatingStar from "@/components/rating/RatingStar";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -14,10 +13,12 @@ import { useEffect } from "react";
 import { getAllRatingThunk } from "@/redux/features/rating/getAllRatingThunk";
 
 const RatingPage: React.FC = () => {
+  const { t } = useLanguage();
+
   const { id, type: typeParam } = useLocalSearchParams();
 
   const dispatch = useDispatch<AppDispatch>();
-  const { ratings, isLoading } = useSelector(
+  const { ratings } = useSelector(
     (state: RootState) => state.rating
   );
 
@@ -30,14 +31,14 @@ const RatingPage: React.FC = () => {
   const averageRating =
     ratings?.length > 0
       ? ratings.reduce((acc: number, rating: any) => acc + rating.stars, 0) /
-        ratings.length
+      ratings.length
       : 0;
   const totalRatings = ratings?.length || 0;
 
   const getPercentage = (star: number) => {
     return totalRatings > 0
       ? (ratings.filter((r: any) => r.stars === star).length / totalRatings) *
-          100
+      100
       : 0;
   };
 

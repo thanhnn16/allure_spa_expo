@@ -1,6 +1,4 @@
-import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { OrderItem, Orders } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
@@ -20,6 +18,7 @@ import { useDispatch } from "react-redux";
 import { setOrderProducts } from "@/redux/features/order/orderSlice";
 import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface OrderProductItemProps {
   order: Orders;
@@ -29,6 +28,8 @@ interface OrderProductItemProps {
 const { width } = Dimensions.get("window");
 
 const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
+  const { t } = useLanguage();
+
   const orderItems = order.order_items || [];
   const dispatch = useDispatch();
 

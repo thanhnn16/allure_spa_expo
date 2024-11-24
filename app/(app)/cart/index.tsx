@@ -28,9 +28,10 @@ import {
 } from "@/redux/features/order/orderSlice";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 export default function Cart() {
+const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const [cartDialog, setCartDialog] = useState(false);
   const [setItemDelete, setsetItemDelete] = useState<Number>();

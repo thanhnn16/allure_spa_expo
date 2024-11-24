@@ -5,7 +5,6 @@ import { router } from "expo-router";
 import { Dimensions } from "react-native";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 interface UpcomingAppointmentProps {
   appointment: {
@@ -23,7 +22,9 @@ interface UpcomingAppointmentProps {
 }
 
 const UpcomingAppointment = ({ appointment }: UpcomingAppointmentProps) => {
-  const { width } = Dimensions.get("window");
+  const { t } = useLanguage();
+
+  Dimensions.get("window");
 
   return (
     <View marginB-20>

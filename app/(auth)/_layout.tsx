@@ -1,21 +1,15 @@
-import { useEffect } from "react";
-import { useRouter } from "expo-router";
-import { Stack } from "expo-router/stack";
-import { useAuth } from "../../hooks/useAuth";
+import { Stack } from "expo-router";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { Redirect } from "expo-router";
 
 export default function AuthLayout() {
-  const router = useRouter();
-  const { initializing, user, error } = useAuth();
+  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!initializing && user) {
-        router.replace("/(app)");
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, [initializing, user]);
+  // Redirect to app if authenticated or guest
+  if (isAuthenticated || isGuest) {
+    return <Redirect href="/(app)" />;
+  }
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }

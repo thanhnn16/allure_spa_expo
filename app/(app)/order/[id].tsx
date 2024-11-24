@@ -24,7 +24,6 @@ import OrderActionButtons from "@/components/order/OrderActionButtons";
 import OrderSkeleton from "@/components/order/OrderSkeleton";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import formatCurrency from "@/utils/price/formatCurrency";
 import { OrderItem } from "@/types/order.type";
 import { useLocalSearchParams } from "expo-router";
@@ -39,31 +38,13 @@ import SelectImagesBar from "@/components/images/SelectImagesBar";
 import { Rating } from "@kolking/react-native-rating";
 import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
 import {
-  convertImageToBase64,
   processImageForUpload,
 } from "@/utils/helpers/imageHelper";
-import { ServiceResponeModel } from "@/types/service.type";
-import { Product } from "@/types/product.type";
 
-const paymentMethods: PaymentMethod[] = [
-  {
-    id: 1,
-    name: t("checkout.cash"),
-    iconName: "cash-outline",
-  },
-  {
-    id: 2,
-    name: t("checkout.credit_card"),
-    iconName: "card-outline",
-  },
-  {
-    id: 3,
-    name: t("checkout.bank_transfer"),
-    iconName: "card-outline",
-  },
-];
 
 const OrderDetail = () => {
+  const { t } = useLanguage();
+
   const { id } = useLocalSearchParams();
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -83,6 +64,25 @@ const OrderDetail = () => {
   const { selectedOrder, isLoading, error } = useSelector(
     (state: RootState) => state.order
   );
+
+
+  const paymentMethods: PaymentMethod[] = [
+    {
+      id: 1,
+      name: t("checkout.cash"),
+      iconName: "cash-outline",
+    },
+    {
+      id: 2,
+      name: t("checkout.credit_card"),
+      iconName: "card-outline",
+    },
+    {
+      id: 3,
+      name: t("checkout.bank_transfer"),
+      iconName: "card-outline",
+    },
+  ];
 
   useEffect(() => {
     dispatch(getOrderByIdThunk({ id: id }));

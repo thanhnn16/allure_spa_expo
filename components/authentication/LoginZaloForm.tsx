@@ -1,16 +1,17 @@
 import React from "react";
-import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 import { useZaloAuth } from "@/hooks/useZaloAuth";
 import { Text, View } from "react-native-ui-lib";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface LoginZaloFormProps {
   onBackPress: () => void;
 }
 
 const LoginZaloForm: React.FC<LoginZaloFormProps> = ({ onBackPress }) => {
+  const { t } = useLanguage();
+
   const { login, loading, error } = useZaloAuth();
 
   return (

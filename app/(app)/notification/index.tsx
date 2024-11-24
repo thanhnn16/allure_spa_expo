@@ -6,7 +6,7 @@ import AppBar from "@/components/app-bar/AppBar";
 import NotificationItem, {
   NotificationType,
 } from "@/components/notification/NotificationItem";
-import { FlatList, ActivityIndicator, RefreshControl, SectionList } from "react-native";
+import { ActivityIndicator, RefreshControl, SectionList } from "react-native";
 import {
   fetchNotifications,
   markNotificationAsRead,
@@ -20,7 +20,6 @@ import EmptyNotification from "@/components/notification/EmptyNotification";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { router } from "expo-router";
 
 interface GroupedNotifications {
@@ -29,6 +28,8 @@ interface GroupedNotifications {
 }
 
 const NotificationPage: React.FC = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch<AppDispatch>();
   const {
     notifications = [],
@@ -64,11 +65,11 @@ const NotificationPage: React.FC = () => {
 
   const groupNotifications = (notifications: Notification[]): GroupedNotifications[] => {
     const groups: { [key: string]: Notification[] } = {};
-    
+
     notifications.forEach(notification => {
       const date = new Date(notification.created_at);
       let groupTitle: string;
-      
+
       if (isToday(date)) {
         groupTitle = "Hôm nay";
       } else if (isYesterday(date)) {
@@ -80,7 +81,7 @@ const NotificationPage: React.FC = () => {
       } else {
         groupTitle = format(date, 'MM/yyyy');
       }
-      
+
       if (!groups[groupTitle]) {
         groups[groupTitle] = [];
       }

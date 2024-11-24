@@ -1,6 +1,5 @@
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import React from "react";
 import { FlatList } from "react-native";
 import { View, Text, TouchableOpacity } from "react-native-ui-lib";
@@ -21,6 +20,8 @@ const SectionContainer: React.FC<RenderSectionProps> = ({
   renderItem,
   onPressMore,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <View gap-10 marginV-10>
       <View row spread paddingH-24>

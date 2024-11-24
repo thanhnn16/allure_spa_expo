@@ -1,9 +1,6 @@
 import {
-  StyleSheet,
   Dimensions,
   ScrollView,
-  Keyboard,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { Text, View, SkeletonView } from "react-native-ui-lib";
 import { useState, useCallback, useEffect, useRef } from "react";
@@ -27,11 +24,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RecentSearches from "@/components/search/RecentSearches";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const SearchScreen = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
   const { results, loading, recentSearches } = useSelector(

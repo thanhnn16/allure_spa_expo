@@ -15,16 +15,16 @@ import { RootState } from "@/redux/store";
 import { useLanguage } from "@/hooks/useLanguage";
 import { setI18nConfig } from "@/languages/i18n";
 import { setLanguage } from "@/redux/features/language/languageSlice";
-import { router } from "expo-router";
 
 const SettingsScreen: React.FC = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const currentLanguage = useSelector(
     (state: RootState) => state.language.currentLanguage
   );
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const { t } = useLanguage();
 
   const languageOptions = [
     { label: "Tiếng Việt", value: "vi" },

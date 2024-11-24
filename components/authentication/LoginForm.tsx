@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { Colors, View, Text } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import { useLanguage } from "@/hooks/useLanguage";
-
-const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
@@ -17,6 +15,7 @@ interface LoginFormProps {
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
+  const { t } = useLanguage();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

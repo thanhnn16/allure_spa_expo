@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { Colors, Keyboard, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,9 +17,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { convertImageToBase64 } from "@/utils/helpers/imageHelper";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const AIChatScreen = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch<AppDispatch>();
   const { messages, isThinking, error, configs } = useSelector(
     (state: RootState) => state.ai

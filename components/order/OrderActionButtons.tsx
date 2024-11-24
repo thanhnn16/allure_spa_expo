@@ -1,12 +1,9 @@
-import { View, Button, Colors } from "react-native-ui-lib";
+import { View } from "react-native-ui-lib";
 import { useDispatch } from "react-redux";
 import { Orders } from "@/types/order.type";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppButton from "../buttons/AppButton";
-import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
-import { getOrderByIdThunk } from "@/redux/features/order/getOrderByIdThunk";
 import { router } from "expo-router";
 import { setOrderProducts } from "@/redux/features/order/orderSlice";
 
@@ -16,6 +13,8 @@ interface OrderActionButtonsProps {
 }
 
 const OrderActionButtons = ({ order, onCancel }: OrderActionButtonsProps) => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
 
   const handleReorder = () => {

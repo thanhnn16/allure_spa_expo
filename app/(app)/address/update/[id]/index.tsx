@@ -1,31 +1,33 @@
-import { Colors, Image, Picker, PickerValue, Text, TouchableOpacity, View } from "react-native-ui-lib";
+import { Colors, Picker, PickerValue, Text, TouchableOpacity, View } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
-import { useNavigation, useLocalSearchParams } from "expo-router";
-import BackButton from "@/assets/icons/back.svg";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import AppButton from "@/components/buttons/AppButton";
-import { SafeAreaView, ScrollView, TextInput, Alert } from "react-native";
+import { ScrollView, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import AppBar from "@/components/app-bar/AppBar";
-import { Address, AddressDistrict, AddressProvince, AddressWard, UserProfile } from "@/types/address.type";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Address, AddressDistrict, AddressProvince, AddressWard } from "@/types/address.type";
 import { fetchAddresses } from "@/redux/features/address/addressThunk";
 import AppDialog from "@/components/dialog/AppDialog";
 import AddressTextInput from "@/components/address/AddressTextInput";
 import { RootState } from "@/redux/store";
 import { User } from "@/types/user.type";
-import { addressTypeItems } from "../../add";
 import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from "@/redux/features/address/getAddressThunk";
-import { get, set } from "lodash";
 import { useAuth } from "@/hooks/useAuth";
 
 type AddressType = "home" | "work" | "others";
 
 const UpdateScreen = () => {
+  const { t } = useLanguage();
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch();
+
+
+  const addressTypeItems = [
+    { id: 1, name: t("address.home"), type: "home" as AddressType },
+    { id: 2, name: t("address.work"), type: "work" as AddressType },
+    { id: 3, name: t("address.others"), type: "others" as AddressType },
+  ];
 
   const [formData, setFormData] = useState<Address>({
     user_id: "",
@@ -49,7 +51,7 @@ const UpdateScreen = () => {
   const [selectedAddressType, setSelectedAddressType] = useState<AddressType>("home");
   const [selectedItem, setSelectedItem] = useState<number | null>(1);
 
-  const [province, setProvince] = useState<AddressProvince | string >();
+  const [province, setProvince] = useState<AddressProvince>();
   const [provinceList, setProvinceList] = useState<AddressProvince[]>([]);
 
   const [district, setDistrict] = useState<AddressDistrict>();
@@ -60,13 +62,10 @@ const UpdateScreen = () => {
   const [wardList, setWardList] = useState<AddressWard[]>([]);
   
 
-  const { addresses, loading, error } = useSelector(
+  const { addresses } = useSelector(
     (state: RootState) => state.address
   );
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
 
   const getProvince = async () => {
     try {
@@ -87,7 +86,6 @@ const UpdateScreen = () => {
     try {
       const response = await dispatch(getAddressDistrictThunk({ query: id }));
       setDistrictList(response.payload.data);
-      const selectedDistrict = districtList.find((item) => item.id === address?.district);
       // if (address) {
       //   getWard(Number(selectedDistrict?.id));
       // }
@@ -211,15 +209,14 @@ const UpdateScreen = () => {
             placeholder="Tỉnh/Thành phố"
             floatingPlaceholder
             value={province?.id}
-            label={ address?.province || province?.name }
+            label={address?.province || province?.name}
             enableModalBlur={true}
             onChange={(value: PickerValue) => {
               if (typeof value === 'string') {
                 const selectedProvince = provinceList.find((item) => item.id === value);
                 if (selectedProvince) {
-                  setProvince({ id: selectedProvince.id, name: selectedProvince.name } as AddressProvince);
-                  getDistrict(Number(selectedProvince?.id));
-
+                  setProvince(selectedProvince);
+                  getDistrict(Number(selectedProvince.id));
                 }
               }
             }}

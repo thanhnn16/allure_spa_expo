@@ -38,7 +38,6 @@ import { HOME_CATEGORIES } from "@/constants/categories";
 import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
 import { useLanguage } from "@/hooks/useLanguage";
 import { User } from "@/types/user.type";
-const { t } = useLanguage();
 
 interface HomeHeaderProps {
   user: User;
@@ -51,6 +50,7 @@ interface HomeHeaderProps {
     opacity: number;
     transform: { translateY: number }[];
   };
+  t: (key: string) => string;
 }
 
 interface HomeSkeletonContentProps {
@@ -63,6 +63,7 @@ const HomeHeader = memo(
     greeting,
     greetingHeaderStyle,
     searchBarStyle,
+    t,
   }: HomeHeaderProps) => {
     return (
       <View bg-white paddingH-20>
@@ -191,6 +192,7 @@ const HomeSkeletonContent = memo(
 );
 
 const HomePage = () => {
+  const { t } = useLanguage();
   const dispatch = useDispatch();
   const { user } = useAuth();
   const scrollOffset = useSharedValue(0);
@@ -404,6 +406,7 @@ const HomePage = () => {
           greeting={currentGreeting}
           greetingHeaderStyle={greetingHeaderStyle}
           searchBarStyle={searchBarStyle}
+          t={t}
         />
       </Animated.View>
 

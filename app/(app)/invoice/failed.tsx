@@ -1,4 +1,3 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Colors } from "react-native-ui-lib";
 import { router, useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -6,9 +5,10 @@ import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 export default function InvoiceFailed() {
+  const { t } = useLanguage();
+
   const params = useLocalSearchParams<{
     reason: string;
     type: "cancel" | "failed";

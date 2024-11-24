@@ -7,7 +7,6 @@ import {
 } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
@@ -21,6 +20,8 @@ import VoucherSkeletonView from "@/components/voucher/VoucherSkeletonView";
 import VoucherShape from "@/assets/icons/discount-shape.svg";
 
 const Voucher = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const [activeVouchers, setactiveVoucher] = useState<VoucherType[]>([]);
   const [expiredVouchers, setexpiredVoucher] = useState<VoucherType[]>([]);

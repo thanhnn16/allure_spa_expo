@@ -3,26 +3,25 @@ import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppButton from "../buttons/AppButton";
 import { ActivityIndicator } from "react-native";
 
 interface AppDialogProps {
-    visible: boolean;
-    title: string;
-    description?: string;
-    closeButton?: boolean;
-    confirmButton?: boolean;
-    secondaryConfirmButton?: boolean;
-    secondaryConfirmButtonLabel?: string;
-    closeButtonLabel?: string;
-    confirmButtonLabel?: string;
-    onClose?: () => void;
-    onConfirm?: () => void;
-    onConfrimSecondary?: () => void;
-    severity: "success" | "error" | "info" | "warning";
-    loading?: boolean;
-    children?: React.ReactNode;
+  visible: boolean;
+  title: string;
+  description?: string;
+  closeButton?: boolean;
+  confirmButton?: boolean;
+  secondaryConfirmButton?: boolean;
+  secondaryConfirmButtonLabel?: string;
+  closeButtonLabel?: string;
+  confirmButtonLabel?: string;
+  onClose?: () => void;
+  onConfirm?: () => void;
+  onConfrimSecondary?: () => void;
+  severity: "success" | "error" | "info" | "warning";
+  loading?: boolean;
+  children?: React.ReactNode;
 }
 
 const AppDialog = ({
@@ -34,12 +33,17 @@ const AppDialog = ({
   description,
   closeButton = true,
   confirmButton = true,
-  closeButtonLabel = t("common.cancel"),
-  confirmButtonLabel = t("common.confirm"),
+  closeButtonLabel,
+  confirmButtonLabel,
   loading = false,
 }: AppDialogProps) => {
+  const { t } = useLanguage();
+
+  const defaultCloseLabel = t("common.cancel");
+  const defaultConfirmLabel = t("common.confirm");
+
   const iconMap = {
-    success: "check-circle",
+    success: "check-circle", 
     error: "error",
     info: "info",
     warning: "warning",

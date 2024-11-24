@@ -3,13 +3,14 @@ import { StyleSheet } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 import { Dimensions } from "react-native";
 
 const { width } = Dimensions.get("window");
 
 const OrderSkeleton = () => {
+  const { t } = useLanguage();
+
   return (
     <View flex bg-white>
       <AppBar back title={t("orders.detail")} />

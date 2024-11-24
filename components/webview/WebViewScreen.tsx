@@ -7,13 +7,14 @@ import AppDialog from "@/components/dialog/AppDialog";
 import AppBar from "../app-bar/AppBar";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 interface WebViewScreenProps {
   url: string;
   type: WebViewType;
 }
 
 const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
+  const { t } = useLanguage();
+
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogConfig, setDialogConfig] = useState({
     title: "",
@@ -21,14 +22,6 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
     severity: "error" as "error" | "success" | "info" | "warning",
   });
 
-  const showDialog = (
-    title: string,
-    description: string,
-    severity: "error" | "success" | "info" | "warning"
-  ) => {
-    setDialogConfig({ title, description, severity });
-    setDialogVisible(true);
-  };
 
   const handleZaloCallback = (navState: any) => {
     const urlObj = new URL(navState.url);
