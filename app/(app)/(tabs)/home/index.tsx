@@ -213,9 +213,10 @@ const HomePage = () => {
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const { user } = useAuth();
+  
   const scrollOffset = useSharedValue(0);
   const { packages } = useSelector((state: RootState) => state.servicePackage);
-  const { servicesList, isLoading } = useSelector(
+  const { servicesList, isLoading, hasMore, currentPage } = useSelector(
     (state: RootState) => state.service
   );
   const { products } = useSelector((state: RootState) => state.product);
@@ -338,6 +339,12 @@ const HomePage = () => {
     [WINDOW_WIDTH, WINDOW_HEIGHT]
   );
 
+  const loadMoreServices = useCallback(() => {
+    if (hasMore && !isLoading) {
+      dispatch(getServicesThunk({ page: currentPage + 1, limit: 5 }));
+    }
+  }, [hasMore, isLoading, currentPage, dispatch]);
+
   const renderContent = () => (
     <View flex>
       <Animated.View entering={FadeIn.duration(500)}>
@@ -369,6 +376,8 @@ const HomePage = () => {
               onPressMore={() => {
                 handlePressMore("service");
               }}
+              onEndReached={loadMoreServices}
+              isLoadingMore={isLoading && currentPage > 1}
             />
           </Animated.View>
         )}

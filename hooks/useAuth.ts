@@ -11,11 +11,11 @@ import { useZaloAuth } from './useZaloAuth';
 import { useLanguage } from '@/hooks/useLanguage';
 
 export const useAuth = () => {
+  const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
   const { user } = useSelector((state: RootState) => state.user);
   const { login: zaloLogin } = useZaloAuth();
-  const { t } = useLanguage();
 
   const handleAuthError = (error: any) => {
     let errorMessage = t('auth.login.unknown_error');
