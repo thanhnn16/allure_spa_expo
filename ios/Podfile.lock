@@ -1360,6 +1360,27 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
+  - react-native-blur (4.4.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-image-picker (7.1.2):
     - DoubleConversion
     - glog
@@ -1381,6 +1402,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-netinfo (11.4.1):
+    - React-Core
   - react-native-pager-view (6.3.0):
     - DoubleConversion
     - glog
@@ -1824,7 +1847,9 @@ DEPENDENCIES:
   - React-jsitracing (from `../node_modules/react-native/ReactCommon/hermes/executor/`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-voice (from `../node_modules/@react-native-voice/voice`)"
@@ -2024,8 +2049,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   React-Mapbuffer:
     :path: "../node_modules/react-native/ReactCommon"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
   react-native-safe-area-context:
@@ -2188,7 +2217,9 @@ SPEC CHECKSUMS:
   React-jsitracing: c83efb63c8e9e1dff72a3c56e88ae1c530a87795
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: dce508662b995ffefd29e278a16b78217039d43d
+  react-native-blur: 68eda7d27e86b53ec96445fc59fe9e84f0921fea
   react-native-image-picker: 8b791a2bec6da84ca7d8cbcad30da159d6dd6da4
+  react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-pager-view: b4ba00095f74ab430250cef2a119a5e2491b2c8d
   react-native-safe-area-context: a240ad4b683349e48b1d51fed1611138d1bdad97
   react-native-voice: f5e8eec2278451d0017eb6a30a6ccc726aca34e0
