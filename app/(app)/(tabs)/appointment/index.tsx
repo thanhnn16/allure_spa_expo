@@ -602,8 +602,17 @@ const { t } = useLanguage();
         paddingTop: 8,
       },
       header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: 16,
         paddingVertical: Platform.OS === 'ios' ? 8 : 12,
+      },
+      headerContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
       },
     },
     todayButtonFontWeight: "600",
@@ -638,9 +647,11 @@ const { t } = useLanguage();
           markedDates={getMarkedDates()}
           theme={calendarTheme}
           customHeaderTitle={
-            <Text h2_bold color={Colors.text}>
-              {moment(selectedDate).format("MMMM YYYY")}
-            </Text>
+            <View flex center>
+              <Text h2_bold color={Colors.text}>
+                {moment(selectedDate).format("MMMM YYYY")}
+              </Text>
+            </View>
           }
         />
 
