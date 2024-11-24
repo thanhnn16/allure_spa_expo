@@ -7,18 +7,15 @@ import { setGuestUser, clearGuestUser, clearAuth } from '@/redux/features/auth/a
 import { router } from 'expo-router';
 import { LoginCredentials, RegisterCredentials, AuthErrorCode } from '@/types/auth.type';
 import AuthService from '@/utils/services/auth/authService';
-import { useZaloAuth } from './useZaloAuth';
-import { useLanguage } from '@/hooks/useLanguage';
+import i18n from '@/languages/i18n';
 
 export const useAuth = () => {
-  const { t } = useLanguage();
   const dispatch = useDispatch<AppDispatch>();
   const authState = useSelector((state: RootState) => state.auth);
   const { user } = useSelector((state: RootState) => state.user);
-  const { login: zaloLogin } = useZaloAuth();
 
   const handleAuthError = (error: any) => {
-    let errorMessage = t('auth.login.unknown_error');
+    let errorMessage = i18n.t('auth.login.unknown_error');
     const errorCode = error?.code;
     const errorMsg = error?.message;
 
@@ -27,19 +24,19 @@ export const useAuth = () => {
     switch (errorCode) {
       case AuthErrorCode.USER_NOT_FOUND:
       case AuthErrorCode.WRONG_PASSWORD:
-        return t('auth.login.invalid_credentials');
+        return i18n.t('auth.login.invalid_credentials');
       case AuthErrorCode.INVALID_PHONE_FORMAT:
-        return t('auth.login.invalid_phone_number');
+        return i18n.t('auth.login.invalid_phone_number');
       case AuthErrorCode.INVALID_PASSWORD_FORMAT:
-        return t('auth.login.invalid_password_special_char');
+        return i18n.t('auth.login.invalid_password_special_char');
       case AuthErrorCode.INVALID_EMAIL_FORMAT:
-        return t('auth.login.invalid_email');
+        return i18n.t('auth.login.invalid_email');
       case AuthErrorCode.INVALID_NAME_FORMAT:
-        return t('auth.login.invalid_full_name');
+        return i18n.t('auth.login.invalid_full_name');
       case AuthErrorCode.PASSWORDS_NOT_MATCH:
-        return t('auth.register.password_mismatch');
+        return i18n.t('auth.register.password_mismatch');
       case AuthErrorCode.SERVER_ERROR:
-        return t('auth.login.server_error');
+        return i18n.t('auth.login.server_error');
       default:
         return errorMsg || errorMessage;
     }
@@ -65,14 +62,6 @@ export const useAuth = () => {
         router.replace('/(app)/(tabs)/home');
         return result;
       }
-    } catch (error: any) {
-      throw error;
-    }
-  };
-
-  const signInWithZalo = async () => {
-    try {
-      await zaloLogin();
     } catch (error: any) {
       throw error;
     }
@@ -106,6 +95,5 @@ export const useAuth = () => {
     signUp,
     signOut,
     signInAsGuest,
-    signInWithZalo
   };
 };

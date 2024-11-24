@@ -21,7 +21,9 @@ SplashScreen.preventAutoHideAsync();
 const AppContent = () => {
   const segments = useSegments();
   const router = useRouter();
-  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, isGuest } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
