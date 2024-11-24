@@ -14,6 +14,9 @@ const colorScheme = {
   primary_light: 'rgba(113, 118, 88, 0.12)',
   surface: '#FFFFFF',
   card_bg: '#FAFAFA',
+  surface_light: '#F8F9FA',
+  border: '#E9ECEF',
+  surface_variant: '#F3F4F6',
 };
 
 Colors.loadColors(colorScheme);

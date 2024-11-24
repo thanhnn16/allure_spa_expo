@@ -1,4 +1,3 @@
-
 import { OrderItem, Orders } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
@@ -13,7 +12,6 @@ import {
 } from "react-native-ui-lib";
 import OrderStatusBadge from "./OrderStatusBadge";
 import AppButton from "../buttons/AppButton";
-import LinearGradient from "react-native-linear-gradient";
 import { useDispatch } from "react-redux";
 import { setOrderProducts } from "@/redux/features/order/orderSlice";
 import { ServiceResponeModel } from "@/types/service.type";
@@ -49,15 +47,13 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   if (!order || !orderItems.length) {
     return (
       <View
+        bg-surface_light
+        br30
+        padding-16
+        margin-10
+        border-1
         style={{
-          padding: 16,
-          backgroundColor: "white",
-          borderRadius: 10,
-          margin: 10,
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          elevation: 3,
+          borderColor: Colors.border
         }}
       >
         <SkeletonView height={20} width={width * 0.3} />
@@ -126,66 +122,58 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
 
   return (
     <View
+      bg-surface_light
+      br30
+      margin-10
+      border-1
       style={{
-        backgroundColor: "white",
-        borderRadius: 10,
-        margin: 10,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        elevation: 3,
+        borderColor: Colors.border
       }}
     >
       <Animated.View>
-        <LinearGradient
-          colors={[
-            Colors.white as string,
-            Colors.rgba(Colors.primary, 0.05) as string,
-          ]}
+        <TouchableOpacity
+          onPress={() => router.push(`/order/${order.id}`)}
+          activeOpacity={0.7}
         >
-          <TouchableOpacity
-            onPress={() => router.push(`/order/${order.id}`)}
-            activeOpacity={0.7}
-          >
-            <View row spread centerV paddingH-15 paddingT-15>
-              <View row centerV>
-                <Text h3_bold>#{order.id}</Text>
-              </View>
-              <View row gap-10 centerV>
-                <OrderStatusBadge status={order.status} />
-              </View>
+          <View row spread centerV padding-16>
+            <View row centerV>
+              <Text h3_bold>#{order.id}</Text>
             </View>
-            <View height={1} marginV-10 bg-$backgroundPrimaryLight></View>
+            <View row gap-10 centerV>
+              <OrderStatusBadge status={order.status} />
+            </View>
+          </View>
+          
+          <View height={1} bg-border marginB-10 />
 
-            {orderItems.map(renderItem)}
+          {orderItems.map(renderItem)}
 
-            <View height={1} marginT-10 bg-$backgroundPrimaryLight></View>
+          <View height={1} bg-border marginT-10 />
 
-            <View paddingH-16 paddingV-8 gap-8>
-              <View row spread marginT-10>
-                <Text h3_bold>{t("orders.total")}</Text>
-                <Text h3_bold secondary>
-                  {formatCurrency({ price: Number(order.total_amount) })}
-                </Text>
-              </View>
-              {(order.status === "completed" || order.status === "cancelled") &&
-                order.order_items.some((item) => item.product) && (
-                  <AppButton
-                    type="outline"
-                    title={t("orders.repurchase")}
-                    onPress={() => handleReorder()}
-                  />
-                )}
-              {order.status === "completed" ? (
+          <View padding-16 gap-8>
+            <View row spread marginT-10>
+              <Text h3_bold>{t("orders.total")}</Text>
+              <Text h3_bold secondary>
+                {formatCurrency({ price: Number(order.total_amount) })}
+              </Text>
+            </View>
+            {(order.status === "completed" || order.status === "cancelled") &&
+              order.order_items.some((item) => item.product) && (
                 <AppButton
                   type="outline"
-                  title={t("orders.rate_now")}
-                  onPress={() => router.push(`/order/${order.id}`)}
+                  title={t("orders.repurchase")}
+                  onPress={() => handleReorder()}
                 />
-              ) : null}
-            </View>
-          </TouchableOpacity>
-        </LinearGradient>
+              )}
+            {order.status === "completed" ? (
+              <AppButton
+                type="outline"
+                title={t("orders.rate_now")}
+                onPress={() => router.push(`/order/${order.id}`)}
+              />
+            ) : null}
+          </View>
+        </TouchableOpacity>
       </Animated.View>
     </View>
   );

@@ -85,14 +85,12 @@ const MyOrder = () => {
           <Animated.View
             entering={FadeInDown.delay(index * 100).duration(400)}
             style={{
-              backgroundColor: "white",
-              borderRadius: 10,
+              backgroundColor: Colors.surface_light,
+              borderRadius: 12,
               margin: 10,
               padding: 16,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              elevation: 3,
+              borderWidth: 1,
+              borderColor: Colors.border,
             }}
           >
             <View row spread centerV>
