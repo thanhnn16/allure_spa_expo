@@ -45,10 +45,7 @@ export const useAuth = () => {
   const signIn = async (credentials: LoginCredentials) => {
     try {
       const result = await dispatch(loginThunk(credentials)).unwrap();
-      if (result?.token) {
-        router.replace('/(app)/(tabs)/home');
-        return result;
-      }
+      return result;
     } catch (error: any) {
       const errorMessage = handleAuthError(error);
       throw new Error(errorMessage);
@@ -58,10 +55,7 @@ export const useAuth = () => {
   const signUp = async (credentials: RegisterCredentials) => {
     try {
       const result = await dispatch(registerThunk(credentials)).unwrap();
-      if (result) {
-        router.replace('/(app)/(tabs)/home');
-        return result;
-      }
+      return result;
     } catch (error: any) {
       throw error;
     }
@@ -72,7 +66,6 @@ export const useAuth = () => {
       await dispatch(logoutThunk()).unwrap();
       dispatch(clearAuth());
       dispatch(clearGuestUser());
-      router.replace('/(auth)');
     } catch (error: any) {
       throw error;
     }
@@ -82,7 +75,6 @@ export const useAuth = () => {
     try {
       await AuthService.loginAsGuest();
       dispatch(setGuestUser());
-      router.replace('/(app)/(tabs)/home');
     } catch (error: any) {
       throw error;
     }

@@ -11,35 +11,35 @@ import {
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
 import { router } from "expo-router";
-import { useEffect, useMemo, useCallback, memo } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { Dimensions } from "react-native";
 import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
   FadeIn,
   FadeInDown,
   FadeInUp,
+  useAnimatedScrollHandler,
+  useSharedValue,
 } from "react-native-reanimated";
 import { Colors, Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
+import AppDialog from "@/components/dialog/AppDialog";
 import ServiceItem from "@/components/home/ServiceItem";
 import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import WeatherView from "@/components/home/WeatherView";
+import { HOME_CATEGORIES } from "@/constants/categories";
 import { useAuth } from "@/hooks/useAuth";
+import { useDialog } from "@/hooks/useDialog";
+import { useLanguage } from "@/hooks/useLanguage";
 import { fetchBanners } from "@/redux/features/banner/bannerThunk";
+import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
+import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 import { RootState } from "@/redux/store";
 import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
-import { SkeletonView } from "react-native-ui-lib";
-import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
-import { HOME_CATEGORIES } from "@/constants/categories";
-import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
-import { useLanguage } from "@/hooks/useLanguage";
 import { User } from "@/types/user.type";
-import { useDialog } from "@/hooks/useDialog";
-import AppDialog from "@/components/dialog/AppDialog";
+import { SkeletonView } from "react-native-ui-lib";
 
 interface HomeHeaderProps {
   user: User;
@@ -69,6 +69,19 @@ const HomeHeader = memo(
   }: HomeHeaderProps) => {
     const { isGuest } = useAuth();
     const { showDialog, dialogConfig } = useDialog();
+
+    const handleNotificationPress = useCallback(() => {
+      if (isGuest) {
+        showDialog(
+          "Thông báo",
+          "Bạn cần đăng nhập để sử dụng chức năng này",
+          "error"
+        );
+      } else {
+        router.push("/notification");
+      }
+    }, [isGuest, showDialog]);
+
     return (
       <View bg-white paddingH-20>
         <Animated.View style={[greetingHeaderStyle]}>
@@ -101,17 +114,7 @@ const HomeHeader = memo(
           marginH-20
         >
           <HomeHeaderButton
-            onPress={() => {
-              if (isGuest) {
-                showDialog(
-                  "Thông báo",
-                  "Bạn cần đăng nhập để sử dụng chức năng này",
-                  "error"
-                );
-              } else {
-                router.push("/notification");
-              }
-            }}
+            onPress={handleNotificationPress}
             iconName="notifications-outline"
             type="notification"
           />
@@ -223,12 +226,12 @@ const HomePage = () => {
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
 
-  const greeting = () => {
+  const currentGreeting = useMemo(() => {
     const hours = new Date().getHours();
     if (hours < 12) return t("greeting.morning");
     if (hours < 18) return t("greeting.afternoon");
     return t("greeting.evening");
-  };
+  }, [t]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -237,7 +240,7 @@ const HomePage = () => {
     },
   });
 
-  const getUpcomingAppointment = useCallback(() => {
+  const getUpcomingAppointment = (packages: any[]) => {
     if (!packages || !Array.isArray(packages)) return null;
 
     const now = new Date();
@@ -247,8 +250,7 @@ const HomePage = () => {
     for (const pkg of packages) {
       if (pkg.next_appointment_details) {
         try {
-          const [day, month, year] =
-            pkg.next_appointment_details.date.split("/");
+          const [day, month, year] = pkg.next_appointment_details.date.split("/");
           const appointmentDate = new Date(
             parseInt(year),
             parseInt(month) - 1,
@@ -258,8 +260,7 @@ const HomePage = () => {
             0
           );
 
-          const [startHour, startMinute] =
-            pkg.next_appointment_details.time.start.split(":");
+          const [startHour, startMinute] = pkg.next_appointment_details.time.start.split(":");
           appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
 
           if (
@@ -280,11 +281,11 @@ const HomePage = () => {
       }
     }
     return null;
-  }, [packages]);
+  };
 
   const upcomingAppointment = useMemo(
-    () => getUpcomingAppointment(),
-    [getUpcomingAppointment]
+    () => getUpcomingAppointment(packages),
+    [packages]
   );
 
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
@@ -409,8 +410,6 @@ const HomePage = () => {
     HEADER_HEIGHT,
     SCROLL_THRESHOLD
   );
-
-  const currentGreeting = greeting();
 
   return (
     <View bg-$white flex>
