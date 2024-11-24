@@ -1,10 +1,7 @@
-import { useLanguage } from "@/hooks/useLanguage";
-
-const { t } = useLanguage();
+import { translate } from "@/languages/i18n";
 import getLocation from "@/utils/location/locationHelper";
 import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
-import { BlurView } from "expo-blur";
 import { useEffect, useState } from "react";
 import { Text, View, Image, SkeletonView, Colors } from "react-native-ui-lib";
 
@@ -16,6 +13,7 @@ interface LocationsType {
 }
 
 const WeatherView = () => {
+
   const [temperature, setTemperature] = useState<number>(0);
   const [location, setLocation] = useState<LocationsType | null>(null);
   const [weatherIcon, setWeatherIcon] = useState<string>("");
@@ -58,13 +56,13 @@ const WeatherView = () => {
   useEffect(() => {
     const date = new Date();
     const weekdays = [
-      t("days.sun"),
-      t("days.mon"),
-      t("days.tue"),
-      t("days.wed"),
-      t("days.thu"),
-      t("days.fri"),
-      t("days.sat"),
+      translate("days.sun"),
+      translate("days.mon"),
+      translate("days.tue"),
+      translate("days.wed"),
+      translate("days.thu"),
+      translate("days.fri"),
+      translate("days.sat"),
     ];
 
     const weekday = weekdays[date.getDay()];
@@ -109,7 +107,7 @@ const WeatherView = () => {
       />
       <View>
         <Text text70 color="#4A4A4A">
-          {weekday}, {t("days.day")} {currentDate}
+          {weekday}, {translate("days.day")} {currentDate}
         </Text>
         <View row gap-6 centerV>
           <FontAwesome6 name="location-dot" size={12} color="#4A4A4A" />

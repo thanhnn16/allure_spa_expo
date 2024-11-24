@@ -3,7 +3,6 @@ import { View, Text, Colors } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 import { Alert, ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,6 +12,8 @@ interface RegisterFormProps {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
+  const { t } = useLanguage();
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");

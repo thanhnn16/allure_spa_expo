@@ -1,10 +1,9 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions } from "react-native";
 import { View, SkeletonView } from "react-native-ui-lib";
-import React, { useState } from "react";
+import React from "react";
 import { Product } from "@/types/product.type";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 import ProductDescriptionColapable from "./ProductDescriptionColapable";
 
@@ -19,6 +18,8 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({
   product,
   isLoading = false,
 }) => {
+  const { t } = useLanguage();
+
   if (isLoading) {
     return (
       <View marginT-10>

@@ -1,21 +1,19 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image, Card } from "react-native-ui-lib";
-import BackButton from "@/assets/icons/back.svg";
 import ArrowRight from "@/assets/icons/arrow.svg";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { useAuth } from "@/hooks/useAuth";
 import { router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
-import { setUser } from "@/redux/features/auth/authSlice";
 
 interface ProfileDetailProps { }
 
 const ProfileDetail = (props: ProfileDetailProps) => {
+  const { t } = useLanguage();
+
   const { user, setAuthUser } = useAuth();
   const dispatch = useDispatch();
 

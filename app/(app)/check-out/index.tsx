@@ -1,70 +1,68 @@
-import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  ScrollView,
-  ImageSourcePropType,
-  TouchableOpacity,
-  TextInput,
-  Linking,
-} from "react-native";
-import { Button, Colors, Text, View } from "react-native-ui-lib";
-import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
-import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import PaymentPicker from "@/components/payment/PaymentPicker";
 import PaymentProductItem from "@/components/payment/PaymentProductItem";
+import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import { useLanguage } from "@/hooks/useLanguage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useNavigation } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+  ImageSourcePropType,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { Button, Colors, Text, View } from "react-native-ui-lib";
 
-const { t } = useLanguage();
-import formatCurrency from "@/utils/price/formatCurrency";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
-import { Voucher } from "@/types/voucher.type";
-import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
+import AppButton from "@/components/buttons/AppButton";
 import AppDialog from "@/components/dialog/AppDialog";
-import OrderService from "@/services/OrderService";
 import { useAuth } from "@/hooks/useAuth";
-import { clearCart } from "@/redux/features/cart/cartSlice";
-import { OrderItem } from "@/types";
 import { useDialog } from "@/hooks/useDialog";
 import { fetchAddresses } from "@/redux/features";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import AppButton from "@/components/buttons/AppButton";
-import { Address } from "@/types/address.type";
-import { selectCheckoutItems } from "@/redux/features/cart/cartSlice";
-import { CheckoutOrderItem } from "@/types/order.type";
-import { useLocalSearchParams } from "expo-router";
+import { clearCart, selectCheckoutItems } from "@/redux/features/cart/cartSlice";
 import { clearTempOrder } from "@/redux/features/order/orderSlice";
+import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
+import { RootState } from "@/redux/store";
+import OrderService from "@/services/OrderService";
+import { OrderItem } from "@/types";
+import { Address } from "@/types/address.type";
+import { CheckoutOrderItem } from "@/types/order.type";
+import { Voucher } from "@/types/voucher.type";
+import formatCurrency from "@/utils/price/formatCurrency";
+import { useLocalSearchParams } from "expo-router";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useDispatch, useSelector } from "react-redux";
 
 export interface PaymentMethod {
   id: number;
   name: string;
-  icon?: ImageSourcePropType;
   iconName: string;
-  code?: string;
+  iconType?: "Ionicons" | "MaterialCommunityIcons";
 }
-const paymentMethods: PaymentMethod[] = [
-  {
-    id: 1,
-    name: t("checkout.cash"),
-    iconName: "cash-outline",
-  },
-  {
-    id: 2,
-    name: t("checkout.credit_card"),
-    iconName: "card-outline",
-  },
-  {
-    id: 3,
-    name: t("checkout.bank_transfer"),
-    iconName: "card-outline",
-  },
-];
-
 export default function Checkout() {
-  const { user } = useAuth();
+  const { t } = useLanguage();
+
+
+  const paymentMethods: PaymentMethod[] = [
+    {
+      id: 1,
+      name: t("checkout.cash"),
+      iconName: "cash-outline",
+    },
+    {
+      id: 2,
+      name: t("checkout.credit_card"),
+      iconName: "card-outline",
+    },
+    {
+      id: 3,
+      name: t("checkout.bank_transfer"),
+      iconName: "card-outline",
+    },
+  ];
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
@@ -73,16 +71,12 @@ export default function Checkout() {
   const [voucher, setVoucher] = useState<Voucher | null>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const [paymentDialog, setPaymentDialog] = useState(false);
-  const [createOrderDialog, setCreateOrderDialog] = useState(false);
   const { dialogConfig, showDialog, hideDialog } = useDialog();
   const [note, setNote] = useState("");
   const { source } = useLocalSearchParams();
 
   const tempOrder = useSelector((state: RootState) => state.order.tempOrder);
   const checkoutItems = useSelector(selectCheckoutItems) as CheckoutOrderItem[];
-  const cartTotalAmount = useSelector(
-    (state: RootState) => state.cart.totalAmount
-  );
   const addresses = useSelector((state: RootState) => state.address.addresses);
   const userProfile = useSelector((state: RootState) => state.auth.user);
   const vouchers = useSelector((state: RootState) => state.voucher.vouchers);

@@ -3,11 +3,8 @@ import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthResponse, AuthErrorCode } from "@/types/auth.type";
-import { useLanguage } from "@/hooks/useLanguage";
-
-const { t } = useLanguage();
-import { useDispatch } from "react-redux";
-import { getUserThunk } from "../users/getUserThunk";
+import { translate } from "@/languages/i18n";
+import { setUser } from "../users/userSlice";
 
 interface LoginRequest {
   phoneNumber: string;
@@ -16,7 +13,7 @@ interface LoginRequest {
 
 export const loginThunk = createAsyncThunk(
   'user/login',
-  async (body: LoginRequest, { rejectWithValue }: { rejectWithValue: any }) => {
+  async (body: LoginRequest, { dispatch, rejectWithValue }: { dispatch: any, rejectWithValue: (value: any) => any }) => {
     try {
       const res = await AxiosInstance().post<AuthResponse>('auth/login', {
         phone_number: body.phoneNumber,
@@ -25,10 +22,6 @@ export const loginThunk = createAsyncThunk(
 
       if (res.data.success && res.data.data) {
         const { token, user } = res.data.data;
-        const dispatch = useDispatch();
-
-        await dispatch(getUserThunk());
-
 
         if (!token) {
           return rejectWithValue({
@@ -38,6 +31,7 @@ export const loginThunk = createAsyncThunk(
         }
 
         await AsyncStorage.setItem('userToken', token);
+        dispatch(setUser(user));
 
         try {
           await FirebaseService.requestUserPermission();
@@ -46,12 +40,12 @@ export const loginThunk = createAsyncThunk(
           // Do nothing
         }
 
-        return { user, token };
+        return { token };
       }
 
       return rejectWithValue({
         code: res.data.status_code || 'UNKNOWN_ERROR',
-        message: res.data.message || t('auth.login.unknown_error')
+        message: res.data.message || translate('auth.login.unknown_error')
       });
 
     } catch (error: any) {
@@ -77,19 +71,19 @@ export const loginThunk = createAsyncThunk(
           case AuthErrorCode.WRONG_PASSWORD:
             return rejectWithValue({
               code: error.response.data.status_code,
-              message: t('auth.login.invalid_credentials')
+              message: translate('auth.login.invalid_credentials')
             });
           default:
             return rejectWithValue({
               code: error.response.data.status_code,
-              message: error.response.data.message || t('auth.login.unknown_error')
+              message: error.response.data.message || translate('auth.login.unknown_error')
             });
         }
       }
 
       return rejectWithValue({
         code: AuthErrorCode.SERVER_ERROR,
-        message: t('auth.login.server_error')
+        message: translate('auth.login.server_error')
       });
     }
   }

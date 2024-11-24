@@ -20,9 +20,10 @@ import { router } from "expo-router";
 import { Dimensions } from "react-native";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const ServicePackageScreen = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.user);
   const { packages, isLoading } = useSelector(

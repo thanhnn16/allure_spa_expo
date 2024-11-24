@@ -6,11 +6,9 @@ import {
   Image,
   Picker,
 } from "react-native-ui-lib";
-import { Alert } from "react-native";
 import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppDialog from "@/components/dialog/AppDialog";
 import { TextInput } from "react-native";
 import * as ImagePicker from "expo-image-picker";
@@ -28,12 +26,13 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { processImageForUpload } from "@/utils/helpers/imageHelper";
-import { useDialog } from "@/hooks/useDialog";
 import AppBar from "@/components/app-bar/AppBar";
 
-interface ProfileEditProps {}
+interface ProfileEditProps { }
 
 const ProfileEdit = (props: ProfileEditProps) => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const { user, setUser: setAuthUser } = useAuth();
 

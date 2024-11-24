@@ -2,7 +2,6 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { languageSlice } from "@/redux/features";
 import { zaloSlice } from "@/redux/features";
 import { serviceSlice } from './features/service/serviceSlice';
 import { authSlice } from '@/redux/features';
@@ -22,19 +21,18 @@ import appointmentReducer from './features/appointment/appointmentSlice';
 import notificationReducer from './features/notification/notificationSlice';
 import bannerReducer from '@/redux/features/banner/bannerSlice';
 import servicePackageReducer from './features/servicePackage/servicePackageSlice';
+import languageReducer from './features/language/languageSlice';
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['language', 'zalo', 'auth'],
+    whitelist: ['zalo', 'auth', 'user', 'language'],
     timeout: 10000,
 }
 
 const rootReducer: any = combineReducers({
     banners: bannerReducer,
-
     user: userReducer,
-    language: languageSlice.reducer,
     zalo: zaloSlice.reducer,
     service: serviceSlice.reducer,
     auth: authSlice.reducer,
@@ -52,6 +50,7 @@ const rootReducer: any = combineReducers({
     appointment: appointmentReducer,
     notification: notificationReducer,
     servicePackage: servicePackageReducer,
+    language: languageReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;

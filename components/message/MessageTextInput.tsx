@@ -7,8 +7,6 @@ import { Href, router } from 'expo-router';
 import MicIcon from '@/assets/icons/mic.svg';
 import CameraIcon from '@/assets/icons/camera.svg';
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
-import {push} from "expo-router/build/global-state/routing";
 
 
 interface MessageTextInputProps {
@@ -26,6 +24,8 @@ interface MessageTextInputProps {
 const MessageTextInput = ({
     placeholder, message, setMessage, handleSend, isAI, isCamera, selectedImages, setSelectedImages, onVoicePress
 }: MessageTextInputProps) => {
+    const { t } = useLanguage();
+
 
     const handleSelectImages = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({

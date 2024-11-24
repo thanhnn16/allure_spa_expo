@@ -1,8 +1,9 @@
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 import { Wizard } from 'react-native-ui-lib'
 
 const TransactionHeader = ({ status }: { status: string }) => {
+    const { t } = useLanguage();
+
     const handleGetOrderStatus = (status: string) => {
         if (status === "pending") {
             return 0;

@@ -1,20 +1,22 @@
 import { StyleSheet } from "react-native";
 import {
-  Card,
   Text,
   TouchableOpacity,
   View,
-  Image,
   Colors,
 } from "react-native-ui-lib";
-import React from "react";
 
-import BackIcon from "@/assets/icons/arrow_left.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
-import { PaymentAddressProps } from "@/app/(app)/check-out";
+interface PaymentAddressProps {
+  addressType: string;
+  fullName: string;
+  phoneNumber: string;
+  address: string;
+  district: string;
+  province: string;
+}
 
 interface PaymentAddressComponentProps {
   isPayment?: boolean;
@@ -27,6 +29,8 @@ const PaymentAddress = ({
   onPress,
   selectAddress,
 }: PaymentAddressComponentProps) => {
+  const { t } = useLanguage();
+
   return (
     <View marginV-10>
       <Text h2_bold>{t("checkout.customer_info")}</Text>

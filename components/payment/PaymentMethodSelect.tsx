@@ -1,13 +1,10 @@
-import { StyleSheet, } from 'react-native'
 import { Text, View, TouchableOpacity, Colors } from 'react-native-ui-lib'
 import {
     MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { PaymentMethod } from '@/app/(app)/check-out';
-import { useEffect, useState } from 'react';
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 
 
 interface PaymentMethodSelectProps {
@@ -17,11 +14,13 @@ interface PaymentMethodSelectProps {
 }
 
 const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMethodSelectProps) => {
+    const { t } = useLanguage();
+
     const renderPaymentIcon = (method: PaymentMethod) => {
         if (method.iconType === "Ionicons") {
             return (
                 <Ionicons
-                    name={method.icon as any}
+                    name={method.iconName as any}
                     size={24}
                     color={Colors.primary}
                 />
@@ -29,7 +28,7 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
         }
         return (
             <MaterialCommunityIcons
-                name={method.icon as any}
+                name={method.iconName as any}
                 size={24}
                 color={Colors.primary}
             />
@@ -82,4 +81,3 @@ const PaymentMethodSelect = ({ onPress, selectedPayment, isPayment }: PaymentMet
 
 export default PaymentMethodSelect
 
-const styles = StyleSheet.create({})

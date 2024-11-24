@@ -31,17 +31,17 @@ import { User } from "@/types/user.type";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
-
-export const addressTypeItems = [
-  { id: 1, name: t("address.home"), type: "home" as AddressType },
-  { id: 2, name: t("address.work"), type: "work" as AddressType },
-  { id: 3, name: t("address.others"), type: "others" as AddressType },
-];
-
 type AddressType = "home" | "work" | "others";
 
 const Add = () => {
+  const { t } = useLanguage();
+  
+  const addressTypeItems = [
+    { id: 1, name: t("address.home"), type: "home" as AddressType },
+    { id: 2, name: t("address.work"), type: "work" as AddressType },
+    { id: 3, name: t("address.others"), type: "others" as AddressType },
+  ];
+
   const [selectedItem, setSelectedItem] = useState<number | null>(1);
   const [loading, setLoading] = useState(false);
   const [selectedAddressType, setSelectedAddressType] =
@@ -69,7 +69,7 @@ const Add = () => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [confirmButton, setConfirmButton] = useState(false);
   const [onConfirmDialog, setOnConfirmDialog] = useState<() => void>(
-    () => () => {}
+    () => () => { }
   );
   const [userProfile, setUserProfile] = useState<User>();
   const { user } = useAuth();
@@ -244,13 +244,13 @@ const Add = () => {
           <AddressTextInput
             value={userProfile?.full_name || ""}
             placeholder={t("address.name")}
-            onChangeText={() => {}}
+            onChangeText={() => { }}
             editable={false}
           />
           <AddressTextInput
             value={userProfile?.phone_number || ""}
             placeholder={t("address.phone_number")}
-            onChangeText={() => {}}
+            onChangeText={() => { }}
             maxLength={10}
             keyboardType="phone-pad"
             editable={false}

@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { getAppointments, cancelAppointment, updateAppointment } from '@/redux/features/appointment/appointmentThunk';
 
 interface Service {

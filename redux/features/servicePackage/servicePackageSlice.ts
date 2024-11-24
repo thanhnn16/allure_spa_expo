@@ -5,12 +5,16 @@ interface ServicePackageState {
     packages: any[];
     isLoading: boolean;
     error: string | null;
+    upcomingAppointment: any | null;
+    loadingUpcoming: boolean;
 }
 
 const initialState: ServicePackageState = {
     packages: [],
     isLoading: false,
     error: null,
+    upcomingAppointment: null,
+    loadingUpcoming: false,
 };
 
 export const servicePackageSlice = createSlice({

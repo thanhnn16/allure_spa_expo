@@ -6,7 +6,7 @@ import { RootState } from "../../store";
 
 interface initialStateType {
     serviceCategories: ServiceCategoriesResponeParams | null;
-    servicesList: ServicesResponeParams | null;
+    servicesList: any[];
     currentPage: number;
     hasMore: boolean;
     isLoading: boolean;
@@ -15,7 +15,7 @@ interface initialStateType {
 
 const initialState: initialStateType = {
     serviceCategories: null,
-    servicesList: null,
+    servicesList: [],
     currentPage: 1,
     hasMore: true,
     isLoading: false,
@@ -57,16 +57,9 @@ export const serviceSlice = createSlice({
                 const { data, page, hasMore } = action.payload;
 
                 if (page === 1) {
-                    state.servicesList = {
-                        data: data
-                    };
+                    state.servicesList = data.data;
                 } else {
-                    state.servicesList = {
-                        data: {
-                            ...state.servicesList?.data,
-                            data: [...(state.servicesList?.data?.data || []), ...data]
-                        }
-                    };
+                    state.servicesList = [...state.servicesList, ...data.data];
                 }
 
                 state.currentPage = page;

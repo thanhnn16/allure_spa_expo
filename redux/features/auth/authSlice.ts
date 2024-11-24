@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice } from '@reduxjs/toolkit';
-import { logoutThunk } from "./logoutThunk";
 import { loginThunk } from "./loginThunk";
 import { registerThunk } from "./registerThunk";
+import { logoutThunk } from "./logoutThunk";
 
 interface AuthState {
   token: string | null;
@@ -128,14 +128,9 @@ export const authSlice = createSlice({
 });
 
 export const {
-  login,
-  register,
-  logout,
-  zaloLogin,
-  setUser,
-  clearUser,
   setGuestUser,
   clearGuestUser,
+  clearAuth,
   setZaloTokens,
   clearZaloTokens
 } = authSlice.actions;

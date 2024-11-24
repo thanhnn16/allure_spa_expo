@@ -11,9 +11,10 @@ import { AppointmentResponeModelParams } from "@/types/service.type";
 import AppButton from "@/components/buttons/AppButton";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const AppointmentDetailPage = () => {
+const { t } = useLanguage();
+
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch();
   const [appointment, setAppointment] =

@@ -11,203 +11,49 @@ import {
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
 import { router } from "expo-router";
-import { useEffect, useMemo, useCallback, memo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Dimensions } from "react-native";
 import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
   FadeIn,
   FadeInDown,
   FadeInUp,
+  useAnimatedScrollHandler,
+  useSharedValue,
 } from "react-native-reanimated";
 import { Colors, Image, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
+import AppDialog from "@/components/dialog/AppDialog";
 import ServiceItem from "@/components/home/ServiceItem";
 import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import WeatherView from "@/components/home/WeatherView";
+import { HOME_CATEGORIES } from "@/constants/categories";
 import { useAuth } from "@/hooks/useAuth";
-import { fetchBanners } from "@/redux/features/banner/bannerThunk";
-import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
+import { useDialog } from "@/hooks/useDialog";
+import { useLanguage } from "@/hooks/useLanguage";
 import { RootState } from "@/redux/store";
 import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
 import { SkeletonView } from "react-native-ui-lib";
+import { translate } from '@/languages/i18n';
+import getLocation from "@/utils/location/locationHelper";
+import getWeatherData from "@/utils/weather/getWeatherData";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
-import { HOME_CATEGORIES } from "@/constants/categories";
-import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
-import { useLanguage } from "@/hooks/useLanguage";
-import { User } from "@/types/user.type";
-const { t } = useLanguage();
-
-interface HomeHeaderProps {
-  user: User;
-  greeting: string;
-  greetingHeaderStyle: {
-    opacity: number;
-    transform: { translateY: number }[];
-  };
-  searchBarStyle: {
-    opacity: number;
-    transform: { translateY: number }[];
-  };
-}
-
-interface HomeSkeletonContentProps {
-  WINDOW_WIDTH: number;
-}
-
-const HomeHeader = memo(
-  ({
-    user,
-    greeting,
-    greetingHeaderStyle,
-    searchBarStyle,
-  }: HomeHeaderProps) => {
-    return (
-      <View bg-white paddingH-20>
-        <Animated.View style={[greetingHeaderStyle]}>
-          <View row spread marginB-10>
-            <View row centerV gap-10>
-              <Image
-                width={32}
-                height={32}
-                borderRadius={30}
-                source={require("@/assets/images/logo/logo.png")}
-              />
-              <View centerV>
-                <Text h2_bold>{user?.full_name || t("common.guest")}</Text>
-                <Text h4>{greeting}</Text>
-              </View>
-            </View>
-          </View>
-          <WeatherView />
-        </Animated.View>
-
-        <View
-          row
-          centerV
-          gap-15
-          absR
-          style={{ zIndex: 2 }}
-          right-0
-          top-0
-          paddingV-10
-          marginH-20
-        >
-          <HomeHeaderButton
-            onPress={() => {
-              router.push("/notification");
-            }}
-            iconName="notifications-outline"
-            type="notification"
-          />
-          <HomeHeaderButton
-            onPress={() => {
-              router.push("/cart");
-            }}
-            iconName="cart-outline"
-            type="cart"
-          />
-        </View>
-
-        <Animated.View
-          style={[
-            searchBarStyle,
-            {
-              position: "absolute",
-              bottom: 10,
-              left: 20,
-              right: 20,
-            },
-          ]}
-        >
-          <Text h0_bold color="#717658" marginB-10>
-            {t("home.discover")}
-          </Text>
-          <AppSearch isHome />
-        </Animated.View>
-      </View>
-    );
-  }
-);
-
-const HomeSkeletonContent = memo(
-  ({ WINDOW_WIDTH }: HomeSkeletonContentProps) => {
-    return (
-      <View flex paddingH-20>
-        {/* Banner skeleton */}
-        <View marginB-20>
-          <SkeletonView
-            height={160}
-            width={WINDOW_WIDTH - 40}
-            borderRadius={12}
-          />
-        </View>
-
-        {/* Category skeleton */}
-        <View row centerH marginB-20 spread>
-          {Array(6)
-            .fill(0)
-            .map((_, index) => (
-              <View key={index} center marginH-8>
-                <SkeletonView
-                  height={48}
-                  width={48}
-                  style={{ borderRadius: 24 }}
-                />
-                <SkeletonView height={16} width={60} marginT-8 />
-              </View>
-            ))}
-        </View>
-
-        {/* Upcoming Appointment skeleton */}
-        <View marginB-20>
-          <SkeletonView
-            height={120}
-            width={WINDOW_WIDTH - 40}
-            borderRadius={12}
-          />
-        </View>
-
-        {/* Services section skeleton */}
-        <View marginB-20>
-          <View row spread marginB-10>
-            <SkeletonView height={20} width={120} />
-            <SkeletonView height={20} width={80} />
-          </View>
-        </View>
-
-        {/* Products section skeleton */}
-        <View>
-          <View row spread marginB-10>
-            <SkeletonView height={20} width={120} />
-            <SkeletonView height={20} width={80} />
-          </View>
-        </View>
-      </View>
-    );
-  }
-);
+import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
 
 const HomePage = () => {
+  const { t } = useLanguage();
   const dispatch = useDispatch();
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
+  const { showDialog, dialogConfig } = useDialog();
+
   const scrollOffset = useSharedValue(0);
-  const { packages } = useSelector((state: RootState) => state.servicePackage);
-  const { servicesList, isLoading } = useSelector(
+  useSelector((state: RootState) => state.servicePackage);
+  const { servicesList, isLoading, hasMore, currentPage } = useSelector(
     (state: RootState) => state.service
   );
   const { products } = useSelector((state: RootState) => state.product);
-  const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
-    useHeaderDimensions();
-
-  const greeting = () => {
-    const hours = new Date().getHours();
-    if (hours < 12) return t("greeting.morning");
-    if (hours < 18) return t("greeting.afternoon");
-    return t("greeting.evening");
-  };
+  const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } = useHeaderDimensions();
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -216,54 +62,147 @@ const HomePage = () => {
     },
   });
 
-  const getUpcomingAppointment = useCallback(() => {
-    if (!packages || !Array.isArray(packages)) return null;
-
-    const now = new Date();
-    const threeDaysFromNow = new Date();
-    threeDaysFromNow.setDate(now.getDate() + 7);
-
-    for (const pkg of packages) {
-      if (pkg.next_appointment_details) {
-        try {
-          const [day, month, year] =
-            pkg.next_appointment_details.date.split("/");
-          const appointmentDate = new Date(
-            parseInt(year),
-            parseInt(month) - 1,
-            parseInt(day),
-            0,
-            0,
-            0
-          );
-
-          const [startHour, startMinute] =
-            pkg.next_appointment_details.time.start.split(":");
-          appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
-
-          if (
-            !isNaN(appointmentDate.getTime()) &&
-            appointmentDate > now &&
-            appointmentDate <= threeDaysFromNow
-          ) {
-            return {
-              ...pkg.next_appointment_details,
-              service_name: pkg.service_name,
-              id: pkg.id,
-            };
-          }
-        } catch (error) {
-          console.error("Error parsing date:", error);
-          continue;
-        }
-      }
+  const handleNotificationPress = () => {
+    if (isGuest) {
+      showDialog(
+        "Thông báo",
+        "Bạn cần đăng nhập để sử dụng chức năng này",
+        "error"
+      );
+    } else {
+      router.push("/notification");
     }
-    return null;
-  }, [packages]);
+  };
 
-  const upcomingAppointment = useMemo(
-    () => getUpcomingAppointment(),
-    [getUpcomingAppointment]
+  const currentGreeting = (() => {
+    const hours = new Date().getHours();
+    if (hours < 12) return translate("greeting.morning");
+    if (hours < 18) return translate("greeting.afternoon");
+    return translate("greeting.evening");
+  })();
+
+  const renderHeader = () => (
+    <View bg-white paddingH-20>
+      <Animated.View style={[greetingHeaderStyle]}>
+        <View row spread marginB-10>
+          <View row centerV gap-10>
+            <Image
+              width={32}
+              height={32}
+              borderRadius={30}
+              source={require("@/assets/images/logo/logo.png")}
+            />
+            <View centerV>
+              <Text h2_bold>{user?.full_name || translate("common.guest")}</Text>
+              <Text h4>{currentGreeting}</Text>
+            </View>
+          </View>
+        </View>
+        <WeatherView />
+      </Animated.View>
+
+      <View
+        row
+        centerV
+        gap-15
+        absR
+        style={{ zIndex: 2 }}
+        right-0
+        top-0
+        paddingV-10
+        marginH-20
+      >
+        <HomeHeaderButton
+          onPress={handleNotificationPress}
+          iconName="notifications-outline"
+          type="notification"
+        />
+        <HomeHeaderButton
+          onPress={() => {
+            router.push("/cart");
+          }}
+          iconName="cart-outline"
+          type="cart"
+        />
+      </View>
+
+      <Animated.View
+        style={[
+          searchBarStyle,
+          {
+            position: "absolute",
+            bottom: 10,
+            left: 20,
+            right: 20,
+          },
+        ]}
+      >
+        <Text h0_bold color="#717658" marginB-10>
+          {translate("home.discover")}
+        </Text>
+        <AppSearch isHome />
+      </Animated.View>
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        severity={dialogConfig.severity}
+      />
+    </View>
+  );
+
+  const renderSkeletonContent = () => (
+    <View flex paddingH-20>
+      {/* Banner skeleton */}
+      <View marginB-20>
+        <SkeletonView
+          height={160}
+          width={WINDOW_WIDTH - 40}
+          borderRadius={12}
+        />
+      </View>
+
+      {/* Category skeleton */}
+      <View row centerH marginB-20 spread>
+        {Array(6)
+          .fill(0)
+          .map((_, index) => (
+            <View key={index} center marginH-8>
+              <SkeletonView
+                height={48}
+                width={48}
+                style={{ borderRadius: 24 }}
+              />
+              <SkeletonView height={16} width={60} marginT-8 />
+            </View>
+          ))}
+      </View>
+
+      {/* Upcoming Appointment skeleton */}
+      <View marginB-20>
+        <SkeletonView
+          height={120}
+          width={WINDOW_WIDTH - 40}
+          borderRadius={12}
+        />
+      </View>
+
+      {/* Services section skeleton */}
+      <View marginB-20>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
+      </View>
+
+      {/* Products section skeleton */}
+      <View>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={120} />
+          <SkeletonView height={20} width={80} />
+        </View>
+      </View>
+
+    </View>
   );
 
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
@@ -275,24 +214,6 @@ const HomePage = () => {
       params: { type },
     });
   }, []);
-
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        await Promise.all([
-          dispatch(getServicesThunk({ page: 1, limit: 5 })),
-          dispatch(getAllProductsThunk()),
-          dispatch(fetchBanners()),
-          dispatch(fetchUnreadCount()),
-          dispatch(fetchCartItems()),
-        ]);
-      } catch (error) {
-        console.error("Error fetching initial data:", error);
-      }
-    };
-
-    fetchInitialData();
-  }, [dispatch, user?.id]);
 
   const renderServiceItem = useCallback(
     ({ item }: { item: ServiceResponeModel }) => (
@@ -317,6 +238,71 @@ const HomePage = () => {
     ),
     [WINDOW_WIDTH, WINDOW_HEIGHT]
   );
+
+  const loadMoreServices = useCallback(() => {
+    if (hasMore && !isLoading) {
+      dispatch(getServicesThunk({ page: currentPage + 1, limit: 5 }));
+    }
+  }, [hasMore, isLoading, currentPage, dispatch]);
+
+  const getUpcomingAppointment = useCallback((packages: any[]) => {
+    if (!packages || !Array.isArray(packages)) return null;
+
+    const now = new Date();
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(now.getDate() + 7);
+
+    for (const pkg of packages) {
+      if (pkg.next_appointment_details) {
+        try {
+          const [day, month, year] = pkg.next_appointment_details.date.split("/");
+          const appointmentDate = new Date(
+            parseInt(year),
+            parseInt(month) - 1,
+            parseInt(day),
+            0,
+            0,
+            0
+          );
+
+          const [startHour, startMinute] = pkg.next_appointment_details.time.start.split(":");
+          appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
+
+          if (
+            !isNaN(appointmentDate.getTime()) &&
+            appointmentDate > now &&
+            appointmentDate <= threeDaysFromNow
+          ) {
+            return {
+              ...pkg.next_appointment_details,
+              service_name: pkg.service_name,
+              id: pkg.id,
+            };
+          }
+        } catch (error) {
+          console.error("Error parsing date:", error);
+          continue;
+        }
+      }
+    }
+    return null;
+  }, []);
+
+  const upcomingAppointment = useMemo(() => 
+    getUpcomingAppointment(user?.packages || []), 
+    [user?.packages, getUpcomingAppointment]
+  );
+
+  useEffect(() => {
+    Promise.all([
+      dispatch(fetchUnreadCount()),
+      dispatch(getServicesThunk({ page: 1, limit: 5 })),
+      dispatch(getAllProductsThunk()),
+      getLocation().then((location) => {
+        getWeatherData(location.latitude, location.longitude);
+      }),
+    ]);
+  }, [dispatch]);
 
   const renderContent = () => (
     <View flex>
@@ -349,6 +335,8 @@ const HomePage = () => {
               onPressMore={() => {
                 handlePressMore("service");
               }}
+              onEndReached={loadMoreServices}
+              isLoadingMore={isLoading && currentPage > 1}
             />
           </Animated.View>
         )}
@@ -381,8 +369,6 @@ const HomePage = () => {
     SCROLL_THRESHOLD
   );
 
-  const currentGreeting = greeting();
-
   return (
     <View bg-$white flex>
       <Animated.View
@@ -399,12 +385,7 @@ const HomePage = () => {
           },
         ]}
       >
-        <HomeHeader
-          user={user}
-          greeting={currentGreeting}
-          greetingHeaderStyle={greetingHeaderStyle}
-          searchBarStyle={searchBarStyle}
-        />
+        {renderHeader()}
       </Animated.View>
 
       <Animated.ScrollView
@@ -418,7 +399,7 @@ const HomePage = () => {
         }}
       >
         {isLoading ? (
-          <HomeSkeletonContent WINDOW_WIDTH={WINDOW_WIDTH} />
+          renderSkeletonContent()
         ) : (
           renderContent()
         )}

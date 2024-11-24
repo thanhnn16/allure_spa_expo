@@ -1,40 +1,34 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '@/redux/features/language/languageSlice';
+import { setI18nConfig } from '@/languages/i18n';
+import { translate } from '@/languages/i18n';
 import { RootState } from '@/redux/store';
-import i18n from '@/languages/i18n';
-import { getInitialLanguage } from '@/languages/i18n';
 
 export const useLanguage = () => {
-    // Get initial language from device settings
-    let currentLanguage = getInitialLanguage();
-
-    // Try to get language from Redux store if available
     try {
-        const storeLanguage = useSelector(
-            (state: RootState) => state.language.currentLanguage
-        );
-        if (storeLanguage) {
-            currentLanguage = storeLanguage;
-        }
+        const dispatch = useDispatch();
+        const currentLanguage = useSelector((state: RootState) => state.language.currentLanguage);
+
+        const changeLanguage = async (language: string) => {
+            try {
+                await setI18nConfig(language);
+                dispatch(setLanguage(language));
+            } catch (error) {
+                console.error('Error changing language:', error);
+            }
+        };
+
+        return {
+            changeLanguage,
+            currentLanguage,
+            t: translate,
+        };
     } catch (error) {
-        // Fallback to device language if Redux store is not available
+        console.error('Redux context not available:', error);
+        return {
+            changeLanguage: async () => {},
+            currentLanguage: 'en',
+            t: translate,
+        };
     }
-
-    // Set i18n locale
-    if (currentLanguage) {
-        i18n.locale = currentLanguage;
-    }
-
-    const t = (key: string, options?: any) => {
-        try {
-            return i18n.t(key, options);
-        } catch (error) {
-            console.error('Translation error:', error);
-            return key;
-        }
-    };
-
-    return {
-        currentLanguage,
-        t
-    };
 }; 

@@ -7,35 +7,23 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
-import {
-  View,
-  Image,
-  Text,
-} from "react-native-ui-lib";
+import { View, Image, Text } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import LoginForm from "../../components/authentication/LoginForm";
 import RegisterForm from "../../components/authentication/RegisterForm";
 import LoginZaloForm from "../../components/authentication/LoginZaloForm";
 import OTP from "./otp";
 import AppButton from "@/components/buttons/AppButton";
 import Brand from "@/assets/images/common/logo-brand.svg";
-import { useDispatch, useSelector } from "react-redux";
-import { setLanguage } from "@/redux/features/language/languageSlice";
-import { RootState } from "@/redux/store";
 import LanguageModal from "@/components/modals/LanguageModal";
-import { useAuth } from '@/hooks/useAuth';
-import i18n from "@/languages/i18n";
+import { useAuth } from "@/hooks/useAuth";
 
 const { width, height } = Dimensions.get("window");
 
 const Onboarding: React.FC = () => {
-  const dispatch = useDispatch();
+  const { t, currentLanguage, changeLanguage } = useLanguage();
 
-  const currentLanguage = useSelector(
-    (state: RootState) => state.language?.currentLanguage ?? "en"
-  );
   const [activeView, setActiveView] = useState<
     "default" | "login" | "register" | "zalo" | "otp"
   >("default");
@@ -82,9 +70,8 @@ const Onboarding: React.FC = () => {
     animateViewChange(newView);
   };
 
-  const updateLanguage = (nextLanguage: string) => {
-    i18n.locale = nextLanguage;
-    dispatch(setLanguage(nextLanguage));
+  const updateLanguage = async (nextLanguage: string) => {
+    await changeLanguage(nextLanguage);
     setModalVisible(false);
   };
 
@@ -108,10 +95,6 @@ const Onboarding: React.FC = () => {
         return null;
     }
   };
-
-  useEffect(() => {
-    i18n.locale = currentLanguage;
-  }, [currentLanguage]);
 
   const { signInAsGuest } = useAuth();
 
@@ -216,7 +199,7 @@ const Onboarding: React.FC = () => {
               isVisible={modalVisible}
               onClose={toggleLanguageModal}
               onSelectLanguage={updateLanguage}
-              currentLanguage={currentLanguage}
+              currentLanguage={currentLanguage || ""}
             />
           </View>
         </TouchableWithoutFeedback>

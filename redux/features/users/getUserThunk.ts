@@ -12,10 +12,9 @@ export const getUserThunk = createAsyncThunk(
         return res.data.data;
       }
 
-      console.log('Get all user failed:', res.data.message);
-      return rejectWithValue(res.data.message || 'Get all products failed');
+      return rejectWithValue(res.data.message || 'Get user info failed');
     } catch (error: any) {
-      console.error('Get all user error:', error);
-      return rejectWithValue(error.response?.data?.message || "Get all user failed");
+      console.error('Get user info error:', error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || "Get user info failed");
     }
   });

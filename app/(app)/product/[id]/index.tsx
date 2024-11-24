@@ -22,7 +22,6 @@ import SunIcon from "@/assets/icons/sun.svg";
 import AppBar from "@/components/app-bar/AppBar";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getProductThunk } from "@/redux/features/products/productThunk";
@@ -50,6 +49,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { clearProduct } from "@/redux/features/products/productSlice";
 
 export default function DetailsScreen() {
+  const { t } = useLanguage();
+
   const { id } = useLocalSearchParams();
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
@@ -62,7 +63,6 @@ export default function DetailsScreen() {
 
   const user_id = useSelector((state: RootState) => state.auth.user?.id);
 
-  const status = useSelector((state: RootState) => state.favorite.status);
 
   const { product, isLoading, media } = useSelector(
     (state: RootState) => state.product

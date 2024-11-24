@@ -1,21 +1,20 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Alert, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, ImageBackground } from 'react-native';
-import { View, Image, Text, Colors, Spacings } from 'react-native-ui-lib';
+import { Alert, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native-ui-lib';
 import { TextInput as RNTextInput } from 'react-native';
-import AppButton, { AppButtonProps } from '@/components/buttons/AppButton';
-import Brand from '@/assets/images/common/logo-brand.svg';
+import AppButton from '@/components/buttons/AppButton';
 import colors from "@/constants/Colors";
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { forwardRef } from 'react-native-ui-lib';
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 
 interface OTPProps {
   onBackPress: () => void;
 }
 
 const OTP: React.FC<OTPProps> = ({ onBackPress }) => {
+  const { t } = useLanguage();
+
   const inputRefs = useRef<(RNTextInput | null)[]>([]);
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [confirmation, setConfirmation] = useState<any>(null);
@@ -44,16 +43,16 @@ const OTP: React.FC<OTPProps> = ({ onBackPress }) => {
   };
 
   const handleVerifyOTP = async () => {
-      if (!otp.every((value) => value)) {
-        Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ mã OTP');
-        return;
-      }
-      else {
-        const otpValue = otp.join('');
-        router.push('/home');
-      }
-  
-    };
+    if (!otp.every((value) => value)) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ mã OTP');
+      return;
+    }
+    else {
+      const otpValue = otp.join('');
+      router.push('/home');
+    }
+
+  };
 
   return (
     <View>

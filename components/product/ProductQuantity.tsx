@@ -1,7 +1,5 @@
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
-import { useState } from "react";
 import { Dimensions } from "react-native";
 import {
   View,
@@ -25,6 +23,8 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
   setQuantity,
   maxQuantity,
 }) => {
+  const { t } = useLanguage();
+
   if (isLoading) {
     return (
       <View marginV-10 marginH-20>

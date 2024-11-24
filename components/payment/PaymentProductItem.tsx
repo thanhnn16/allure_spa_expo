@@ -1,7 +1,6 @@
 import { CheckoutOrderItem } from "@/types/order.type";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import formatCurrency from "@/utils/price/formatCurrency";
 import { Dimensions, StyleSheet } from "react-native";
 import { Text, View, Image } from "react-native-ui-lib";
@@ -11,6 +10,8 @@ interface PaymentProductItemProps {
 }
 
 const PaymentProductItem = ({ orderItem }: PaymentProductItemProps) => {
+  const { t } = useLanguage();
+
   const windowWidth = Dimensions.get("window").width;
   const total = orderItem.price * orderItem.quantity;
 

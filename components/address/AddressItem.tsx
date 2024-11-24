@@ -1,10 +1,9 @@
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { Address, UserProfile } from "@/types/address.type";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Href, router } from "expo-router";
-import { TouchableOpacity, View, Text, Colors } from "react-native-ui-lib";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { View, Text, Colors } from "react-native-ui-lib";
 import AddressIconButton from "./AddressIconButton";
 
 interface AddressItemProps {
@@ -20,6 +19,8 @@ const AddressItem = ({
     setDeleteDialogVisible, setUpdateDialogVisible, setUpdateItem
 }: AddressItemProps
 ) => {
+    const { t } = useLanguage();
+
     const handleDelete = () => {
         setUpdateItem(item)
         setDeleteDialogVisible(true)

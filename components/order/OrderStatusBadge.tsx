@@ -1,7 +1,6 @@
 import { View, Text, Colors } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const getStatusColor = (status: string) => {
   const colors = {
@@ -15,6 +14,8 @@ const getStatusColor = (status: string) => {
 };
 
 const OrderStatusBadge = ({ status }: { status: string }) => {
+  const { t } = useLanguage();
+
   return (
     <View
       paddingH-12

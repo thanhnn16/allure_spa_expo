@@ -10,21 +10,13 @@ import {
 } from "react-native-ui-lib";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AppBar from "@/components/app-bar/AppBar";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 import { useLanguage } from "@/hooks/useLanguage";
-import { setI18nConfig } from "@/languages/i18n";
-import { setLanguage } from "@/redux/features/language/languageSlice";
-import { router } from "expo-router";
 
 const SettingsScreen: React.FC = () => {
-  const dispatch = useDispatch();
-  const currentLanguage = useSelector(
-    (state: RootState) => state.language.currentLanguage
-  );
+  const { t, currentLanguage, changeLanguage } = useLanguage();
+
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const { t } = useLanguage();
 
   const languageOptions = [
     { label: "Tiếng Việt", value: "vi" },
@@ -34,9 +26,7 @@ const SettingsScreen: React.FC = () => {
 
   const handleLanguageChange = async (value: string) => {
     try {
-      setI18nConfig(value);
-      dispatch(setLanguage(value));
-      // TODO: Fix in tab layout. Working fine in app layout.
+      await changeLanguage(value);
     } catch (error) {
       console.error("Error changing language:", error);
     }
@@ -56,7 +46,7 @@ const SettingsScreen: React.FC = () => {
           </View>
 
           <RadioGroup
-            initialValue={currentLanguage}
+            initialValue={currentLanguage || ""}
             onValueChange={handleLanguageChange}
           >
             {languageOptions.map((option) => (

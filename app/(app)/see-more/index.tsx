@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, SafeAreaView } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import { useEffect, useMemo, useState } from "react";
 import AppBar from "@/components/app-bar/AppBar";
 import { useLocalSearchParams } from "expo-router";
@@ -11,9 +11,10 @@ import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
 import { View } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const SeeMore = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const { type } = useLocalSearchParams();
   const [title, setTitle] = useState("");

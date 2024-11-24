@@ -10,25 +10,28 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { Href, router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
 import { ScrollView } from "react-native";
 import VoucherIcon from "@/assets/icons/discount-shape.svg";
+import { getUserThunk } from "@/redux/features/users/getUserThunk";
+import { useDispatch } from "react-redux";
 
 const ProfilePage = () => {
-  const { user, signOut, signOutGuest, isGuest } = useAuth();
+  const { t } = useLanguage();
+  const dispatch = useDispatch();
+  const { user, signOut, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
-
-  const handleSignOut = () => {
-    isGuest ? signOutGuest() : signOut();
-  };
 
   const handleLoginConfirm = () => {
     setLoginDialogVisible(false);
     router.replace("/(auth)");
   };
+
+  useEffect(() => {
+    dispatch(getUserThunk());
+  }, [dispatch]);
 
   const handleNavigation = (path: Href<string>, showDialog: boolean = true) => {
     if (isGuest && showDialog) {
@@ -149,12 +152,12 @@ const ProfilePage = () => {
                   : t("profile.logout"),
                 description: "",
                 icon: require("@/assets/images/logout.png"),
-                onPress: handleSignOut,
+                onPress: signOut,
               },
             ].map((item, index) => (
               <TouchableOpacity key={index} onPress={item.onPress}>
                 <View row padding-10 gap-20 center>
-                  <TouchableOpacity
+                  <View
                     style={{
                       width: 50,
                       height: 50,
@@ -165,7 +168,7 @@ const ProfilePage = () => {
                     }}
                   >
                     <Image source={item.icon} width={24} height={24} />
-                  </TouchableOpacity>
+                  </View>
                   <View flex gap-5>
                     <Text h3_bold>{item.title}</Text>
                     {item.description ? (
@@ -207,7 +210,7 @@ const ProfilePage = () => {
             ].map((item, index) => (
               <TouchableOpacity key={index} onPress={item.onPress}>
                 <View row padding-10 gap-20 center>
-                  <TouchableOpacity
+                  <View
                     style={{
                       width: 50,
                       height: 50,
@@ -218,9 +221,9 @@ const ProfilePage = () => {
                     }}
                   >
                     <Image source={item.icon} width={24} height={24} />
-                  </TouchableOpacity>
+                  </View>
                   <View flex gap-5>
-                    <Text text70BL>{item.title}</Text>
+                    <Text h3_bold>{item.title}</Text>
                   </View>
                   <Image source={ArrowRight} />
                 </View>

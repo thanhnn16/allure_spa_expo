@@ -28,7 +28,6 @@ import { Pressable, StyleProp, ViewStyle, Platform } from "react-native";
 import { Href, router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import { RootState } from "@/redux/store";
 import { setCurrentSearchText } from "@/redux/features/search/searchSlice";
 
@@ -50,6 +49,8 @@ export type AppSearchRef = {
 };
 
 const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const currentSearchText = useSelector(
     (state: RootState) => state.search.currentSearchText

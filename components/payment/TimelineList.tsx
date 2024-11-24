@@ -1,14 +1,14 @@
-import { StyleSheet } from 'react-native'
-import { View, Text } from 'react-native-ui-lib'
+import { View } from 'react-native-ui-lib'
 import TimelineItem from './TimelineItem';
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 
 interface TimelineListProps {
     state: string;
 }
 
 const TimelineList = ({ state }: TimelineListProps) => {
+    const { t } = useLanguage();
+
 
     const handleTimelineList = (state: string) => {
         if (state === 'pending') {

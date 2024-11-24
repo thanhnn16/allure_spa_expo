@@ -1,7 +1,6 @@
 export { getProductThunk } from "./products/productThunk";
 export { productSlice } from "./products/productSlice";
 export { getServiceCateThunk } from "./service/getServiceCateThunk";
-export { languageSlice } from "./language/languageSlice";
 export { authSlice } from "./auth/authSlice";
 export { zaloSlice } from "./zalo/zaloSlice";
 export { loginThunk } from "./auth/loginThunk";

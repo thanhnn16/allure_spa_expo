@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Colors, Text, View, TouchableOpacity } from "react-native-ui-lib";
+import { Colors, Text, View } from "react-native-ui-lib";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -16,10 +16,11 @@ import {
 } from "@/components/notification/NotificationItem";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 import AppButton from "@/components/buttons/AppButton";
 
 const NotificationDetail: React.FC = () => {
+  const { t } = useLanguage();
+
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const notification = useSelector((state: RootState) =>
@@ -53,7 +54,7 @@ const NotificationDetail: React.FC = () => {
 
     const type = notification.type as NotificationType;
     let actionText = "";
-    let onActionPress = () => {};
+    let onActionPress = () => { };
 
     switch (type) {
       case "new_appointment":

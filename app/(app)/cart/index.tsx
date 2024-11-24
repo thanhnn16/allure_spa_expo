@@ -28,9 +28,10 @@ import {
 } from "@/redux/features/order/orderSlice";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 export default function Cart() {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch();
   const [cartDialog, setCartDialog] = useState(false);
   const [setItemDelete, setsetItemDelete] = useState<Number>();
@@ -112,7 +113,7 @@ export default function Cart() {
           )}
           keyExtractor={(item) => item.id.toString()}
         />
-        <View style={styles.totalContainer}>
+        <View row spread br20 paddingV-12 paddingH-20 backgroundColor={Colors.rgba(Colors.primary, 0.08)}>
           <Text h3_bold>Tổng cộng: </Text>
           <Text h3_bold secondary>
             {formattedPrice}
@@ -162,7 +163,7 @@ export default function Cart() {
 
   return (
     <GestureHandlerRootView>
-      <View style={styles.container}>
+      <View flex bg-white paddingB-20>
         <AppBar title="Giỏ Hàng" back />
         {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
       </View>
@@ -184,18 +185,6 @@ export default function Cart() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  totalContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    marginHorizontal: 10,
-    backgroundColor: "rgba(113, 118, 88, 0.2)",
-    borderRadius: 10,
-  },
   totalText: {
     fontSize: 16,
     fontWeight: "bold",

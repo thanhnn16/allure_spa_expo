@@ -16,9 +16,10 @@ import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
 const ChatListScreen = () => {
+  const { t } = useLanguage();
+
   const dispatch = useDispatch<AppDispatch>();
   const { chats, isLoading } = useSelector((state: RootState) => state.chat);
   const { isGuest } = useAuth();

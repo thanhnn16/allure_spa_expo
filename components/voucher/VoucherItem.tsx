@@ -4,13 +4,14 @@ import { Text, View, Image, Colors } from 'react-native-ui-lib'
 import VoucherMoney from '@/assets/icons/money-4.svg'
 import VoucherPrecent from '@/assets/icons/ticket-discount.svg'
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 
 interface VoucherItemProps {
     voucher: Voucher;
 }
 
 const VoucherItem = ({ voucher }: VoucherItemProps) => {
+    const { t } = useLanguage();
+
     const VoucherIcon = voucher.discount_type === 'percentage' ? VoucherPrecent : VoucherMoney;
     return (
         <View

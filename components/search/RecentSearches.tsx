@@ -2,7 +2,6 @@ import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity } from 'react-native-ui-lib';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 
 interface RecentSearchesProps {
   searches: string[];
@@ -17,6 +16,8 @@ const RecentSearches = ({
   onRemoveSearch,
   onClearAll
 }: RecentSearchesProps) => {
+  const { t } = useLanguage();
+
   if (searches.length === 0) return null;
 
   return (

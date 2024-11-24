@@ -1,20 +1,16 @@
-import react from "react";
-import { useFonts } from "expo-font";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
 
-import { View, Text, Image, TouchableOpacity } from "react-native-ui-lib";
-import BackButton from "@/assets/icons/back.svg";
-import { router, useNavigation } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, Image } from "react-native-ui-lib";
 import AppBar from "@/components/app-bar/AppBar";
 import * as Application from "expo-application";
 import { ScrollView } from "react-native";
 
-interface AboutAppProps {}
+interface AboutAppProps { }
 
 const AboutApp = () => {
+  const { t } = useLanguage();
+
   const appName = Application.applicationName;
   const appVersion = Application.nativeApplicationVersion;
   const buildVersion = Application.nativeBuildVersion;

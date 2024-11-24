@@ -18,11 +18,17 @@ export const fetchNotifications = createAsyncThunk(
         try {
             dispatch(setLoading(true));
             const response = await AxiosInstance().get<NotificationResponse>('/notifications');
+            
+            const notifications = response.data?.data?.data || [];
+            const hasMore = response.data?.data?.hasMore || false;
+            const unreadCount = notifications.filter(n => !n.is_read).length;
+
             dispatch(setNotifications({
-                items: response.data.data.data,
-                hasMore: response.data.data.hasMore,
-                unreadCount: response.data.data.data.filter(n => !n.is_read).length
+                items: notifications,
+                hasMore: hasMore,
+                unreadCount: unreadCount
             }));
+            
             return response.data.data;
         } catch (error: any) {
             dispatch(setError(error.message));

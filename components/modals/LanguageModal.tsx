@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Animated, TouchableWithoutFeedback } from 'react-native';
-import { View, Text, Colors, TouchableOpacity } from 'react-native-ui-lib';
+import { Text, Colors, TouchableOpacity } from 'react-native-ui-lib';
 import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
 
 interface LanguageModalProps {
   isVisible: boolean;
@@ -17,6 +16,8 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
   onSelectLanguage,
   currentLanguage,
 }) => {
+  const { t } = useLanguage();
+
   const [modalVisible, setModalVisible] = useState(isVisible);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
@@ -66,10 +67,10 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
 
   return (
     <TouchableWithoutFeedback onPress={onClose}>
-      <Animated.View 
+      <Animated.View
         style={[
-          styles.modalContainer, 
-          { 
+          styles.modalContainer,
+          {
             opacity: fadeAnim,
             backgroundColor: fadeAnim.interpolate({
               inputRange: [0, 1],
@@ -79,7 +80,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
         ]}
       >
         <TouchableWithoutFeedback>
-          <Animated.View 
+          <Animated.View
             style={[
               styles.modalContent,
               {

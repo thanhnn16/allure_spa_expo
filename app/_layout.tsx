@@ -5,7 +5,7 @@ import { persistor } from "@/redux/store";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import "expo-dev-client";
 import { useFonts } from "expo-font";
-import { Slot } from "expo-router";
+import { Slot, useSegments, useRouter } from "expo-router";
 import { useEffect, useCallback } from "react";
 import { StatusBar } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -13,13 +13,59 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
-import { useSegments } from "expo-router";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import i18n from "@/languages/i18n";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+const AuthenticationContent = () => {
+  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
   const segments = useSegments();
+  const router = useRouter();
 
+  useEffect(() => {
+    const inAuthGroup = segments[0] === "(auth)";
+    const inAppGroup = segments[0] === "(app)";
+
+    if (isAuthenticated || isGuest) {
+      if (inAuthGroup) {
+        router.replace("/(app)");
+      }
+    } else {
+      if (inAppGroup) {
+        router.replace("/(auth)");
+      }
+    }
+  }, [segments, isAuthenticated, isGuest, router]);
+
+  const isAuthGroup = segments[0] === "(auth)";
+
+  if (isAuthGroup) {
+    return <Slot />;
+  }
+
+  return (
+    <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "white" }}>
+      <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+      <Slot />
+    </SafeAreaView>
+  );
+};
+
+const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const currentLanguage = useSelector((state: RootState) => state.language.currentLanguage);
+  
+  useEffect(() => {
+    if (currentLanguage) {
+      i18n.locale = currentLanguage;
+    }
+  }, [currentLanguage]);
+
+  return <>{children}</>;
+};
+
+const InitializedApp = () => {
   const [fontsLoaded] = useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
@@ -29,45 +75,34 @@ export default function RootLayout() {
     "KaiseiTokumin-Regular": require("@/assets/fonts/KaiseiTokumin-Regular.ttf"),
   });
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  const initializeFirebase = useCallback(async () => {
+    await FirebaseService.requestUserPermission();
+    await FirebaseService.setupNotifications();
+    FirebaseService.setupMessageHandlers();
+  }, []);
 
   useEffect(() => {
-    const initializeApp = async () => {
-      await FirebaseService.requestUserPermission();
-      await FirebaseService.setupNotifications();
-      FirebaseService.setupMessageHandlers();
-      await onLayoutRootView();
-    };
-
-    initializeApp();
-  }, [onLayoutRootView, fontsLoaded]);
+    if (fontsLoaded) {
+      initializeFirebase();
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, initializeFirebase]);
 
   if (!fontsLoaded) {
     return null;
   }
 
+  return <AuthenticationContent />;
+};
+
+export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          {segments[0] === "(auth)" ? (
-            <Slot />
-          ) : (
-            <SafeAreaView
-              edges={["top"]}
-              style={{ flex: 1, backgroundColor: "white" }}
-            >
-              <StatusBar
-                backgroundColor="transparent"
-                barStyle={"dark-content"}
-              />
-              <Slot />
-            </SafeAreaView>
-          )}
+          <LanguageProvider>
+            <InitializedApp />
+          </LanguageProvider>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>

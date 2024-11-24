@@ -15,9 +15,9 @@ import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
-const { t } = useLanguage();
-
 const AddressScreen = () => {
+  const { t } = useLanguage();
+
   const [dialogUpdateVisible, setDialogUpdateVisible] = useState(false);
   const [dialogDeleteVisible, setdialogDeleteVisible] = useState(false);
 

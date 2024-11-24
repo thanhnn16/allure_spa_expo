@@ -4,11 +4,8 @@ import React from "react";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import StarIcon from "@/assets/icons/star.svg";
 import formatCurrency from "@/utils/price/formatCurrency";
-import FavoriteButton from "@/components/buttons/FavoriteButton";
 import { Product } from "@/types/product.type";
 import { useLanguage } from "@/hooks/useLanguage";
-
-const { t } = useLanguage();
 
 interface RenderProductItemProps {
   item: Product;
@@ -17,16 +14,13 @@ interface RenderProductItemProps {
   heightImage: number;
 }
 
-const formatPrice = (price: number): string => {
-  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " ₫";
-};
-
 const RenderProductItem: React.FC<RenderProductItemProps> = ({
   item,
   widthItem,
-  heightItem,
   heightImage,
 }) => {
+  const { t } = useLanguage();
+
   // Get first image from media array
   const productImage =
     item.media && item.media.length > 0
