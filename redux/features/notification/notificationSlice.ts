@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Notification } from "./types";
-import { fetchNotifications } from "./notificationThunks";
 
 interface NotificationState {
     notifications: Notification[];
@@ -67,21 +66,6 @@ const notificationSlice = createSlice({
             state.hasMore = false;
             state.currentPage = 1;
         },
-    },
-    extraReducers: (builder: any) => {
-        builder.addCase(fetchNotifications.pending, (state: NotificationState) => {
-            state.loading = true;
-        });
-        builder.addCase(fetchNotifications.fulfilled, (state: NotificationState, action: any) => {
-            state.loading = false;
-            state.notifications = action.payload?.data || [];
-            state.hasMore = action.payload?.hasMore || false;
-            state.unreadCount = (action.payload?.data || []).filter((n: Notification) => !n.is_read).length;
-        });
-        builder.addCase(fetchNotifications.rejected, (state: NotificationState, action: any) => {
-            state.loading = false;
-            state.error = action.error.message;
-        });
     },
 });
 

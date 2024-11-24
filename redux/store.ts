@@ -21,11 +21,12 @@ import appointmentReducer from './features/appointment/appointmentSlice';
 import notificationReducer from './features/notification/notificationSlice';
 import bannerReducer from '@/redux/features/banner/bannerSlice';
 import servicePackageReducer from './features/servicePackage/servicePackageSlice';
+import languageReducer from './features/language/languageSlice';
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['zalo', 'auth', 'user'],
+    whitelist: ['zalo', 'auth', 'user', 'language'],
     timeout: 10000,
 }
 
@@ -49,6 +50,7 @@ const rootReducer: any = combineReducers({
     appointment: appointmentReducer,
     notification: notificationReducer,
     servicePackage: servicePackageReducer,
+    language: languageReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;

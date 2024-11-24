@@ -1,5 +1,4 @@
-import { useLanguage } from "@/hooks/useLanguage";
-
+import i18n from "@/languages/i18n";
 import getLocation from "@/utils/location/locationHelper";
 import getWeather from "@/utils/weather/getWeatherData";
 import FontAwesome6 from "@expo/vector-icons/build/FontAwesome6";
@@ -14,7 +13,6 @@ interface LocationsType {
 }
 
 const WeatherView = () => {
-const { t } = useLanguage();
 
   const [temperature, setTemperature] = useState<number>(0);
   const [location, setLocation] = useState<LocationsType | null>(null);
@@ -58,13 +56,13 @@ const { t } = useLanguage();
   useEffect(() => {
     const date = new Date();
     const weekdays = [
-      t("days.sun"),
-      t("days.mon"),
-      t("days.tue"),
-      t("days.wed"),
-      t("days.thu"),
-      t("days.fri"),
-      t("days.sat"),
+      i18n.t("days.sun"),
+      i18n.t("days.mon"),
+      i18n.t("days.tue"),
+      i18n.t("days.wed"),
+      i18n.t("days.thu"),
+      i18n.t("days.fri"),
+      i18n.t("days.sat"),
     ];
 
     const weekday = weekdays[date.getDay()];
@@ -109,7 +107,7 @@ const { t } = useLanguage();
       />
       <View>
         <Text text70 color="#4A4A4A">
-          {weekday}, {t("days.day")} {currentDate}
+          {weekday}, {i18n.t("days.day")} {currentDate}
         </Text>
         <View row gap-6 centerV>
           <FontAwesome6 name="location-dot" size={12} color="#4A4A4A" />

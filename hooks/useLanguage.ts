@@ -1,53 +1,33 @@
-import { useEffect, useState, useMemo } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from '@/languages/i18n';
-import { getInitialLanguage } from '@/languages/i18n';
-
-const LANGUAGE_KEY = '@app_language';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLanguage } from '@/redux/features/language/languageSlice';
+import i18n, { setI18nConfig } from '@/languages/i18n';
+import { RootState } from '@/redux/store';
 
 export const useLanguage = () => {
-    const initialLanguage = useMemo(() => {
-        const initial = getInitialLanguage();
-        return initial || 'en';
-    }, []);
+    try {
+        const dispatch = useDispatch();
+        const currentLanguage = useSelector((state: RootState) => state.language.currentLanguage);
 
-    const [currentLanguage, setCurrentLanguage] = useState<string>(initialLanguage);
-
-    useEffect(() => {
-        i18n.locale = currentLanguage;
-        
-        const loadSavedLanguage = async () => {
+        const changeLanguage = async (language: string) => {
             try {
-                const savedLanguage = await AsyncStorage.getItem(LANGUAGE_KEY);
-                if (savedLanguage) {
-                    setCurrentLanguage(savedLanguage);
-                    i18n.locale = savedLanguage;
-                }
+                await setI18nConfig(language);
+                dispatch(setLanguage(language));
             } catch (error) {
-                console.error('Error loading language:', error);
+                console.error('Error changing language:', error);
             }
         };
-        
-        loadSavedLanguage();
-    }, []);
 
-    const changeLanguage = async (language: string) => {
-        try {
-            await AsyncStorage.setItem(LANGUAGE_KEY, language);
-            setCurrentLanguage(language);
-            i18n.locale = language;
-        } catch (error) {
-            console.error('Error saving language:', error);
-        }
-    };
-
-    const t = useMemo(() => {
-        return (key: string, options?: any) => i18n.t(key, options);
-    }, [currentLanguage]);
-
-    return {
-        currentLanguage,
-        changeLanguage,
-        t
-    };
+        return {
+            changeLanguage,
+            currentLanguage,
+            t: i18n.t,
+        };
+    } catch (error) {
+        console.error('Redux context not available:', error);
+        return {
+            changeLanguage: async () => {},
+            currentLanguage: 'en',
+            t: i18n.t,
+        };
+    }
 }; 

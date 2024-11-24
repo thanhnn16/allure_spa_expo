@@ -1,6 +1,5 @@
 import { LocaleConfig } from 'react-native-calendars';
-import { useLanguage } from '@/hooks/useLanguage';
-const { t } = useLanguage();
+import i18n from '@/languages/i18n';
 
 // Vietnamese Configuration
 LocaleConfig.locales['vi'] = {
@@ -47,9 +46,8 @@ LocaleConfig.locales['en'] = {
     today: 'Today'
 };
 
-// Function to update locale based on current language
 export const updateCalendarLocale = () => {
-    const currentLocale = t('language');
+    const currentLocale = i18n.locale;
     switch (currentLocale) {
         case 'vi':
         case 'ja':
@@ -57,9 +55,8 @@ export const updateCalendarLocale = () => {
             LocaleConfig.defaultLocale = currentLocale;
             break;
         default:
-            LocaleConfig.defaultLocale = 'en'; // Fallback to English
+            LocaleConfig.defaultLocale = 'en';
     }
 };
 
-// Initial setup
 updateCalendarLocale(); 

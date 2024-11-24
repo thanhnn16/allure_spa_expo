@@ -15,15 +15,14 @@ import * as SplashScreen from "expo-splash-screen";
 import "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import i18n from "@/languages/i18n";
 
 SplashScreen.preventAutoHideAsync();
 
-const AppContent = () => {
+const AuthenticationContent = () => {
+  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
   const segments = useSegments();
   const router = useRouter();
-  const { isAuthenticated, isGuest } = useSelector(
-    (state: RootState) => state.auth
-  );
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
@@ -54,6 +53,18 @@ const AppContent = () => {
   );
 };
 
+const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const currentLanguage = useSelector((state: RootState) => state.language.currentLanguage);
+  
+  useEffect(() => {
+    if (currentLanguage) {
+      i18n.locale = currentLanguage;
+    }
+  }, [currentLanguage]);
+
+  return <>{children}</>;
+};
+
 const InitializedApp = () => {
   const [fontsLoaded] = useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
@@ -81,17 +92,19 @@ const InitializedApp = () => {
     return null;
   }
 
+  return <AuthenticationContent />;
+};
+
+export default function RootLayout() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <AppContent />
+          <LanguageProvider>
+            <InitializedApp />
+          </LanguageProvider>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>
   );
-};
-
-export default function RootLayout() {
-  return <InitializedApp />;
 }
