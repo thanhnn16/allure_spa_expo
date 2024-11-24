@@ -11,7 +11,7 @@ import {
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
 import { router } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Dimensions } from "react-native";
 import Animated, {
   FadeIn,
@@ -36,6 +36,11 @@ import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
 import { SkeletonView } from "react-native-ui-lib";
 import { translate } from '@/languages/i18n';
+import getLocation from "@/utils/location/locationHelper";
+import getWeatherData from "@/utils/weather/getWeatherData";
+import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
+import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
+import { getUpcomingAppointmentThunk } from "@/redux/features/servicePackage/upcomingAppointmentThunk";
 
 const HomePage = () => {
   const { t } = useLanguage();
@@ -50,7 +55,7 @@ const HomePage = () => {
   );
   const { products } = useSelector((state: RootState) => state.product);
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } = useHeaderDimensions();
-
+  const { upcomingAppointment } = useSelector((state: RootState) => state.servicePackage);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -58,51 +63,6 @@ const HomePage = () => {
       scrollOffset.value = event.contentOffset.y;
     },
   });
-
-  const getUpcomingAppointment = (packages: any[]) => {
-    if (!packages || !Array.isArray(packages)) return null;
-
-    const now = new Date();
-    const threeDaysFromNow = new Date();
-    threeDaysFromNow.setDate(now.getDate() + 7);
-
-    for (const pkg of packages) {
-      if (pkg.next_appointment_details) {
-        try {
-          const [day, month, year] = pkg.next_appointment_details.date.split("/");
-          const appointmentDate = new Date(
-            parseInt(year),
-            parseInt(month) - 1,
-            parseInt(day),
-            0,
-            0,
-            0
-          );
-
-          const [startHour, startMinute] = pkg.next_appointment_details.time.start.split(":");
-          appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
-
-          if (
-            !isNaN(appointmentDate.getTime()) &&
-            appointmentDate > now &&
-            appointmentDate <= threeDaysFromNow
-          ) {
-            return {
-              ...pkg.next_appointment_details,
-              service_name: pkg.service_name,
-              id: pkg.id,
-            };
-          }
-        } catch (error) {
-          console.error("Error parsing date:", error);
-          continue;
-        }
-      }
-    }
-    return null;
-  };
-
-  const upcomingAppointment = getUpcomingAppointment(packages);
 
   const handleNotificationPress = () => {
     if (isGuest) {
@@ -124,7 +84,6 @@ const HomePage = () => {
   })();
 
   const renderHeader = () => (
-    
     <View bg-white paddingH-20>
       <Animated.View style={[greetingHeaderStyle]}>
         <View row spread marginB-10>
@@ -287,6 +246,17 @@ const HomePage = () => {
       dispatch(getServicesThunk({ page: currentPage + 1, limit: 5 }));
     }
   }, [hasMore, isLoading, currentPage, dispatch]);
+
+
+  useEffect(() => {
+    Promise.all([
+      dispatch(fetchUnreadCount()),
+      dispatch(getServicesThunk({ page: 1, limit: 5 })),
+      dispatch(getAllProductsThunk()),
+      dispatch(getUpcomingAppointmentThunk()),
+    ]);
+  }, [dispatch]);
+
 
   const renderContent = () => (
     <View flex>

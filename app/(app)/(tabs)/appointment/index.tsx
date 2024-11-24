@@ -297,6 +297,8 @@ const { t } = useLanguage();
         entering={FadeInDown.delay(index * 100).springify()}
         style={{
           marginBottom: 15,
+          backgroundColor: Colors.white,
+          borderRadius: 20,
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.08,
@@ -305,9 +307,10 @@ const { t } = useLanguage();
         }}
       >
         <LinearGradient
-          colors={[Colors.white as string, Colors.primary_blur as string]}
+          colors={[Colors.white, Colors.primary_blur]}
           style={{ 
             borderRadius: 20,
+            overflow: 'hidden',
             ...(Platform.OS === 'ios' && {
               borderWidth: 1,
               borderColor: Colors.rgba(Colors.grey60, 0.2),
