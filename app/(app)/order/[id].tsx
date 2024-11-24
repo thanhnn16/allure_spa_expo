@@ -380,7 +380,6 @@ const OrderDetail = () => {
                       <TouchableOpacity
                         key={item.id}
                         onPress={() => {
-                          console.log("item: ", item);
                           setCurrentItem(item);
                         }}
                         style={{ marginTop: 5 }}
