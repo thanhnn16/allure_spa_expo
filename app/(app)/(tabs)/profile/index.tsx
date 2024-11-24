@@ -19,12 +19,8 @@ import VoucherIcon from "@/assets/icons/discount-shape.svg";
 const ProfilePage = () => {
   const { t } = useLanguage();
 
-  const { user, signOut, signOutGuest, isGuest } = useAuth();
+  const { user, signOut, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
-
-  const handleSignOut = () => {
-    isGuest ? signOutGuest() : signOut();
-  };
 
   const handleLoginConfirm = () => {
     setLoginDialogVisible(false);
@@ -150,7 +146,7 @@ const ProfilePage = () => {
                   : t("profile.logout"),
                 description: "",
                 icon: require("@/assets/images/logout.png"),
-                onPress: handleSignOut,
+                onPress: signOut,
               },
             ].map((item, index) => (
               <TouchableOpacity key={index} onPress={item.onPress}>

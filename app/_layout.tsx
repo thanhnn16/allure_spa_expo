@@ -18,17 +18,14 @@ import { RootState } from "@/redux/store";
 
 SplashScreen.preventAutoHideAsync();
 
-// Separate component for auth-aware navigation
-function AuthAwareNavigator() {
+const AppContent = () => {
   const segments = useSegments();
-  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
   const router = useRouter();
+  const { isAuthenticated, isGuest } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
     const inAppGroup = segments[0] === "(app)";
-
-    if (!router) return;
 
     if (isAuthenticated || isGuest) {
       if (inAuthGroup) {
@@ -41,7 +38,9 @@ function AuthAwareNavigator() {
     }
   }, [segments, isAuthenticated, isGuest, router]);
 
-  if (segments[0] === "(auth)") {
+  const isAuthGroup = segments[0] === "(auth)";
+
+  if (isAuthGroup) {
     return <Slot />;
   }
 
@@ -51,22 +50,9 @@ function AuthAwareNavigator() {
       <Slot />
     </SafeAreaView>
   );
-}
+};
 
-// Separate component for initialization
-function InitializedApp() {
-  return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider>
-          <AuthAwareNavigator />
-        </SafeAreaProvider>
-      </PersistGate>
-    </Provider>
-  );
-}
-
-export default function RootLayout() {
+const InitializedApp = () => {
   const [fontsLoaded] = useFonts({
     "SFProText-Bold": require("@/assets/fonts/SFProText-Bold.otf"),
     "SFProText-Semibold": require("@/assets/fonts/SFProText-Semibold.otf"),
@@ -93,5 +79,17 @@ export default function RootLayout() {
     return null;
   }
 
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
+          <AppContent />
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
+  );
+};
+
+export default function RootLayout() {
   return <InitializedApp />;
 }

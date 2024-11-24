@@ -8,12 +8,10 @@ export const getUserThunk = createAsyncThunk(
     try {
       const res: any = await AxiosInstance().get<User>("user/info");
 
-      console.log('Get user info:', res.data);
       if (res.data.success) {
         return res.data.data;
       }
 
-      console.log('Get user info failed:', res.data.message);
       return rejectWithValue(res.data.message || 'Get user info failed');
     } catch (error: any) {
       console.error('Get user info error:', error.response?.data?.message);

@@ -99,11 +99,6 @@ export const useAuth = () => {
     }
   };
 
-  const signOutGuest = () => {
-    dispatch(clearGuestUser());
-    router.replace('/(auth)');
-  };
-
   return {
     ...authState,
     user,
@@ -111,7 +106,6 @@ export const useAuth = () => {
     signUp,
     signOut,
     signInAsGuest,
-    signOutGuest,
     signInWithZalo
   };
 };
