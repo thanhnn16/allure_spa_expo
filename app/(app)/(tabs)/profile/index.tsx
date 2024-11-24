@@ -151,7 +151,7 @@ const ProfilePage = () => {
             ].map((item, index) => (
               <TouchableOpacity key={index} onPress={item.onPress}>
                 <View row padding-10 gap-20 center>
-                  <TouchableOpacity
+                  <View
                     style={{
                       width: 50,
                       height: 50,
@@ -162,7 +162,7 @@ const ProfilePage = () => {
                     }}
                   >
                     <Image source={item.icon} width={24} height={24} />
-                  </TouchableOpacity>
+                  </View>
                   <View flex gap-5>
                     <Text h3_bold>{item.title}</Text>
                     {item.description ? (
@@ -204,7 +204,7 @@ const ProfilePage = () => {
             ].map((item, index) => (
               <TouchableOpacity key={index} onPress={item.onPress}>
                 <View row padding-10 gap-20 center>
-                  <TouchableOpacity
+                  <View
                     style={{
                       width: 50,
                       height: 50,
@@ -215,9 +215,9 @@ const ProfilePage = () => {
                     }}
                   >
                     <Image source={item.icon} width={24} height={24} />
-                  </TouchableOpacity>
+                  </View>
                   <View flex gap-5>
-                    <Text text70BL>{item.title}</Text>
+                    <Text h3_bold>{item.title}</Text>
                   </View>
                   <Image source={ArrowRight} />
                 </View>

@@ -38,6 +38,8 @@ import { HOME_CATEGORIES } from "@/constants/categories";
 import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
 import { useLanguage } from "@/hooks/useLanguage";
 import { User } from "@/types/user.type";
+import { useDialog } from "@/hooks/useDialog";
+import AppDialog from "@/components/dialog/AppDialog";
 
 interface HomeHeaderProps {
   user: User;
@@ -65,6 +67,8 @@ const HomeHeader = memo(
     searchBarStyle,
     t,
   }: HomeHeaderProps) => {
+    const { isGuest } = useAuth();
+    const { showDialog, dialogConfig } = useDialog();
     return (
       <View bg-white paddingH-20>
         <Animated.View style={[greetingHeaderStyle]}>
@@ -98,7 +102,15 @@ const HomeHeader = memo(
         >
           <HomeHeaderButton
             onPress={() => {
-              router.push("/notification");
+              if (isGuest) {
+                showDialog(
+                  "Thông báo",
+                  "Bạn cần đăng nhập để sử dụng chức năng này",
+                  "error"
+                );
+              } else {
+                router.push("/notification");
+              }
             }}
             iconName="notifications-outline"
             type="notification"
@@ -128,6 +140,11 @@ const HomeHeader = memo(
           </Text>
           <AppSearch isHome />
         </Animated.View>
+        <AppDialog
+          visible={dialogConfig.visible}
+          title={dialogConfig.title}
+          severity={dialogConfig.severity}
+        />
       </View>
     );
   }
@@ -186,6 +203,7 @@ const HomeSkeletonContent = memo(
             <SkeletonView height={20} width={80} />
           </View>
         </View>
+
       </View>
     );
   }
