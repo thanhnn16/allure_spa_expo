@@ -24,7 +24,13 @@ const notificationSlice = createSlice({
     initialState,
     reducers: {
         setNotifications: (state: NotificationState, action: any) => {
-            state.notifications = action.payload.items;
+            state.notifications = action.payload.items.map((item: any) => ({
+                ...item,
+                translations: item.translations || {
+                    title: {},
+                    content: {}
+                }
+            }));
             state.hasMore = action.payload.hasMore;
             if (typeof action.payload.unreadCount === 'number') {
                 state.unreadCount = action.payload.unreadCount;

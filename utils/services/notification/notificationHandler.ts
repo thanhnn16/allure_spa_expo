@@ -6,16 +6,75 @@ export const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
 
 export const setupNotificationHandler = () => {
     Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-            shouldShowAlert: true,
-            shouldPlaySound: true,
-            shouldSetBadge: true,
-        }),
+        handleNotification: async (notification) => {
+
+            return {
+                shouldShowAlert: true,
+                shouldPlaySound: true,
+                shouldSetBadge: true
+            };
+        }
     });
 
     Notifications.addNotificationResponseReceivedListener((response) => {
-        handleNotificationNavigation(response.notification.request.content.data);
+        const data = response.notification.request.content.data;
+        handleNotificationNavigation(data);
     });
+};
+
+export const handleNotificationNavigation = (data: any) => {
+    try {
+        const type = data?.type;
+
+        switch (type) {
+            case 'new_appointment':
+            case 'appointment_status':
+                router.push({
+                    pathname: '/appointment/[id]',
+                    params: { id: data?.appointment_id }
+                });
+                break;
+
+            case 'new_order':
+            case 'order_status':
+                router.push({
+                    pathname: '/(app)/order/[id]',
+                    params: { id: data?.order_id }
+                });
+                break;
+
+            case 'new_message':
+                router.push({
+                    pathname: '/chat/[id]',
+                    params: { id: data?.conversation_id }
+                });
+                break;
+
+            case 'payment':
+                router.push('/notification');
+                break;
+
+            case 'promotion':
+                router.push({
+                    pathname: '/reward/[id]',
+                    params: { id: data?.promotion_id }
+                });
+                break;
+
+            case 'new_review':
+                router.push({
+                    pathname: '/rating/[id]',
+                    params: { id: data?.review_id }
+                });
+                break;
+
+            default:
+                router.push('/notification');
+                break;
+        }
+    } catch (error) {
+        console.error('Navigation error:', error);
+    }
 };
 
 TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error }) => {
@@ -26,45 +85,4 @@ TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error }) => {
 
     const notificationData = data as any;
     handleNotificationNavigation(notificationData);
-});
-
-const handleNotificationNavigation = (data: any) => {
-    try {
-        const type = data?.type;
-        const notificationId = data?.notification_id;
-
-        switch (type) {
-            case 'new_appointment':
-            case 'appointment_status':
-                // router.push(`/appointments/${data?.appointment_id}`);
-                break;
-
-            case 'new_order':
-            case 'order_status':
-                // router.push(`/(app)/order/${data?.order_id}`);
-                break;
-
-            case 'new_message':
-                router.push(`/chat/${data?.conversation_id}`);
-                break;
-
-            case 'payment':
-                // router.push(`/payments/${data?.payment_id}`);
-                break;
-
-            case 'promotion':
-                // router.push(`/reward/${data?.promotion_id}`);
-                break;
-
-            case 'new_review':
-                // router.push(`/reviews/${data?.review_id}`);
-                break;
-
-            default:
-                router.push(`/notification`);
-                break;
-        }
-    } catch (error) {
-        console.error('Navigation error:', error);
-    }
-}; 
+}); 

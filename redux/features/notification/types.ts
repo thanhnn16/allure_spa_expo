@@ -1,26 +1,24 @@
+import { NotificationType } from "@/components/notification/NotificationItem";
+
 export interface Notification {
     id: number;
     title: string;
     content: string;
-    type: string;
+    type: NotificationType;
     is_read: boolean;
-    url?: string;
     created_at: string;
+    url?: string;
+    data?: any;
     media?: {
         id: number;
         url: string;
         type: string;
-    } | null;
-    formatted_date: string;
-    data?: {
-        appointment_id?: number;
-        order_id?: number;
-        conversation_id?: number;
-        payment_id?: number;
-        promotion_id?: number;
-        review_id?: number;
-        [key: string]: any;
     };
+    translations?: {
+        title: Record<string, string>;
+        content: Record<string, string>;
+    };
+    formatted_date: string;
 }
 
 export interface NotificationResponse {
