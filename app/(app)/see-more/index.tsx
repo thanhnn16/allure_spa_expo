@@ -106,7 +106,7 @@ const SeeMore = () => {
             heightImage={WINDOW_HEIGHT * 0.18}
           />
         )}
-        keyExtractor={(item) => `${type}-${item.id}`}
+        keyExtractor={(item, index) => `${type}-${item.id}-${index}`}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
