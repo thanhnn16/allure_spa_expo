@@ -254,9 +254,9 @@
     "evening": "Chúc bạn buổi tối vui vẻ!"
   },
   "package": {
-    "single": "Gói đơn",
-    "combo5": "Gói combo 5",
-    "combo10": "Gói combo 10",
+    "single": "Gói đơn (Không giảm giá)",
+    "combo5": "Gói combo 5 (Giảm 20% + 1 buổi free)",
+    "combo10": "Gói combo 10 (Giảm 30% + 3 buổi free)",
     "select_combo": "Chọn gói combo"
   },
   "service": {

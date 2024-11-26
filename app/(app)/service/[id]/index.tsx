@@ -209,7 +209,7 @@ const ServiceDetailPage = () => {
     switch (combo) {
       case 1:
         setPrice(service?.combo_5_price);
-        setComboName(t("package.commbo5"));
+        setComboName(t("package.combo5"));
         break;
       case 2:
         setPrice(service?.combo_10_price);

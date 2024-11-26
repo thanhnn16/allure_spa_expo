@@ -250,9 +250,9 @@
     "evening": "Good evening!"
   },
   "package": {
-    "single": "Single package",
-    "combo5": "Combo package 5",
-    "combo10": "Combo package 10",
+    "single": "Single package (No discount)",
+    "combo5": "Combo package 5 (20% discount + 1 free)",
+    "combo10": "Combo package 10 (30% discount + 3 free)",
     "select_combo": "Select combo package"
   },
   "service": {
