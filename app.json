@@ -65,7 +65,6 @@
       "bundler": "metro",
       "output": "static"
     },
-
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/messaging",
@@ -107,9 +106,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "15c18159-da17-4fbf-9538-0c41023b9fef"
+        "projectId": "65d3bae8-1d7b-45c0-a9bb-84fa6ff8897d"
       }
     },
-    "owner": "thanhnn16"
+    "owner": "datn-allurespa"
   }
 }
