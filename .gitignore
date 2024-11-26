@@ -12,6 +12,8 @@ web-build/
 
 package-lock.json
 
+android/keystores/release.keystore
+
 firebase/google-services.json
 firebase/GoogleService-Info.plist
 
