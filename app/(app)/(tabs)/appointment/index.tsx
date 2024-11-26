@@ -297,17 +297,24 @@ const ScheduledPage = () => {
       item.status.toLowerCase() === "completed";
 
     return (
-      <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
+      <Animated.View 
+        entering={FadeInDown.delay(index * 100).springify()}
+        style={{
+          opacity: isPastOrCompleted ? 0.7 : 1,
+        }}
+      >
         <View
           style={{
             marginBottom: 15,
             backgroundColor: isPastOrCompleted
-              ? Colors.surface_light
+              ? Colors.surface_variant
               : Colors.white,
             borderRadius: 20,
             ...(Platform.OS === "ios" && {
               borderWidth: 0.5,
-              borderColor: Colors.rgba(Colors.primary, 0.25),
+              borderColor: isPastOrCompleted 
+                ? Colors.grey40
+                : Colors.rgba(Colors.primary, 0.25),
             }),
           }}
         >
@@ -315,16 +322,17 @@ const ScheduledPage = () => {
             {/* Header */}
             <View row spread centerV>
               <View row centerV>
-                <Text h2_bold color={Colors.primary}>{`#${item.id
-                  .toString()
-                  .padStart(3)}`}</Text>
+                <Text 
+                  h2_bold 
+                  color={isPastOrCompleted ? Colors.grey30 : Colors.primary}
+                >{`#${item.id.toString().padStart(3)}`}</Text>
                 {isPastOrCompleted && (
                   <View
                     marginL-8
                     padding-4
                     paddingH-8
                     br20
-                    backgroundColor={Colors.surface_variant}
+                    backgroundColor={Colors.rgba(Colors.grey40, 0.1)}
                   >
                     <Text h5 color={Colors.grey30}>
                       {t("appointment.past")}
@@ -361,10 +369,15 @@ const ScheduledPage = () => {
                     height: 110,
                     borderRadius: 15,
                     backgroundColor: Colors.grey60,
+                    opacity: isPastOrCompleted ? 0.6 : 1,
                   }}
                 />
                 <View flex marginL-15>
-                  <Text h3_bold numberOfLines={2}>
+                  <Text 
+                    h3_bold 
+                    numberOfLines={2}
+                    color={isPastOrCompleted ? Colors.grey30 : Colors.text}
+                  >
                     {item.title}
                   </Text>
 
@@ -374,9 +387,13 @@ const ScheduledPage = () => {
                       <MaterialCommunityIcons
                         name="clock-time-four"
                         size={16}
-                        color={Colors.primary}
+                        color={isPastOrCompleted ? Colors.grey40 : Colors.primary}
                       />
-                      <Text marginL-5 h4 color={Colors.text}>
+                      <Text 
+                        marginL-5 
+                        h4 
+                        color={isPastOrCompleted ? Colors.grey40 : Colors.text}
+                      >
                         {`${moment(
                           item.time_slot.start_time,
                           "HH:mm:ss"
@@ -393,16 +410,23 @@ const ScheduledPage = () => {
                     <MaterialCommunityIcons
                       name="calendar"
                       size={16}
-                      color={Colors.primary}
+                      color={isPastOrCompleted ? Colors.grey40 : Colors.primary}
                     />
-                    <Text marginL-5 h4 color={Colors.text}>
+                    <Text 
+                      marginL-5 
+                      h4 
+                      color={isPastOrCompleted ? Colors.grey40 : Colors.text}
+                    >
                       {moment(item.start).format("DD/MM/YYYY")}
                     </Text>
                   </View>
 
                   {item.service?.single_price && (
                     <View marginT-8>
-                      <Text h3_bold color={Colors.secondary}>
+                      <Text 
+                        h3_bold 
+                        color={isPastOrCompleted ? Colors.grey40 : Colors.secondary}
+                      >
                         {formatCurrency({ price: item.service.single_price })}
                       </Text>
                     </View>
