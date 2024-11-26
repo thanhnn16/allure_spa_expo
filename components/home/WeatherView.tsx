@@ -34,16 +34,19 @@ const WeatherView = () => {
           nearestProvince.lat,
           nearestProvince.lon
         );
-        if (!weatherData) {
-          throw new Error("Failed to fetch weather data");
-        }
-        setLocation(nearestProvince);
-        setWeatherIcon(weatherData.weather[0].icon);
-        const temperatureData = weatherData["main"]["temp"];
-        if (temperatureData > 50) {
-          setTemperature(temperatureData - 273.15);
+        if (weatherData) {
+          setLocation(nearestProvince);
+          setWeatherIcon(weatherData.weather[0].icon);
+          const temperatureData = weatherData["main"]["temp"];
+          if (temperatureData > 50) {
+            setTemperature(temperatureData - 273.15);
+          } else {
+            setTemperature(weatherData["main"]["temp"]);
+          }
         } else {
-          setTemperature(weatherData["main"]["temp"]);
+          setError("Không có quyền truy cập vị trí");
+          setWeatherIcon("01d");
+          setTemperature(25);
         }
       } catch (error: any) {
         setError("Không có quyền truy cập vị trí");

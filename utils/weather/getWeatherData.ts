@@ -6,14 +6,16 @@ let KEY = Constants.expoConfig?.extra?.EXPO_PUBLIC_OPEN_WEATHER_API_KEY;
 const getWeather = async (lat: Double, lon: Double) => {
   try {
     if (!KEY) {
-      throw new Error('Weather API key is not defined');
+      console.warn('Weather API key is not defined');
+      return null;
     }
     const response = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${KEY}`
     );
     return response.data;
   } catch (error) {
-    throw new Error('Error fetching weather data');
+    console.warn('Error fetching weather data:', error);
+    return null;
   }
 };
 
