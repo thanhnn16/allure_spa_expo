@@ -11,9 +11,8 @@ import { AppointmentResponeModelParams } from "@/types/service.type";
 import AppButton from "@/components/buttons/AppButton";
 import { useLanguage } from "@/hooks/useLanguage";
 
-
 const AppointmentDetailPage = () => {
-const { t } = useLanguage();
+  const { t } = useLanguage();
 
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch();
@@ -83,23 +82,23 @@ const { t } = useLanguage();
 
   const statusColors = {
     completed: {
-      bg: Colors.rgba(Colors.green30, 0.15),
-      text: Colors.green10,
+      bg: Colors.rgba(Colors.primary, 0.08),
+      text: Colors.primary,
       icon: "check-circle" as const,
     },
     pending: {
-      bg: Colors.rgba(Colors.yellow30, 0.15),
-      text: Colors.yellow10,
+      bg: Colors.rgba(Colors.secondary, 0.08),
+      text: Colors.secondary,
       icon: "clock-outline" as const,
     },
     cancelled: {
-      bg: Colors.rgba(Colors.red30, 0.15),
+      bg: Colors.rgba(Colors.red30, 0.08),
       text: Colors.red10,
       icon: "close-circle" as const,
     },
     confirmed: {
-      bg: Colors.rgba(Colors.blue30, 0.15),
-      text: Colors.blue10,
+      bg: Colors.rgba(Colors.primary, 0.08),
+      text: Colors.primary,
       icon: "calendar-check" as const,
     },
   };
@@ -125,7 +124,7 @@ const { t } = useLanguage();
               />
               <View marginL-8 padding-8 br30 backgroundColor={statusConfig.bg}>
                 <Text h3 color={statusConfig.text}>
-                  {appointment.status}
+                  {t(`appointment.status.${appointment.status.toLowerCase()}`)}
                 </Text>
               </View>
             </View>

@@ -428,7 +428,6 @@
   },
   "appointment": {
     "title": "Lịch hẹn",
-    "scheduled": "Lịch đã đặt",
     "all": "Tất cả",
     "completed": "Đã hoàn thành",
     "cancelled": "Bị huỷ",
@@ -479,7 +478,9 @@
       "pending": "Chờ xác nhận",
       "cancelled": "Đã huỷ",
       "confirmed": "Đã xác nhận"
-    }
+    },
+    "no_appointments_for_selected_date": "Bạn không có lịch hẹn nào cho ngày đã chọn",
+    "past": "Đã qua"
   },
   "orders": {
     "title": "Đơn hàng",

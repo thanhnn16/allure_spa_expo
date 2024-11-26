@@ -463,7 +463,6 @@
     "thank_you_for_review": "Thank you for your review"
   },
   "appointment": {
-    "scheduled": "Scheduled",
     "all": "All",
     "7upcoming": "7 upcoming days",
     "completed": "Completed",
@@ -514,7 +513,9 @@
       "pending": "Pending",
       "cancelled": "Cancelled",
       "confirmed": "Confirmed"
-    }
+    },
+    "no_appointments_for_selected_date": "You have no appointments for the selected date",
+    "past": "Past"
   },
   "orders": {
     "title": "Orders",
