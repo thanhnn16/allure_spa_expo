@@ -351,9 +351,9 @@
     "evening": "こんばんは！"
   },
   "package": {
-    "single": "単一パッケージ",
-    "combo5": "コンボパック5",
-    "combo10": "1コンボパック10",
+    "single": "単一パッケージ (割引なし)",
+    "combo5": "コンボパック5 (20%割引 + 1無料)",
+    "combo10": "1コンボパック10 (30%割引 + 3無料)",
     "select_combo": "コンボパッケージを選択してください"
   },
   "service": {
@@ -539,7 +539,6 @@
     "thank_you_for_review": "ありがとうございました"
   },
   "appointment": {
-    "scheduled": "予約済み",
     "all": "すべて",
     "7upcoming": "7日後",
     "completed": "完了",
@@ -591,7 +590,9 @@
       "pending": "保留中",
       "cancelled": "キャンセル",
       "confirmed": "確認済み"
-    }
+    },
+    "no_appointments_for_selected_date": "選択した日付に予約がありません",
+    "past": "過去"
   },
   "orders": {
     "title": "注文",
