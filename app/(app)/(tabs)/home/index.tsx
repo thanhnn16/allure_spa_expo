@@ -27,7 +27,6 @@ import AppDialog from "@/components/dialog/AppDialog";
 import ServiceItem from "@/components/home/ServiceItem";
 import UpcomingAppointment from "@/components/home/UpcomingAppointment";
 import WeatherView from "@/components/home/WeatherView";
-import { HOME_CATEGORIES } from "@/constants/categories";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -35,7 +34,7 @@ import { RootState } from "@/redux/store";
 import { Product } from "@/types/product.type";
 import { ServiceResponeModel } from "@/types/service.type";
 import { SkeletonView } from "react-native-ui-lib";
-import { translate } from '@/languages/i18n';
+import { translate } from "@/languages/i18n";
 import getLocation from "@/utils/location/locationHelper";
 import getWeatherData from "@/utils/weather/getWeatherData";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
@@ -53,7 +52,8 @@ const HomePage = () => {
     (state: RootState) => state.service
   );
   const { products } = useSelector((state: RootState) => state.product);
-  const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } = useHeaderDimensions();
+  const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
+    useHeaderDimensions();
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -93,7 +93,9 @@ const HomePage = () => {
               source={require("@/assets/images/logo/logo.png")}
             />
             <View centerV>
-              <Text h2_bold>{user?.full_name || translate("common.guest")}</Text>
+              <Text h2_bold>
+                {user?.full_name || translate("common.guest")}
+              </Text>
               <Text h4>{currentGreeting}</Text>
             </View>
           </View>
@@ -201,7 +203,6 @@ const HomePage = () => {
           <SkeletonView height={20} width={80} />
         </View>
       </View>
-
     </View>
   );
 
@@ -255,7 +256,8 @@ const HomePage = () => {
     for (const pkg of packages) {
       if (pkg.next_appointment_details) {
         try {
-          const [day, month, year] = pkg.next_appointment_details.date.split("/");
+          const [day, month, year] =
+            pkg.next_appointment_details.date.split("/");
           const appointmentDate = new Date(
             parseInt(year),
             parseInt(month) - 1,
@@ -265,7 +267,8 @@ const HomePage = () => {
             0
           );
 
-          const [startHour, startMinute] = pkg.next_appointment_details.time.start.split(":");
+          const [startHour, startMinute] =
+            pkg.next_appointment_details.time.start.split(":");
           appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
 
           if (
@@ -288,8 +291,8 @@ const HomePage = () => {
     return null;
   }, []);
 
-  const upcomingAppointment = useMemo(() => 
-    getUpcomingAppointment(user?.packages || []), 
+  const upcomingAppointment = useMemo(
+    () => getUpcomingAppointment(user?.packages || []),
     [user?.packages, getUpcomingAppointment]
   );
 
@@ -311,7 +314,7 @@ const HomePage = () => {
       </Animated.View>
 
       <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-        <CategoryItem cateData={HOME_CATEGORIES} />
+        <CategoryItem />
       </Animated.View>
 
       {upcomingAppointment && (
@@ -398,11 +401,7 @@ const HomePage = () => {
           marginTop: 24,
         }}
       >
-        {isLoading ? (
-          renderSkeletonContent()
-        ) : (
-          renderContent()
-        )}
+        {isLoading ? renderSkeletonContent() : renderContent()}
       </Animated.ScrollView>
     </View>
   );

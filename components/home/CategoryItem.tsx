@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FlatList } from "react-native";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import { router } from "expo-router";
+import { translate } from "@/languages/i18n";
 
 interface CategoryItem {
   id: string;
@@ -10,11 +11,50 @@ interface CategoryItem {
   url?: string;
 }
 
-interface RenderCategoryProps {
-  cateData: CategoryItem[];
-}
+const RenderCategory: React.FC = () => {
+  // Move categories data into component and use useMemo to prevent unnecessary re-renders
+  const categories = useMemo(
+    () => [
+      {
+        id: "1",
+        name: translate("home.introduce"),
+        icon: require("@/assets/images/home/icons/Introduce.png"),
+        url: "https://allurespa.com.vn/gioi-thieu/",
+      },
+      {
+        id: "2",
+        name: translate("home.voucher"),
+        icon: require("@/assets/images/home/icons/Voucher.png"),
+        url: "https://allurespa.com.vn/voucher/",
+      },
+      {
+        id: "3",
+        name: translate("home.service"),
+        icon: require("@/assets/images/home/icons/Service.png"),
+        url: "https://allurespa.com.vn/dich-vu/",
+      },
+      {
+        id: "4",
+        name: translate("home.product"),
+        icon: require("@/assets/images/home/icons/Product.png"),
+        url: "https://allurespa.com.vn/san-pham/",
+      },
+      {
+        id: "5",
+        name: translate("home.course"),
+        icon: require("@/assets/images/home/icons/Course.png"),
+        url: "https://allurespa.com.vn/khoa-hoc/",
+      },
+      {
+        id: "6",
+        name: translate("home.news"),
+        icon: require("@/assets/images/home/icons/News.png"),
+        url: "https://allurespa.com.vn/category/tin-tuc/",
+      },
+    ],
+    []
+  ); // Empty dependency array since translate is stable
 
-const RenderCategory: React.FC<RenderCategoryProps> = ({ cateData }) => {
   const handleOpenWebView = (url: string) => {
     router.push({
       pathname: "/webview",
@@ -50,7 +90,7 @@ const RenderCategory: React.FC<RenderCategoryProps> = ({ cateData }) => {
   return (
     <View width={"100%"} marginV-12>
       <FlatList
-        data={cateData}
+        data={categories}
         renderItem={renderCateItem}
         keyExtractor={(item) => item.id.toString()}
         horizontal
