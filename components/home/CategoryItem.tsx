@@ -1,14 +1,16 @@
 import React, { useMemo } from "react";
 import { FlatList } from "react-native";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { translate } from "@/languages/i18n";
+import { route } from "../../../../../PhpstormProjects/allure_spa-server/vendor/tightenco/ziggy/src/js/index";
 
 interface CategoryItem {
   id: string;
   name: string;
   icon: any;
   url?: string;
+  route?: string;
 }
 
 const RenderCategory: React.FC = () => {
@@ -25,19 +27,19 @@ const RenderCategory: React.FC = () => {
         id: "2",
         name: translate("home.voucher"),
         icon: require("@/assets/images/home/icons/Voucher.png"),
-        url: "https://allurespa.com.vn/voucher/",
+        route: "/voucher",
       },
       {
         id: "3",
         name: translate("home.service"),
         icon: require("@/assets/images/home/icons/Service.png"),
-        url: "https://allurespa.com.vn/dich-vu/",
+        route: "/see-more?type=service",
       },
       {
         id: "4",
         name: translate("home.product"),
         icon: require("@/assets/images/home/icons/Product.png"),
-        url: "https://allurespa.com.vn/san-pham/",
+        route: "/see-more?type=product",
       },
       {
         id: "5",
@@ -55,11 +57,15 @@ const RenderCategory: React.FC = () => {
     []
   ); // Empty dependency array since translate is stable
 
-  const handleOpenWebView = (url: string) => {
-    router.push({
-      pathname: "/webview",
-      params: { url },
-    });
+  const handleNavigation = (item: CategoryItem) => {
+    if (item.url) {
+      router.push({
+        pathname: "/webview",
+        params: { url: item.url },
+      });
+    } else if (item.route) {
+      router.push(item.route as Href<string>);
+    }
   };
 
   const renderCateItem = ({ item }: { item: CategoryItem }) => {
@@ -67,11 +73,7 @@ const RenderCategory: React.FC = () => {
       <TouchableOpacity
         center
         marginH-12
-        onPress={() => {
-          if (item.url) {
-            handleOpenWebView(item.url);
-          }
-        }}
+        onPress={() => handleNavigation(item)}
       >
         <View
           width={48}
