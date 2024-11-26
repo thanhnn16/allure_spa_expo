@@ -17,7 +17,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { convertImageToBase64 } from "@/utils/helpers/imageHelper";
 import { useLanguage } from "@/hooks/useLanguage";
 
-
 const AIChatScreen = () => {
   const { t } = useLanguage();
 
@@ -223,19 +222,17 @@ const AIChatScreen = () => {
     }
   }, [messages]);
 
-  const [refreshing, setRefreshing] = useState(false);
-
   const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
-
 
   return (
     <KeyboardTrackingView
       style={{ flex: 1, backgroundColor: Colors.white }}
       trackInteractive
-      useSafeArea
     >
       <AppBar back title={t("chat.chat_with_ai")} />
-      {renderChatUI()}
+      <View flex useSafeArea>
+        {renderChatUI()}
+      </View>
     </KeyboardTrackingView>
   );
 };

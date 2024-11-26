@@ -37,10 +37,7 @@ import { createRatingProductThunk } from "@/redux/features/rating/createRatingTh
 import SelectImagesBar from "@/components/images/SelectImagesBar";
 import { Rating } from "@kolking/react-native-rating";
 import { changeOrderStatusByIdThunk } from "@/redux/features/order/changeOrderStatusThunk";
-import {
-  processImageForUpload,
-} from "@/utils/helpers/imageHelper";
-
+import { processImageForUpload } from "@/utils/helpers/imageHelper";
 
 const OrderDetail = () => {
   const { t } = useLanguage();
@@ -64,7 +61,6 @@ const OrderDetail = () => {
   const { selectedOrder, isLoading, error } = useSelector(
     (state: RootState) => state.order
   );
-
 
   const paymentMethods: PaymentMethod[] = [
     {
@@ -131,7 +127,9 @@ const OrderDetail = () => {
             } as any);
           } catch (error: any) {
             console.error(`Error processing image ${index}:`, error);
-            throw new Error(`Lỗi xử lý hình ảnh ${index + 1}: ${error.message}`);
+            throw new Error(
+              `Lỗi xử lý hình ảnh ${index + 1}: ${error.message}`
+            );
           }
         });
       }
@@ -196,7 +194,6 @@ const OrderDetail = () => {
     <GestureHandlerRootView>
       <View flex bg-white>
         <AppBar back title={t("orders.detail")} />
-
         <ScrollView
           style={styles.container}
           showsVerticalScrollIndicator={false}
@@ -205,23 +202,21 @@ const OrderDetail = () => {
             <TransactionHeader status={selectedOrder.status} />
           )}
 
-          {!selectedOrder.is_rated && selectedOrder.status == "completed" && (
+          {selectedOrder.status === "completed" && (
             <View style={styles.section}>
               <View row spread centerV>
-                <Text h2_bold>
-                  {selectedOrder.order_items?.filter(
-                    (item: OrderItem) => !item.is_rated
-                  ).length > 0
-                    ? t("transaction_detail.review_products")
-                    : t("transaction_detail.review_completed")}
-                </Text>
+                <Text h2_bold>{t("transaction_detail.review_products")}</Text>
               </View>
-              {selectedOrder.order_items?.filter(
+              {selectedOrder.order_items.some(
                 (item: OrderItem) => !item.is_rated
-              ).length > 0 ? (
+              ) ? (
                 <>
                   <Text h3 marginV-8 color={Colors.grey30}>
-                    {t("transaction_detail.product_need_review")}
+                    {`${
+                      selectedOrder.order_items.filter(
+                        (item: OrderItem) => !item.is_rated
+                      ).length
+                    } ${t("transaction_detail.product_need_review")}`}
                   </Text>
                   <View flex>
                     <AppButton
@@ -472,9 +467,7 @@ const OrderDetail = () => {
                 <RadioButton
                   value={"Chọn thêm sản phẩm khác/ Thay đổi voucher"}
                   color={Colors.primary}
-                  label={t(
-                    "transaction_detail.cancel.change_order_voucher"
-                  )}
+                  label={t("transaction_detail.cancel.change_order_voucher")}
                   labelStyle={Typography.h3}
                 />
                 <RadioButton
@@ -613,7 +606,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 26,
   },
   section: {
     padding: 16,

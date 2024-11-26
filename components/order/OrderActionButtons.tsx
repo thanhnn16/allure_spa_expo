@@ -30,7 +30,7 @@ const OrderActionButtons = ({ order, onCancel }: OrderActionButtonsProps) => {
   };
 
   return (
-    <View bg-white paddingH-20 gap-10 marginB-10>
+    <View bg-white paddingH-20 gap-10 marginB-20>
       {order.status === "pending" && (
         <AppButton
           type="outline"
