@@ -1,26 +1,46 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native-ui-lib";
-import { TextInput } from "react-native";
-import { useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import BackButton from "@/assets/icons/back.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { changePasswordThunk } from "@/redux";
 import AppDialog from "@/components/dialog/AppDialog";
+import AppBar from "@/components/app-bar/AppBar";
+import { TextInput } from "@/components/inputs/TextInput";
+import i18n from "@/languages/i18n";
+import AppButton from "@/components/buttons/AppButton";
+import { set } from "lodash";
 
-interface ChangePasswordProps {}
+interface ChangePasswordProps { }
 
 const ChangePassword = (props: ChangePasswordProps) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   // State for password fields
+  const [loading, setLoading] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [currentPasswordError, setCurrentPasswordError] = useState("");
+  const [newPasswordError, setNewPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
   const [error, setError] = useState<string | null>(null);
+  const [successDialog, setSuccessDialog] = useState(false);
 
   const handleChangePassword = async () => {
+    setLoading(true);
+    if (newPassword !== currentPassword) {
+      setNewPasswordError("Mật khẩu cũ và mật khẩu mới không được trùng nhau");
+      setLoading(false);
+      setError("Mật khẩu cũ và mật khẩu mới không được trùng nhau");
+      return;
+    }
     if (newPassword !== confirmPassword) {
+      setConfirmPasswordError("Mật khẩu xác nhận không khớp");
+      setLoading(false);
       setError("Mật khẩu xác nhận không khớp");
       return;
     }
@@ -33,117 +53,163 @@ const ChangePassword = (props: ChangePasswordProps) => {
         })
       );
       if (changePasswordThunk.fulfilled.match(resultAction)) {
+        setLoading(false);
         console.log("Change password success");
         navigation.goBack();
       } else {
         if (resultAction.payload) {
+          setLoading(false);
           setError(resultAction.payload);
         } else {
+          setLoading(false);
           setError("Change password failed");
         }
       }
     } catch (error: any) {
-      console.error("Change password error:", error);
+      setLoading(false);
       setError(error.message || "Change password failed");
     }
-
-    // Handle password change logic here
-    console.log("Current Password:", currentPassword);
-    console.log("New Password:", newPassword);
-    console.log("Confirm Password:", confirmPassword);
   };
 
+  const validateCurrentPassword = (pass: string) => {
+    if (!pass) {
+      setCurrentPasswordError(i18n.t("auth.register.empty_password"));
+      return false;
+    }
+    setCurrentPasswordError("");
+    return true;
+  };
+
+  const validateNewPassword = (pass: string) => {
+    if (!pass) {
+      setNewPasswordError(i18n.t("auth.register.empty_password"));
+      return false;
+    }
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;
+    if (specialCharRegex.test(pass)) {
+      setNewPasswordError(i18n.t("auth.register.invalid_password_special_char"));
+      return false;
+    }
+    if (pass.length < 8) {
+      setNewPasswordError(i18n.t("auth.register.invalid_password_length"));
+      return false;
+    }
+    setNewPasswordError("");
+    return true;
+  };
+
+  const validateConfirmPassword = (pass: string, confirmPass: string) => {
+    if (pass !== confirmPass) {
+      setConfirmPasswordError(i18n.t("auth.register.password_mismatch"));
+      return false;
+    }
+    setConfirmPasswordError("");
+    return true;
+  };
+
+  const handleSuccessDialog = () => {
+    setSuccessDialog(false);
+    router.back();
+  }
+
   return (
-    <View flex marginH-20 marginT-20>
-      <View row centerV>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-            console.log("Back");
-          }}
-        >
-          <Image width={30} height={30} source={BackButton} />
-        </TouchableOpacity>
-      </View>
-      <View marginT-30 gap-7>
-        <Text text50 marginR-30>
-          Tạo mật khẩu mới
-        </Text>
-        <Text>Mật khẩu mới của bạn phải khác với mật khẩu từng sử dụng.</Text>
-      </View>
-      <View marginT-30>
-        <Text marginB-10>Nhập mật khẩu cũ</Text>
+    <View flex bg-white>
+      <AppBar title="Đổi mật khẩu mới" back />
+
+      <View flex paddingH-18>
+        <View paddingV-24>
+          <Text h3>Mật khẩu mới của bạn phải khác với mật khẩu từng sử dụng</Text>
+        </View>
+
         <TextInput
+          title={i18n.t("auth.register.current_password")}
+          placeholder={i18n.t("auth.register.current_password")}
           secureTextEntry
           value={currentPassword}
           onChangeText={setCurrentPassword}
-          style={{
-            borderWidth: 1,
-            height: 45,
-            borderColor: "#000000",
-            borderRadius: 10,
-            paddingHorizontal: 10,
-
-            marginBottom: 20,
-          }}
+          onBlur={() => validateCurrentPassword(currentPassword)}
         />
+        {currentPasswordError ? (
+          <Text h3 secondary>{currentPasswordError}</Text>
+        ) : null}
+
         <TouchableOpacity
           onPress={() => {
             console.log("Quên mật khẩu");
-            // Add your forgot password logic here
           }}
           style={{ alignSelf: "flex-end", marginBottom: 20 }}
         >
-          <Text style={{ color: "red" }}>Quên mật khẩu ?</Text>
+          <Text h3 secondary>Quên mật khẩu ?</Text>
         </TouchableOpacity>
-        <Text marginB-10>Mật khẩu mới</Text>
+
         <TextInput
+          title={i18n.t("auth.register.password")}
+          placeholder={i18n.t("auth.register.password")}
           secureTextEntry
           value={newPassword}
           onChangeText={setNewPassword}
-          style={{
-            borderWidth: 1,
-            height: 45,
-            borderColor: "#000000",
-            borderRadius: 10,
-            paddingHorizontal: 10,
-            marginBottom: 20,
-          }}
+          onBlur={() => validateNewPassword(newPassword)}
         />
-        <Text marginB-10>Xác nhận mật khẩu mới</Text>
+        {newPasswordError ? (
+          <Text h3 secondary>{newPasswordError}</Text>
+        ) : null}
+
         <TextInput
+          title={i18n.t("auth.register.confirm_password")}
+          placeholder={i18n.t("auth.register.confirm_password")}
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
-          style={{
-            borderWidth: 1,
-            height: 45,
-            borderColor: "#000000",
-            borderRadius: 10,
-            paddingHorizontal: 10,
-            marginBottom: 20,
-          }}
+          onBlur={() => validateConfirmPassword(newPassword, confirmPassword)}
         />
+        {confirmPasswordError ? (
+          <Text h3 secondary>{confirmPasswordError}</Text>
+        ) : null}
+
+        <View marginT-32>
+          <AppButton
+            title="Đổi mật khẩu"
+            type="primary"
+            onPress={handleChangePassword}
+            disabled={
+              confirmPassword === "" ||
+              currentPassword === "" ||
+              newPassword === "" ||
+              loading
+            }
+          />
+        </View>
+
       </View>
-      <View marginT-30>
-        <TouchableOpacity
-          center
-          style={{
-            width: "100%",
-            height: 50,
-            backgroundColor: "#717658",
-            padding: 10,
-            borderRadius: 15,
-            elevation: 5,
-            marginTop: 20,
-          }}
-          onPress={handleChangePassword}
-        >
-          <Text center white text70BO>
-            Đổi mật khẩu
-          </Text>
-        </TouchableOpacity>
-      </View>
+
+      <AppDialog
+        visible={successDialog}
+        severity="success"
+        title="Đổi mật khẩu thành công"
+        confirmButtonLabel="Đóng"
+        closeButton={false}
+        description="Mật khẩu của bạn đã được thay đổi"
+        onConfirm={() => setSuccessDialog(false)}
+      />
+
+      <AppDialog
+        visible={!!error}
+        severity="error"
+        title="Đổi mật khẩu thất bại"
+        confirmButtonLabel="Đóng"
+        closeButton={false}
+        description={error}
+        onConfirm={() => setError(null)}
+      />
+
+      <AppDialog
+        visible={loading}
+        severity="info"
+        title="Đang thay đổi mật khẩu"
+        description="Vui lòng đợi trong giây lát"
+        closeButton={false}
+        confirmButton={false}
+      />
     </View>
   );
 };

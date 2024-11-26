@@ -4,7 +4,7 @@ import ArrowRight from "@/assets/icons/arrow.svg";
 import { useLanguage } from "@/hooks/useLanguage";
 
 import { useAuth } from "@/hooks/useAuth";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { useDispatch } from "react-redux";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
@@ -61,13 +61,15 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             {
               title: t("profile.change_password"),
               icon: require("@/assets/images/key.png"),
-              onPress: () => { },
+              onPress: () => { 
+                router.push("/(app)/profile/change-password");
+               },
             },
             {
               title: t("profile.history_login"),
               icon: require("@/assets/images/global.png"),
               onPress: () => {
-                console.log("Lịch sử đăng nhập");
+                router.push("/profile/history-login" as Href);
               },
             },
             {
@@ -101,7 +103,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
                   <Image source={item.icon} width={24} height={24} />
                 </TouchableOpacity>
                 <View flex gap-5>
-                  <Text text70BL>{item.title}</Text>
+                  <Text h3_bold>{item.title}</Text>
                 </View>
                 <Image source={ArrowRight} />
               </View>
