@@ -3,7 +3,6 @@ import axios from 'axios';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import { Platform } from 'react-native';
-import Constants from "expo-constants";
 export interface AccessTokenResponse {
   access_token: string;
   refresh_token: string;
@@ -36,7 +35,7 @@ export const getRedirectUri = () => {
   if (Platform.OS === 'web') {
     return `${appUrl}zalo-login-progress`;
   }
-  const scheme = Constants.expoConfig?.scheme || 'allurespa';
+  const scheme = process.env.EXPO_PUBLIC_SCHEME || 'allurespa';
   return `${scheme}://oauth`;
 };
 
