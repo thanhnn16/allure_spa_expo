@@ -3,7 +3,10 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { Dimensions } from "react-native";
 import Animated from "react-native-reanimated";
 import { View, Text, Colors, SkeletonView, Image } from "react-native-ui-lib";
-import { ServiceResponeModel } from "@/types/service.type";
+import {
+  ServiceDetailResponeModel,
+  ServiceResponeModel,
+} from "@/types/service.type";
 import { Product } from "@/types/product.type";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useEffect } from "react";
@@ -44,7 +47,7 @@ const PaymentItem = ({ orderItem }: PaymentItemProps) => {
   const isService = orderItem.item_type === "service";
   const itemData = isService ? orderItem.service : orderItem.product;
   const itemName = isService
-    ? (itemData as ServiceResponeModel)?.service_name
+    ? (itemData as ServiceDetailResponeModel)?.service_name
     : (itemData as Product)?.name;
   const imageUrl = itemData?.media?.[0]?.full_url;
 
