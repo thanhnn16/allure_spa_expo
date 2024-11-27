@@ -9,12 +9,12 @@ import messaging from "@react-native-firebase/messaging";
 
 import IconCskh from "@/assets/icons/cskh.svg";
 import AppBar from "@/components/app-bar/AppBar";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
 import { updateChatLastMessage } from "@/redux/features/chat/chatSlice";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import moment from 'moment';
+import 'moment/locale/vi';
 
 
 const ChatListScreen = () => {
@@ -110,9 +110,7 @@ const ChatListScreen = () => {
         </View>
         {lastMessageTime && (
           <Text h3>
-            {formatDistanceToNow(new Date(lastMessageTime), {
-              locale: vi,
-            })}
+            {moment(lastMessageTime).fromNow()}
           </Text>
         )}
       </TouchableOpacity>

@@ -33,6 +33,50 @@ import * as Haptics from "expo-haptics";
 import { View as RNView } from "react-native";
 import { useLanguage } from "@/hooks/useLanguage";
 
+const SuccessModal = ({
+  visible,
+  title,
+  onClose,
+  onViewAppointments,
+  t,
+}: {
+  visible: boolean;
+  title: string;
+  onClose: () => void;
+  onViewAppointments: () => void;
+  t: any;
+}) => (
+  <Modal visible={visible} transparent>
+    <View center bg-$backgroundDefault>
+      <Card padding-20 width="80%" br20>
+        <View center marginB-20>
+          <MaterialIcons name="done" size={64} color={Colors.primary} />
+        </View>
+        <Text text60BO center marginB-20>
+          {title}
+        </Text>
+        <View flex row center paddingH-20 marginB-10>
+          <View flex-1>
+            <AppButton
+              title={t("service.back_to_home")}
+              type="primary"
+              marginB-10
+              onPress={onClose}
+            />
+          </View>
+          <View flex-1>
+            <AppButton
+              title={t("service.view_appointments")}
+              type="outline"
+              onPress={onViewAppointments}
+            />
+          </View>
+        </View>
+      </Card>
+    </View>
+  </Modal>
+);
+
 const BookingPage = () => {
   const { t } = useLanguage();
 
@@ -80,8 +124,31 @@ const BookingPage = () => {
     }, 100);
   };
 
-  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
-  const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+  const [successModal, setSuccessModal] = useState<{
+    visible: boolean;
+    isUpdate: boolean;
+  }>({
+    visible: false,
+    isUpdate: false,
+  });
+
+  const handleSuccess = (isUpdate: boolean) => {
+    setShowModal(false);
+    setSuccessModal({
+      visible: true,
+      isUpdate,
+    });
+  };
+
+  const handleCloseSuccess = () => {
+    setSuccessModal({ visible: false, isUpdate: false });
+    router.push("/home");
+  };
+
+  const handleViewAppointments = () => {
+    setSuccessModal({ visible: false, isUpdate: false });
+    router.push("/(app)/(tabs)/appointment");
+  };
 
   const {
     service_id,
@@ -180,7 +247,7 @@ const BookingPage = () => {
 
     try {
       await dispatch(createBooking(bookingData));
-      setShowConfirmModal(true); // Show confirm modal
+      handleSuccess(false); // Show success modal
       setSuccess(true); // Set success state to true upon successful booking
     } catch (error: any) {
       setDialogTitle(t("service.error"));
@@ -208,7 +275,7 @@ const BookingPage = () => {
         await dispatch(
           updateAppointment({ ...bookingData, id: appointment_id })
         );
-        setShowUpdateModal(true); // Show update modal
+        handleSuccess(true); // Show success modal
         setSuccess(true); // Set success state to true upon successful update
       }
     } catch (error: any) {
@@ -614,9 +681,9 @@ const BookingPage = () => {
         </Animated.ScrollView>
       </View>
 
-      <Modal visible={showModal} transparent animationType="slide">
-        <View flex center bg-$backgroundDefault>
-          <Card padding-20 width="80%" br20>
+      <Modal visible={showModal} transparent animationType="fade">
+        <View flex center backgroundColor={`rgba(${Colors.dark}, 0.5)`}>
+          <Card padding-20 width="80%" br30>
             <View center marginB-20>
               <MaterialIcons name="info" size={48} color={Colors.primary} />
             </View>
@@ -648,93 +715,45 @@ const BookingPage = () => {
                 {t("service.note")}: <Text text70BO>{note}</Text>
               </Text>
             </View>
-            <View row spread marginT-20 paddingH-20 marginB-10>
-              <AppButton
-                title={t("service.agree")}
-                type="primary"
-                onPress={() => {
-                  if (edit_mode === "true") {
-                    handleUpdate();
-                  } else {
-                    handleBooking();
-                  }
-                }}
-              />
-              <AppButton
-                title={t("service.cancel")}
-                type="outline"
-                onPress={() => {
-                  setShowModal(false);
-                }}
-              />
+            <View center gap-10>
+              <View center>
+                <AppButton
+                  title={t("service.agree")}
+                  type="primary"
+                  onPress={() => {
+                    if (edit_mode === "true") {
+                      handleUpdate();
+                    } else {
+                      handleBooking();
+                    }
+                  }}
+                />
+              </View>
+              <View center>
+                <AppButton
+                  title={t("service.cancel")}
+                  type="outline"
+                  onPress={() => {
+                    setShowModal(false);
+                  }}
+                />
+              </View>
             </View>
           </Card>
         </View>
       </Modal>
 
-      <Modal visible={showConfirmModal} transparent>
-        <View flex center bg-$backgroundDefault>
-          <Card padding-20 width="80%" br20>
-            <View center marginB-20>
-              <MaterialIcons name="done" size={64} color={Colors.primary} />
-            </View>
-            <Text text60BO center marginB-20>
-              {t("service.confirm_information")}
-            </Text>
-            <View paddingH-20 marginB-10>
-              <AppButton
-                title={t("service.back_to_home")}
-                type="primary"
-                marginB-10
-                onPress={() => {
-                  setShowConfirmModal(false);
-                  router.push("/home");
-                }}
-              />
-              <AppButton
-                title={t("service.view_appointments")}
-                type="outline"
-                onPress={() => {
-                  setShowConfirmModal(false);
-                  router.push("/(app)/(tabs)/appointment");
-                }}
-              />
-            </View>
-          </Card>
-        </View>
-      </Modal>
-
-      <Modal visible={showUpdateModal} transparent>
-        <View flex center bg-$backgroundDefault>
-          <Card padding-20 width="80%" br20>
-            <View center marginB-20>
-              <MaterialIcons name="done" size={64} color={Colors.primary} />
-            </View>
-            <Text text60BO center marginB-20>
-              {t("service.update_information")}
-            </Text>
-            <View paddingH-20 marginB-10>
-              <AppButton
-                title={t("service.back_to_home")}
-                type="primary"
-                marginB-10
-                onPress={() => {
-                  setShowUpdateModal(false);
-                  router.push("/home");
-                }}
-              />
-              <AppButton
-                title={t("service.view_appointments")}
-                type="outline"
-                onPress={() => {
-                  setShowUpdateModal(false);
-                  router.push("/(app)/(tabs)/appointment");
-                }}
-              />
-            </View>
-          </Card>
-        </View>
-      </Modal>
+      <SuccessModal
+        visible={successModal.visible}
+        title={
+          successModal.isUpdate
+            ? t("service.update_information")
+            : t("service.confirm_information")
+        }
+        t={t}
+        onClose={handleCloseSuccess}
+        onViewAppointments={handleViewAppointments}
+      />
     </View>
   );
 };

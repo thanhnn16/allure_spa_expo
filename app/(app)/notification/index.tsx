@@ -24,19 +24,14 @@ import {
   markAllNotificationsAsRead,
   loadMoreNotifications,
 } from "@/redux/features/notification/notificationThunks";
-import {
-  formatDistanceToNow,
-  format,
-  isToday,
-  isYesterday,
-  isThisWeek,
-  isThisMonth,
-} from "date-fns";
-import { vi } from "date-fns/locale";
 import { Notification } from "@/redux/features/notification/types";
 import EmptyNotification from "@/components/notification/EmptyNotification";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTranslatedNotification } from "@/hooks/useTranslatedNotification";
+import { useFormattedTime } from "@/hooks/useFormattedTime";
+import moment from "moment";
+import "moment/locale/vi"; // Import Vietnamese locale
 
 import { router } from "expo-router";
 
@@ -103,19 +98,19 @@ const NotificationPage: React.FC = () => {
     const groups: { [key: string]: Notification[] } = {};
 
     notifications.forEach((notification) => {
-      const date = new Date(notification.created_at);
+      const date = moment(notification.created_at);
       let groupTitle: string;
 
-      if (isToday(date)) {
-        groupTitle = "Hôm nay";
-      } else if (isYesterday(date)) {
-        groupTitle = "Hôm qua";
-      } else if (isThisWeek(date)) {
-        groupTitle = "Tuần này";
-      } else if (isThisMonth(date)) {
-        groupTitle = "Tháng này";
+      if (date.isSame(moment(), "day")) {
+        groupTitle = t("time.today");
+      } else if (date.isSame(moment().subtract(1, "day"), "day")) {
+        groupTitle = t("time.yesterday");
+      } else if (date.isSame(moment(), "week")) {
+        groupTitle = t("time.this_week");
+      } else if (date.isSame(moment(), "month")) {
+        groupTitle = t("time.this_month");
       } else {
-        groupTitle = format(date, "MM/yyyy");
+        groupTitle = date.format("MM/YYYY");
       }
 
       if (!groups[groupTitle]) {
@@ -148,22 +143,24 @@ const NotificationPage: React.FC = () => {
   }: {
     item: Notification;
     index: number;
-  }) => (
-    <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
-      <NotificationItem
-        id={item.id}
-        type={item.type as NotificationType}
-        title={item.title}
-        content={item.content}
-        time={formatDistanceToNow(new Date(item.created_at), {
-          addSuffix: true,
-          locale: vi,
-        })}
-        isRead={item.is_read}
-        onPress={() => handleNotificationPress(item.id)}
-      />
-    </Animated.View>
-  );
+  }) => {
+    const translatedNotification = useTranslatedNotification(item);
+    const formattedTime = useFormattedTime(item.created_at_timestamp);
+
+    return (
+      <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
+        <NotificationItem
+          id={item.id}
+          type={item.type as NotificationType}
+          title={translatedNotification.title}
+          content={translatedNotification.content}
+          time={formattedTime}
+          isRead={item.is_read}
+          onPress={() => handleNotificationPress(item.id)}
+        />
+      </Animated.View>
+    );
+  };
 
   if (loading && !notifications?.length) {
     return (
@@ -202,28 +199,44 @@ const NotificationPage: React.FC = () => {
               padding-16
               backgroundColor={Colors.white}
               style={{
-                borderBottomWidth: 0.5,
+                borderBottomWidth: 1,
                 borderBottomColor: Colors.grey60,
-                shadowColor: Colors.grey40,
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.1,
-                shadowRadius: 2,
-                elevation: 2,
               }}
             >
-              <Text h2_bold color={Colors.text}>
-                {t("notification.all_notifications")}
-              </Text>
+              <View row centerV>
+                <Text h3 color={Colors.text} marginR-8>
+                  {t("notification.all_notifications")}
+                </Text>
+                {notifications.filter((n: Notification) => !n.is_read).length >
+                  0 && (
+                  <View
+                    style={{
+                      backgroundColor: Colors.primary,
+                      paddingHorizontal: 8,
+                      paddingVertical: 2,
+                      borderRadius: 12,
+                    }}
+                  >
+                    <Text text80 white>
+                      {
+                        notifications.filter((n: Notification) => !n.is_read)
+                          .length
+                      }
+                    </Text>
+                  </View>
+                )}
+              </View>
               {notifications?.some((n: Notification) => !n.is_read) && (
                 <TouchableOpacity
                   onPress={handleMarkAllAsRead}
                   style={{
-                    padding: 8,
-                    borderRadius: 6,
-                    backgroundColor: Colors.primary_light,
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    borderRadius: 16,
+                    backgroundColor: Colors.primary,
                   }}
                 >
-                  <Text text80BO color={Colors.primary}>
+                  <Text text80 white>
                     {t("notification.mark_all_as_read")}
                   </Text>
                 </TouchableOpacity>
@@ -234,9 +247,6 @@ const NotificationPage: React.FC = () => {
               renderItem={renderItem}
               renderSectionHeader={renderSectionHeader}
               keyExtractor={(item: Notification) => item.id.toString()}
-              contentContainerStyle={{
-                paddingVertical: 12,
-              }}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.5}
               refreshControl={

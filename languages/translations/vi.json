@@ -335,6 +335,15 @@
     "set_default_address": "Đặt làm địa chỉ mặc định",
     "set_default_address_confirm": "Bạn có chắc chắn muốn đặt địa chỉ này làm mặc định không?"
   },
+  "time": {
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "this_week": "Tuần này",
+    "this_month": "Tháng này",
+    "minutes_ago": "{{minutes}} phút trước",
+    "hours_ago": "{{hours}} giờ trước",
+    "days_ago": "{{days}} ngày trước"
+  },
   "date": {
     "formats": {
       "short": "dd/MM/yyyy"
