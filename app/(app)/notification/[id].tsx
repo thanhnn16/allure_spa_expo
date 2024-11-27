@@ -11,12 +11,16 @@ import { Notification } from "@/redux/features/notification/types";
 import {
   NotificationType,
   notificationTypeMap,
+  notificationTypeTranslations,
 } from "@/components/notification/NotificationItem";
 import { useLanguage } from "@/hooks/useLanguage";
 
 import AppButton from "@/components/buttons/AppButton";
 import { useTranslatedNotification } from "@/hooks/useTranslatedNotification";
 import { useFormattedTime } from "@/hooks/useFormattedTime";
+
+// Thêm type definition cho ngôn ngữ được hỗ trợ
+type SupportedLanguage = "en" | "vi" | "ja";
 
 const NotificationDetail: React.FC = () => {
   const { t } = useLanguage();
@@ -79,11 +83,6 @@ const NotificationDetail: React.FC = () => {
           router.push(`/chat/${notification.data?.conversation_id}`);
         break;
 
-      case "payment":
-        actionText = t("notification.view_payment");
-        // onActionPress = () => router.push(`/payments/${notification.data?.payment_id}`);
-        break;
-
       case "promotion":
         actionText = t("notification.view_promotion");
         onActionPress = () =>
@@ -113,6 +112,22 @@ const NotificationDetail: React.FC = () => {
           </View>
         }
       />
+    );
+  };
+
+  const getTranslatedType = (type: NotificationType) => {
+    const language = useSelector(
+      (state: RootState) => state.language.currentLanguage
+    );
+
+    // Kiểm tra xem ngôn ngữ có được hỗ trợ không
+    if (!["en", "vi", "ja"].includes(language)) {
+      return type; // Trả về type gốc nếu ngôn ngữ không được hỗ trợ
+    }
+
+    return (
+      notificationTypeTranslations[language as SupportedLanguage]?.[type] ||
+      type
     );
   };
 
@@ -218,13 +233,7 @@ const NotificationDetail: React.FC = () => {
                   {t("notification.type")}
                 </Text>
                 <Text h3 color={Colors.primary}>
-                  {notification.type
-                    .split("_")
-                    .map(
-                      (word: string) =>
-                        word.charAt(0).toUpperCase() + word.slice(1)
-                    )
-                    .join(" ")}
+                  {getTranslatedType(notification.type)}
                 </Text>
               </View>
 
