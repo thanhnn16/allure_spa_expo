@@ -98,7 +98,17 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
                 resizeMode="cover"
               />
             ) : (
-              <SkeletonView width={100} height={100} borderRadius={13} />
+              <Animated.Image
+                source={
+                  require("@/assets/images/logo/logo.png")
+                }
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 13,
+                }}
+                resizeMode="cover"
+              />
             )}
 
             <View flex marginL-10 gap-5>
