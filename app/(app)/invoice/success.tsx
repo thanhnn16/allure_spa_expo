@@ -8,7 +8,6 @@ import axios from "axios";
 import { useLanguage } from "@/hooks/useLanguage";
 
 import { Dimensions } from "react-native";
-import Constants from "expo-constants";
 import formatCurrency from "@/utils/price/formatCurrency";
 
 const screenWidth = Dimensions.get("window").width;
@@ -58,7 +57,7 @@ export default function InvoiceSuccess() {
         : `/api/orders/${params.order_id}`;
 
       const response = await axios.get(
-        `${Constants.expoConfig?.extra?.EXPO_PUBLIC_SERVER_URL}${endpoint}`
+        `${process.env.EXPO_PUBLIC_SERVER_URL}${endpoint}`
       );
       setPaymentDetails(response.data);
     } catch (error) {

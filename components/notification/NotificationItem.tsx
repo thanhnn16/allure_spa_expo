@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Colors } from "react-native-ui-lib";
 import { Feather } from "@expo/vector-icons";
+import { useTranslatedNotification } from "../../hooks/useTranslatedNotification";
+import { handleNotificationNavigation } from "@/utils/services/notification/notificationHandler";
 
 export type NotificationType =
   | "new_appointment"
@@ -21,6 +23,7 @@ interface NotificationItemProps {
   time: string;
   isRead: boolean;
   url?: string;
+  data?: any;
   status?: string;
   onPress?: () => void;
 }
@@ -91,18 +94,39 @@ export const notificationTypeMap: Record<
 };
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
+  id,
   type,
-  title,
-  content,
+  title: originalTitle,
+  content: originalContent,
   time,
   isRead,
+  data,
   onPress,
 }) => {
+  const { title, content } = useTranslatedNotification({
+    id,
+    title: originalTitle,
+    content: originalContent,
+    type,
+    is_read: isRead,
+    created_at: time,
+    data,
+    formatted_date: time,
+  });
+
+  const handlePress = () => {
+    if (onPress) {
+      onPress();
+    } else if (data) {
+      handleNotificationNavigation({ type, ...data });
+    }
+  };
+
   const { iconName, iconColor, bgColor } =
     notificationTypeMap[type] || notificationTypeMap.system;
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
       <View
         padding-16
         marginH-12

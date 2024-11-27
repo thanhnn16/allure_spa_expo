@@ -3,9 +3,7 @@ import AxiosInstance from '../helper/axiosInstance';
 import * as Device from 'expo-device';
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
-import { useDispatch } from 'react-redux';
 import { fetchUnreadCount } from '@/redux/features/notification/notificationThunks';
-import { AppDispatch } from '@/redux/store';
 import { BACKGROUND_NOTIFICATION_TASK, setupNotificationHandler } from '@/utils/services/notification/notificationHandler';
 
 class FirebaseService {
@@ -73,34 +71,42 @@ class FirebaseService {
   }
 
   async handleNotification(remoteMessage: any) {
-    const uniqueId = remoteMessage.data?.notification_id || `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    
+    const uniqueId = remoteMessage.data?.notification_id ||
+      `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
     const existingNotifications = await Notifications.getAllScheduledNotificationsAsync();
     const isDuplicate = existingNotifications.some(
-        notification => notification.content.data?.notification_id === uniqueId
+      notification => notification.content.data?.notification_id === uniqueId
     );
-    
+
     if (isDuplicate) return;
 
+    // Xử lý translations nếu có
+    const translations = remoteMessage.data?.translations;
+
     const notificationData = {
-        title: remoteMessage.notification?.title || "Thông báo mới",
-        body: remoteMessage.notification?.body,
-        data: {
-            ...remoteMessage.data,
-            notification_id: uniqueId,
-            type: remoteMessage.data?.type,
-        },
-        sound: 'default',
-        priority: Notifications.AndroidNotificationPriority.HIGH,
+      title: translations?.title ||
+        remoteMessage.notification?.title ||
+        "Thông báo mới",
+      body: translations?.content ||
+        remoteMessage.notification?.body,
+      data: {
+        ...remoteMessage.data,
+        notification_id: uniqueId,
+        type: remoteMessage.data?.type,
+        translations // Lưu lại translations để có thể sử dụng sau
+      },
+      sound: 'default',
+      priority: Notifications.AndroidNotificationPriority.HIGH,
     };
 
     await Notifications.scheduleNotificationAsync({
-        content: notificationData,
-        trigger: null,
+      content: notificationData,
+      trigger: null,
     });
 
     if (remoteMessage.data?.should_update_count) {
-        await this.updateUnreadCount();
+      await this.updateUnreadCount();
     }
   }
 

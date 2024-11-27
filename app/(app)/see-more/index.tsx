@@ -10,20 +10,39 @@ import ProductItem from "@/components/home/ProductItem";
 import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
 import { View } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
-
+import { ServiceResponeModel } from "@/types/service.type";
 
 const SeeMore = () => {
   const { t } = useLanguage();
 
   const dispatch = useDispatch();
   const { type } = useLocalSearchParams();
-  const [title, setTitle] = useState("");
+  const title = useMemo(() => {
+    return type === "service" ? t("home.service") : t("home.product");
+  }, [type, t]);
 
   const { servicesList, currentPage, hasMore, isLoading } = useSelector(
-    (state: RootState) => state.service
+    (state: RootState) => {
+      return state.service;
+    }
   );
 
-  const serviceList = servicesList?.data?.data || [];
+  const [accumulatedServices, setAccumulatedServices] = useState<
+    ServiceResponeModel[]
+  >([]);
+
+  const [isFirstLoading, setIsFirstLoading] = useState(false);
+
+  useEffect(() => {
+    if (Array.isArray(servicesList)) {
+      if (currentPage === 1) {
+        setAccumulatedServices(servicesList);
+      } else {
+        setAccumulatedServices((prev) => [...prev, ...servicesList]);
+      }
+    }
+  }, [servicesList, currentPage]);
+
   const productList = useSelector((state: RootState) => state.product.products);
 
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
@@ -31,15 +50,35 @@ const SeeMore = () => {
 
   useEffect(() => {
     if (type === "service") {
-      dispatch(getServicesThunk({ page: 1 }));
+      setIsFirstLoading(true);
+      setAccumulatedServices([]);
+      dispatch(getServicesThunk({ page: 1, limit: 10 }))
+        .then(() => {
+          setIsFirstLoading(false);
+        })
+        .catch((error: any) => {
+          console.error("Error loading services:", error);
+          setIsFirstLoading(false);
+        });
     }
   }, [type]);
 
   const handleLoadMore = () => {
-    if (isLoading || !hasMore) return;
+    console.log("Load more triggered", {
+      isLoading,
+      hasMore,
+      isFirstLoading,
+      currentPage,
+    });
+    if (isLoading || !hasMore || isFirstLoading) return;
 
     if (type === "service") {
-      dispatch(getServicesThunk({ page: currentPage + 1 }));
+      dispatch(
+        getServicesThunk({
+          page: currentPage + 1,
+          limit: 10,
+        })
+      );
     } else if (type === "product") {
       dispatch({
         type: "product/fetchProducts",
@@ -49,14 +88,12 @@ const SeeMore = () => {
   };
 
   const renderList = useMemo(() => {
-    if (type === "service") {
-      setTitle(t("home.service"));
-    } else if (type === "product") {
-      setTitle(t("home.product"));
-    }
-
-    const data = type === "service" ? serviceList : productList;
+    const data = type === "service" ? accumulatedServices : productList;
     const ItemComponent = type === "service" ? ServiceItem : ProductItem;
+
+    if (type === "service" && isFirstLoading) {
+      return <View height={32} />;
+    }
 
     return (
       <FlatList
@@ -69,19 +106,30 @@ const SeeMore = () => {
             heightImage={WINDOW_HEIGHT * 0.18}
           />
         )}
-        keyExtractor={(item) => `${type}-${item.id}`}
+        keyExtractor={(item, index) => `${type}-${item.id}-${index}`}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 10 }}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={<View height={32} />}
+        ListFooterComponent={
+          isLoading ? <View height={32} /> : <View height={32} />
+        }
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}
+        initialNumToRender={10}
       />
     );
-  }, [type, serviceList, productList, isLoading]);
+  }, [
+    type,
+    accumulatedServices,
+    productList,
+    isLoading,
+    isFirstLoading,
+    WINDOW_WIDTH,
+    WINDOW_HEIGHT,
+  ]);
 
   return (
     <View flex bg-white>

@@ -59,7 +59,8 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.INTERNET",
         "android.permission.CAMERA"
-      ]
+      ],
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
