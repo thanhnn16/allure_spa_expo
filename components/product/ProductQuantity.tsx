@@ -15,6 +15,7 @@ interface ProductQuantityProps {
   quantity: number;
   maxQuantity?: number;
   setQuantity: (quantity: number) => void;
+  setTotalPrice?: (price: number) => void;
 }
 
 const ProductQuantity: React.FC<ProductQuantityProps> = ({
@@ -22,6 +23,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
   quantity,
   setQuantity,
   maxQuantity,
+  setTotalPrice,
 }) => {
   const { t } = useLanguage();
 
@@ -58,7 +60,10 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
           style={{
             padding: 10,
           }}
-          onPress={() => setQuantity(Math.max(1, quantity - 1))}
+          onPress={() => {
+            setQuantity(Math.max(1, quantity - 1));
+            setTotalPrice && setTotalPrice(Math.max(1, quantity - 1) * 1000000);
+          }}
         >
           <Text h2>-</Text>
         </TouchableOpacity>
@@ -67,7 +72,10 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
           style={{
             padding: 10,
           }}
-          onPress={() => setQuantity(Math.min(maxQuantity || 0, quantity + 1))}
+          onPress={() => {
+            setQuantity(Math.min(maxQuantity || 0, quantity + 1))
+            setTotalPrice && setTotalPrice(Math.min(maxQuantity || 0, quantity + 1) * 1000000);
+          }}
         >
           <Text h2>+</Text>
         </TouchableOpacity>
