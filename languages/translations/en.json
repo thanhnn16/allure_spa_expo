@@ -410,6 +410,7 @@
     "payment_method": "Payment Method",
     "pay_when_receive": "Pay when receive",
     "pay_online": "Pay online",
+    "select_address": "Select address",
     "select_payment_method": "Select payment method",
     "product": "Product",
     "amount": "Amount",

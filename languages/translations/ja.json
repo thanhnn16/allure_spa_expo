@@ -483,6 +483,7 @@
     "voucher": "バウチャー",
     "no_voucher": "バウチャーなし",
     "payment_method": "支払い方法",
+    "select_address": "住所を選択してください",
     "select_payment_method": "支払い方法を選択してください",
     "pay_when_receive": "受け取り時に支払う",
     "pay_online": "オンラインで支払う",

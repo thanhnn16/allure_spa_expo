@@ -1,23 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Orders } from '@/types/order.type';
+import { CheckoutOrderItem, Orders } from '@/types/order.type';
 import { getAllOrderThunk } from './getAllOrderThunk';
 import { getOrderThunk } from './getOrderThunk';
 import { getOrderByIdThunk } from './getOrderByIdThunk';
 import { changeOrderStatusByIdThunk } from './changeOrderStatusThunk';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { CheckoutData } from '@/types/checkout.type';
 import { createOrder } from './createOrderThunk';
-
-export interface OrderItem {
-    id: number;
-    name: string;
-    price: number | string;
-    priceValue: number;
-    quantity: number;
-    image?: string;
-    type: 'product' | 'service';
-    service_type?: 'single' | 'combo_5' | 'combo_10';
-}
 
 interface OrderState {
     ordersByStatus: {
@@ -37,9 +24,9 @@ interface OrderState {
     totalAmount: number;
     fromCart: boolean;
     selectedOrder: Orders | null;
-    orders: OrderItem[];
+    orders: CheckoutOrderItem[];
     tempOrder: {
-        items: OrderItem[];
+        items: CheckoutOrderItem[];
         totalAmount: number;
     };
 }
@@ -119,7 +106,17 @@ const orderSlice = createSlice({
         },
         setTempOrder: (state: OrderState, action: any) => {
             state.tempOrder = {
-                items: action.payload.items,
+                items: action.payload.items.map((item: any) => ({
+                    ...item,
+                    name: item.name ||
+                        item.service_name ||
+                        item.product?.name ||
+                        item.service?.service_name,
+                    image: item.image ||
+                        item.product?.media?.[0]?.full_url ||
+                        item.service?.media?.[0]?.full_url ||
+                        (item.media && item.media[0]?.full_url),
+                })),
                 totalAmount: action.payload.totalAmount
             };
         },
@@ -172,7 +169,6 @@ const orderSlice = createSlice({
                 }
             })
             .addCase(getAllOrderThunk.rejected, (state: OrderState, action: any) => {
-                const isLoadMore = action.meta.arg?.page > 1;
                 state.isLoading = false;
                 state.isLoadingMore = false;
                 state.error = action.payload;

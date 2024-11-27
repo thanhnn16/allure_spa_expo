@@ -24,12 +24,16 @@ import {
 } from "@/types/service.type";
 import { setTempOrder } from "@/redux/features/order/orderSlice";
 
+type ServiceWithCombo =
+  | ServiceResponeModel
+  | (ServiceDetailResponeModel & {
+      combo?: number;
+    });
+
 interface ServiceBottomComponentProps {
   isLoading: boolean;
-  // product: Product | null;
   onPurchase?: () => void;
-  // quantity: number;
-  service: ServiceResponeModel | ServiceDetailResponeModel;
+  service: ServiceWithCombo;
 }
 
 const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
@@ -44,23 +48,47 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
   const dispatch = useDispatch();
 
   const handlePurchase = () => {
+    console.log("handlePurchase called, service:", service);
     if (onPurchase) {
       onPurchase();
     } else {
-      const price = service?.single_price
-        ? parseFloat(service.single_price.toString())
-        : 0;
+      // Get price based on service_type
+      let price = 0;
+      let serviceType = "single";
+
+      // Add type guard to check if combo exists
+      if ("combo" in service) {
+        console.log("Combo detected:", service.combo);
+        if (service.combo === 1) {
+          price = service?.combo_5_price || 0;
+          serviceType = "combo_5";
+        } else if (service.combo === 2) {
+          price = service?.combo_10_price || 0;
+          serviceType = "combo_10";
+        } else {
+          price = service?.single_price || 0;
+          serviceType = "single";
+        }
+      } else {
+        console.log("No combo detected, using single price");
+        price = service?.single_price || 0;
+        serviceType = "single";
+      }
+
+      console.log("Selected price:", price, "Service type:", serviceType);
 
       const orderItem = {
-        id: service?.id,
-        name: service?.service_name,
-        price: price,
-        priceValue: price,
+        item_id: service?.id,
+        item_type: "service",
         quantity: 1,
+        price: price,
+        service_type: serviceType,
+        service: service,
+        name: service?.service_name,
         image: service?.media?.[0]?.full_url,
-        type: "service",
-        service_type: "single",
       };
+
+      console.log("Order item created:", orderItem);
 
       dispatch(
         setTempOrder({
@@ -69,6 +97,7 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
         })
       );
 
+      console.log("Temp order dispatched, redirecting to checkout");
       router.push("/check-out?source=direct");
     }
   };

@@ -12,7 +12,6 @@ import {
 import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
 
-
 import CommentIcon from "@/assets/icons/comment.svg";
 import ShoppingCartIcon from "@/assets/icons/shopping-cart.svg";
 import { Dimensions } from "react-native";
@@ -20,10 +19,7 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "@/redux/features/cart/cartSlice";
 import { Product } from "@/types/product.type";
 import { useState } from "react";
-import {
-  clearOrders,
-  setTempOrder,
-} from "@/redux/features/order/orderSlice";
+import { clearOrders, setTempOrder } from "@/redux/features/order/orderSlice";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -77,13 +73,13 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
       const price = product?.price ? parseFloat(product.price.toString()) : 0;
 
       const orderItem = {
-        id: product?.id,
-        name: product?.name,
-        price: price,
-        priceValue: price,
+        item_id: product?.id,
+        item_type: "product",
         quantity: quantity,
+        price: price,
+        product: product,
+        name: product?.name,
         image: product?.media?.[0]?.full_url,
-        type: "product",
       };
 
       dispatch(
