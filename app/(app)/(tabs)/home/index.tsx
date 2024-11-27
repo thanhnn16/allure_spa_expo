@@ -302,7 +302,7 @@ const HomePage = () => {
       dispatch(getServicesThunk({ page: 1, limit: 5 })),
       dispatch(getAllProductsThunk()),
       getLocation().then((location) => {
-        getWeatherData(location.latitude, location.longitude);
+        getWeatherData(location.lat, location.lon);
       }),
     ]);
   }, [dispatch]);

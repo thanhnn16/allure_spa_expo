@@ -12,8 +12,8 @@ const getWeather = async (lat: Double, lon: Double) => {
       `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${KEY}`
     );
     return response.data;
-  } catch (error) {
-    console.warn('Error fetching weather data:', error);
+  } catch (error: any) {
+    console.warn("Error fetching weather data:", error.response.data);
     return null;
   }
 };
