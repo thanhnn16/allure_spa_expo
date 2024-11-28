@@ -21,8 +21,8 @@ import {
   Platform,
   ListRenderItem,
   ListRenderItemInfo,
+  KeyboardAvoidingView,
 } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import {
   Colors,
@@ -30,6 +30,7 @@ import {
   SkeletonView,
   Text,
   TouchableOpacity,
+  Keyboard,
   View,
 } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
@@ -126,15 +127,10 @@ const ScheduledPage = () => {
     AppointmentResponeModelParams[]
   >([]);
 
-  useEffect(() => {
-    dispatch(getAppointments());
-    return () => {
-      dispatch(resetAppointmentState());
-    };
-  }, [dispatch]);
+  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
 
   useEffect(() => {
-    const fetchAllAppointments = async () => {
+    const fetchInitialData = async () => {
       try {
         const response = await dispatch(
           getAppointments({
@@ -143,13 +139,18 @@ const ScheduledPage = () => {
           })
         ).unwrap();
         setAllAppointments(response);
+        handleItemPress(items[0]);
       } catch (error) {
-        console.log("Error fetching all appointments:", error);
+        console.log("Error fetching initial appointments:", error);
       }
     };
 
-    fetchAllAppointments();
-  }, []);
+    fetchInitialData();
+
+    return () => {
+      dispatch(resetAppointmentState());
+    };
+  }, [dispatch]);
 
   const items = [
     { id: 1, name: t("appointment.all") },
@@ -190,10 +191,6 @@ const ScheduledPage = () => {
     dispatch(resetAppointmentState());
     dispatch(getAppointments(params));
   };
-
-  useEffect(() => {
-    handleItemPress(items[0]);
-  }, []);
 
   const renderItem = (item: { id: number; name: string; status?: string }) => {
     const isSelected = item.id === selectedItem;
@@ -477,15 +474,13 @@ const ScheduledPage = () => {
                     backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                   >
                     <Text h4 color={Colors.red10}>
-                      {`${t("appointment.cancelled_by")}: ${
-                        item.cancelled_by_user.full_name
-                      }`}
+                      {`${t("appointment.cancelled_by")}: ${item.cancelled_by_user.full_name
+                        }`}
                     </Text>
                     {item.cancellation_note && (
                       <Text marginT-5 h4 color={Colors.red10}>
-                        {`${t("appointment.cancel_reason")}: ${
-                          item.cancellation_note
-                        }`}
+                        {`${t("appointment.cancel_reason")}: ${item.cancellation_note
+                          }`}
                       </Text>
                     )}
                   </View>
@@ -545,9 +540,9 @@ const ScheduledPage = () => {
         item,
         index,
         separators: {
-          highlight: () => {},
-          unhighlight: () => {},
-          updateProps: () => {},
+          highlight: () => { },
+          unhighlight: () => { },
+          updateProps: () => { },
         },
       }),
     (prev, next) => prev.item.id === next.item.id
@@ -569,17 +564,17 @@ const ScheduledPage = () => {
           marked: true,
           dotColor:
             statusColors[
-              appointment.status.toLowerCase() as keyof typeof statusColors
+            appointment.status.toLowerCase() as keyof typeof statusColors
             ],
           selected: date === selectedDate,
           selectedColor:
             date === selectedDate
               ? Colors.rgba(
-                  statusColors[
-                    appointment.status.toLowerCase() as keyof typeof statusColors
-                  ],
-                  0.1
-                )
+                statusColors[
+                appointment.status.toLowerCase() as keyof typeof statusColors
+                ],
+                0.1
+              )
               : undefined,
         };
       }
@@ -730,9 +725,9 @@ const ScheduledPage = () => {
                   item={item}
                   index={index}
                   separators={{
-                    highlight: () => {},
-                    unhighlight: () => {},
-                    updateProps: () => {},
+                    highlight: () => { },
+                    unhighlight: () => { },
+                    updateProps: () => { },
                   }}
                 />
               )}
@@ -752,7 +747,7 @@ const ScheduledPage = () => {
                   </Text>
                   <AppButton
                     type="primary"
-                    title={t("appointment.book_appointment")}
+                    title={t("service_package.book_appointment")}
                     onPress={() => router.push("/(app)/service-package")}
                     buttonStyle={{ minWidth: 200 }}
                   />
@@ -794,157 +789,170 @@ const ScheduledPage = () => {
 
   const renderCancelModal = () => (
     <Modal visible={isModalVisible} transparent animationType="fade">
-      <View flex center backgroundColor={Colors.rgba(Colors.black, 0.5)}>
-        <Animated.View
-          entering={FadeInDown}
-          style={{
-            width: "85%",
-            backgroundColor: Colors.white,
-            borderRadius: 20,
-            padding: 20,
-            ...(Platform.OS === "ios"
-              ? {
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <View
+          flex
+          center
+          backgroundColor={Colors.rgba(Colors.black, 0.5)}
+        >
+          <Animated.View
+            entering={FadeInDown}
+            style={{
+              width: "85%",
+              backgroundColor: Colors.white,
+              borderRadius: 20,
+              padding: 20,
+              ...(Platform.OS === "ios"
+                ? {
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.15,
                   shadowRadius: 10,
                 }
-              : {
+                : {
                   elevation: 8,
                 }),
-          }}
-        >
-          <Text h2_bold marginB-15>
-            {t("appointment.cancel_appointment")}
-          </Text>
-
-          <TextInput
-            style={{
-              minHeight: 100,
-              borderColor: Colors.grey40,
-              borderWidth: 1,
-              borderRadius: 15,
-              padding: 15,
-              marginBottom: 20,
-              textAlignVertical: "top",
             }}
-            placeholder={t("appointment.cancel_appointment_reason")}
-            value={note}
-            onChangeText={setNote}
-            multiline
-          />
+          >
+            <Text h2_bold marginB-15>
+              {t("appointment.cancel_appointment")}
+            </Text>
 
-          <View row spread>
-            <AppButton
-              type="outline"
-              title={t("appointment.cancel")}
-              onPress={() => setModalVisible(false)}
+            <TextInput
+              style={{
+                minHeight: 100,
+                borderColor: Colors.grey40,
+                borderWidth: 1,
+                borderRadius: 15,
+                padding: 15,
+                marginBottom: 20,
+                textAlignVertical: "top",
+              }}
+              placeholderTextColor={Colors.grey40}
+              placeholder={t("appointment.cancel_appointment_reason")}
+              value={note}
+              onChangeText={setNote}
+              multiline
             />
             <AppButton
               type="outline"
-              title={t("appointment.confirm")}
+              title={t("appointment.cancel_appointment")}
               onPress={handleConfirmCancel}
             />
-          </View>
-        </Animated.View>
-      </View>
+
+            <View gap-10>
+              <AppButton
+                type="text"
+                title={t("close")}
+                onPress={() => setModalVisible(false)}
+              />
+
+            </View>
+          </Animated.View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 
   return (
-    <View flex bg-white>
-      <AppBar
-        title={t("appointment.title")}
-        rightComponent={renderViewModeToggle()}
-      />
+    <KeyboardTrackingView style={{ flex: 1 }}>
+      <View flex bg-white>
+        <AppBar
+          title={t("appointment.title")}
+          rightComponent={renderViewModeToggle()}
+        />
 
-      {viewMode === "list" ? (
-        <>
-          <View height={46} center paddingH-24>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              {items.map((item) => renderItem(item))}
-            </ScrollView>
-          </View>
-          <View flex paddingH-24>
-            {loading ? (
-              <View>
-                {[1, 2, 3].map((_, index) => (
-                  <View key={index}>{renderSkeletonItem()}</View>
-                ))}
-              </View>
-            ) : !appointments || (appointments.length === 0 && !loading) ? (
-              <View flex center>
-                <View center gap-10>
-                  <MaterialCommunityIcons
-                    name="calendar-blank"
-                    size={64}
-                    color={Colors.grey40}
-                  />
-                  <Text h2_bold center>
-                    {t("appointment.no_appointments_title")}
-                  </Text>
-                  <Text h3 center grey30>
-                    {t(
-                      `appointment.no_${
-                        selectedItem === 1
+        {viewMode === "list" ? (
+          <>
+            <View height={46} center paddingH-24>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                {items.map((item) => renderItem(item))}
+              </ScrollView>
+            </View>
+            <View flex paddingH-24>
+              {loading ? (
+                <View>
+                  {[1, 2, 3].map((_, index) => (
+                    <View key={index}>{renderSkeletonItem()}</View>
+                  ))}
+                </View>
+              ) : !appointments || (appointments.length === 0 && !loading) ? (
+                <View flex center>
+                  <View center gap-10>
+                    <MaterialCommunityIcons
+                      name="calendar-blank"
+                      size={64}
+                      color={Colors.grey40}
+                    />
+                    <Text h2_bold center>
+                      {t("appointment.no_appointments_title")}
+                    </Text>
+                    <Text h3 center grey30>
+                      {t(
+                        `appointment.no_${selectedItem === 1
                           ? "appointments"
                           : selectedItem === 6
-                          ? "next_7days"
-                          : selectedItem === 2
-                          ? "pending"
-                          : selectedItem === 5
-                          ? "confirmed"
-                          : selectedItem === 3
-                          ? "completed"
-                          : "cancelled"
-                      }`
-                    )}
-                  </Text>
-                  <AppButton
-                    type="primary"
-                    title={t("appointment.book_for_service_package")}
-                    onPress={() => {
-                      router.push("/(app)/service-package");
-                    }}
-                  />
-                  <AppButton
-                    type="outline"
-                    title={t("appointment.find_service")}
-                    onPress={() => {
-                      router.push("/(app)/see-more?type=service");
-                    }}
-                  />
+                            ? "next_7days"
+                            : selectedItem === 2
+                              ? "pending"
+                              : selectedItem === 5
+                                ? "confirmed"
+                                : selectedItem === 3
+                                  ? "completed"
+                                  : "cancelled"
+                        }`
+                      )}
+                    </Text>
+                    <AppButton
+                      type="primary"
+                      title={t("appointment.book_for_service_package")}
+                      onPress={() => {
+                        router.push("/(app)/service-package");
+                      }}
+                    />
+                    <AppButton
+                      type="outline"
+                      title={t("appointment.find_service")}
+                      onPress={() => {
+                        router.push("/(app)/see-more?type=service");
+                      }}
+                    />
+                  </View>
                 </View>
-              </View>
-            ) : (
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={appointments}
-                renderItem={({ item, index }) => (
-                  <MemoizedFlatListItem
-                    item={item}
-                    index={index}
-                    separators={{
-                      highlight: () => {},
-                      unhighlight: () => {},
-                      updateProps: () => {},
-                    }}
-                  />
-                )}
-                keyExtractor={(item) => item.id.toString()}
-                maxToRenderPerBatch={10}
-                windowSize={10}
-                removeClippedSubviews={true}
-              />
-            )}
-          </View>
-        </>
-      ) : (
-        renderCalendarView()
-      )}
+              ) : (
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  data={appointments}
+                  renderItem={({ item, index }) => (
+                    <MemoizedFlatListItem
+                      item={item}
+                      index={index}
+                      separators={{
+                        highlight: () => { },
+                        unhighlight: () => { },
+                        updateProps: () => { },
+                      }}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id.toString()}
+                  maxToRenderPerBatch={10}
+                  windowSize={10}
+                  removeClippedSubviews={true}
+                />
+              )}
+            </View>
+          </>
+        ) : (
+          renderCalendarView()
+        )}
 
-      {renderCancelModal()}
-    </View>
+        {renderCancelModal()}
+      </View>
+    </KeyboardTrackingView>
+
   );
 };
 
