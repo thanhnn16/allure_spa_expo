@@ -13,7 +13,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { Button, Colors, Text, View } from "react-native-ui-lib";
+import { Button, Colors, Keyboard, Text, View } from "react-native-ui-lib";
 
 import AppButton from "@/components/buttons/AppButton";
 import AppDialog from "@/components/dialog/AppDialog";
@@ -94,6 +94,9 @@ export default function Checkout() {
   }));
 
   const orderItems = source === "direct" ? tempOrderItems : checkoutItems;
+
+  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
+
 
   const calculateTotalPrice = () => {
     if (!orderItems || orderItems.length === 0) return 0;
@@ -227,18 +230,27 @@ export default function Checkout() {
   };
 
   useEffect(() => {
-    const fetchVouchers = async () => {
+    const initializeCheckout = async () => {
       try {
-        await dispatch(getAllVouchersThunk());
+        await Promise.all([
+          // Load addresses
+          dispatch(fetchAddresses()).unwrap(),
+          // Load vouchers
+          dispatch(getAllVouchersThunk()),
+          // Load selected address from storage
+          loadSelectedAddress()
+        ]);
+
+        // Update active vouchers after fetching
         if (vouchers) {
           setactiveVoucher(vouchers.filter((v: Voucher) => v.is_active));
         }
       } catch (error) {
-        console.error("Error fetching vouchers:", error);
+        console.error("Error initializing checkout:", error);
       }
     };
 
-    fetchVouchers();
+    initializeCheckout();
   }, [dispatch]);
 
   useEffect(() => {
@@ -273,25 +285,6 @@ export default function Checkout() {
       }
     };
   }, [source, tempOrder.items, checkoutItems]);
-
-  useEffect(() => {
-    loadAddressData();
-  }, []);
-
-  const loadAddressData = async () => {
-    try {
-      // Load addresses from redux
-      await dispatch(fetchAddresses()).unwrap();
-
-      // Check for previously selected address
-      const savedAddress = await AsyncStorage.getItem("selectedAddress");
-      if (savedAddress) {
-        setSelectedAddress(JSON.parse(savedAddress));
-      }
-    } catch (error) {
-      console.error("Error loading addresses:", error);
-    }
-  };
 
   const renderAddressSection = () => {
     if (addresses.length === 0) {
@@ -352,149 +345,153 @@ export default function Checkout() {
 
   return (
     <View flex bg-white>
-      <AppBar back title={t("checkout.title")} />
-      <View flex backgroundColor={Colors.white}>
-        <ScrollView
-          style={{ paddingHorizontal: 20 }}
-          showsVerticalScrollIndicator={false}
-        >
-          {renderAddressSection()}
+      <KeyboardTrackingView trackInteractive style={{ flex: 1, backgroundColor: Colors.white }}>
+        <AppBar back title={t("checkout.title")} />
+        <View flex backgroundColor={Colors.white}>
+          <ScrollView
+            style={{ paddingHorizontal: 20 }}
+            showsVerticalScrollIndicator={false}
+          >
+            {renderAddressSection()}
 
-          <View marginV-10 gap-10>
-            <Text h2_bold>{t("checkout.voucher")}</Text>
-            <VoucherDropdown
-              value={voucher}
-              items={activeVouchers}
-              onSelect={handleVoucherSelect}
-            />
-          </View>
-
-          <View style={styles.borderInset} />
-
-          <View marginV-10 gap-10>
-            <Text h2_bold>{t("checkout.payment_method")}</Text>
-            <PaymentPicker
-              value={selectedPayment}
-              items={paymentMethods}
-              onSelect={handlePaymentSelect}
-            />
-          </View>
-
-          <View style={styles.borderInset} />
-
-          <View marginV-10 gap-10>
-            <Text h2_bold>{t("checkout.product")}</Text>
-            {renderOrderItems()}
-          </View>
-
-          <View style={styles.borderInset} />
-
-          <View marginV-10>
-            <Text h2_bold>Note</Text>
-            <TextInput
-              value={note}
-              placeholder={t("address.note")}
-              onChangeText={(value) => setNote(value)}
-              multiline={true}
-              numberOfLines={3}
-              style={{
-                fontSize: 14,
-                minHeight: 80,
-                width: "100%",
-                padding: 15,
-                backgroundColor: "#ffffff",
-                borderRadius: 8,
-                textAlignVertical: "top",
-                borderWidth: 1,
-                borderColor: "#E5E7EB",
-                marginTop: 10,
-              }}
-            />
-          </View>
-        </ScrollView>
-
-        <View
-          style={{
-            borderTopWidth: 1,
-            borderLeftWidth: 1,
-            borderRightWidth: 1,
-            borderTopColor: "#E0E0E0",
-            borderLeftColor: "#E0E0E0",
-            borderRightColor: "#E0E0E0",
-            borderTopLeftRadius: 13,
-            borderTopRightRadius: 13,
-            backgroundColor: "#FFFFFF",
-            padding: 20,
-          }}
-        >
-          <View>
-            <View row centerV spread>
-              <Text h3_bold>{t("checkout.subtotal")}</Text>
-              <Text h3_bold>{formatCurrency({ price: totalPrice })}</Text>
+            <View marginV-10 gap-10>
+              <Text h2_bold>{t("checkout.voucher")}</Text>
+              <VoucherDropdown
+                value={voucher}
+                items={activeVouchers}
+                onSelect={handleVoucherSelect}
+              />
             </View>
-            <View row centerV spread marginT-10>
-              <Text h3_bold>{t("checkout.voucher")}</Text>
-              {selectedVoucher ? (
-                <View style={styles.voucherSummary}>
-                  <View style={styles.voucherBadge}>
-                    <Text style={styles.voucherCode}>{selectedVoucher.code}</Text>
+
+            <View style={styles.borderInset} />
+
+            <View marginV-10 gap-10>
+              <Text h2_bold>{t("checkout.payment_method")}</Text>
+              <PaymentPicker
+                value={selectedPayment}
+                items={paymentMethods}
+                onSelect={handlePaymentSelect}
+              />
+            </View>
+
+            <View style={styles.borderInset} />
+
+            <View marginV-10 gap-10>
+              <Text h2_bold>{t("checkout.product")}</Text>
+              {renderOrderItems()}
+            </View>
+
+            <View style={styles.borderInset} />
+
+            <View marginV-10>
+              <Text h2_bold>Note</Text>
+              <TextInput
+                value={note}
+                placeholder={t("address.note")}
+                onChangeText={(value) => setNote(value)}
+                multiline={true}
+                numberOfLines={3}
+                style={{
+                  fontSize: 14,
+                  minHeight: 80,
+                  width: "100%",
+                  padding: 15,
+                  backgroundColor: "#ffffff",
+                  borderRadius: 8,
+                  textAlignVertical: "top",
+                  borderWidth: 1,
+                  borderColor: "#E5E7EB",
+                  marginTop: 10,
+                }}
+              />
+            </View>
+          </ScrollView>
+
+          <View
+            style={{
+              borderTopWidth: 1,
+              borderLeftWidth: 1,
+              borderRightWidth: 1,
+              borderTopColor: "#E0E0E0",
+              borderLeftColor: "#E0E0E0",
+              borderRightColor: "#E0E0E0",
+              borderTopLeftRadius: 13,
+              borderTopRightRadius: 13,
+              backgroundColor: "#FFFFFF",
+              padding: 20,
+            }}
+          >
+            <View>
+              <View row centerV spread>
+                <Text h3_bold>{t("checkout.subtotal")}</Text>
+                <Text h3_bold>{formatCurrency({ price: totalPrice })}</Text>
+              </View>
+              <View row centerV spread marginT-10>
+                <Text h3_bold>{t("checkout.voucher")}</Text>
+                {selectedVoucher ? (
+                  <View style={styles.voucherSummary}>
+                    <View style={styles.voucherBadge}>
+                      <Text style={styles.voucherCode}>{selectedVoucher.code}</Text>
+                    </View>
+                    <Text style={styles.voucherDiscount}>
+                      -{selectedVoucher.formatted_discount}
+                    </Text>
                   </View>
-                  <Text style={styles.voucherDiscount}>
-                    -{selectedVoucher.formatted_discount}
+                ) : (
+                  <Text style={styles.noVoucherText}>{t("checkout.no_voucher_applied")}</Text>
+                )}
+              </View>
+              <View row centerV spread marginV-10>
+                <Text h3_bold>{t("checkout.total_payment")}</Text>
+                <View>
+                  {discountedPrice !== totalPrice && (
+                    <Text
+                      h3
+                      style={{
+                        textDecorationLine: "line-through",
+                        color: Colors.grey30,
+                        fontSize: 12,
+                        textAlign: "right",
+                      }}
+                    >
+                      {formatCurrency({ price: totalPrice })}
+                    </Text>
+                  )}
+                  <Text h3_bold secondary>
+                    {formatCurrency({ price: discountedPrice })}
                   </Text>
                 </View>
-              ) : (
-                <Text style={styles.noVoucherText}>{t("checkout.no_voucher_applied")}</Text>
-              )}
-            </View>
-            <View row centerV spread marginV-10>
-              <Text h3_bold>{t("checkout.total_payment")}</Text>
-              <View>
-                {discountedPrice !== totalPrice && (
-                  <Text
-                    h3
-                    style={{
-                      textDecorationLine: "line-through",
-                      color: Colors.grey30,
-                      fontSize: 12,
-                      textAlign: "right",
-                    }}
-                  >
-                    {formatCurrency({ price: totalPrice })}
-                  </Text>
-                )}
-                <Text h3_bold secondary>
-                  {formatCurrency({ price: discountedPrice })}
-                </Text>
               </View>
+
+              <Button
+                label={t("checkout.payment").toString()}
+                labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
+                backgroundColor={Colors.primary}
+                padding-20
+                style={{ height: 50 }}
+                borderRadius={13}
+                onPress={() => handlePayment()}
+              />
             </View>
-
-            <Button
-              label={t("checkout.payment").toString()}
-              labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-              backgroundColor={Colors.primary}
-              padding-20
-              style={{ height: 50 }}
-              borderRadius={13}
-              onPress={() => handlePayment()}
-            />
           </View>
-        </View>
-        <AppDialog
-          visible={paymentDialog}
-          title={"Xác nhận xóa sản phẩm"}
-          description={
-            "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
-          }
-          closeButtonLabel={t("common.cancel")}
-          confirmButtonLabel={"Xóa"}
-          severity="info"
-          onClose={() => setPaymentDialog(false)}
-        />
+          <AppDialog
+            visible={paymentDialog}
+            title={"Xác nhận xóa sản phẩm"}
+            description={
+              "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
+            }
+            closeButtonLabel={t("common.cancel")}
+            confirmButtonLabel={"Xóa"}
+            severity="info"
+            onClose={() => setPaymentDialog(false)}
+          />
 
-        <AppDialog {...dialogConfig} onClose={hideDialog} />
-      </View>
-    </View>
+          <AppDialog {...dialogConfig} onClose={hideDialog} />
+        </View>
+      </KeyboardTrackingView>
+
+    </View >
+
   );
 }
 
