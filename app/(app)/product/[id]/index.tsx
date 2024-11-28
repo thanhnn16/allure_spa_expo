@@ -49,6 +49,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { clearProduct } from "@/redux/features/products/productSlice";
 import { setTempOrder } from "@/redux/features/order/orderSlice";
 import { CheckoutOrderItem } from "@/types/order.type";
+import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 
 export default function DetailsScreen() {
   const { t } = useLanguage();
@@ -79,7 +80,6 @@ export default function DetailsScreen() {
   useEffect(() => {
     const fetchProduct = async () => {
       await dispatch(getProductThunk({ product_id: Number(id), user_id }));
-      setTotalPrice(Number(product?.price));
       setIsInitialLoading(false);
     };
 
@@ -88,6 +88,12 @@ export default function DetailsScreen() {
       dispatch(clearProduct());
     };
   }, [id]);
+
+  useEffect(() => {
+    if (product?.price) {
+      setTotalPrice(Number(product.price) * quantity);
+    }
+  }, [product, quantity]);
 
   useEffect(() => {
     setIsFavorite(product?.is_favorite);
@@ -283,15 +289,11 @@ export default function DetailsScreen() {
         <AppBar
           back
           rightComponent={
-            <View>
-              <TouchableOpacity onPress={() => router.push("/cart")}>
-                <Ionicons
-                  name="cart-outline"
-                  size={24}
-                  color={Colors.primary}
-                />
-              </TouchableOpacity>
-            </View>
+            <HomeHeaderButton
+              onPress={() => router.push("/cart")}
+              iconName="cart-outline"
+              type="cart"
+            />
           }
           title={t("productDetail.title")}
         />
@@ -317,7 +319,17 @@ export default function DetailsScreen() {
 
   return (
     <View flex bg-$white>
-      <AppBar back rightComponent title={t("productDetail.title")} />
+      <AppBar
+        back
+        rightComponent={
+          <HomeHeaderButton
+            onPress={() => router.push("/cart")}
+            iconName="cart-outline"
+            type="cart"
+          />
+        }
+        title={t("productDetail.title")}
+      />
       <View flex>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View
