@@ -49,7 +49,7 @@ const OrderDetail = () => {
   const cancelBottomSheetRef = useRef<BottomSheet>(null);
   const [rateDialog, setRateDialog] = useState(false);
   const [errorDialog, setErrorDialog] = useState(false);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [note, setNote] = useState("");
   const dispatch = useDispatch();
@@ -202,37 +202,38 @@ const OrderDetail = () => {
             <TransactionHeader status={selectedOrder.status} />
           )}
 
-          {selectedOrder.status === "completed" && (
-            <View style={styles.section}>
-              <View row spread centerV>
-                <Text h2_bold>{t("transaction_detail.review_products")}</Text>
-              </View>
-              {selectedOrder.order_items.some(
-                (item: OrderItem) => !item.is_rated
-              ) ? (
-                <>
-                  <Text h3 marginV-8 color={Colors.grey30}>
-                    {`${
-                      selectedOrder.order_items.filter(
+          {selectedOrder.status === "completed" &&
+            new Date().getTime() - new Date(selectedOrder.created_at).getTime() <= 2 * 30 * 24 * 60 * 60 * 1000
+            && (
+              <View style={styles.section}>
+                <View row spread centerV>
+                  <Text h2_bold>{t("transaction_detail.review_products")}</Text>
+                </View>
+                {selectedOrder.order_items.some(
+                  (item: OrderItem) => !item.is_rated
+                ) ? (
+                  <>
+                    <Text h3 marginV-8 color={Colors.grey30}>
+                      {`${selectedOrder.order_items.filter(
                         (item: OrderItem) => !item.is_rated
                       ).length
-                    } ${t("transaction_detail.product_need_review")}`}
+                        } ${t("transaction_detail.product_need_review")}`}
+                    </Text>
+                    <View flex>
+                      <AppButton
+                        title={t("transaction_detail.review_now")}
+                        type="outline"
+                        onPress={() => handleOpenBottomSheet()}
+                      />
+                    </View>
+                  </>
+                ) : (
+                  <Text h3 marginV-8 color={Colors.grey30}>
+                    {t("transaction_detail.thank_you_for_review")}
                   </Text>
-                  <View flex>
-                    <AppButton
-                      title={t("transaction_detail.review_now")}
-                      type="outline"
-                      onPress={() => handleOpenBottomSheet()}
-                    />
-                  </View>
-                </>
-              ) : (
-                <Text h3 marginV-8 color={Colors.grey30}>
-                  {t("transaction_detail.thank_you_for_review")}
-                </Text>
-              )}
-            </View>
-          )}
+                )}
+              </View>
+            )}
 
           {/* Order Status Section */}
           <View style={styles.section}>

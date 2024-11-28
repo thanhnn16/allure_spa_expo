@@ -3,11 +3,11 @@ import { View, Image, Text, Colors, ProgressBar } from 'react-native-ui-lib'
 
 import StarIcon from '@/assets/icons/star.svg';
 
-const RatingBar = ({ star, percent }: { star: number, percent: number }) => {
+const RatingBar = ({ star, total }: { star: number, total: number }) => {
   const [progress, setProgress] = useState(0);
   useEffect(() => {
-    setProgress(percent / 100);
-  }, [percent]);
+    setProgress(total / 100);
+  }, [total]);
 
   return (
 
@@ -20,7 +20,7 @@ const RatingBar = ({ star, percent }: { star: number, percent: number }) => {
 
       <ProgressBar progress={progress} style={{ width: 70, height: 2, borderRadius: 100 }} progressColor={Colors.primary} />
 
-      <Text h3_medium>{percent}%</Text>
+      <Text h3_medium>{total}</Text>
 
     </View>
   )

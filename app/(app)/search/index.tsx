@@ -2,7 +2,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import { Text, View, SkeletonView } from "react-native-ui-lib";
+import { Text, View, SkeletonView, TouchableOpacity, Image, Chip, Slider, Colors } from "react-native-ui-lib";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounce } from "lodash";
@@ -23,6 +23,10 @@ import AppBar from "@/components/app-bar/AppBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RecentSearches from "@/components/search/RecentSearches";
 import { useLanguage } from "@/hooks/useLanguage";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import AppButton from "@/components/buttons/AppButton";
+import { Ionicons } from "@expo/vector-icons";
 
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -38,6 +42,7 @@ const SearchScreen = () => {
 
   const RECENT_SEARCHES_KEY = "@recent_searches";
   const searchInputRef = useRef<AppSearchRef>(null);
+
 
   useEffect(() => {
     const loadRecentSearches = async () => {
@@ -167,7 +172,9 @@ const SearchScreen = () => {
           keyboardShouldPersistTaps="handled"
         >
           {searchQuery ? (
-            <View marginT-20>{renderSearchResults()}</View>
+            <View marginT-16>
+              {renderSearchResults()}
+            </View>
           ) : (
             <View marginT-20>
               <RecentSearches

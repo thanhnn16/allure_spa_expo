@@ -42,6 +42,11 @@ const RatingPage: React.FC = () => {
       : 0;
   };
 
+  const totalRatingsByStar = [5, 4, 3, 2, 1].map(star => ({
+    star,
+    total: ratings.filter((r: any) => r.stars === star).length,
+  }));
+
   return (
     <View flex bg-$backgroundDefault>
       <AppBar back title="Đánh giá" />
@@ -59,11 +64,9 @@ const RatingPage: React.FC = () => {
         </View>
 
         <View flex right>
-          <RatingBar star={5} percent={getPercentage(5)} />
-          <RatingBar star={4} percent={getPercentage(4)} />
-          <RatingBar star={3} percent={getPercentage(3)} />
-          <RatingBar star={2} percent={getPercentage(2)} />
-          <RatingBar star={1} percent={getPercentage(1)} />
+          {totalRatingsByStar.map(({ star, total }) => (
+            <RatingBar key={star} star={star} total={total} />
+          ))}
         </View>
       </View>
 

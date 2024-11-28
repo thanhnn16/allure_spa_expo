@@ -9,6 +9,7 @@ import {
 import { useLanguage } from "@/hooks/useLanguage";
 
 import AppBar from "@/components/app-bar/AppBar";
+import AppButton from "@/components/buttons/AppButton";
 
 const DeleteAccountVerifyScreen: React.FC = () => {
   const { t } = useLanguage();
@@ -18,8 +19,8 @@ const DeleteAccountVerifyScreen: React.FC = () => {
     <View flex bg-white>
       <AppBar back title={t("deleteaccount.title")} />
       <View marginT-20 paddingH-24>
-        <Text text40H>{t("deleteaccount.title")}</Text>
-        <Text marginT-20 text70>
+        <Text h0_bold>{t("deleteaccount.title")}</Text>
+        <Text marginT-20 h2>
           {t("deleteaccount.description2")}
         </Text>
         <RadioGroup
@@ -41,7 +42,7 @@ const DeleteAccountVerifyScreen: React.FC = () => {
                 marginVertical: 5,
               }}
             >
-              <Text text70 color={verify === lang ? "black" : "grey"}>
+              <Text h2 color={verify === lang ? "black" : "grey"}>
                 {lang}
               </Text>
               <RadioButton
@@ -53,21 +54,12 @@ const DeleteAccountVerifyScreen: React.FC = () => {
           ))}
         </RadioGroup>
       </View>
-      <TouchableOpacity
-        backgroundColor={"#717658"}
-        style={{
-          borderRadius: 15,
-          paddingVertical: 16,
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 150,
-          height: 55,
-        }}
-      >
-        <Text white text70H>
-          {t("deleteaccount.title")}
-        </Text>
-      </TouchableOpacity>
+      <View marginT-40 paddingH-20>
+        <AppButton
+          type="primary"
+          title={t("deleteaccount.title")}
+        />
+      </View>
     </View>
   );
 };

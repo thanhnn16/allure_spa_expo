@@ -13,10 +13,11 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Href, router } from "expo-router";
 import { useEffect, useState } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
-import { ScrollView } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import VoucherIcon from "@/assets/icons/discount-shape.svg";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import { useDispatch } from "react-redux";
+import * as MailComposer from 'expo-mail-composer';
 
 const ProfilePage = () => {
   const { t } = useLanguage();
@@ -40,6 +41,16 @@ const ProfilePage = () => {
       // chuyển hướng tới trang theo path
       router.push(path);
     }
+  };
+
+  const handleSentEmail = () => {
+    return (
+      MailComposer.composeAsync({
+        subject: 'Help & Support Allure Spa',
+        body: 'Please describe your problem or question here:',
+        recipients: ['thanhnn16.work@gmail.com'],
+      })
+    );
   };
 
   return (
@@ -70,30 +81,30 @@ const ProfilePage = () => {
                 }
               />
               <View>
-                <Text h2_bold>{user?.full_name || t("common.guest")}</Text>
-                <Text h3>{user?.phone_number || ""}</Text>
+                <Text h3_bold>{user?.full_name || t("common.guest")}</Text>
+                <View row gap-4 centerV>
+                  <Image
+                    width={16}
+                    height={16}
+                    marginB-2
+                    source={require("@/assets/images/allureCoin.png")}
+                  />
+                  <Text color={Colors.primary} h3_bold>
+                    {user?.loyalty_points || 0}
+                  </Text>
+                </View>
               </View>
             </View>
             <View gap-6 center>
-              <View row gap-4 centerV>
-                <Text color={Colors.primary} h3_bold>
-                  {user?.loyalty_points || 0}
-                </Text>
-                <Image
-                  width={16}
-                  height={16}
-                  marginB-2
-                  source={require("@/assets/images/allureCoin.png")}
-                />
-              </View>
+
 
               <TouchableOpacity
                 center
                 backgroundColor="#FFFFFF"
                 style={{
                   borderRadius: 10,
-                  width: 48,
-                  height: 32,
+                  width: 52,
+                  height: 36,
                   elevation: 5,
                 }}
                 onPress={() => {
@@ -182,20 +193,20 @@ const ProfilePage = () => {
               </TouchableOpacity>
             ))}
           </Card>
-          <Text text80BO gray style={{ letterSpacing: 1 }} marginT-10>
+          <Text h2_bold gray marginT-18>
             {t("profile.more")}
           </Text>
-          <Card width={"100%"} marginT-20>
+          <Card width={"100%"} marginT-12>
             {[
               {
                 title: t("profile.purchase_policy"),
                 icon: require("@/assets/images/chamhoi.png"),
-                onPress: () => console.log("Purchase Policy"),
+                onPress: () => router.push("/(app)/profile/policy"),
               },
               {
                 title: t("profile.help_support"),
                 icon: require("@/assets/images/ring.png"),
-                onPress: () => console.log("Help & Support"),
+                onPress: () => handleSentEmail(),
               },
               {
                 title: t("profile.about_app"),

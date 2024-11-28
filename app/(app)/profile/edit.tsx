@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   Picker,
+  Typography,
 } from "react-native-ui-lib";
 import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -27,6 +28,8 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { processImageForUpload } from "@/utils/helpers/imageHelper";
 import AppBar from "@/components/app-bar/AppBar";
+import { set } from "lodash";
+import AppButton from "@/components/buttons/AppButton";
 
 interface ProfileEditProps { }
 
@@ -53,10 +56,13 @@ const ProfileEdit = (props: ProfileEditProps) => {
   const [errorDialog, setErrorDialog] = useState(false);
   const [uploadAvatarLoading, setUploadAvatarLoading] = useState(false);
   const [uploadAvatarSuccess, setUploadAvatarSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
     const fetchUserData = async () => {
       try {
+        setLoading(true);
         const user = await dispatch(getUserThunk()).unwrap();
         setName(user.full_name);
         setPhone(user.phone_number);
@@ -64,8 +70,10 @@ const ProfileEdit = (props: ProfileEditProps) => {
         setGender(user.gender);
         setBirthday(new Date(user.date_of_birth));
         setAvatar({ uri: user.avatar_url });
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+        setLoading(false);
+      } catch (error: any) {
+        setLoading(false);
+        setError(error);
       }
     };
     fetchUserData();
@@ -76,16 +84,17 @@ const ProfileEdit = (props: ProfileEditProps) => {
       //validate email format
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
       if (!emailRegex.test(email)) {
-        console.log("Invalid email format");
+        setError("Invalid email format");
         return;
       }
       //validate phone number format
       const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
       if (!phoneRegex.test(phone)) {
-        console.log("Invalid phone number format");
+        setError("Invalid phone number format");
         return;
       }
       // Update user info
+      setLoading(true);
       await dispatch(
         updateUserThunk({
           full_name: name,
@@ -104,13 +113,11 @@ const ProfileEdit = (props: ProfileEditProps) => {
       setGender(updatedUser.gender);
       setBirthday(new Date(updatedUser.date_of_birth));
       setAvatar({ uri: updatedUser.avatar_url });
-
-      //hiển thị thông khi update thành công
-      console.log("Update profile successfully");
+      setLoading(false);
       setDialogVisible(true);
-    } catch (error) {
-      console.error("Failed to update profile:", error);
-      // Handle error (show error message)
+    } catch (error: any) {
+      setLoading(false);
+      setError(error);
     }
   };
 
@@ -146,16 +153,14 @@ const ProfileEdit = (props: ProfileEditProps) => {
 
           setUploadAvatarLoading(false);
           setUploadAvatarSuccess(true);
-        } catch (error) {
-          console.error("Failed to upload avatar:", error);
+        } catch (error: any) {
           setUploadAvatarLoading(false);
-          setErrorDialog(true);
+          setError(error);
         }
       }
     } catch (error: any) {
-      console.error("Failed to upload avatar:", error);
       setUploadAvatarLoading(false);
-      setErrorDialog(true);
+      setError(error);
     }
   };
 
@@ -301,28 +306,17 @@ const ProfileEdit = (props: ProfileEditProps) => {
           </View>
         </View>
         <View centerH marginT-30>
-          <TouchableOpacity
-            center
-            style={{
-              width: "80%",
-              height: 50,
-              backgroundColor: "#717658",
-              padding: 10,
-              borderRadius: 15,
-              elevation: 5,
-              marginTop: 20,
-            }}
+          <AppButton
+            title={t("profile.change_info")}
+            type="primary"
             onPress={handleSaveChanges}
-          >
-            <Text center white text70BO>
-              {t("profile.change_info")}
-            </Text>
-          </TouchableOpacity>
+            disabled={name === "" || phone === "" || email === "" || loading}
+          />
         </View>
         <AppDialog
           visible={isDialogVisible}
           onClose={() => setDialogVisible(false)}
-          confirmButton
+          closeButton={false}
           confirmButtonLabel="OK"
           severity="success"
           title="Cập nhật thông tin thành công"
@@ -333,22 +327,36 @@ const ProfileEdit = (props: ProfileEditProps) => {
           }}
         />
         <AppDialog
-          visible={errorDialog}
-          onClose={() => setErrorDialog(false)}
+          visible={!!error}
+          onConfirm={() => setError(null)}
+          confirmButtonLabel="OK"
+          closeButton={false}
           severity="error"
           title="Lỗi"
-          description="Cập nhật thông tin thất bại"
+          description={error || "Có lỗi đã xảy ra, vui lòng thử lại"}
         />
         <AppDialog
           visible={uploadAvatarLoading}
           severity="info"
           title="Đang tải lên ảnh đại diện"
+          closeButton={false}
+          confirmButton={false}
+        />
+        <AppDialog
+          visible={loading}
+          severity="info"
+          title="Đang thay đổi thông tin"
+          description="Vui lòng đợi trong giây lát"
+          closeButton={false}
+          confirmButton={false}
         />
         <AppDialog
           visible={uploadAvatarSuccess}
           severity="success"
           title="Tải lên ảnh đại diện thành công"
           description="Ảnh đại diện của bạn đã được cập nhật thành công"
+          closeButton={false}
+          confirmButtonLabel="Đóng"
           onConfirm={() => {
             setUploadAvatarSuccess(false);
           }}

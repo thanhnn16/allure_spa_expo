@@ -62,6 +62,7 @@ export default function DetailsScreen() {
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const user_id = useSelector((state: RootState) => state.auth.user?.id);
 
@@ -74,9 +75,11 @@ export default function DetailsScreen() {
 
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchProduct = async () => {
       await dispatch(getProductThunk({ product_id: Number(id), user_id }));
+      setTotalPrice(Number(product?.price));
       setIsInitialLoading(false);
     };
 
@@ -352,7 +355,7 @@ export default function DetailsScreen() {
             <View row marginB-10>
               <Image source={TagIcon} size={24} />
               <Text h2_medium secondary marginL-5>
-                {formatCurrency({ price: Number(product?.price) })}
+                {formatCurrency({ price: Number(totalPrice) })}
               </Text>
 
               <View flex centerV row gap-15 right>
@@ -399,6 +402,7 @@ export default function DetailsScreen() {
             quantity={quantity}
             setQuantity={setQuantity}
             maxQuantity={product?.quantity}
+            setTotalPrice={setTotalPrice}
           />
 
           <View marginT-10 paddingH-20>

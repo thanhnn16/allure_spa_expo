@@ -15,6 +15,13 @@ const RatingStar = ({ rating } : RatingStarProps) => {
     const hasHalfStar = rating % 1 !== 0;
     const totalStars = 5;
 
+    if (rating === 0) {
+      for (let i = 0; i < totalStars; i++) {
+        stars.push(<Image width={17} height={17} key={`blank-${i}`} source={StarIcon} />);
+      }
+      return stars;
+    }
+
     for (let i = 0; i < fullStars; i++) {
       stars.push(<Image width={17} height={17} key={`full-${i}`} source={StarIcon} />);
     }
@@ -27,6 +34,8 @@ const RatingStar = ({ rating } : RatingStarProps) => {
     for (let i = 0; i < blankStars; i++) {
       stars.push(<Image width={17} height={17} key={`blank-${i}`} source={BlankStarIcon} />);
     }
+
+    
 
     return stars;
   };
