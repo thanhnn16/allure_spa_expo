@@ -6,17 +6,21 @@ import { RootState } from "@/redux/store";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { Feather } from "@expo/vector-icons";
-import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
 import Animated, { FadeIn } from "react-native-reanimated";
 import { Notification } from "@/redux/features/notification/types";
 import {
   NotificationType,
   notificationTypeMap,
+  notificationTypeTranslations,
 } from "@/components/notification/NotificationItem";
 import { useLanguage } from "@/hooks/useLanguage";
 
 import AppButton from "@/components/buttons/AppButton";
+import { useTranslatedNotification } from "@/hooks/useTranslatedNotification";
+import { useFormattedTime } from "@/hooks/useFormattedTime";
+
+// Thêm type definition cho ngôn ngữ được hỗ trợ
+type SupportedLanguage = "en" | "vi" | "ja";
 
 const NotificationDetail: React.FC = () => {
   const { t } = useLanguage();
@@ -28,6 +32,10 @@ const NotificationDetail: React.FC = () => {
       (n: Notification) => n.id === Number(id)
     )
   );
+
+  const translatedNotification = useTranslatedNotification(notification);
+
+  const formattedTime = useFormattedTime(notification.created_at_timestamp);
 
   if (!notification) {
     return (
@@ -54,7 +62,7 @@ const NotificationDetail: React.FC = () => {
 
     const type = notification.type as NotificationType;
     let actionText = "";
-    let onActionPress = () => { };
+    let onActionPress = () => {};
 
     switch (type) {
       case "new_appointment":
@@ -73,11 +81,6 @@ const NotificationDetail: React.FC = () => {
         actionText = t("notification.view_conversation");
         onActionPress = () =>
           router.push(`/chat/${notification.data?.conversation_id}`);
-        break;
-
-      case "payment":
-        actionText = t("notification.view_payment");
-        // onActionPress = () => router.push(`/payments/${notification.data?.payment_id}`);
         break;
 
       case "promotion":
@@ -105,14 +108,26 @@ const NotificationDetail: React.FC = () => {
             <Text h3_bold color={Colors.primary}>
               {actionText}
             </Text>
-            <Feather
-              name="arrow-right"
-              size={16}
-              color={Colors.primary}
-            />
+            <Feather name="arrow-right" size={16} color={Colors.primary} />
           </View>
         }
       />
+    );
+  };
+
+  const getTranslatedType = (type: NotificationType) => {
+    const language = useSelector(
+      (state: RootState) => state.language.currentLanguage
+    );
+
+    // Kiểm tra xem ngôn ngữ có được hỗ trợ không
+    if (!["en", "vi", "ja"].includes(language)) {
+      return type; // Trả về type gốc nếu ngôn ngữ không được hỗ trợ
+    }
+
+    return (
+      notificationTypeTranslations[language as SupportedLanguage]?.[type] ||
+      type
     );
   };
 
@@ -144,7 +159,7 @@ const NotificationDetail: React.FC = () => {
             </View>
 
             <Text h2_bold center color={Colors.text} marginB-12>
-              {notification.title}
+              {translatedNotification.title}
             </Text>
 
             <View
@@ -162,10 +177,7 @@ const NotificationDetail: React.FC = () => {
             >
               <Feather name="clock" size={14} color={Colors.primary} />
               <Text h4 marginL-4 color={Colors.primary}>
-                {formatDistanceToNow(new Date(notification.created_at), {
-                  addSuffix: true,
-                  locale: vi,
-                })}
+                {formattedTime}
               </Text>
             </View>
           </View>
@@ -182,7 +194,7 @@ const NotificationDetail: React.FC = () => {
               }}
             >
               <Text h3 color={Colors.text} style={{ lineHeight: 24 }}>
-                {notification.content}
+                {translatedNotification.content}
               </Text>
 
               {renderActionButton()}
@@ -221,13 +233,7 @@ const NotificationDetail: React.FC = () => {
                   {t("notification.type")}
                 </Text>
                 <Text h3 color={Colors.primary}>
-                  {notification.type
-                    .split("_")
-                    .map(
-                      (word: string) =>
-                        word.charAt(0).toUpperCase() + word.slice(1)
-                    )
-                    .join(" ")}
+                  {getTranslatedType(notification.type)}
                 </Text>
               </View>
 

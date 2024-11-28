@@ -1,5 +1,5 @@
 import { Product } from "./product.type";
-import { ServiceResponeModel } from "./service.type";
+import { ServiceDetailResponeModel, ServiceResponeModel } from "./service.type";
 
 export interface OrderItem {
     id: number;
@@ -68,11 +68,11 @@ export interface OrderResponse {
 }
 
 export interface CheckoutOrderItem {
-    item_type: "product" | "service";
     item_id: number;
+    item_type: 'product' | 'service';
     quantity: number;
     price: number;
-    service_type?: "combo_5" | "combo_10" | "single";
+    service_type?: 'single' | 'combo_5' | 'combo_10';
     product?: Product;
-    service?: ServiceResponeModel;
+    service?: ServiceDetailResponeModel;
 }

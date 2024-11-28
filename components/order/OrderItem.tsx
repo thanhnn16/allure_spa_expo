@@ -1,4 +1,4 @@
-import { OrderItem, Orders } from "@/types/order.type";
+import { Orders, OrderItem as OrderItemType } from "@/types/order.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { router } from "expo-router";
 import { Dimensions } from "react-native";
@@ -18,14 +18,13 @@ import { ServiceResponeModel } from "@/types/service.type";
 import { Product } from "@/types/product.type";
 import { useLanguage } from "@/hooks/useLanguage";
 
-interface OrderProductItemProps {
+interface OrderItemProps {
   order: Orders;
-  orderItem?: OrderItem;
 }
 
 const { width } = Dimensions.get("window");
 
-const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
+const OrderItem = ({ order }: OrderItemProps) => {
   const { t } = useLanguage();
 
   const orderItems = order.order_items || [];
@@ -53,7 +52,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
         margin-10
         border-1
         style={{
-          borderColor: Colors.border
+          borderColor: Colors.border,
         }}
       >
         <SkeletonView height={20} width={width * 0.3} />
@@ -68,7 +67,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
     );
   }
 
-  const renderItem = (item: OrderItem) => {
+  const renderItem = (item: OrderItemType) => {
     const isService = item.item_type === "service";
     const itemData = isService ? item.service : item.product;
 
@@ -123,6 +122,24 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
               <Text h3_bold primary>
                 {formatCurrency({ price: Number(item.price) })}
               </Text>
+              {isService && item.service_type && (
+                <View
+                  padding-8
+                  br20
+                  center
+                  backgroundColor={Colors.primary_light}
+                  marginT-4
+                  width={"40%"}
+                >
+                  <Text text80 color={Colors.primary}>
+                    {item.service_type === "combo_5"
+                      ? t("orders.combo_5")
+                      : item.service_type === "combo_10"
+                      ? t("orders.combo_10")
+                      : t("orders.single")}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -137,7 +154,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
       margin-10
       border-1
       style={{
-        borderColor: Colors.border
+        borderColor: Colors.border,
       }}
     >
       <Animated.View>
@@ -153,7 +170,7 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
               <OrderStatusBadge status={order.status} />
             </View>
           </View>
-          
+
           <View height={1} bg-border marginB-10 />
 
           {orderItems.map(renderItem)}
@@ -168,7 +185,9 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
               </Text>
             </View>
             {(order.status === "completed" || order.status === "cancelled") &&
-              order.order_items.some((item) => item.product) && (
+              order.order_items.some(
+                (item) => item.product || item.service
+              ) && (
                 <AppButton
                   type="outline"
                   title={t("orders.repurchase")}
@@ -189,4 +208,4 @@ const OrderProductItem = ({ order, orderItem }: OrderProductItemProps) => {
   );
 };
 
-export default OrderProductItem;
+export default OrderItem;

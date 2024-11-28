@@ -14,7 +14,7 @@ import { getAllOrderThunk } from "@/redux/features/order/getAllOrderThunk";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AppBar from "@/components/app-bar/AppBar";
 import AppTabBar from "@/components/app-bar/AppTabBar";
-import OrderProductItem from "@/components/order/OrderProductItem";
+import OrderItem from "@/components/order/OrderItem";
 import { clearOrders } from "@/redux/features/order/orderSlice";
 
 import ShoppingBagIcon from "@/assets/icons/bag.svg";
@@ -174,7 +174,7 @@ const MyOrder = () => {
         }
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(index * 50).duration(300)}>
-            <OrderProductItem order={item} />
+            <OrderItem order={item} />
           </Animated.View>
         )}
       />

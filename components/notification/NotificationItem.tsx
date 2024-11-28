@@ -7,12 +7,21 @@ import { handleNotificationNavigation } from "@/utils/services/notification/noti
 export type NotificationType =
   | "new_appointment"
   | "appointment_status"
+  | "appointment_cancelled"
+  | "appointment_reminder"
   | "new_order"
   | "order_status"
+  | "order_cancelled"
+  | "order_completed"
+  | "service_expiring"
+  | "service_low_sessions"
+  | "service_completed"
+  | "payment_success"
+  | "payment_failed"
+  | "payment_pending"
   | "new_message"
   | "new_review"
   | "promotion"
-  | "payment"
   | "system";
 
 interface NotificationItemProps {
@@ -49,6 +58,18 @@ export const notificationTypeMap: Record<
     bgColor: "#FFF5EE",
     group: "appointment",
   },
+  appointment_cancelled: {
+    iconName: "x-circle",
+    iconColor: Colors.red30,
+    bgColor: "#FFEFEF",
+    group: "appointment",
+  },
+  appointment_reminder: {
+    iconName: "bell",
+    iconColor: Colors.secondary,
+    bgColor: "#FFF5EE",
+    group: "appointment",
+  },
   new_order: {
     iconName: "shopping-bag",
     iconColor: Colors.primary,
@@ -60,6 +81,54 @@ export const notificationTypeMap: Record<
     iconColor: Colors.primary,
     bgColor: Colors.primary_light,
     group: "order",
+  },
+  order_cancelled: {
+    iconName: "x-circle",
+    iconColor: Colors.red30,
+    bgColor: "#FFEFEF",
+    group: "order",
+  },
+  order_completed: {
+    iconName: "check-circle",
+    iconColor: Colors.green30,
+    bgColor: "#E8F5E9",
+    group: "order",
+  },
+  service_expiring: {
+    iconName: "alert-triangle",
+    iconColor: Colors.orange30,
+    bgColor: "#FFF3E0",
+    group: "service",
+  },
+  service_low_sessions: {
+    iconName: "battery-low",
+    iconColor: Colors.orange30,
+    bgColor: "#FFF3E0",
+    group: "service",
+  },
+  service_completed: {
+    iconName: "check-circle",
+    iconColor: Colors.green30,
+    bgColor: "#E8F5E9",
+    group: "service",
+  },
+  payment_success: {
+    iconName: "credit-card",
+    iconColor: Colors.green30,
+    bgColor: "#E8F5E9",
+    group: "payment",
+  },
+  payment_failed: {
+    iconName: "credit-card",
+    iconColor: Colors.red30,
+    bgColor: "#FFEFEF",
+    group: "payment",
+  },
+  payment_pending: {
+    iconName: "credit-card",
+    iconColor: Colors.orange30,
+    bgColor: "#FFF3E0",
+    group: "payment",
   },
   new_message: {
     iconName: "message-circle",
@@ -85,11 +154,71 @@ export const notificationTypeMap: Record<
     bgColor: Colors.grey70,
     group: "system",
   },
-  payment: {
-    iconName: "credit-card",
-    iconColor: Colors.primary,
-    bgColor: Colors.primary_light,
-    group: "payment",
+};
+
+export const notificationTypeTranslations = {
+  en: {
+    new_appointment: "New Appointment",
+    appointment_new: "New Appointment",
+    appointment_status: "Appointment Status",
+    appointment_cancelled: "Appointment Cancelled",
+    appointment_reminder: "Appointment Reminder",
+    new_order: "New Order",
+    order_status: "Order Status",
+    order_cancelled: "Order Cancelled",
+    order_completed: "Order Completed",
+    service_expiring: "Service Expiring",
+    service_low_sessions: "Low Sessions",
+    service_completed: "Service Completed",
+    payment_success: "Payment Success",
+    payment_failed: "Payment Failed",
+    payment_pending: "Payment Pending",
+    new_message: "New Message",
+    new_review: "New Review",
+    promotion: "Promotion",
+    system: "System",
+  },
+  vi: {
+    new_appointment: "Lịch hẹn mới",
+    appointment_new: "Lịch hẹn mới",
+    appointment_status: "Trạng thái lịch hẹn",
+    appointment_cancelled: "Lịch hẹn đã hủy",
+    appointment_reminder: "Nhắc nhở lịch hẹn",
+    new_order: "Đơn hàng mới",
+    order_status: "Trạng thái đơn hàng",
+    order_cancelled: "Đơn hàng đã hủy",
+    order_completed: "Đơn hàng hoàn thành",
+    service_expiring: "Dịch vụ sắp hết hạn",
+    service_low_sessions: "Số buổi còn lại thấp",
+    service_completed: "Dịch vụ hoàn thành",
+    payment_success: "Thanh toán thành công",
+    payment_failed: "Thanh toán thất bại",
+    payment_pending: "Chờ thanh toán",
+    new_message: "Tin nhắn mới",
+    new_review: "Đánh giá mới",
+    promotion: "Khuyến mãi",
+    system: "Hệ thống",
+  },
+  ja: {
+    new_appointment: "新しい予約",
+    appointment_new: "新しい予約",
+    appointment_status: "予約状態",
+    appointment_cancelled: "予約キャンセル",
+    appointment_reminder: "予約リマインダー",
+    new_order: "新規注文",
+    order_status: "注文状態",
+    order_cancelled: "注文キャンセル",
+    order_completed: "注文完了",
+    service_expiring: "サービス期限切れ",
+    service_low_sessions: "残りセッション数が少ない",
+    service_completed: "サービス完了",
+    payment_success: "支払い成功",
+    payment_failed: "支払い失敗",
+    payment_pending: "支払い保留",
+    new_message: "新しいメッセージ",
+    new_review: "新しいレビュー",
+    promotion: "プロモーション",
+    system: "システム",
   },
 };
 
@@ -111,7 +240,10 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     is_read: isRead,
     created_at: time,
     data,
-    formatted_date: time,
+    user_id: "",
+    status: "unseen",
+    updated_at: "",
+    created_at_timestamp: 0,
   });
 
   const handlePress = () => {

@@ -1,13 +1,12 @@
 import AppBar from "@/components/app-bar/AppBar";
 import PaymentPicker from "@/components/payment/PaymentPicker";
-import PaymentProductItem from "@/components/payment/PaymentProductItem";
+import PaymentItem from "@/components/payment/PaymentItem";
 import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import { useLanguage } from "@/hooks/useLanguage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  ImageSourcePropType,
   Linking,
   ScrollView,
   StyleSheet,
@@ -18,10 +17,12 @@ import { Button, Colors, Text, View } from "react-native-ui-lib";
 
 import AppButton from "@/components/buttons/AppButton";
 import AppDialog from "@/components/dialog/AppDialog";
-import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
 import { fetchAddresses } from "@/redux/features";
-import { clearCart, selectCheckoutItems } from "@/redux/features/cart/cartSlice";
+import {
+  clearCart,
+  selectCheckoutItems,
+} from "@/redux/features/cart/cartSlice";
 import { clearTempOrder } from "@/redux/features/order/orderSlice";
 import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
 import { RootState } from "@/redux/store";
@@ -43,7 +44,6 @@ export interface PaymentMethod {
 }
 export default function Checkout() {
   const { t } = useLanguage();
-
 
   const paymentMethods: PaymentMethod[] = [
     {
@@ -333,20 +333,15 @@ export default function Checkout() {
   };
 
   const renderOrderItems = () => {
-    return orderItems.map((item: CheckoutOrderItem) => (
-      <PaymentProductItem
-        key={`${item.item_type}-${item.item_id}`}
-        orderItem={{
-          item_id: item.item_id,
-          item_type: item.item_type,
-          quantity: item.quantity,
-          price: item.price,
-          service_type: item.service_type,
-          [item.item_type]:
-            item.item_type === "product" ? item.product : item.service,
-        }}
-      />
-    ));
+    return orderItems.map((item: CheckoutOrderItem) => {
+      console.log("Rendering PaymentItem with:", item);
+      return (
+        <PaymentItem
+          key={`${item.item_type}-${item.item_id}`}
+          orderItem={item}
+        />
+      );
+    });
   };
 
   return (

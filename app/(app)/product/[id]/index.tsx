@@ -47,7 +47,8 @@ import { Media } from "@/types/media.type";
 
 import { Ionicons } from "@expo/vector-icons";
 import { clearProduct } from "@/redux/features/products/productSlice";
-import { set } from "lodash";
+import { setTempOrder } from "@/redux/features/order/orderSlice";
+import { CheckoutOrderItem } from "@/types/order.type";
 
 export default function DetailsScreen() {
   const { t } = useLanguage();
@@ -64,7 +65,6 @@ export default function DetailsScreen() {
   const [totalPrice, setTotalPrice] = useState(0);
 
   const user_id = useSelector((state: RootState) => state.auth.user?.id);
-
 
   const { product, isLoading, media } = useSelector(
     (state: RootState) => state.product
@@ -130,10 +130,7 @@ export default function DetailsScreen() {
     } catch (error) {
       setIsFavorite((prev: boolean) => !prev);
       console.error("Error toggling favorite:", error);
-      Alert.alert(
-        t("common.error"),
-        t("common.something_went_wrong")
-      );
+      Alert.alert(t("common.error"), t("common.something_went_wrong"));
     }
   };
 
@@ -195,7 +192,32 @@ export default function DetailsScreen() {
   const handleGuestPurchase = () => {
     if (isGuest) {
       setBuyProductDialog(true);
+    } else {
+      handlePurchase();
     }
+  };
+
+  const handlePurchase = () => {
+    if (!product) return;
+
+    const price = product.price ? parseFloat(product.price.toString()) : 0;
+
+    const orderItem: CheckoutOrderItem = {
+      item_id: product.id,
+      item_type: "product",
+      quantity: quantity,
+      price: price,
+      product: product,
+    };
+
+    dispatch(
+      setTempOrder({
+        items: [orderItem],
+        totalAmount: price * quantity,
+      })
+    );
+
+    router.push("/check-out?source=direct");
   };
 
   const handleLoginConfirm = () => {
@@ -387,9 +409,7 @@ export default function DetailsScreen() {
             {isLoading ? (
               <SkeletonView height={20} width={windowWidth * 0.45} marginB-10 />
             ) : (
-              <Text h2_medium>
-                {t("productDetail.product_description")}
-              </Text>
+              <Text h2_medium>{t("productDetail.product_description")}</Text>
             )}
             <ProductDescription product={product} isLoading={isLoading} />
           </View>
@@ -415,7 +435,7 @@ export default function DetailsScreen() {
         <ProductBottomComponent
           isLoading={isLoading}
           product={product}
-          onPurchase={isGuest ? handleGuestPurchase : undefined}
+          onPurchase={isGuest ? handleGuestPurchase : handlePurchase}
           quantity={quantity}
           onAddToCart={() => {
             handlePressAnimOpacity();

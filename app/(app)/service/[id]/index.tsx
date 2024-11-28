@@ -9,6 +9,8 @@ import {
   ActionSheet,
   SkeletonView,
   Colors,
+  Dialog,
+  PanningProvider,
 } from "react-native-ui-lib";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { Ionicons } from "@expo/vector-icons";
@@ -40,7 +42,8 @@ import LinkIcon from "@/assets/icons/link.svg";
 import PhoneCallIcon from "@/assets/icons/phone.svg";
 import BlinkingIconText from "@/components/BlinkingIconText";
 import ServiceBookingDialog from "@/components/dialog/ServiceBookingDialog";
-
+import { setTempOrder } from "@/redux/features/order/orderSlice";
+import { CheckoutOrderItem } from "@/types/order.type";
 const ServiceDetailPage = () => {
   const { t } = useLanguage();
 
@@ -64,8 +67,9 @@ const ServiceDetailPage = () => {
   const [favoriteDialog, setFavoriteDialog] = useState(false);
   const [bookingDialog, setBookingDialog] = useState(false);
 
-  const [showActionSheet, setShowActionSheet] = useState<boolean>(false);
+  const [showDialog, setShowDialog] = useState<boolean>(false);
   const [combo, setCombo] = useState<number>(0);
+  const [selectedCombo, setSelectedCombo] = useState<number>(0);
 
   // Window dimensions
   const windowWidth = Dimensions.get("window").width;
@@ -136,7 +140,6 @@ const ServiceDetailPage = () => {
         itemId: service?.id,
       })
     );
-    console.log("status", status);
     setIsFavoriteState(status === "added");
   };
 
@@ -166,21 +169,46 @@ const ServiceDetailPage = () => {
       params: {
         service_id: service?.id,
         service_name: service?.service_name,
+        combo: combo,
       },
     });
   };
 
   const handlePayment = () => {
     setBookingDialog(false);
-    router.push({
-      pathname: "/(app)/check-out",
-      params: {
-        service_id: service?.id,
-        service_name: service?.service_name,
-        combo: combo,
-        price: price,
-      },
-    });
+
+    if (!service) {
+      console.error("Service data is missing");
+      return;
+    }
+
+    const price =
+      combo === 1
+        ? service.combo_5_price
+        : combo === 2
+        ? service.combo_10_price
+        : service.single_price;
+
+    const orderItem: CheckoutOrderItem = {
+      item_id: service.id,
+      item_type: "service",
+      quantity: 1,
+      price: price,
+      service_type:
+        combo === 1 ? "combo_5" : combo === 2 ? "combo_10" : "single",
+      service: service,
+    };
+
+    console.log("Setting temp order with item:", orderItem);
+
+    dispatch(
+      setTempOrder({
+        items: [orderItem],
+        totalAmount: price,
+      })
+    );
+
+    router.push("/check-out?source=direct");
   };
 
   // Components
@@ -259,6 +287,44 @@ const ServiceDetailPage = () => {
       </View>
     );
   };
+
+  const renderDialogContent = () => (
+    <View padding-20>
+      <Text h2 marginB-20>
+        {t("package.select_combo")}
+      </Text>
+      <TouchableOpacity
+        onPress={() => {
+          setCombo(0);
+          setShowDialog(false);
+        }}
+      >
+        <Text h3 marginB-15>
+          {t("package.single")}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setCombo(1);
+          setShowDialog(false);
+        }}
+      >
+        <Text h3 marginB-15>
+          {t("package.combo5")}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setCombo(2);
+          setShowDialog(false);
+        }}
+      >
+        <Text h3 marginB-15>
+          {t("package.combo10")}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View flex bg-$white>
@@ -355,9 +421,7 @@ const ServiceDetailPage = () => {
                     <View gap-20>
                       <Text h2_bold>{t("service.treatment")}</Text>
 
-                      <TouchableOpacity
-                        onPress={() => setShowActionSheet(true)}
-                      >
+                      <TouchableOpacity onPress={() => setShowDialog(true)}>
                         <View
                           center
                           row
@@ -421,31 +485,14 @@ const ServiceDetailPage = () => {
                     </View>
                   </View>
 
-                  {/* Package Selection Sheet */}
-                  <ActionSheet
-                    title={t("package.select_combo")}
-                    cancelButtonIndex={4}
-                    showCancelButton={true}
-                    destructiveButtonIndex={0}
-                    visible={showActionSheet}
-                    containerStyle={{ padding: 10, gap: 10 }}
-                    onDismiss={() => setShowActionSheet(false)}
-                    useNativeIOS
-                    options={[
-                      {
-                        label: t("package.single"),
-                        onPress: () => setCombo(0),
-                      },
-                      {
-                        label: t("package.combo5"),
-                        onPress: () => setCombo(1),
-                      },
-                      {
-                        label: t("package.combo10"),
-                        onPress: () => setCombo(2),
-                      },
-                    ]}
-                  />
+                  {/* Package Selection Dialog */}
+                  <Dialog
+                    visible={showDialog}
+                    onDismiss={() => setShowDialog(false)}
+                    panDirection={PanningProvider.Directions.DOWN}
+                  >
+                    {renderDialogContent()}
+                  </Dialog>
                 </ScrollView>
               </View>
 
@@ -453,7 +500,7 @@ const ServiceDetailPage = () => {
               <ServiceBottomComponent
                 isLoading={isLoading}
                 onPurchase={() => setBookingDialog(true)}
-                service={service}
+                service={{ ...service, combo: selectedCombo }}
               />
 
               {/* Dialogs */}
@@ -486,14 +533,17 @@ const ServiceDetailPage = () => {
                 confirmButtonLabel={t("service.book_now")}
                 secondaryConfirmButtonLabel={t("checkout.pay_online")}
                 severity="info"
-                onClose={() => setBookingDialog(false)}
+                onClose={() => {
+                  setBookingDialog(false);
+                  setCombo(0); // Reset combo when dialog closes
+                }}
                 onConfirm={handleBooking}
                 onConfrimSecondary={handlePayment}
                 closeButton={true}
                 confirmButton={true}
                 secondaryConfirmButton={true}
-                showActionSheet={showActionSheet}
-                setShowActionSheet={setShowActionSheet}
+                showActionSheet={showDialog}
+                setShowActionSheet={setShowDialog}
                 setCombo={setCombo}
                 singlePrice={service?.single_price}
                 combo5Price={service?.combo_5_price}

@@ -321,6 +321,15 @@
     "verify_yes": "はい、データを電子メールに送信します",
     "verify_no": "結構です！"
   },
+  "time": {
+    "today": "今日",
+    "yesterday": "昨日",
+    "this_week": "今週",
+    "this_month": "今月",
+    "minutes_ago": "{{minutes}} 分前",
+    "hours_ago": "{{hours}} 時間前",
+    "days_ago": "{{days}} 日前"
+  },
   "days": {
     "mon": "月曜日",
     "tue": "火曜日",
@@ -474,6 +483,7 @@
     "voucher": "バウチャー",
     "no_voucher": "バウチャーなし",
     "payment_method": "支払い方法",
+    "select_address": "住所を選択してください",
     "select_payment_method": "支払い方法を選択してください",
     "pay_when_receive": "受け取り時に支払う",
     "pay_online": "オンラインで支払う",

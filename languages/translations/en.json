@@ -334,6 +334,15 @@
     "set_default_address": "Set default address",
     "set_default_address_confirm": "Are you sure you want to set this address as default?"
   },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "this_week": "This week",
+    "this_month": "This month",
+    "minutes_ago": "{{minutes}} minutes ago",
+    "hours_ago": "{{hours}} hours ago",
+    "days_ago": "{{days}} days ago"
+  },
   "date": {
     "formats": {
       "short": "dd/MM/yyyy"
@@ -401,6 +410,7 @@
     "payment_method": "Payment Method",
     "pay_when_receive": "Pay when receive",
     "pay_online": "Pay online",
+    "select_address": "Select address",
     "select_payment_method": "Select payment method",
     "product": "Product",
     "amount": "Amount",

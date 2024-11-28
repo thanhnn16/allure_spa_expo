@@ -81,7 +81,6 @@ export interface ServiceDetailResponeModel extends Timestamps, ResponeDefaultPar
     combo_5_price: number;
     rating_summary: RatingSummary;
     is_favorite: boolean;
-
     combo_10_price: number;
     validity_period: number;
     category: CategoryResponeModelParams;

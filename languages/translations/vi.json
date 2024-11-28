@@ -335,6 +335,15 @@
     "set_default_address": "Đặt làm địa chỉ mặc định",
     "set_default_address_confirm": "Bạn có chắc chắn muốn đặt địa chỉ này làm mặc định không?"
   },
+  "time": {
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "this_week": "Tuần này",
+    "this_month": "Tháng này",
+    "minutes_ago": "{{minutes}} phút trước",
+    "hours_ago": "{{hours}} giờ trước",
+    "days_ago": "{{days}} ngày trước"
+  },
   "date": {
     "formats": {
       "short": "dd/MM/yyyy"
@@ -369,18 +378,28 @@
     "customer_info": "Thông tin khách hàng",
     "default": "Mặc định",
     "voucher": "Voucher",
-    "no_voucher": "Không có voucher",
+    "no_voucher": "Không có Voucher",
     "payment_method": "Phương thức thanh toán",
-    "select_payment_method": "Chọn phương thức thanh toán",
     "pay_when_receive": "Thanh toán khi nhận hàng",
     "pay_online": "Thanh toán online",
+    "select_address": "Chọn địa chỉ",
+    "select_payment_method": "Chọn phương thức thanh toán",
     "product": "Sản phẩm",
     "amount": "Số lượng",
     "total": "Tổng cộng",
     "no_discount": "Không có",
     "total_payment": "Tổng thanh toán",
     "payment": "Thanh toán",
-    "subtotal": "Tạm tính"
+    "subtotal": "Tạm tính",
+    "cash": "Tiền mặt",
+    "credit_card": "Thẻ tín dụng",
+    "bank_transfer": "Chuyển khoản ngân hàng",
+    "no_address": "Không có địa chỉ",
+    "delivery_address": "Địa chỉ giao hàng",
+    "order_success": "Đặt hàng thành công",
+    "order_success_message": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
+    "payment_error": "Lỗi thanh toán",
+    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
