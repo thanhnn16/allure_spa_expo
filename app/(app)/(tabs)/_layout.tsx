@@ -10,7 +10,7 @@ const TabLayout: React.FC = () => {
   return (
     <Tabs
       backBehavior="history"
-      initialRouteName={"home/index"}
+      initialRouteName="home/index"
       screenOptions={{
         headerShown: false,
         tabBarStyle: {

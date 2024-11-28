@@ -291,7 +291,7 @@ export const sendImageMessage = createAsyncThunk(
       }
 
       const model = genAI.getGenerativeModel({
-        model: config?.model_type || 'gemini-1.5-pro',
+        model: 'gemini-1.5-flash',
         systemInstruction: config?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined

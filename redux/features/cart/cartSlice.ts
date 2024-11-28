@@ -137,4 +137,9 @@ export const selectCheckoutItems = createSelector(
   }))
 );
 
+export const selectTotalCartItems = createSelector(
+  [(state: RootState) => state.cart.items],
+  (items: CartItem[]) => items.reduce((total, item) => total + item.cart_quantity, 0)
+);
+
 export default cartSlice.reducer;

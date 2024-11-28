@@ -39,6 +39,7 @@ import getLocation from "@/utils/location/locationHelper";
 import getWeatherData from "@/utils/weather/getWeatherData";
 import { fetchUnreadCount } from "@/redux/features/notification/notificationThunks";
 import { getAllProductsThunk } from "@/redux/features/products/getAllProductsThunk";
+import { fetchCartItems } from "@/redux/features/cart/fetchCartThunk";
 
 const HomePage = () => {
   const { t } = useLanguage();
@@ -301,6 +302,7 @@ const HomePage = () => {
       dispatch(fetchUnreadCount()),
       dispatch(getServicesThunk({ page: 1, limit: 5 })),
       dispatch(getAllProductsThunk()),
+      dispatch(fetchCartItems()),
       getLocation().then((location) => {
         getWeatherData(location.lat, location.lon);
       }),
