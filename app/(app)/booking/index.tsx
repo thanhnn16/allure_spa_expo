@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { FlatList, Dimensions, Modal } from "react-native";
+import {FlatList, Dimensions, Modal, Keyboard, Platform, ScrollView, KeyboardAvoidingView} from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -46,35 +46,44 @@ const SuccessModal = ({
   onViewAppointments: () => void;
   t: any;
 }) => (
-  <Modal visible={visible} transparent>
-    <View center bg-$backgroundDefault>
-      <Card padding-20 width="80%" br20>
-        <View center marginB-20>
-          <MaterialIcons name="done" size={64} color={Colors.primary} />
-        </View>
-        <Text text60BO center marginB-20>
-          {title}
-        </Text>
-        <View flex row center paddingH-20 marginB-10>
-          <View flex-1>
-            <AppButton
-              title={t("service.back_to_home")}
-              type="primary"
-              marginB-10
-              onPress={onClose}
-            />
+    <Modal visible={visible} transparent>
+      <View
+          center
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            flex: 1,
+          }}
+      >
+        <Card padding-20 width="80%" height="30%" br20>
+          <View center>
+            <MaterialIcons name="done" size={64} color={Colors.primary} />
           </View>
-          <View flex-1>
-            <AppButton
-              title={t("service.view_appointments")}
-              type="outline"
-              onPress={onViewAppointments}
-            />
+          <Text text60BO center marginB-36>
+            {title}
+          </Text>
+          <View flex center paddingH-20 marginB-10 style={{gap: 10}}>
+            <View flex-1>
+              <AppButton
+                  title={t("service.back_to_home")}
+                  type="primary"
+                  marginB-10
+                  onPress={onClose}
+                  style={{marginRight: 10}}
+              />
+            </View>
+            <View flex-1 marginT-24 marginB-10 >
+              <AppButton
+                  title={t("service.view_appointments")}
+                  type="outline"
+                  onPress={onViewAppointments}
+              />
+            </View>
           </View>
-        </View>
-      </Card>
-    </View>
-  </Modal>
+        </Card>
+      </View>
+    </Modal>
 );
 
 const BookingPage = () => {
@@ -198,6 +207,31 @@ const BookingPage = () => {
   ]);
 
   useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      noteRef.current?.measureLayout(
+          // @ts-ignore
+          timeSlotRef.current,
+          (x: number, y: number) => {
+            timeSlotRef.current?.scrollTo({
+              y: y,
+              animated: true,
+            });
+          },
+          () => console.log("measurement failed")
+      );
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      timeSlotRef.current?.scrollTo({ y: 0, animated: true });
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     dispatch(getTimeSlots(selectedDate));
   }, [selectedDate, dispatch]);
 
@@ -299,72 +333,6 @@ const BookingPage = () => {
     }
   }, [bookingSuccess, error, dispatch]);
 
-  const renderTimeSlot = (time: any) => {
-    return (
-      <Animated.View
-        entering={FadeIn.duration(500).delay(time.id * 100)}
-        style={{
-          transform: [{ scale: fadeAnim }],
-        }}
-      >
-        <TouchableOpacity
-          key={time.id}
-          onPress={() => {
-            setSelectedTime(time.id);
-            Haptics.selectionAsync();
-          }}
-          disabled={!time.available}
-        >
-          <Card
-            flex
-            center
-            enableShadow={false}
-            br40
-            padding-16
-            marginB-8
-            style={{
-              opacity: !time.available ? 0.5 : 1,
-              backgroundColor:
-                selectedTime === time.id ? Colors.primary_blur : Colors.card_bg,
-              borderWidth: selectedTime === time.id ? 1 : 0,
-              borderColor: Colors.primary_light,
-            }}
-          >
-            <Text
-              style={{
-                color: selectedTime === time.id ? Colors.primary : Colors.text,
-              }}
-              text70BO
-            >
-              {`${time.start_time.substring(0, 5)} - ${time.end_time.substring(
-                0,
-                5
-              )}`}
-            </Text>
-
-            <View row centerV marginT-8>
-              <Octicons
-                name="person"
-                size={16}
-                color={selectedTime === time.id ? Colors.primary : Colors.icon}
-              />
-              <Text
-                marginL-8
-                text80
-                style={{
-                  color:
-                    selectedTime === time.id ? Colors.primary : Colors.text,
-                }}
-              >
-                {time.available_slots} {t("service.available")}
-              </Text>
-            </View>
-          </Card>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
-
   const timeSlotRef = useRef<Animated.ScrollView>(null);
   const seatRef = useRef<RNView>(null);
   const noteRef = useRef<RNView>(null);
@@ -401,22 +369,29 @@ const BookingPage = () => {
         },
         () => console.log("measurement failed")
       );
-    }, 100);
+    }, 50);
   };
 
+  const currentTime = moment();
+  const currentDate = moment().format("YYYY-MM-DD");
+
+
   return (
-    <View flex bg-white>
-      <AppBar back title={t("service.make_appointment")} />
-      <View flex>
-        <Animated.ScrollView
-          ref={timeSlotRef}
-          entering={FadeIn.duration(500)}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: 40,
-          }}
-        >
-          <View flex paddingH-24>
+      <View flex bg-white>
+        <AppBar back title={t("service.make_appointment")} />
+        <View flex>
+          <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+          >
+            <ScrollView
+                ref={timeSlotRef}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  paddingBottom: 120,
+                }}
+            >
+              <View flex paddingH-24>
             <Card
               flex
               br20
@@ -496,99 +471,92 @@ const BookingPage = () => {
               />
             </Card>
 
-            {timeSlots.length > 0 && (
-              <View marginT-20 marginB-20>
-                <Text text60BO $textDefault marginB-10>
-                  {t("service.select_time")}
-                </Text>
-                <View marginT-16>
-                  <FlatList
-                    scrollEnabled={false}
-                    data={timeSlots}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        onPress={() => handleTimeSlotSelect(item)}
-                        disabled={!item.available}
-                      >
-                        <Animated.View
-                          entering={FadeIn.duration(500).delay(item.id * 100)}
-                          style={{
-                            transform: [{ scale: fadeAnim }],
-                          }}
-                        >
-                          <Card
-                            center
-                            enableShadow={false}
-                            br40
-                            paddingV-12
-                            paddingH-16
-                            style={{
-                              opacity: !item.available ? 0.5 : 1,
-                              backgroundColor:
-                                selectedTime === item.id
-                                  ? Colors.primary_blur
-                                  : Colors.card_bg,
-                              borderWidth: selectedTime === item.id ? 1 : 0,
-                              borderColor: Colors.primary_light,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                color:
-                                  selectedTime === item.id
-                                    ? Colors.primary
-                                    : Colors.text,
-                              }}
-                              text80BO
-                            >
-                              {`${item.start_time.substring(
-                                0,
-                                5
-                              )} - ${item.end_time.substring(0, 5)}`}
-                            </Text>
 
-                            <View row centerV marginT-8>
-                              <Octicons
-                                name="person"
-                                size={16}
-                                color={
-                                  selectedTime === item.id
-                                    ? Colors.primary
-                                    : Colors.icon
-                                }
-                              />
-                              <Text
-                                marginL-8
-                                text80
-                                style={{
-                                  color:
-                                    selectedTime === item.id
-                                      ? Colors.primary
-                                      : Colors.text,
-                                }}
+
+
+            {timeSlots.length > 0 && (
+                <View marginT-20 marginB-20>
+                  <Text text60BO $textDefault marginB-10>
+                    {t("service.select_time")}
+                  </Text>
+                  <View marginT-16>
+                    <FlatList
+                        scrollEnabled={false}
+                        data={timeSlots}
+                        renderItem={({ item }) => {
+                          const isPast = selectedDate === currentDate && moment(item.start_time, "HH:mm").isBefore(currentTime);
+                          return (
+                              <TouchableOpacity
+                                  onPress={() => handleTimeSlotSelect(item)}
+                                  disabled={!item.available || isPast}
                               >
-                                {item.available_slots} {t("service.available")}
-                              </Text>
-                            </View>
-                          </Card>
-                        </Animated.View>
-                      </TouchableOpacity>
-                    )}
-                    keyExtractor={(item: any) => item.id.toString()}
-                    numColumns={numColumns}
-                    contentContainerStyle={{
-                      gap: 8,
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                    columnWrapperStyle={{
-                      justifyContent: "space-between",
-                      width: "100%",
-                    }}
-                    nestedScrollEnabled
-                  />
+                                <Animated.View
+                                    entering={FadeIn.duration(500).delay(item.id * 100)}
+                                    style={{
+                                      transform: [{ scale: fadeAnim }],
+                                    }}
+                                >
+                                  <Card
+                                      center
+                                      enableShadow={false}
+                                      br40
+                                      paddingV-12
+                                      paddingH-16
+                                      style={{
+                                        opacity: !item.available || isPast ? 0.5 : 1,
+                                        backgroundColor:
+                                            selectedTime === item.id
+                                                ? Colors.primary_blur
+                                                : Colors.card_bg,
+                                        borderWidth: selectedTime === item.id ? 1 : 0,
+                                        borderColor: Colors.primary_light,
+                                      }}
+                                  >
+                                    <Text
+                                        style={{
+                                          color: selectedTime === item.id ? Colors.primary : Colors.text,
+                                        }}
+                                        text80BO
+                                    >
+                                      {`${item.start_time.substring(0, 5)} - ${item.end_time.substring(0, 5)}`}
+                                    </Text>
+
+                                    <View row centerV marginT-8>
+                                      <Octicons
+                                          name="person"
+                                          size={16}
+                                          color={selectedTime === item.id ? Colors.primary : Colors.icon}
+                                      />
+                                      <Text
+                                          marginL-8
+                                          text80
+                                          style={{
+                                            color: selectedTime === item.id ? Colors.primary : Colors.text,
+                                          }}
+                                      >
+                                        {item.available_slots} {t("service.available")}
+                                      </Text>
+                                    </View>
+                                  </Card>
+                                </Animated.View>
+                              </TouchableOpacity>
+                          );
+                        }}
+                        keyExtractor={(item: any) => item.id.toString()}
+                        numColumns={numColumns}
+                        contentContainerStyle={{
+                          gap: 8,
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                        columnWrapperStyle={{
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                        nestedScrollEnabled
+                    />
+                  </View>
                 </View>
-              </View>
             )}
 
             {selectedTime && (
@@ -648,37 +616,38 @@ const BookingPage = () => {
               </View>
             )}
 
-            {slot !== 0 && (
-              <View ref={noteRef} marginT-20>
-                <Text text60BO $textDefault marginB-12>
-                  {t("service.note")}
-                </Text>
-                <TextArea
-                  value={note}
-                  onChangeText={setNote}
-                  placeholder={t("service.enter_content")}
-                  multiline
-                  numberOfLines={5}
-                  maxLength={200}
-                  br20
-                  bg-$backgroundNeutralLight
-                  padding-16
-                  style={{
-                    height: 120,
-                    textAlignVertical: "top",
-                  }}
-                />
-                <View marginT-20>
-                  <AppButton
-                    title={t("service.continue")}
-                    type="primary"
-                    onPress={handleShowModal}
-                  />
-                </View>
-              </View>
-            )}
+                {slot !== 0 && (
+                    <View ref={noteRef} marginT-20>
+                      <Text text60BO $textDefault marginB-12>
+                        {t("service.note")}
+                      </Text>
+                      <TextArea
+                          value={note}
+                          onChangeText={setNote}
+                          placeholder={t("service.enter_content")}
+                          multiline
+                          numberOfLines={5}
+                          maxLength={200}
+                          br20
+                          bg-$backgroundNeutralLight
+                          padding-16
+                          style={{
+                            height: 120,
+                            textAlignVertical: "top",
+                          }}
+                      />
+                      <View marginT-20>
+                        <AppButton
+                            title={t("service.continue")}
+                            type="primary"
+                            onPress={handleShowModal}
+                        />
+                      </View>
+                    </View>
+                )}
           </View>
-        </Animated.ScrollView>
+        </ScrollView>
+        </KeyboardAvoidingView>
       </View>
 
       <Modal visible={showModal} transparent animationType="fade">
