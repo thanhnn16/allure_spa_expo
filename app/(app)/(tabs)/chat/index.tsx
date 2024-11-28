@@ -1,6 +1,6 @@
 import { Href, router } from "expo-router";
-import { View, Text, TouchableOpacity, Image } from "react-native-ui-lib";
-import { StyleSheet, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, Image, SkeletonView } from "react-native-ui-lib";
+import { FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -19,6 +19,8 @@ import 'moment/locale/vi';
 
 const ChatListScreen = () => {
   const { t } = useLanguage();
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
   const { chats, isLoading } = useSelector((state: RootState) => state.chat);
@@ -79,10 +81,15 @@ const ChatListScreen = () => {
       return (
         <TouchableOpacity
           onPress={() => handleChatScreen("ai")}
-          style={styles.chatItem}
+          row
+          paddingH-12
+          paddingV-16
+          centerV
+          br40
+          style={{ borderWidth: 0.3, borderColor: "#ccc" }}
         >
-          <Image source={IconCskh} style={styles.avatar} />
-          <View style={styles.messageContainer}>
+          <Image source={IconCskh} width={40} height={40} borderRadius={20} />
+          <View centerV marginL-12>
             <Text h3_bold>{t("chat.chat_with_ai")}</Text>
             <Text h3 numberOfLines={1}>
               {t("chat.ai_description")}
@@ -92,17 +99,21 @@ const ChatListScreen = () => {
       );
     }
 
-    // Nếu là chat với admin/staff
     const lastMessage = item.messages?.[0]?.message || t("chat.no_messages");
     const lastMessageTime = item.messages?.[0]?.created_at;
 
     return (
       <TouchableOpacity
         onPress={() => handleChatScreen(item.id)}
-        style={styles.chatItem}
+        row
+        paddingH-12
+        paddingV-16
+        centerV
+        br40
+        style={{ borderWidth: 0.3, borderColor: "#ccc" }}
       >
-        <Image source={IconCskh} style={styles.avatar} />
-        <View style={styles.messageContainer}>
+        <Image source={IconCskh} width={40} height={40} borderRadius={20} />
+        <View flex >
           <Text h3_bold>{t("chat.customer_care")}</Text>
           <Text h3 numberOfLines={1}>
             {lastMessage}
@@ -122,6 +133,39 @@ const ChatListScreen = () => {
     router.replace("/(auth)");
   };
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await dispatch(fetchChatsThunk());
+    setIsRefreshing(false);
+  };
+
+  const renderSkeletonViewItem = () => (
+    <View row paddingH-12 paddingV-16 centerV>
+      <SkeletonView width={40} height={40} borderRadius={20} />
+      <View flex center marginL-12>
+        <SkeletonView
+          width={150}
+          height={16}
+          marginB-8
+        />
+        <SkeletonView
+          width={200}
+          height={14}
+        />
+      </View>
+    </View>
+  );
+
+  const renderLoadingState = () => (
+    <>
+      {[1, 2, 3].map((item) => (
+        <View key={item}>
+          {renderSkeletonViewItem()}
+        </View>
+      ))}
+    </>
+  );
+
   return (
     <View flex bg-$backgroundDefault>
       <AppBar title={t("pageTitle.chat")} />
@@ -137,40 +181,19 @@ const ChatListScreen = () => {
           onConfirm={handleLoginConfirm}
         />
       ) : (
-        <FlatList
-          data={chatDataWithAI}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          refreshing={isLoading}
-          onRefresh={() => dispatch(fetchChatsThunk())}
-        />
+        <View flex paddingH-20>
+          <FlatList
+            data={isLoading ? [] : chatDataWithAI}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            ListEmptyComponent={isLoading ? renderLoadingState : undefined}
+          />
+        </View>
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  listContainer: {
-    paddingHorizontal: 16,
-  },
-  chatItem: {
-    flexDirection: "row",
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    marginRight: 12,
-    borderRadius: 20,
-  },
-  messageContainer: {
-    flex: 1,
-    justifyContent: "center",
-  },
-});
 
 export default ChatListScreen;
