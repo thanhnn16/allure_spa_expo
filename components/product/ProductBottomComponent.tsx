@@ -77,9 +77,12 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
         item_type: "product",
         quantity: quantity,
         price: price,
-        product: product,
+        priceValue: price,
         name: product?.name,
         image: product?.media?.[0]?.full_url,
+        media: product?.media,
+        product: product,
+        service_type: null
       };
 
       dispatch(

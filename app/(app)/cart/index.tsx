@@ -111,7 +111,7 @@ export default function Cart() {
               setItemDelete={setsetItemDelete}
             />
           )}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
         />
         <View row spread br20 paddingV-12 paddingH-20 backgroundColor={Colors.rgba(Colors.primary, 0.08)}>
           <Text h3_bold>Tổng cộng: </Text>

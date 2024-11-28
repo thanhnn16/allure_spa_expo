@@ -81,14 +81,16 @@ export default function Checkout() {
   const userProfile = useSelector((state: RootState) => state.auth.user);
   const vouchers = useSelector((state: RootState) => state.voucher.vouchers);
 
-  const tempOrderItems = tempOrder.items.map((item: OrderItem) => ({
+  const tempOrderItems = tempOrder.items.map((item: CheckoutOrderItem) => ({
     item_id: item.item_id,
     item_type: item.item_type,
     quantity: item.quantity,
     price: item.price,
     service_type: item.service_type,
-    product: item.item_type === "product" ? item : undefined,
-    service: item.item_type === "service" ? item : undefined,
+    name: item.name,
+    image: item.image,
+    product: item.item_type === "product" ? item.product : undefined,
+    service: item.item_type === "service" ? item.service : undefined,
   }));
 
   const orderItems = source === "direct" ? tempOrderItems : checkoutItems;
