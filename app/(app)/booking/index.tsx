@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import { FlatList, Dimensions, Modal } from "react-native";
+import {FlatList, Dimensions, Modal, Keyboard, Platform, ScrollView, KeyboardAvoidingView} from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -207,6 +207,31 @@ const BookingPage = () => {
   ]);
 
   useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      noteRef.current?.measureLayout(
+          // @ts-ignore
+          timeSlotRef.current,
+          (x: number, y: number) => {
+            timeSlotRef.current?.scrollTo({
+              y: y,
+              animated: true,
+            });
+          },
+          () => console.log("measurement failed")
+      );
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      timeSlotRef.current?.scrollTo({ y: 0, animated: true });
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     dispatch(getTimeSlots(selectedDate));
   }, [selectedDate, dispatch]);
 
@@ -344,7 +369,7 @@ const BookingPage = () => {
         },
         () => console.log("measurement failed")
       );
-    }, 100);
+    }, 50);
   };
 
   const currentTime = moment();
@@ -352,18 +377,21 @@ const BookingPage = () => {
 
 
   return (
-    <View flex bg-white>
-      <AppBar back title={t("service.make_appointment")} />
-      <View flex>
-        <Animated.ScrollView
-          ref={timeSlotRef}
-          entering={FadeIn.duration(500)}
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: 40,
-          }}
-        >
-          <View flex paddingH-24>
+      <View flex bg-white>
+        <AppBar back title={t("service.make_appointment")} />
+        <View flex>
+          <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ flex: 1 }}
+          >
+            <ScrollView
+                ref={timeSlotRef}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  paddingBottom: 120,
+                }}
+            >
+              <View flex paddingH-24>
             <Card
               flex
               br20
@@ -588,37 +616,38 @@ const BookingPage = () => {
               </View>
             )}
 
-            {slot !== 0 && (
-              <View ref={noteRef} marginT-20>
-                <Text text60BO $textDefault marginB-12>
-                  {t("service.note")}
-                </Text>
-                <TextArea
-                  value={note}
-                  onChangeText={setNote}
-                  placeholder={t("service.enter_content")}
-                  multiline
-                  numberOfLines={5}
-                  maxLength={200}
-                  br20
-                  bg-$backgroundNeutralLight
-                  padding-16
-                  style={{
-                    height: 120,
-                    textAlignVertical: "top",
-                  }}
-                />
-                <View marginT-20>
-                  <AppButton
-                    title={t("service.continue")}
-                    type="primary"
-                    onPress={handleShowModal}
-                  />
-                </View>
-              </View>
-            )}
+                {slot !== 0 && (
+                    <View ref={noteRef} marginT-20>
+                      <Text text60BO $textDefault marginB-12>
+                        {t("service.note")}
+                      </Text>
+                      <TextArea
+                          value={note}
+                          onChangeText={setNote}
+                          placeholder={t("service.enter_content")}
+                          multiline
+                          numberOfLines={5}
+                          maxLength={200}
+                          br20
+                          bg-$backgroundNeutralLight
+                          padding-16
+                          style={{
+                            height: 120,
+                            textAlignVertical: "top",
+                          }}
+                      />
+                      <View marginT-20>
+                        <AppButton
+                            title={t("service.continue")}
+                            type="primary"
+                            onPress={handleShowModal}
+                        />
+                      </View>
+                    </View>
+                )}
           </View>
-        </Animated.ScrollView>
+        </ScrollView>
+        </KeyboardAvoidingView>
       </View>
 
       <Modal visible={showModal} transparent animationType="fade">

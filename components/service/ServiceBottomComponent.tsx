@@ -1,34 +1,17 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Button,
-  Image,
-  SkeletonView,
-  Incubator,
-  Colors,
-} from "react-native-ui-lib";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Button, Image, SkeletonView, Incubator, Colors} from "react-native-ui-lib";
+import { useDispatch } from "react-redux";
 import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
-
-import { Dimensions } from "react-native";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-
+import { useAuth } from "@/hooks/useAuth";
 import PhoneCallIcon from "@/assets/icons/phone.svg";
 import CommentIcon from "@/assets/icons/comment.svg";
-import { Linking } from "react-native";
-import {
-  ServiceDetailResponeModel,
-  ServiceResponeModel,
-} from "@/types/service.type";
 import { setTempOrder } from "@/redux/features/order/orderSlice";
+import { ServiceDetailResponeModel, ServiceResponeModel } from "@/types/service.type";
+import AppDialog from "@/components/dialog/AppDialog";
+import {Dimensions, Linking} from "react-native";
 
-type ServiceWithCombo =
-    | ServiceResponeModel
-    | (ServiceDetailResponeModel & {
-  combo?: number;
-});
+type ServiceWithCombo = ServiceResponeModel | (ServiceDetailResponeModel & { combo?: number });
 
 interface ServiceBottomComponentProps {
   isLoading: boolean;
@@ -36,19 +19,23 @@ interface ServiceBottomComponentProps {
   service: ServiceWithCombo;
 }
 
-const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
-                                                                         isLoading = false,
-                                                                         onPurchase,
-                                                                         service,
-                                                                       }) => {
+const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({ isLoading = false, onPurchase, service }) => {
   const { t } = useLanguage();
-
-  const [isToastVisible, setToastIsVisible] = useState(false);
+  const { isGuest } = useAuth();
+  const [buyProductDialog, setBuyProductDialog] = useState(false);
   const windowWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
 
+  const handleLoginConfirm = () => {
+    setBuyProductDialog(false);
+    router.replace("/(auth)");
+  };
+
   const handlePurchase = () => {
-    console.log("handlePurchase called, service:", service);
+    if (isGuest) {
+      setBuyProductDialog(true);
+      return;
+    }
     if (onPurchase) {
       onPurchase();
     } else {
@@ -56,7 +43,6 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
       let serviceType = "single";
 
       if ("combo" in service) {
-        console.log("Combo detected:", service.combo);
         if (service.combo === 1) {
           price = service?.combo_5_price || 0;
           serviceType = "combo_5";
@@ -68,12 +54,9 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
           serviceType = "single";
         }
       } else {
-        console.log("No combo detected, using single price");
         price = service?.single_price || 0;
         serviceType = "single";
       }
-
-      console.log("Selected price:", price, "Service type:", serviceType);
 
       const orderItem = {
         item_id: service?.id,
@@ -86,8 +69,6 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
         image: service?.media?.[0]?.full_url,
       };
 
-      console.log("Order item created:", orderItem);
-
       dispatch(
           setTempOrder({
             items: [orderItem],
@@ -95,7 +76,6 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
           })
       );
 
-      console.log("Temp order dispatched, redirecting to checkout");
       router.push("/check-out?source=direct");
     }
   };
@@ -151,16 +131,16 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({
               backgroundColor={Colors.primary}
           />
         </View>
-        <Incubator.Toast
-            visible={isToastVisible}
-            position={"bottom"}
-            autoDismiss={1500}
-            onDismiss={() => setToastIsVisible(false)}
-        >
-          <View bg-$backgroundSuccessLight flex padding-10>
-            <Text h3_medium>Thêm giỏ hàng thành công</Text>
-          </View>
-        </Incubator.Toast>
+        <AppDialog
+            visible={buyProductDialog}
+            title={t("auth.login.login_required")}
+            description={t("auth.login.login_buy_product")}
+            closeButtonLabel={t("common.cancel")}
+            confirmButtonLabel={t("auth.login.login_now")}
+            severity="info"
+            onClose={() => setBuyProductDialog(false)}
+            onConfirm={handleLoginConfirm}
+        />
       </View>
   );
 };
