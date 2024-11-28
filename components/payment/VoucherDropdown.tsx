@@ -4,15 +4,17 @@ import React, { useRef, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { Voucher } from '@/types/voucher.type';
 
+interface VoucherDropdownProps {
+    value: Voucher | null;
+    items: Voucher[];
+    onSelect: (voucher: Voucher | null) => void;
+}
+
 const VoucherDropdown = ({
     value,
     items,
     onSelect,
-}: {
-    value: Voucher | null;
-    items: Voucher[];
-    onSelect: (voucher: Voucher) => void;
-}) => {
+}: VoucherDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const animation = useRef(new Animated.Value(0)).current;
 
@@ -31,6 +33,20 @@ const VoucherDropdown = ({
         inputRange: [0, 1],
         outputRange: ["0deg", "180deg"],
     });
+
+    const handleSelect = (voucher: Voucher) => {
+        if (value?.id === voucher.id) {
+            onSelect(null);
+        } else {
+            onSelect(voucher);
+        }
+    };
+
+    const isVoucherValid = (voucher: Voucher): boolean => {
+        const now = new Date();
+        const endDate = new Date(voucher.end_date);
+        return endDate > now && voucher.remaining_uses > 0;
+    };
 
     return (
         <View>
@@ -67,39 +83,62 @@ const VoucherDropdown = ({
                         },
                     ]}
                 >
-                    {items.map((item) => (
-                        <TouchableOpacity
-                            key={item.id}
-                            style={{
-                                ...dropdownStyles.item,
-                                ...(value?.code === item.code ? dropdownStyles.selectedItem : {}),
-                            }}
-
-                            onPress={() => {
-                                onSelect(item);
-                                toggleDropdown();
-                            }}
-                        >
-                            <View>
-                                <Text>{item.code}</Text>
-                            </View>
-                            <View row centerV gap-5>
-                                {value?.code === item.code && (
-                                    <View>
-                                        <Ionicons
-                                            name="checkmark-circle"
-                                            size={16}
-                                            color={Colors.primary}
-                                        />
+                    {items.map((item) => {
+                        const isValid = isVoucherValid(item);
+                        return (
+                            <TouchableOpacity
+                                key={item.id}
+                                style={{
+                                    ...dropdownStyles.item,
+                                    ...(value?.code === item.code ? dropdownStyles.selectedItem : {}),
+                                    ...((!isValid) ? dropdownStyles.disabledItem : {}),
+                                }}
+                                onPress={() => {
+                                    if (isValid) {
+                                        handleSelect(item);
+                                        toggleDropdown();
+                                    }
+                                }}
+                                disabled={!isValid}
+                            >
+                                <View style={dropdownStyles.voucherInfo}>
+                                    <View style={dropdownStyles.voucherHeader}>
+                                        <Text style={dropdownStyles.voucherCode}>{item.code}</Text>
+                                        {!isValid && (
+                                            <View style={dropdownStyles.expiredBadge}>
+                                                <Text style={dropdownStyles.expiredText}>
+                                                    {item.remaining_uses <= 0 ? 'Hết lượt dùng' : 'Hết hạn'}
+                                                </Text>
+                                            </View>
+                                        )}
                                     </View>
-                                )}
-                                <Text>
-                                    Giảm {item.formatted_discount}
-                                </Text>
-
-                            </View>
-                        </TouchableOpacity>
-                    ))}
+                                    <Text style={dropdownStyles.description}>{item.description}</Text>
+                                    <View style={dropdownStyles.voucherMeta}>
+                                        <Text style={dropdownStyles.metaText}>
+                                            HSD: {item.end_date_formatted}
+                                        </Text>
+                                        <Text style={dropdownStyles.metaText}>
+                                            Còn lại: {item.remaining_uses} lượt
+                                        </Text>
+                                    </View>
+                                </View>
+                                <View row centerV gap-5>
+                                    {value?.code === item.code && (
+                                        <View>
+                                            <Ionicons
+                                                name="checkmark-circle"
+                                                size={16}
+                                                color={Colors.primary}
+                                            />
+                                        </View>
+                                    )}
+                                    <Text style={dropdownStyles.discountText}>
+                                        Giảm {item.formatted_discount}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
                 </Animated.View>
             )}
         </View>
@@ -125,5 +164,51 @@ const dropdownStyles = StyleSheet.create({
     selectedItem: {
         backgroundColor: "#f0f0f0",
         justifyContent: "space-between",
+    },
+    voucherInfo: {
+        flex: 1,
+        marginRight: 10,
+    },
+    voucherHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    voucherCode: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.primary,
+        marginRight: 8,
+    },
+    description: {
+        fontSize: 13,
+        color: Colors.grey30,
+        marginBottom: 4,
+    },
+    voucherMeta: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    metaText: {
+        fontSize: 12,
+        color: Colors.grey40,
+    },
+    discountText: {
+        color: Colors.secondary,
+        fontWeight: 'bold',
+    },
+    expiredBadge: {
+        backgroundColor: Colors.grey50,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
+    expiredText: {
+        color: Colors.white,
+        fontSize: 10,
+    },
+    disabledItem: {
+        opacity: 0.6,
+        backgroundColor: Colors.grey60 + '10',
     },
 });

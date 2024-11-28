@@ -428,7 +428,10 @@
     "order_success": "Order Success",
     "order_success_message": "Your order has been created successfully. We will contact you as soon as possible.",
     "payment_error": "Payment Error",
-    "payment_error_message": "An error occurred while processing the payment. Please try again later."
+    "payment_error_message": "An error occurred while processing the payment. Please try again later.",
+    "no_voucher_applied": "No voucher applied",
+    "create_order_failed": "Create order failed",
+    "create_order_failed_message": "An error occurred while creating the order. Please try again later."
   },
   "transaction": {
     "payment_success": "Payment Success",

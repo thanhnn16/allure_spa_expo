@@ -128,11 +128,15 @@ export default function Checkout() {
     }
   };
 
-  const handleVoucherSelect = (voucher: Voucher) => {
+  const handleVoucherSelect = (voucher: Voucher | null) => {
     setVoucher(voucher);
     setSelectedVoucher(voucher);
-    const newPrice = calculateDiscountedPrice(totalPrice, voucher);
-    setDiscountedPrice(newPrice);
+    if (voucher) {
+      const newPrice = calculateDiscountedPrice(totalPrice, voucher);
+      setDiscountedPrice(newPrice);
+    } else {
+      setDiscountedPrice(totalPrice);
+    }
   };
 
   const loadSelectedAddress = async () => {
@@ -218,7 +222,7 @@ export default function Checkout() {
       }
     } catch (error) {
       console.error("Payment error:", error);
-      showDialog(t("common.error"), t("checkout.payment_failed"), "error");
+      showDialog(t("common.error"), t("checkout.create_order_failed_message"), "error");
     }
   };
 
@@ -430,7 +434,18 @@ export default function Checkout() {
             </View>
             <View row centerV spread marginT-10>
               <Text h3_bold>{t("checkout.voucher")}</Text>
-              <Text h3>{selectedVoucher ? selectedVoucher.code : ""}</Text>
+              {selectedVoucher ? (
+                <View style={styles.voucherSummary}>
+                  <View style={styles.voucherBadge}>
+                    <Text style={styles.voucherCode}>{selectedVoucher.code}</Text>
+                  </View>
+                  <Text style={styles.voucherDiscount}>
+                    -{selectedVoucher.formatted_discount}
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.noVoucherText}>{t("checkout.no_voucher_applied")}</Text>
+              )}
             </View>
             <View row centerV spread marginV-10>
               <Text h3_bold>{t("checkout.total_payment")}</Text>
@@ -537,5 +552,29 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+  },
+  voucherSummary: {
+    alignItems: 'flex-end',
+  },
+  voucherBadge: {
+    backgroundColor: Colors.primary + '20', // Semi-transparent primary color
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 4,
+  },
+  voucherCode: {
+    color: Colors.primary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  voucherDiscount: {
+    color: Colors.secondary,
+    fontSize: 12,
+  },
+  noVoucherText: {
+    color: Colors.grey30,
+    fontStyle: 'italic',
+    fontSize: 14,
   },
 });

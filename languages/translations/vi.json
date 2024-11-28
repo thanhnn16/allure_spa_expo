@@ -401,7 +401,10 @@
     "order_success": "Đặt hàng thành công",
     "order_success_message": "Đơn hàng của bạn đã được tạo thành công. Chúng tôi sẽ liên hệ với bạn sớm nhất có thể.",
     "payment_error": "Lỗi thanh toán",
-    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau."
+    "payment_error_message": "Đã có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại sau.",
+    "no_voucher_applied": "Không có Voucher áp dụng",
+    "create_order_failed": "Đặt hàng thất bại",
+    "create_order_failed_message": "Đã có lỗi xảy ra khi tạo đơn hàng. Vui lòng thử lại sau."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
