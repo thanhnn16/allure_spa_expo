@@ -105,6 +105,14 @@ interface AiMessage {
   isSystemMessage?: boolean;
 }
 
+// Cập nhật helper function
+const getActiveConfig = (configs: any[]) => {
+  return configs?.find(config => 
+    config.type === 'general_assistant' && 
+    config.is_active
+  );
+};
+
 // Send text message to AI
 export const sendTextMessage = createAsyncThunk(
   'ai/sendTextMessage',
@@ -117,9 +125,8 @@ export const sendTextMessage = createAsyncThunk(
   }, { getState, dispatch, rejectWithValue }: any) => {
     try {
       const state = getState() as RootState;
-      const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
+      const config = getActiveConfig(state.ai.configs);
 
-      // Nếu là system message, không cần hiển thị response
       if (isSystemMessage) {
         return {
           text: '',
@@ -128,16 +135,15 @@ export const sendTextMessage = createAsyncThunk(
         };
       }
 
-      const apiKey = getApiKey(systemConfig);
+      const apiKey = config?.api_key || config?.global_api_key;
       const genAI = new GoogleGenerativeAI(apiKey);
 
-      // Kiểm tra và xử lý function declarations
+      // Xử lý function declarations
       let toolsConfig = undefined;
-      if (systemConfig?.function_declarations) {
-        // Parse function_declarations nếu nó là string
-        const declarations = typeof systemConfig.function_declarations === 'string'
-          ? JSON.parse(systemConfig.function_declarations)
-          : systemConfig.function_declarations;
+      if (config?.function_declarations) {
+        const declarations = typeof config.function_declarations === 'string'
+          ? JSON.parse(config.function_declarations)
+          : config.function_declarations;
 
         if (Array.isArray(declarations)) {
           toolsConfig = [{
@@ -146,12 +152,9 @@ export const sendTextMessage = createAsyncThunk(
         }
       }
 
-      console.log('toolsConfig: ', toolsConfig);
-
-      // Khởi tạo model với tools config
       const model = genAI.getGenerativeModel({
-        model: systemConfig?.model_type || 'gemini-1.5-pro',
-        systemInstruction: systemConfig?.context,
+        model: config?.model_type || 'gemini-1.5-flash',
+        systemInstruction: config?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
       });
@@ -164,10 +167,10 @@ export const sendTextMessage = createAsyncThunk(
             parts: [{ text: msg.parts[0]?.text || '' }]
           })),
         generationConfig: {
-          temperature: systemConfig?.temperature || 0.9,
-          topK: systemConfig?.top_k || 40,
-          topP: systemConfig?.top_p || 0.95,
-          maxOutputTokens: systemConfig?.max_tokens || 8192,
+          temperature: config?.temperature || 0.9,
+          topK: config?.top_k || 40,
+          topP: config?.top_p || 0.95,
+          maxOutputTokens: config?.max_tokens || 8192,
         },
       });
 
@@ -268,18 +271,17 @@ export const sendImageMessage = createAsyncThunk(
   }, { getState, rejectWithValue }: any) => {
     try {
       const state = getState() as RootState;
-      const visionConfig = getActiveConfigByType(state.ai.configs, 'vision_config');
-      const systemConfig = getActiveConfigByType(state.ai.configs, 'system_prompt');
+      const config = getActiveConfig(state.ai.configs);
 
-      const apiKey = getApiKey(visionConfig || systemConfig);
+      const apiKey = config?.api_key || config?.global_api_key;
       const genAI = new GoogleGenerativeAI(apiKey);
 
-      // Thêm xử lý function declarations
+      // Xử lý function declarations tương tự như sendTextMessage
       let toolsConfig = undefined;
-      if (systemConfig?.function_declarations) {
-        const declarations = typeof systemConfig.function_declarations === 'string'
-          ? JSON.parse(systemConfig.function_declarations)
-          : systemConfig.function_declarations;
+      if (config?.function_declarations) {
+        const declarations = typeof config.function_declarations === 'string'
+          ? JSON.parse(config.function_declarations)
+          : config.function_declarations;
 
         if (Array.isArray(declarations)) {
           toolsConfig = [{
@@ -289,8 +291,8 @@ export const sendImageMessage = createAsyncThunk(
       }
 
       const model = genAI.getGenerativeModel({
-        model: systemConfig?.model_type || 'gemini-1.5-pro',
-        systemInstruction: visionConfig?.context || systemConfig?.context,
+        model: config?.model_type || 'gemini-1.5-pro',
+        systemInstruction: config?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
       });
@@ -303,10 +305,10 @@ export const sendImageMessage = createAsyncThunk(
             parts: [{ text: msg.parts[0]?.text || '' }]
           })),
         generationConfig: {
-          temperature: systemConfig?.temperature || 0.9,
-          topK: systemConfig?.top_k || 40,
-          topP: systemConfig?.top_p || 0.95,
-          maxOutputTokens: systemConfig?.max_tokens || 8192,
+          temperature: config?.temperature || 0.9,
+          topK: config?.top_k || 40,
+          topP: config?.top_p || 0.95,
+          maxOutputTokens: config?.max_tokens || 8192,
         },
       });
 

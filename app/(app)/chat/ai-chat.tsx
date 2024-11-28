@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { Colors, Keyboard, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -17,6 +17,46 @@ import { useAuth } from "@/hooks/useAuth";
 import { convertImageToBase64 } from "@/utils/helpers/imageHelper";
 import { useLanguage } from "@/hooks/useLanguage";
 
+// Add new constant for guiding messages
+const GUIDING_MESSAGES = [
+  {
+    id: "skin_analysis",
+    messages: {
+      vi: "Phân tích làn da của tôi",
+      en: "Analyze my skin condition",
+      ja: "私の肌状態を分析してください",
+    },
+    icon: "🔍",
+  },
+  {
+    id: "treatment_recommend",
+    messages: {
+      vi: "Tư vấn liệu trình chăm sóc",
+      en: "Recommend treatment plan",
+      ja: "トリートメントプランを提案",
+    },
+    icon: "✨",
+  },
+  {
+    id: "booking",
+    messages: {
+      vi: "Đặt lịch hẹn",
+      en: "Book an appointment",
+      ja: "予約を取る",
+    },
+    icon: "📅",
+  },
+  {
+    id: "products",
+    messages: {
+      vi: "Tư vấn sản phẩm chăm sóc",
+      en: "Product recommendations",
+      ja: "おすすめの製品",
+    },
+    icon: "🛍️",
+  },
+];
+
 const AIChatScreen = () => {
   const { t } = useLanguage();
 
@@ -28,6 +68,8 @@ const AIChatScreen = () => {
   const [messageStatus, setMessageStatus] = useState("Đã gửi");
   const scrollRef = useRef<FlatList>(null);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+
+  const { currentLanguage } = useLanguage();
 
   const hasValidContent = (msg: any) => {
     return (
@@ -54,6 +96,15 @@ const AIChatScreen = () => {
       try {
         if (!configs || configs.length === 0) return;
 
+        const activeConfig = configs.find(
+          (config: any) =>
+            config.type === "general_assistant" && config.is_active
+        );
+
+        if (!activeConfig) {
+          throw new Error("Chưa có cấu hình AI hoạt động");
+        }
+
         const userContext = {
           user_id: user?.id || "guest",
           name: user?.full_name || "Khách",
@@ -69,6 +120,7 @@ const AIChatScreen = () => {
         ).unwrap();
       } catch (error) {
         console.error("Failed to send user context:", error);
+        setMessageStatus("Lỗi: Không thể khởi tạo chat");
       }
     };
 
@@ -85,30 +137,30 @@ const AIChatScreen = () => {
     try {
       setMessageStatus("Đang gửi");
 
-      if (!configs || configs.length === 0) {
-        throw new Error("Chưa tải được cấu hình AI");
+      const activeConfig = configs.find(
+        (config: any) => config.type === "general_assistant" && config.is_active
+      );
+
+      if (!activeConfig) {
+        throw new Error("Chưa có cấu hình AI hoạt động");
       }
 
       if (selectedImages.length > 0) {
-        try {
-          const imageData = [];
-          for (const uri of selectedImages) {
-            const processedImage = await convertImageToBase64(uri);
-            imageData.push({
-              data: processedImage.base64,
-              mimeType: "image/jpeg",
-            });
-          }
-
-          await dispatch(
-            sendImageMessage({
-              text: currentMessage,
-              images: imageData,
-            })
-          ).unwrap();
-        } catch (error: any) {
-          throw new Error(`Lỗi xử lý hình ảnh: ${error.message}`);
+        const imageData = [];
+        for (const uri of selectedImages) {
+          const processedImage = await convertImageToBase64(uri);
+          imageData.push({
+            data: processedImage.base64,
+            mimeType: "image/jpeg",
+          });
         }
+
+        await dispatch(
+          sendImageMessage({
+            text: currentMessage,
+            images: imageData,
+          })
+        ).unwrap();
       } else {
         await dispatch(
           sendTextMessage({
@@ -141,8 +193,54 @@ const AIChatScreen = () => {
     );
   };
 
+  // Add new function to handle guiding message click
+  const handleGuidingMessage = (messageId: string) => {
+    const message = GUIDING_MESSAGES.find((m) => m.id === messageId);
+    if (message) {
+      setMessage(
+        message.messages[currentLanguage as keyof typeof message.messages]
+      );
+      handleSend();
+    }
+  };
+
+  // Add new component for empty state
+  const renderEmptyState = () => {
+    if (hasMessages) return null;
+
+    return (
+      <View flex center padding-16>
+        <Text color={Colors.primary} text80 marginB-16 marginT-32>
+          {t("chat.start_conversation")}
+        </Text>
+        <View style={{ width: "100%" }}>
+          {GUIDING_MESSAGES.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 16,
+                marginVertical: 8,
+                backgroundColor: Colors.grey70,
+                borderRadius: 8,
+              }}
+              onPress={() => handleGuidingMessage(item.id)}
+            >
+              <Text marginR-8>{item.icon}</Text>
+              <Text>
+                {item.messages[currentLanguage as keyof typeof item.messages]}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    );
+  };
+
   const renderChatUI = () => (
     <>
+      {renderEmptyState()}
       <FlatList
         data={messages.filter(hasValidContent)}
         renderItem={({ item, index }) => {

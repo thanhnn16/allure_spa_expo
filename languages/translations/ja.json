@@ -257,7 +257,8 @@
     "send": "送信",
     "chat_with": "チャット",
     "no_message": "メッセージがありません",
-    "type_message": "メッセージを入力"
+    "type_message": "メッセージを入力",
+    "start_conversation": "どのようなご相談でしょうか？"
   },
   "profile": {
     "title": "プロフィール",

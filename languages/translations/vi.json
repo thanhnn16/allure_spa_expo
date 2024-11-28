@@ -213,7 +213,8 @@
     "send": "Gửi",
     "chat_with": "Chat với",
     "no_message": "Không có tin nhắn",
-    "type_message": "Nhập tin nhắn"
+    "type_message": "Nhập tin nhắn",
+    "start_conversation": "Bạn muốn tư vấn về điều gì?"
   },
   "reward": {
     "title": "Phần thưởng",
