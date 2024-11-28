@@ -75,4 +75,6 @@ export interface CheckoutOrderItem {
     service_type?: 'single' | 'combo_5' | 'combo_10';
     product?: Product;
     service?: ServiceDetailResponeModel;
+    name?: string;
+    image?: string;
 }

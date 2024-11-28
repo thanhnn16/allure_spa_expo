@@ -194,12 +194,11 @@ const ServiceDetailPage = () => {
       item_type: "service",
       quantity: 1,
       price: price,
-      service_type:
-        combo === 1 ? "combo_5" : combo === 2 ? "combo_10" : "single",
+      service_type: combo === 1 ? "combo_5" : combo === 2 ? "combo_10" : "single",
       service: service,
+      name: service.service_name,
+      image: service.media?.[0]?.full_url
     };
-
-    console.log("Setting temp order with item:", orderItem);
 
     dispatch(
       setTempOrder({

@@ -108,14 +108,14 @@ const orderSlice = createSlice({
             state.tempOrder = {
                 items: action.payload.items.map((item: any) => ({
                     ...item,
-                    name: item.name ||
-                        item.service_name ||
-                        item.product?.name ||
-                        item.service?.service_name,
+                    name: item.name || 
+                          item.service_name ||
+                          item.service?.service_name ||
+                          item.product?.name,
                     image: item.image ||
-                        item.product?.media?.[0]?.full_url ||
-                        item.service?.media?.[0]?.full_url ||
-                        (item.media && item.media[0]?.full_url),
+                          item.service?.media?.[0]?.full_url ||
+                          item.product?.media?.[0]?.full_url ||
+                          (item.media && item.media[0]?.full_url)
                 })),
                 totalAmount: action.payload.totalAmount
             };

@@ -66,14 +66,14 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({ isLoadi
         service_type: serviceType,
         service: service,
         name: service?.service_name,
-        image: service?.media?.[0]?.full_url,
+        image: service?.media?.[0]?.full_url
       };
 
       dispatch(
-          setTempOrder({
-            items: [orderItem],
-            totalAmount: price,
-          })
+        setTempOrder({
+          items: [orderItem],
+          totalAmount: price,
+        })
       );
 
       router.push("/check-out?source=direct");

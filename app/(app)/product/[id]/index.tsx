@@ -280,7 +280,21 @@ export default function DetailsScreen() {
   if (isInitialLoading || isLoading) {
     return (
       <View flex bg-$white>
-        <AppBar back rightComponent title={t("productDetail.title")} />
+        <AppBar
+          back
+          rightComponent={
+            <View>
+              <TouchableOpacity onPress={() => router.push("/cart")}>
+                <Ionicons
+                  name="cart-outline"
+                  size={24}
+                  color={Colors.primary}
+                />
+              </TouchableOpacity>
+            </View>
+          }
+          title={t("productDetail.title")}
+        />
         <View flex>
           <SkeletonView
             height={200}
