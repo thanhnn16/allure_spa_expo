@@ -186,8 +186,8 @@ const ServiceDetailPage = () => {
       combo === 1
         ? service.combo_5_price
         : combo === 2
-        ? service.combo_10_price
-        : service.single_price;
+          ? service.combo_10_price
+          : service.single_price;
 
     const orderItem: CheckoutOrderItem = {
       item_id: service.id,
@@ -236,15 +236,15 @@ const ServiceDetailPage = () => {
     switch (combo) {
       case 1:
         setPrice(service?.combo_5_price);
-        setComboName(t("package.combo5"));
+        setComboName(t("package.combo5_discount"));
         break;
       case 2:
         setPrice(service?.combo_10_price);
-        setComboName(t("package.combo10"));
+        setComboName(t("package.combo10_discount"));
         break;
       default:
         setPrice(service?.single_price);
-        setComboName(t("package.single"));
+        setComboName(t("package.single_no_discount"));
         break;
     }
   }, [combo]);
@@ -288,38 +288,59 @@ const ServiceDetailPage = () => {
   };
 
   const renderDialogContent = () => (
-    <View padding-20>
-      <Text h2 marginB-20>
+    <View padding-20 bg-white br30 gap-10>
+      <Text text60BO marginB-10 color={Colors.primary}>
         {t("package.select_combo")}
       </Text>
       <TouchableOpacity
+        br20
+        centerV
+        paddingH-20
+        paddingV-15
+        style={{
+          backgroundColor: Colors.primary + "10",
+        }}
         onPress={() => {
           setCombo(0);
           setShowDialog(false);
         }}
       >
-        <Text h3 marginB-15>
-          {t("package.single")}
+        <Text h3>
+          {t("package.single_no_discount")}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
+        br20
+        centerV
+        paddingH-20
+        paddingV-15
+        style={{
+          backgroundColor: Colors.primary + "10",
+        }}
         onPress={() => {
           setCombo(1);
           setShowDialog(false);
         }}
       >
-        <Text h3 marginB-15>
-          {t("package.combo5")}
+        <Text h3>
+          {t("package.combo5_discount")}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
+        br20
+        centerV
+        paddingH-20
+        paddingV-15
+        style={{
+          backgroundColor: Colors.primary + "10",
+        }}
         onPress={() => {
           setCombo(2);
           setShowDialog(false);
         }}
       >
-        <Text h3 marginB-15>
-          {t("package.combo10")}
+        <Text h3>
+          {t("package.combo10_discount")}
         </Text>
       </TouchableOpacity>
     </View>
@@ -331,21 +352,21 @@ const ServiceDetailPage = () => {
       {isLoading
         ? renderSkeletonView()
         : service && (
+          <View flex>
             <View flex>
-              <View flex>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  {/* Image Carousel */}
-                  <View
-                    style={{
-                      width: "90%",
-                      height: 200,
-                      borderRadius: 20,
-                      overflow: "hidden",
-                      marginTop: 10,
-                      alignSelf: "center",
-                    }}
-                  >
-                    {/* <Carousel
+              <ScrollView showsVerticalScrollIndicator={false}>
+                {/* Image Carousel */}
+                <View
+                  style={{
+                    width: "90%",
+                    height: 200,
+                    borderRadius: 20,
+                    overflow: "hidden",
+                    marginTop: 10,
+                    alignSelf: "center",
+                  }}
+                >
+                  {/* <Carousel
                                     key={`carousel-${images.length}`}
                                     autoplay
                                     loop={images.length > 1}
@@ -359,197 +380,197 @@ const ServiceDetailPage = () => {
                                 >
                                     {images.map((item, idx) => renderItem(item, idx))}
                                 </Carousel> */}
-                    <Image
-                      source={require("@/assets/images/logo/logo.png")}
-                      style={{ width: "100%", height: 200 }}
-                    />
-                  </View>
-
-                  {/* Image Viewer */}
-                  <ImageView
-                    images={images}
-                    imageIndex={0}
-                    visible={visible}
-                    onRequestClose={() => setIsVisible(false)}
-                    onImageIndexChange={(index) => setImageViewIndex(index)}
-                    key={index}
-                    swipeToCloseEnabled={true}
-                    doubleTapToZoomEnabled={true}
-                    FooterComponent={ImageViewFooterComponent}
+                  <Image
+                    source={require("@/assets/images/logo/logo.png")}
+                    style={{ width: "100%", height: 200 }}
                   />
+                </View>
 
-                  {/* Service Details */}
-                  <View padding-20 gap-10>
-                    <Text h1_bold marginB-10>
-                      {service?.service_name}
+                {/* Image Viewer */}
+                <ImageView
+                  images={images}
+                  imageIndex={0}
+                  visible={visible}
+                  onRequestClose={() => setIsVisible(false)}
+                  onImageIndexChange={(index) => setImageViewIndex(index)}
+                  key={index}
+                  swipeToCloseEnabled={true}
+                  doubleTapToZoomEnabled={true}
+                  FooterComponent={ImageViewFooterComponent}
+                />
+
+                {/* Service Details */}
+                <View padding-20 gap-10>
+                  <Text h1_bold marginB-10>
+                    {service?.service_name}
+                  </Text>
+
+                  <View row marginB-10>
+                    <Image source={TagIcon} size={24} />
+                    <Text h1_medium secondary marginL-5>
+                      {formatCurrency({ price: Number(price) })}
                     </Text>
 
-                    <View row marginB-10>
-                      <Image source={TagIcon} size={24} />
-                      <Text h1_medium secondary marginL-5>
-                        {formatCurrency({ price: Number(price) })}
-                      </Text>
-
-                      <View flex centerV row gap-15 right>
-                        <TouchableOpacity onPress={handleShare}>
-                          <Image source={LinkIcon} size={24} />
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={handleToggleFavorite}>
-                          {renderHeartIcon()}
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-
-                    <View row centerV>
-                      <View row gap-5>
-                        <RatingStar
-                          rating={service?.rating_summary.average_rating ?? 0}
-                        />
-                        <Text h3_medium>
-                          {service?.rating_summary.average_rating}
-                        </Text>
-                      </View>
-                      <View flex row right>
-                        <Text h3_medium>
-                          {service?.rating_summary.total_ratings}{" "}
-                          {t("productDetail.reviews")}
-                        </Text>
-                      </View>
-                    </View>
-                    {/* Package Selection */}
-                    <View gap-20>
-                      <Text h2_bold>{t("service.treatment")}</Text>
-
-                      <TouchableOpacity onPress={() => setShowDialog(true)}>
-                        <View
-                          center
-                          row
-                          paddingH-20
-                          height={50}
-                          style={{
-                            borderWidth: 1,
-                            borderRadius: 10,
-                            borderColor: "#E0E0E0",
-                          }}
-                        >
-                          <Text flex h3>
-                            {comboName}
-                          </Text>
-                          <SimpleLineIcons
-                            name="arrow-down"
-                            size={18}
-                            color="#BCBABA"
-                          />
-                        </View>
+                    <View flex centerV row gap-15 right>
+                      <TouchableOpacity onPress={handleShare}>
+                        <Image source={LinkIcon} size={24} />
                       </TouchableOpacity>
-                    </View>
-
-                    {/* Service Description */}
-                    <View>
-                      <BlinkingIconText />
-                    </View>
-
-                    {/* Service Info */}
-                    <View row paddingR-20>
-                      <View>
-                        <Image source={SunIcon} width={18} height={18} />
-                      </View>
-                      <View row>
-                        <Text h3>• </Text>
-                        <Text h3>{service?.description}</Text>
-                      </View>
-                    </View>
-
-                    <View row paddingR-20>
-                      <View>
-                        <Image source={MapMarkerIcon} width={18} height={18} />
-                      </View>
-                      <View row>
-                        <Text h3>• </Text>
-                        <Text h3>
-                          Tầng 1 Shophouse P1- SH02 Vinhome Central Park, 720A
-                          Điện Biên Phủ, Phường 22, Quận Bình Thạnh, HCM
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View row paddingR-20>
-                      <View>
-                        <Image source={PhoneCallIcon} width={18} height={18} />
-                      </View>
-                      <View row>
-                        <Text h3>• </Text>
-                        <Text h3>+84986910920 (Zalo) | +84889130222</Text>
-                      </View>
+                      <TouchableOpacity onPress={handleToggleFavorite}>
+                        {renderHeartIcon()}
+                      </TouchableOpacity>
                     </View>
                   </View>
 
-                  {/* Package Selection Dialog */}
-                  <Dialog
-                    visible={showDialog}
-                    onDismiss={() => setShowDialog(false)}
-                    panDirection={PanningProvider.Directions.DOWN}
-                  >
-                    {renderDialogContent()}
-                  </Dialog>
-                </ScrollView>
-              </View>
+                  <View row centerV>
+                    <View row gap-5>
+                      <RatingStar
+                        rating={service?.rating_summary.average_rating ?? 0}
+                      />
+                      <Text h3_medium>
+                        {service?.rating_summary.average_rating}
+                      </Text>
+                    </View>
+                    <View flex row right>
+                      <Text h3_medium>
+                        {service?.rating_summary.total_ratings}{" "}
+                        {t("productDetail.reviews")}
+                      </Text>
+                    </View>
+                  </View>
+                  {/* Package Selection */}
+                  <View gap-20>
+                    <Text h2_bold>{t("service.treatment")}</Text>
 
-              {/* Bottom Actions */}
-              <ServiceBottomComponent
-                isLoading={isLoading}
-                onPurchase={() => setBookingDialog(true)}
-                service={{ ...service, combo: selectedCombo }}
-              />
+                    <TouchableOpacity onPress={() => setShowDialog(true)}>
+                      <View
+                        center
+                        row
+                        paddingH-20
+                        height={50}
+                        style={{
+                          borderWidth: 1,
+                          borderRadius: 10,
+                          borderColor: "#E0E0E0",
+                        }}
+                      >
+                        <Text flex h3>
+                          {comboName}
+                        </Text>
+                        <SimpleLineIcons
+                          name="arrow-down"
+                          size={18}
+                          color="#BCBABA"
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
 
-              {/* Dialogs */}
-              <AppDialog
-                visible={buyProductDialog}
-                title={t("auth.login.login_required")}
-                description={t("auth.login.login_buy_product")}
-                closeButtonLabel={t("common.cancel")}
-                confirmButtonLabel={t("auth.login.login_now")}
-                severity="info"
-                onClose={() => setBuyProductDialog(false)}
-                onConfirm={handleLoginConfirm}
-              />
+                  {/* Service Description */}
+                  <View>
+                    <BlinkingIconText />
+                  </View>
 
-              <AppDialog
-                visible={favoriteDialog}
-                title={t("auth.login.login_required")}
-                description={t("auth.login.login_favorite")}
-                closeButtonLabel={t("common.cancel")}
-                confirmButtonLabel={t("auth.login.login_now")}
-                severity="info"
-                onClose={() => setFavoriteDialog(false)}
-                onConfirm={handleLoginConfirm}
-              />
+                  {/* Service Info */}
+                  <View row paddingR-20>
+                    <View>
+                      <Image source={SunIcon} width={18} height={18} />
+                    </View>
+                    <View row>
+                      <Text h3>• </Text>
+                      <Text h3>{service?.description}</Text>
+                    </View>
+                  </View>
 
-              <ServiceBookingDialog
-                visible={bookingDialog}
-                title={t("service.serviceDetail.book_now")}
-                closeButtonLabel={t("common.cancel")}
-                confirmButtonLabel={t("service.book_now")}
-                secondaryConfirmButtonLabel={t("checkout.pay_online")}
-                severity="info"
-                onClose={() => {
-                  setBookingDialog(false);
-                  setCombo(0); // Reset combo when dialog closes
-                }}
-                onConfirm={handleBooking}
-                onConfrimSecondary={handlePayment}
-                closeButton={true}
-                confirmButton={true}
-                secondaryConfirmButton={true}
-                showActionSheet={showDialog}
-                setShowActionSheet={setShowDialog}
-                setCombo={setCombo}
-                singlePrice={service?.single_price}
-                combo5Price={service?.combo_5_price}
-                combo10Price={service?.combo_10_price}
-              />
+                  <View row paddingR-20>
+                    <View>
+                      <Image source={MapMarkerIcon} width={18} height={18} />
+                    </View>
+                    <View row>
+                      <Text h3>• </Text>
+                      <Text h3>
+                        Tầng 1 Shophouse P1- SH02 Vinhome Central Park, 720A
+                        Điện Biên Phủ, Phường 22, Quận Bình Thạnh, HCM
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View row paddingR-20>
+                    <View>
+                      <Image source={PhoneCallIcon} width={18} height={18} />
+                    </View>
+                    <View row>
+                      <Text h3>• </Text>
+                      <Text h3>+84986910920 (Zalo) | +84889130222</Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Package Selection Dialog */}
+                <Dialog
+                  visible={showDialog}
+                  onDismiss={() => setShowDialog(false)}
+                  panDirection={PanningProvider.Directions.DOWN}
+                >
+                  {renderDialogContent()}
+                </Dialog>
+              </ScrollView>
             </View>
-          )}
+
+            {/* Bottom Actions */}
+            <ServiceBottomComponent
+              isLoading={isLoading}
+              onPurchase={() => setBookingDialog(true)}
+              service={{ ...service, combo: selectedCombo }}
+            />
+
+            {/* Dialogs */}
+            <AppDialog
+              visible={buyProductDialog}
+              title={t("auth.login.login_required")}
+              description={t("auth.login.login_buy_product")}
+              closeButtonLabel={t("common.cancel")}
+              confirmButtonLabel={t("auth.login.login_now")}
+              severity="info"
+              onClose={() => setBuyProductDialog(false)}
+              onConfirm={handleLoginConfirm}
+            />
+
+            <AppDialog
+              visible={favoriteDialog}
+              title={t("auth.login.login_required")}
+              description={t("auth.login.login_favorite")}
+              closeButtonLabel={t("common.cancel")}
+              confirmButtonLabel={t("auth.login.login_now")}
+              severity="info"
+              onClose={() => setFavoriteDialog(false)}
+              onConfirm={handleLoginConfirm}
+            />
+
+            <ServiceBookingDialog
+              visible={bookingDialog}
+              title={t("service.serviceDetail.book_now")}
+              closeButtonLabel={t("common.cancel")}
+              confirmButtonLabel={t("service.book_now")}
+              secondaryConfirmButtonLabel={t("checkout.pay_online")}
+              severity="info"
+              onClose={() => {
+                setBookingDialog(false);
+                setCombo(0); // Reset combo when dialog closes
+              }}
+              onConfirm={handleBooking}
+              onConfrimSecondary={handlePayment}
+              closeButton={true}
+              confirmButton={true}
+              secondaryConfirmButton={true}
+              showActionSheet={showDialog}
+              setShowActionSheet={setShowDialog}
+              setCombo={setCombo}
+              singlePrice={service?.single_price}
+              combo5Price={service?.combo_5_price}
+              combo10Price={service?.combo_10_price}
+            />
+          </View>
+        )}
     </View>
   );
 };

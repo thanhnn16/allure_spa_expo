@@ -251,10 +251,15 @@
     "evening": "Good evening!"
   },
   "package": {
-    "single": "Single package (No discount)",
-    "combo5": "Combo package 5 (20% discount + 1 free)",
-    "combo10": "Combo package 10 (30% discount + 3 free)",
-    "select_combo": "Select combo package"
+    "single": "Single package",
+    "combo5": "Combo package 5",
+    "combo10": "Combo package 10",
+    "single_no_discount": "Single package (No discount)",
+    "combo5_discount": "Save 20% + 1 free session (6 sessions)",
+    "combo10_discount": "Save 30% + 3 free sessions (13 sessions)",
+    "select_combo": "Select combo package",
+    "no_discount": "No discount",
+    "online_payment_flexible": "Online payment - Flexible usage"
   },
   "service": {
     "service_details": "Service details",
@@ -288,7 +293,10 @@
       "book_now": "Book now",
       "make_appointment": "Make an appointment"
     },
-    "available": "slots available"
+    "available": "slots available",
+    "pay_when_receive": "Pay when receive",
+    "pay_at_spa": "Pay at Spa",
+    "pay_online": "Pay online"
   },
   "system": {
     "fud": "Feature under development!"

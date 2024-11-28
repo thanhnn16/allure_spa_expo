@@ -255,10 +255,15 @@
     "evening": "Chúc bạn buổi tối vui vẻ!"
   },
   "package": {
-    "single": "Gói đơn (Không giảm giá)",
-    "combo5": "Gói combo 5 (Giảm 20% + 1 buổi free)",
-    "combo10": "Gói combo 10 (Giảm 30% + 3 buổi free)",
-    "select_combo": "Chọn gói combo"
+    "single": "Gói đơn",
+    "combo5": "Gói combo 5",
+    "combo10": "Gói combo 10",
+    "single_no_discount": "Gói đơn (Không giảm giá)",
+    "select_combo": "Chọn gói combo",
+    "no_discount": "Không giảm giá",
+    "combo5_discount": "Giảm 20% + 1 buổi free (6 buổi)",
+    "combo10_discount": "Giảm 30% + 3 buổi free (13 buổi)",
+    "online_payment_flexible": "Thanh toán online - Sử dụng linh hoạt"
   },
   "service": {
     "service_details": "Chi tiết dịch vụ",
@@ -294,7 +299,10 @@
       "book_now": "Book now",
       "make_appointment": "Make an appointment"
     },
-    "available": "chỗ còn trống"
+    "available": "chỗ còn trống",
+    "pay_when_receive": "Thanh toán khi nhận hàng",
+    "pay_at_spa": "Thanh toán tại Spa",
+    "pay_online": "Thanh toán online"
   },
   "system": {
     "fud": "Tính năng đang được phát triển!",
