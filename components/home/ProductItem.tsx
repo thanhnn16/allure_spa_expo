@@ -46,13 +46,13 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
         />
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
-        <Text text70H numberOfLines={2} ellipsizeMode="tail">
+        <Text h2_bold numberOfLines={2} ellipsizeMode="tail">
           {item?.name}
         </Text>
 
         <View flex-1 gap-5 row centerV>
           <Image source={StarIcon} width={15} height={15} />
-          <Text style={{ color: "#8C8585" }}>
+          <Text h3 style={{ color: "#8C8585" }}>
             {item?.rating_summary.average_rating} /{" "}
             {item?.rating_summary.total_ratings} | {item?.quantity}{" "}
             {t("productDetail.available")}
@@ -60,7 +60,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
         </View>
 
         <View bottom paddingB-5>
-          <Text text70H style={{ color: "#A85A29" }}>
+          <Text h2_bold secondary>
             {formatCurrency({ price: item.price })}
           </Text>
         </View>

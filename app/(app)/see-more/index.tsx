@@ -105,6 +105,7 @@ const SeeMore = () => {
 
   const handleFilterCategory = async (value: string) => {
     if (value === 'Dịch vụ') {
+      console.log('Dịch vụ');
       await dispatch(
         getServicesThunk({
           page: currentPage + 1,
@@ -114,19 +115,47 @@ const SeeMore = () => {
       categoryBottomSheetRef.current?.close();
       return;
     } else if (value === 'Sản phẩm') {
-      await dispatch({
+      console.log('Sản phẩm');
+      dispatch({
         type: "product/fetchProducts",
         payload: { page: currentPage + 1 },
       });
       categoryBottomSheetRef.current?.close();
       return;
     } else {
+      console.log('Không có');
       categoryBottomSheetRef.current?.close();
       return;
     }
   }
 
-  
+  const handleSort = async (value: string) => {
+    if (value === 'Từ A-Z') {
+      console.log('Từ A-Z');
+      sortBottomSheetRef.current?.close();
+      return;
+    } else if (value === 'Từ Z-A') {
+      console.log('Từ Z-A');
+      sortBottomSheetRef.current?.close();
+      return;
+    } else if (value === 'Giá tăng dần') {
+      console.log('Giá tăng dần');
+      sortBottomSheetRef.current?.close();
+      return;
+    } else if (value === 'Giá giảm dần') {
+      console.log('Giá giảm dần');
+      sortBottomSheetRef.current?.close();
+      return;
+    } else if (value === 'Đánh giá cao nhất') {
+      console.log('Đánh giá cao nhất');
+      sortBottomSheetRef.current?.close();
+      return;
+    } else {
+      console.log('Không có');
+      sortBottomSheetRef.current?.close();
+      return;
+    }
+  }
 
   const resetFilters = () => {
     setCategoryValue('Không có');
@@ -191,10 +220,11 @@ const SeeMore = () => {
               onPress={() => filterBottomSheetRef.current?.expand()}
             >
               <View row spread centerV gap-4>
-                <Text h2>Chưa áp dụng</Text>
+                <Text h2 primary>Bộ lọc (3)</Text>
                 <Image
                   source={FilterIcon}
                   style={{ width: 20, height: 20 }}
+                  tintColor={Colors.primary}
                 />
               </View>
 
@@ -254,7 +284,7 @@ const SeeMore = () => {
                 onValueChange={(value) => setSliderPriceValue(value)}
                 value={sliderPriceValue}
                 minimumValue={0}
-                maximumValue={100}
+                maximumValue={5}
                 step={1}
                 ref={slider}
                 thumbTintColor={Colors.primary}
@@ -266,14 +296,18 @@ const SeeMore = () => {
               <AppButton
                 type="primary"
                 title="Áp dụng"
-                onPress={() => filterBottomSheetRef.current?.close()}
+                onPress={() => {
+                  handleFilterCategory(categoryValue)
+                  handleSort(sortValue)
+                  filterBottomSheetRef.current?.close()
+                }}
               />
               {(categoryValue !== "Không có" || sortValue !== "Không có" || sliderPriceValue !== 0) && (
                 <AppButton
-                type="outline"
-                title="Xóa bộ lọc"
-                onPress={() => resetFilters()}
-              />
+                  type="outline"
+                  title="Xóa bộ lọc"
+                  onPress={() => resetFilters()}
+                />
               )}
             </View>
           </BottomSheetView>
@@ -289,9 +323,9 @@ const SeeMore = () => {
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
             <Text h2_bold center>Danh mục</Text>
             <RadioGroup initialValue={categoryValue} onValueChange={setCategoryValue}>
-              <RadioButton value={'Dịch vụ'} label={'Dịch vụ'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Sản phẩm'} label={'Sản phẩm'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Không có'} label={'Không có'} color={Colors.primary} paddingV-8/>
+              <RadioButton value={'Dịch vụ'} label={'Dịch vụ'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Sản phẩm'} label={'Sản phẩm'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Không có'} label={'Không có'} color={Colors.primary} paddingV-8 />
             </RadioGroup>
             <View paddingV-12 gap-8>
               <AppButton
@@ -316,19 +350,18 @@ const SeeMore = () => {
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
             <Text h2_bold center>Sắp xếp theo</Text>
             <RadioGroup initialValue={sortValue} onValueChange={setSortValue}>
-              <RadioButton value={'Từ A-Z'} label={'Từ A-Z'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Từ Z-A'} label={'Từ Z-A'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Giá tăng dần'} label={'Giá tăng dần'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Giá giảm dần'} label={'Giá giảm dần'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Đánh giá cao nhất'} label={'Đánh giá cao nhất'} color={Colors.primary} paddingV-8/>
-              <RadioButton value={'Không có'} label={'Không có'} color={Colors.primary} paddingV-8/>
+              <RadioButton value={'Từ A-Z'} label={'Từ A-Z'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Từ Z-A'} label={'Từ Z-A'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Giá tăng dần'} label={'Giá tăng dần'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Giá giảm dần'} label={'Giá giảm dần'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Đánh giá cao nhất'} label={'Đánh giá cao nhất'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'Không có'} label={'Không có'} color={Colors.primary} paddingV-8 />
             </RadioGroup>
             <View paddingV-12 gap-8>
               <AppButton
                 type="primary"
                 title="Chọn"
                 onPress={() => {
-                  handleFilterCategory(categoryValue)
                   sortBottomSheetRef.current?.close()
                   filterBottomSheetRef.current?.expand()
                 }}

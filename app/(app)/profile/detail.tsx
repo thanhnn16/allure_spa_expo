@@ -46,8 +46,8 @@ const ProfileDetail = (props: ProfileDetailProps) => {
                 : require("@/assets/images/logo/logo.png")
             }
           />
-          <Text text60>{user?.full_name || t("profile.username")}</Text>
-          <Text gray>{user?.phone_number || ""}</Text>
+          <Text h1_bold>{user?.full_name || t("profile.username")}</Text>
+          <Text h2 gray>{user?.phone_number || ""}</Text>
         </View>
         <Card width={"100%"} marginT-20>
           {[

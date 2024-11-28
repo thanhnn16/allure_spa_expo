@@ -16,8 +16,8 @@ const DeleteAccountScreen: React.FC = () => {
       <AppBar back title={t("deleteAccount.title")} />
       <View flex bg-white paddingH-24>
         <View marginT-20>
-          <Text text40H>{t("deleteAccount.title")}</Text>
-          <Text marginT-20 text70>
+          <Text h0_bold>{t("deleteAccount.title")}</Text>
+          <Text marginT-20 h2>
             {t("deleteAccount.description")}
           </Text>
 

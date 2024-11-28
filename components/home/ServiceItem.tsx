@@ -46,13 +46,14 @@ const ServiceItem: React.FC<RenderServiceItemProps> = ({
       </View>
       <View flex paddingH-12 gap-2>
         <View>
-          <Text text70H numberOfLines={2} ellipsizeMode="tail">
+          <Text h2_bold numberOfLines={2} ellipsizeMode="tail">
             {item.service_name}
           </Text>
         </View>
 
         <View>
           <Text
+            h3
             style={{ color: "#8C8585" }}
             numberOfLines={2}
             ellipsizeMode="tail"
@@ -62,7 +63,7 @@ const ServiceItem: React.FC<RenderServiceItemProps> = ({
         </View>
 
         <View absB marginH-12 marginB-10>
-          <Text text70H style={{ color: "#A85A29" }} marginT-10>
+          <Text h2_bold secondary marginT-10>
             {formatCurrency({ price: item.single_price })}
           </Text>
         </View>
