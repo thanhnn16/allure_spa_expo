@@ -188,165 +188,20 @@ const CancelModal = React.memo(
   }
 );
 
-const ScheduledPage = () => {
-  const { t } = useLanguage();
-
-  const [selectedItem, setSelectedItem] = useState<number>(1);
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [note, setNote] = useState("");
-  const [currentItemId, setCurrentItemId] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
-  const [selectedDate, setSelectedDate] = useState(
-    moment().format("YYYY-MM-DD")
-  );
-  const dispatch = useDispatch();
-  const { appointments, loading } = useSelector(
-    (state: any) => state.appointment
-  );
-  const [allAppointments, setAllAppointments] = useState<
-    AppointmentResponeModelParams[]
-  >([]);
-
-  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
-
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const response = await dispatch(
-          getAppointments({
-            from_date: null,
-            to_date: null,
-          })
-        ).unwrap();
-        setAllAppointments(response);
-        handleItemPress(items[0]);
-      } catch (error) {
-        console.log("Error fetching initial appointments:", error);
-      }
-    };
-
-    fetchInitialData();
-
-    return () => {
-      dispatch(resetAppointmentState());
-    };
-  }, [dispatch]);
-
-  const items = [
-    { id: 1, name: t("appointment.all") },
-    { id: 6, name: t("appointment.7upcoming") },
-    { id: 2, name: t("appointment.pending"), status: "pending" },
-    { id: 5, name: t("appointment.confirmed"), status: "confirmed" },
-    { id: 3, name: t("appointment.completed"), status: "completed" },
-    { id: 4, name: t("appointment.cancelled"), status: "cancelled" },
-  ];
-
-  const handleItemPress = (item: { id: number; status?: string }) => {
-    setSelectedItem(item.id);
-    let params: {
-      from_date: string | null;
-      to_date: string | null;
-      status?: string | null;
-    } = {
-      from_date: moment().format("YYYY-MM-DD"),
-      to_date: moment().add(7, "days").format("YYYY-MM-DD"),
-      status: item.status,
-    };
-
-    if (item.id === 1) {
-      params = {
-        from_date: null,
-        to_date: null,
-        status: null,
-      };
-    }
-
-    if (item.id === 6) {
-      params = {
-        from_date: moment().format("YYYY-MM-DD"),
-        to_date: moment().add(7, "days").format("YYYY-MM-DD"),
-        status: "confirmed",
-      };
-    }
-    dispatch(resetAppointmentState());
-    dispatch(getAppointments(params));
-  };
-
-  const renderItem = (item: { id: number; name: string; status?: string }) => {
-    const isSelected = item.id === selectedItem;
-    return (
-      <TouchableOpacity
-        marginR-12
-        key={item.id}
-        onPress={() => handleItemPress(item)}
-      >
-        <View
-          br30
-          paddingH-15
-          centerV
-          height={40}
-          backgroundColor={isSelected ? Colors.primary : Colors.white}
-          style={{
-            borderWidth: 1,
-            borderColor: isSelected ? Colors.primary : Colors.grey60,
-          }}
-        >
-          <Text h3 color={isSelected ? Colors.white : Colors.text}>
-            {item.name}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderSkeletonItem = () => (
-    <View
-      padding-15
-      marginB-10
-      br20
-      backgroundColor={Colors.white}
-      style={{
-        shadowColor: Colors.black,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-      }}
-    >
-      <SkeletonView height={20} width={width * 0.4} />
-      <View marginT-10>
-        <SkeletonView height={120} width={width - 60} />
-      </View>
-      <View row marginT-10>
-        <SkeletonView height={20} width={width * 0.6} />
-      </View>
-    </View>
-  );
-
-  const handleCancelOrderPress = useCallback((id: number) => {
-    setCurrentItemId(id);
-    setModalVisible(true);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setModalVisible(false);
-  }, []);
-
-  const handleConfirmCancel = useCallback(
-    (note: string) => {
-      if (currentItemId !== null) {
-        dispatch(cancelAppointment({ id: currentItemId, note })).then(() => {
-          dispatch(getAppointments());
-        });
-        setModalVisible(false);
-      }
-    },
-    [currentItemId, dispatch]
-  );
-
-  const renderFlatListItem: ListRenderItem<AppointmentResponeModelParams> = ({
+// 1. Tách AppointmentItem thành một PureComponent riêng
+const AppointmentItem = React.memo(
+  ({
     item,
     index,
+    onCancelPress,
+    isPastOrCompleted,
+    t,
+  }: {
+    item: AppointmentResponeModelParams;
+    index: number;
+    onCancelPress: (id: number) => void;
+    isPastOrCompleted: boolean;
+    t: (key: string) => string;
   }) => {
     const statusColors = {
       completed: {
@@ -373,10 +228,6 @@ const ScheduledPage = () => {
 
     const statusConfig =
       statusColors[item.status.toLowerCase() as keyof typeof statusColors];
-
-    const isPastOrCompleted =
-      moment(item.start).isBefore(moment(), "day") ||
-      item.status.toLowerCase() === "completed";
 
     return (
       <View style={{ marginBottom: 15 }}>
@@ -578,7 +429,7 @@ const ScheduledPage = () => {
                 {item.status === "pending" && (
                   <AppButton
                     type="outline"
-                    onPress={() => handleCancelOrderPress(item.id)}
+                    onPress={() => onCancelPress(item.id)}
                     buttonStyle={{ marginTop: 15, width: "100%" }}
                     children={
                       <View row gap-4 centerV>
@@ -619,22 +470,190 @@ const ScheduledPage = () => {
         </Animated.View>
       </View>
     );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.item.id === nextProps.item.id &&
+      prevProps.isPastOrCompleted === nextProps.isPastOrCompleted
+    );
+  }
+);
+
+const ScheduledPage = () => {
+  const { t } = useLanguage();
+
+  const [selectedItem, setSelectedItem] = useState<number>(1);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [note, setNote] = useState("");
+  const [currentItemId, setCurrentItemId] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "calendar">("list");
+  const [selectedDate, setSelectedDate] = useState(
+    moment().format("YYYY-MM-DD")
+  );
+  const dispatch = useDispatch();
+  const { appointments, loading } = useSelector(
+    (state: any) => state.appointment
+  );
+  const [allAppointments, setAllAppointments] = useState<
+    AppointmentResponeModelParams[]
+  >([]);
+
+  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const response = await dispatch(
+          getAppointments({
+            from_date: null,
+            to_date: null,
+          })
+        ).unwrap();
+        setAllAppointments(response);
+        handleItemPress(items[0]);
+      } catch (error) {
+        console.log("Error fetching initial appointments:", error);
+      }
+    };
+
+    fetchInitialData();
+
+    return () => {
+      dispatch(resetAppointmentState());
+    };
+  }, [dispatch]);
+
+  const items = [
+    { id: 1, name: t("appointment.all") },
+    { id: 6, name: t("appointment.7upcoming") },
+    { id: 2, name: t("appointment.pending"), status: "pending" },
+    { id: 5, name: t("appointment.confirmed"), status: "confirmed" },
+    { id: 3, name: t("appointment.completed"), status: "completed" },
+    { id: 4, name: t("appointment.cancelled"), status: "cancelled" },
+  ];
+
+  const handleItemPress = (item: { id: number; status?: string }) => {
+    setSelectedItem(item.id);
+    let params: {
+      from_date: string | null;
+      to_date: string | null;
+      status?: string | null;
+    } = {
+      from_date: moment().format("YYYY-MM-DD"),
+      to_date: moment().add(7, "days").format("YYYY-MM-DD"),
+      status: item.status,
+    };
+
+    if (item.id === 1) {
+      params = {
+        from_date: null,
+        to_date: null,
+        status: null,
+      };
+    }
+
+    if (item.id === 6) {
+      params = {
+        from_date: moment().format("YYYY-MM-DD"),
+        to_date: moment().add(7, "days").format("YYYY-MM-DD"),
+        status: "confirmed",
+      };
+    }
+    dispatch(resetAppointmentState());
+    dispatch(getAppointments(params));
   };
 
-  // Sửa lại cách sử dụng memo
-  const MemoizedFlatListItem = React.memo(
-    ({ item, index }: ListRenderItemInfo<AppointmentResponeModelParams>) =>
-      renderFlatListItem({
-        item,
-        index,
-        separators: {
-          highlight: () => {},
-          unhighlight: () => {},
-          updateProps: () => {},
-        },
-      }),
-    (prev, next) => prev.item.id === next.item.id
+  const renderItem = (item: { id: number; name: string; status?: string }) => {
+    const isSelected = item.id === selectedItem;
+    return (
+      <TouchableOpacity
+        marginR-12
+        key={item.id}
+        onPress={() => handleItemPress(item)}
+      >
+        <View
+          br30
+          paddingH-15
+          centerV
+          height={40}
+          backgroundColor={isSelected ? Colors.primary : Colors.white}
+          style={{
+            borderWidth: 1,
+            borderColor: isSelected ? Colors.primary : Colors.grey60,
+          }}
+        >
+          <Text h3 color={isSelected ? Colors.white : Colors.text}>
+            {item.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSkeletonItem = () => (
+    <View
+      padding-15
+      marginB-10
+      br20
+      backgroundColor={Colors.white}
+      style={{
+        shadowColor: Colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+      }}
+    >
+      <SkeletonView height={20} width={width * 0.4} />
+      <View marginT-10>
+        <SkeletonView height={120} width={width - 60} />
+      </View>
+      <View row marginT-10>
+        <SkeletonView height={20} width={width * 0.6} />
+      </View>
+    </View>
   );
+
+  const handleCancelOrderPress = useCallback((id: number) => {
+    setCurrentItemId(id);
+    setModalVisible(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setModalVisible(false);
+  }, []);
+
+  const handleConfirmCancel = useCallback(
+    (note: string) => {
+      if (currentItemId !== null) {
+        dispatch(cancelAppointment({ id: currentItemId, note })).then(() => {
+          dispatch(getAppointments());
+        });
+        setModalVisible(false);
+      }
+    },
+    [currentItemId, dispatch]
+  );
+
+  // 2. Cập nhật renderFlatListItem để sử dụng AppointmentItem
+  const renderFlatListItem: ListRenderItem<AppointmentResponeModelParams> = ({
+    item,
+    index,
+  }) => {
+    const isPastOrCompleted =
+      moment(item.start).isBefore(moment(), "day") ||
+      item.status.toLowerCase() === "completed";
+
+    return (
+      <AppointmentItem
+        item={item}
+        index={index}
+        onCancelPress={handleCancelOrderPress}
+        isPastOrCompleted={isPastOrCompleted}
+        t={t}
+      />
+    );
+  };
 
   const getMarkedDates = () => {
     const markedDates: any = {};
@@ -805,17 +824,7 @@ const ScheduledPage = () => {
             <FlatList
               showsVerticalScrollIndicator={false}
               data={appointments}
-              renderItem={({ item, index }) => (
-                <MemoizedFlatListItem
-                  item={item}
-                  index={index}
-                  separators={{
-                    highlight: () => {},
-                    unhighlight: () => {},
-                    updateProps: () => {},
-                  }}
-                />
-              )}
+              renderItem={renderFlatListItem}
               keyExtractor={(item) => item.id.toString()}
               ListEmptyComponent={() => (
                 <View center paddingT-60>
@@ -842,19 +851,51 @@ const ScheduledPage = () => {
                 <RefreshControl
                   refreshing={loading}
                   onRefresh={() => {
-                    dispatch(
-                      getAppointments({
-                        from_date: selectedDate,
-                        to_date: selectedDate,
-                      })
+                    let params: {
+                      from_date: string | null;
+                      to_date: string | null;
+                      status: string | null;
+                    } = {
+                      from_date: null,
+                      to_date: null,
+                      status: null,
+                    };
+
+                    // Lấy params dựa trên item đang được chọn
+                    const selectedItemData = items.find(
+                      (item) => item.id === selectedItem
                     );
+                    if (selectedItemData) {
+                      if (selectedItemData.id === 6) {
+                        params = {
+                          from_date: moment().format("YYYY-MM-DD"),
+                          to_date: moment().add(7, "days").format("YYYY-MM-DD"),
+                          status: "confirmed",
+                        };
+                      } else if (selectedItemData.status) {
+                        params = {
+                          ...params,
+                          status: selectedItemData.status,
+                        };
+                      }
+                    }
+
+                    dispatch(resetAppointmentState());
+                    dispatch(getAppointments(params));
                   }}
                   colors={[Colors.primary]}
                 />
               }
-              maxToRenderPerBatch={10}
-              windowSize={10}
+              maxToRenderPerBatch={5} // Giảm số lượng items render mỗi lần
+              windowSize={5} // Giảm kích thước window
               removeClippedSubviews={true}
+              initialNumToRender={5} // Giảm số lượng items render ban đầu
+              updateCellsBatchingPeriod={50} // Tăng thời gian batch update
+              getItemLayout={(data, index) => ({
+                length: 250, // Ước tính chiều cao trung bình của mỗi item
+                offset: 250 * index,
+                index,
+              })}
             />
           )}
         </View>
@@ -942,17 +983,7 @@ const ScheduledPage = () => {
                 <FlatList
                   showsVerticalScrollIndicator={false}
                   data={appointments}
-                  renderItem={({ item, index }) => (
-                    <MemoizedFlatListItem
-                      item={item}
-                      index={index}
-                      separators={{
-                        highlight: () => {},
-                        unhighlight: () => {},
-                        updateProps: () => {},
-                      }}
-                    />
-                  )}
+                  renderItem={renderFlatListItem}
                   keyExtractor={(item) => item.id.toString()}
                   maxToRenderPerBatch={10}
                   windowSize={10}
