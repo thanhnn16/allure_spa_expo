@@ -14,7 +14,6 @@ import {
   Text,
   View,
   KeyboardAwareScrollView,
-  TouchableOpacity,
 } from "react-native-ui-lib";
 
 import AppDialog from "@/components/dialog/AppDialog";
@@ -131,7 +130,6 @@ export default function Checkout() {
 
   const tempOrder = useSelector((state: RootState) => state.order.tempOrder);
   const checkoutItems = useSelector(selectCheckoutItems) as CheckoutOrderItem[];
-  const addresses = useSelector((state: RootState) => state.address.addresses);
   const userProfile = useSelector((state: RootState) => state.auth.user);
   const vouchers = useSelector((state: RootState) => state.voucher.vouchers);
 
@@ -335,37 +333,15 @@ export default function Checkout() {
   const getProvince = async () => {
     try {
       const response = await dispatch(getAddressProvinceThunk({}));
-      setProvinceList(response.payload.data);
+      const mappedProvinces = response.payload.data.map((p: any) => ({
+        value: p.code.toString(),
+        label: p.name,
+      }));
+      setProvinceList(mappedProvinces);
     } catch (error: any) {
       showDialog(
         t("common.error"),
         error.message || t("address.province_load_error"),
-        "error"
-      );
-    }
-  };
-
-  const getDistrict = async (id: number) => {
-    try {
-      const response = await dispatch(getAddressDistrictThunk({ query: id }));
-      setDistrictList(response.payload.data);
-    } catch (error: any) {
-      showDialog(
-        t("common.error"),
-        error.message || t("address.district_load_error"),
-        "error"
-      );
-    }
-  };
-
-  const getWard = async (id: number) => {
-    try {
-      const response = await dispatch(getAddressWardThunk({ query: id }));
-      setWardList(response.payload.data);
-    } catch (error: any) {
-      showDialog(
-        t("common.error"),
-        error.message || t("address.ward_load_error"),
         "error"
       );
     }
@@ -526,8 +502,6 @@ export default function Checkout() {
     };
   };
 
-  const insets = useSafeAreaInsets();
-
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["20%"], []);
 
@@ -594,11 +568,6 @@ export default function Checkout() {
       </BottomSheetView>
     </BottomSheet>
   );
-
-  const getAddressValidationColor = (value: string) => {
-    if (!value) return Colors.grey50;
-    return value.trim() !== "" ? Colors.green30 : Colors.red30;
-  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

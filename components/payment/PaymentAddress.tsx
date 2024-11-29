@@ -24,15 +24,6 @@ import {
 } from "@/types/address.type";
 import Animated, { FadeIn } from "react-native-reanimated";
 
-export interface PaymentAddressProps {
-  addressType: string;
-  fullName: string;
-  phoneNumber: string;
-  address: string;
-  district: string;
-  province: string;
-}
-
 interface TempAddress {
   full_name: string;
   phone_number: string;
@@ -58,6 +49,20 @@ interface PaymentAddressComponentProps {
   userProfile?: any;
 }
 
+interface MappedProvince {
+  value: string;
+  label: string;
+  id: number;
+  name: string;
+}
+
+interface MappedDistrict {
+  value: string;
+  label: string;
+  id: number;
+  name: string;
+}
+
 const getAddressTypeConfig = (type: string) => {
   switch (type?.toLowerCase()) {
     case "home":
@@ -81,6 +86,15 @@ const getAddressTypeConfig = (type: string) => {
   }
 };
 
+export interface PaymentAddressProps {
+  addressType: string;
+  fullName: string;
+  phoneNumber: string;
+  address: string;
+  district: string;
+  province: string;
+}
+
 const PaymentAddress = ({
   isPayment,
   onPress,
@@ -101,6 +115,9 @@ const PaymentAddress = ({
   const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
   const [ward, setWard] = useState<AddressWard>();
   const [wardList, setWardList] = useState<AddressWard[]>([]);
+  const [provinceId, setProvinceId] = useState<string>("");
+  const [districtId, setDistrictId] = useState<string>("");
+  const [wardId, setWardId] = useState<string>("");
 
   const getProvince = async () => {
     try {
@@ -115,9 +132,11 @@ const PaymentAddress = ({
     }
   };
 
-  const getDistrict = async (id: number) => {
+  const getDistrict = async (provinceId: string) => {
     try {
-      const response = await dispatch(getAddressDistrictThunk({ query: id }));
+      const response = await dispatch(
+        getAddressDistrictThunk({ query: Number(provinceId) })
+      );
       setDistrictList(response.payload.data);
     } catch (error: any) {
       showDialog(
@@ -128,9 +147,11 @@ const PaymentAddress = ({
     }
   };
 
-  const getWard = async (id: number) => {
+  const getWard = async (districtId: string) => {
     try {
-      const response = await dispatch(getAddressWardThunk({ query: id }));
+      const response = await dispatch(
+        getAddressWardThunk({ query: Number(districtId) })
+      );
       setWardList(response.payload.data);
     } catch (error: any) {
       showDialog(
@@ -344,7 +365,7 @@ const PaymentAddress = ({
             <Picker
               placeholder={t("address.province")}
               floatingPlaceholder
-              value={province?.id}
+              value={provinceId}
               label={province?.name}
               enableModalBlur={true}
               onChange={(value: PickerValue) => {
@@ -353,12 +374,16 @@ const PaymentAddress = ({
                     (item) => item.id === value
                   );
                   if (selectedProvince) {
-                    setProvince({
-                      id: selectedProvince.id,
-                      name: selectedProvince.name,
-                    } as AddressProvince);
-                    getDistrict(Number(selectedProvince?.id));
+                    setProvinceId(selectedProvince.id);
                     handleFieldChange("province", selectedProvince.name);
+                    getDistrict(selectedProvince.id);
+
+                    setDistrict(undefined);
+                    setWard(undefined);
+                    setDistrictId("");
+                    setWardId("");
+                    handleFieldChange("district", "");
+                    handleFieldChange("ward", "");
                   }
                 }
               }}
@@ -372,11 +397,13 @@ const PaymentAddress = ({
               }))}
             />
 
-            {province?.id && (
+            {provinceId && (
               <Picker
                 placeholder={t("address.district")}
+                searchPlaceholder={t("address.search_a_district")}
+                topBarProps={{ title: t("address.district") }}
                 floatingPlaceholder
-                value={district?.id}
+                value={districtId}
                 label={district?.name}
                 enableModalBlur={true}
                 onChange={(value: PickerValue) => {
@@ -385,18 +412,17 @@ const PaymentAddress = ({
                       (item) => item.id === value
                     );
                     if (selectedDistrict) {
-                      setDistrict({
-                        id: selectedDistrict.id,
-                        name: selectedDistrict.name,
-                      } as AddressDistrict);
-                      getWard(Number(selectedDistrict?.id));
+                      setDistrictId(selectedDistrict.id);
                       handleFieldChange("district", selectedDistrict.name);
+                      getWard(selectedDistrict.id);
+
+                      setWard(undefined);
+                      setWardId("");
+                      handleFieldChange("ward", "");
                     }
                   }
                 }}
-                topBarProps={{ title: t("address.district") }}
                 showSearch
-                searchPlaceholder={t("address.search_a_district")}
                 searchStyle={{ placeholderTextColor: Colors.grey50 }}
                 items={districtList.map((item: AddressDistrict) => ({
                   value: item.id,
@@ -405,11 +431,11 @@ const PaymentAddress = ({
               />
             )}
 
-            {district?.id && (
+            {districtId && (
               <Picker
                 placeholder={t("address.ward")}
                 floatingPlaceholder
-                value={ward?.id}
+                value={wardId}
                 label={ward?.name}
                 enableModalBlur={true}
                 onChange={(value: PickerValue) => {
@@ -418,10 +444,7 @@ const PaymentAddress = ({
                       (item) => item.id === value
                     );
                     if (selectedWard) {
-                      setWard({
-                        id: selectedWard.id,
-                        name: selectedWard.name,
-                      } as AddressWard);
+                      setWardId(selectedWard.id);
                       handleFieldChange("ward", selectedWard.name);
                     }
                   }
@@ -467,6 +490,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     backgroundColor: Colors.white,
     height: 44,
+    marginBottom: 10,
+  },
+  pickerContainer: {
     marginBottom: 10,
   },
 });
