@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AxiosInstance from '@/utils/services/helper/axiosInstance';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { Address } from '@/types/address.type';
 
 // Async thunks
 export const fetchAddresses = createAsyncThunk(
     'address/fetchAddresses',
-    async (_, { rejectWithValue }) => {
+    async (_: any, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) throw new Error('No token found');
@@ -26,7 +27,7 @@ export const fetchAddresses = createAsyncThunk(
 
 export const addAddress = createAsyncThunk(
     'address/addAddress',
-    async (addressData: Omit<Address, 'id'>, { rejectWithValue }) => {
+    async (addressData: Omit<Address, 'id'>, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) throw new Error('No token found');
@@ -47,7 +48,7 @@ export const addAddress = createAsyncThunk(
 
 export const updateAddress = createAsyncThunk(
     'address/updateAddress',
-    async ({ id, data }: { id: string; data: Partial<Address> }, { rejectWithValue }) => {
+    async ({ id, data }: { id: string; data: Partial<Address> }, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) throw new Error('No token found');
@@ -68,7 +69,7 @@ export const updateAddress = createAsyncThunk(
 
 export const deleteAddress = createAsyncThunk(
     'address/deleteAddress',
-    async (id: string, { rejectWithValue }) => {
+    async (id: string, { rejectWithValue }: { rejectWithValue: any }) => {
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (!token) throw new Error('No token found');

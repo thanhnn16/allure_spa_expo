@@ -1,21 +1,22 @@
 import AppBar from "@/components/app-bar/AppBar";
 import PaymentPicker from "@/components/payment/PaymentPicker";
 import PaymentItem from "@/components/payment/PaymentItem";
-import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import { useLanguage } from "@/hooks/useLanguage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import { Button, Colors, Keyboard, Text, View } from "react-native-ui-lib";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { Animated } from "react-native";
+import * as Haptics from "expo-haptics";
 
-import AppButton from "@/components/buttons/AppButton";
+import {
+  Button,
+  Colors,
+  Text,
+  View,
+  KeyboardAwareScrollView,
+  TouchableOpacity,
+} from "react-native-ui-lib";
+
 import AppDialog from "@/components/dialog/AppDialog";
 import { useDialog } from "@/hooks/useDialog";
 import { fetchAddresses } from "@/redux/features";
@@ -27,14 +28,31 @@ import { clearTempOrder } from "@/redux/features/order/orderSlice";
 import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
 import { RootState } from "@/redux/store";
 import OrderService from "@/services/OrderService";
-import { OrderItem } from "@/types";
 import { Address } from "@/types/address.type";
 import { CheckoutOrderItem } from "@/types/order.type";
 import { Voucher } from "@/types/voucher.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { useLocalSearchParams } from "expo-router";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch, useSelector } from "react-redux";
+import * as Linking from "expo-linking";
+import {
+  getAddressDistrictThunk,
+  getAddressProvinceThunk,
+  getAddressWardThunk,
+} from "@/redux/features/address/getAddressThunk";
+import {
+  AddressDistrict,
+  AddressProvince,
+  AddressWard,
+} from "@/types/address.type";
+import PaymentAddress, {
+  PaymentAddressProps,
+} from "@/components/payment/PaymentAddress";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
+import VoucherDropdown from "@/components/payment/VoucherDropdown";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
 export interface PaymentMethod {
   id: number;
@@ -42,6 +60,43 @@ export interface PaymentMethod {
   iconName: string;
   iconType?: "Ionicons" | "MaterialCommunityIcons";
 }
+
+interface TempAddress {
+  full_name: string;
+  phone_number: string;
+  address: string;
+  ward: string;
+  district: string;
+  province: string;
+}
+
+const presets = {
+  field: {
+    borderWidth: 1,
+    borderColor: Colors.grey50,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    backgroundColor: Colors.white,
+    height: 44,
+  },
+  section: {
+    marginBottom: 16,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+};
+
 export default function Checkout() {
   const { t } = useLanguage();
 
@@ -70,7 +125,6 @@ export default function Checkout() {
   const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
   const [voucher, setVoucher] = useState<Voucher | null>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
-  const [paymentDialog, setPaymentDialog] = useState(false);
   const { dialogConfig, showDialog, hideDialog } = useDialog();
   const [note, setNote] = useState("");
   const { source } = useLocalSearchParams();
@@ -95,8 +149,26 @@ export default function Checkout() {
 
   const orderItems = source === "direct" ? tempOrderItems : checkoutItems;
 
-  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
+  const [addressType, setAddressType] = useState<"saved" | "temp">("saved");
+  const [tempAddress, setTempAddress] = useState<TempAddress>({
+    full_name: userProfile?.full_name || "",
+    phone_number: userProfile?.phone_number || "",
+    address: "",
+    ward: "",
+    district: "",
+    province: "",
+  });
 
+  const [province, setProvince] = useState<AddressProvince>();
+  const [provinceList, setProvinceList] = useState<AddressProvince[]>([]);
+  const [district, setDistrict] = useState<AddressDistrict>();
+  const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
+  const [ward, setWard] = useState<AddressWard>();
+  const [wardList, setWardList] = useState<AddressWard[]>([]);
+
+  const isTempAddressValid = () => {
+    return Object.values(tempAddress).every((value) => value.trim() !== "");
+  };
 
   const calculateTotalPrice = () => {
     if (!orderItems || orderItems.length === 0) return 0;
@@ -119,7 +191,20 @@ export default function Checkout() {
   const [totalPrice, setTotalPrice] = useState(calculateTotalPrice());
   const [discountedPrice, setDiscountedPrice] = useState(totalPrice);
 
-  const handlePaymentSelect = (payment: PaymentMethod) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [fadeAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const handlePaymentSelect = async (payment: PaymentMethod) => {
+    await Haptics.selectionAsync();
     if (payment.id === 2) {
       showDialog(
         "Thanh toán bằng thẻ tín dụng",
@@ -155,7 +240,8 @@ export default function Checkout() {
 
   const handlePayment = async () => {
     try {
-      if (!selectedAddress) {
+      setIsLoading(true);
+      if (addressType === "saved" && !selectedAddress) {
         showDialog(
           t("checkout.address_required_title"),
           t("checkout.address_required_message"),
@@ -164,10 +250,21 @@ export default function Checkout() {
         return;
       }
 
-      // Format order data theo cấu trúc API mới
+      if (addressType === "temp" && !isTempAddressValid()) {
+        showDialog(
+          t("checkout.address_required_title"),
+          t("checkout.temp_address_invalid"),
+          "warning"
+        );
+        return;
+      }
+
+      // Format order data với địa chỉ tạm thời nếu được chọn
       const orderData = {
         payment_method_id: selectedPayment.id,
-        shipping_address_id: selectedAddress.id,
+        shipping_address_id:
+          addressType === "saved" ? selectedAddress?.id : null,
+        temp_address: addressType === "temp" ? tempAddress : null,
         voucher_id: selectedVoucher?.id || null,
         note: note || "",
         items: orderItems.map((item: CheckoutOrderItem) => ({
@@ -225,7 +322,52 @@ export default function Checkout() {
       }
     } catch (error) {
       console.error("Payment error:", error);
-      showDialog(t("common.error"), t("checkout.create_order_failed_message"), "error");
+      showDialog(
+        t("common.error"),
+        t("checkout.create_order_failed_message"),
+        "error"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getProvince = async () => {
+    try {
+      const response = await dispatch(getAddressProvinceThunk({}));
+      setProvinceList(response.payload.data);
+    } catch (error: any) {
+      showDialog(
+        t("common.error"),
+        error.message || t("address.province_load_error"),
+        "error"
+      );
+    }
+  };
+
+  const getDistrict = async (id: number) => {
+    try {
+      const response = await dispatch(getAddressDistrictThunk({ query: id }));
+      setDistrictList(response.payload.data);
+    } catch (error: any) {
+      showDialog(
+        t("common.error"),
+        error.message || t("address.district_load_error"),
+        "error"
+      );
+    }
+  };
+
+  const getWard = async (id: number) => {
+    try {
+      const response = await dispatch(getAddressWardThunk({ query: id }));
+      setWardList(response.payload.data);
+    } catch (error: any) {
+      showDialog(
+        t("common.error"),
+        error.message || t("address.ward_load_error"),
+        "error"
+      );
     }
   };
 
@@ -238,7 +380,7 @@ export default function Checkout() {
           // Load vouchers
           dispatch(getAllVouchersThunk()),
           // Load selected address from storage
-          loadSelectedAddress()
+          loadSelectedAddress(),
         ]);
 
         // Update active vouchers after fetching
@@ -286,292 +428,284 @@ export default function Checkout() {
     };
   }, [source, tempOrder.items, checkoutItems]);
 
-  const renderAddressSection = () => {
-    if (addresses.length === 0) {
-      return (
-        <View style={styles.noAddressContainer}>
-          <Text style={styles.noAddressText}>{t("checkout.no_address")}</Text>
-          <AppButton
-            type="primary"
-            onPress={() => router.push("/(app)/address/add")}
-          >
-            <Text style={styles.buttonText}>
-              {t("address.add_new_address")}
-            </Text>
-          </AppButton>
-        </View>
-      );
+  useEffect(() => {
+    if (addressType === "temp") {
+      getProvince();
     }
+  }, [addressType]);
 
+  const renderAddressSection = () => {
     return (
-      <TouchableOpacity
-        style={styles.addressContainer}
-        onPress={() => router.push("/(app)/address")}
-      >
-        {selectedAddress ? (
-          <View flexS>
-            <Text style={styles.addressTitle}>
-              {t("checkout.delivery_address")}
-            </Text>
-            <Text style={styles.addressText}>
-              {selectedAddress.address}, {selectedAddress.ward},{" "}
-              {selectedAddress.district}, {selectedAddress.province}
-            </Text>
-            <Text style={styles.recipientText}>
-              {userProfile?.full_name} | {userProfile?.phone_number}
-            </Text>
-          </View>
-        ) : (
-          <Text style={styles.selectAddressText}>
-            {t("checkout.select_address")}
-          </Text>
-        )}
-        <MaterialCommunityIcons name="chevron-right" size={24} color="#666" />
-      </TouchableOpacity>
+      <View style={presets.section}>
+        <Text text70 bold marginB-12>
+          {t("checkout.select_address")}
+        </Text>
+        <PaymentAddress
+          isPayment={true}
+          onPress={() => router.push("/(app)/address")}
+          selectAddress={
+            selectedAddress
+              ? convertAddressToPaymentProps(selectedAddress)
+              : null
+          }
+          addressType={addressType}
+          setAddressType={setAddressType}
+          tempAddress={tempAddress}
+          setTempAddress={setTempAddress}
+          showDialog={showDialog}
+          userProfile={userProfile}
+        />
+      </View>
     );
   };
 
-  const renderOrderItems = () => {
-    return orderItems.map((item: CheckoutOrderItem) => {
-      console.log("Rendering PaymentItem with:", item);
-      return (
-        <PaymentItem
-          key={`${item.item_type}-${item.item_id}`}
-          orderItem={item}
+  const renderPaymentMethodSection = () => (
+    <View style={presets.section}>
+      <Text text70 bold marginB-12>
+        {t("checkout.payment_method")}
+      </Text>
+      <PaymentPicker
+        value={selectedPayment}
+        items={paymentMethods}
+        onSelect={handlePaymentSelect}
+      />
+    </View>
+  );
+
+  const renderOrderItems = () => (
+    <View style={presets.section}>
+      <Text text70 bold marginB-12>
+        {t("checkout.order_summary")}
+      </Text>
+      <View
+        backgroundColor={Colors.white}
+        br10
+        style={{
+          borderWidth: 1,
+          borderColor: Colors.border,
+        }}
+      >
+        {orderItems.map((item: CheckoutOrderItem, index: number) => (
+          <View key={`${item.item_type}-${item.item_id}`}>
+            <PaymentItem orderItem={item} />
+            {index !== orderItems.length - 1 && (
+              <View height-1 backgroundColor={Colors.border} marginH-15 />
+            )}
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+
+  const isFormValid = () => {
+    if (addressType === "saved" && !selectedAddress) {
+      return false;
+    }
+
+    if (addressType === "temp" && !isTempAddressValid()) {
+      return false;
+    }
+
+    if (!selectedPayment) {
+      return false;
+    }
+
+    return orderItems.length > 0;
+  };
+
+  const convertAddressToPaymentProps = (
+    address: Address
+  ): PaymentAddressProps => {
+    return {
+      addressType: address.address_type || "default",
+      fullName: userProfile?.full_name || "",
+      phoneNumber: userProfile?.phone_number || "",
+      address: address.address,
+      district: address.district,
+      province: address.province,
+    };
+  };
+
+  const insets = useSafeAreaInsets();
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => ["20%"], []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const renderBottomSheet = () => (
+    <BottomSheet
+      ref={bottomSheetRef}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      enablePanDownToClose={false}
+      style={[
+        styles.bottomContainer,
+        { borderTopLeftRadius: 24, borderTopRightRadius: 24 },
+      ]}
+    >
+      <BottomSheetView style={styles.summaryContainer}>
+        <View marginB-16>
+          <Text text70 bold marginB-12>
+            {t("checkout.voucher")}
+          </Text>
+          <VoucherDropdown
+            value={selectedVoucher}
+            items={activeVouchers}
+            onSelect={handleVoucherSelect}
+          />
+        </View>
+
+        <View style={styles.priceRow}>
+          <Text style={styles.priceLabel}>{t("checkout.subtotal")}</Text>
+          <Text style={styles.priceValue}>
+            {formatCurrency({ price: totalPrice })}
+          </Text>
+        </View>
+
+        {selectedVoucher && (
+          <View style={styles.priceRow}>
+            <Text style={styles.priceLabel}>{t("orders.discount")}</Text>
+            <Text style={styles.discountValue}>
+              -{formatCurrency({ price: totalPrice - discountedPrice })}
+            </Text>
+          </View>
+        )}
+
+        <View style={styles.divider} />
+
+        <View style={styles.totalRow}>
+          <Text style={styles.totalLabel}>{t("checkout.total_payment")}</Text>
+          <Text style={styles.totalValue}>
+            {formatCurrency({ price: discountedPrice })}
+          </Text>
+        </View>
+
+        <Button
+          label={t("checkout.proceed_to_payment")}
+          disabled={!isFormValid() || isLoading}
+          onPress={handlePayment}
+          style={[styles.paymentButton, isLoading && { opacity: 0.7 }]}
+          labelStyle={styles.paymentButtonLabel}
+          loading={isLoading}
         />
-      );
-    });
+      </BottomSheetView>
+    </BottomSheet>
+  );
+
+  const getAddressValidationColor = (value: string) => {
+    if (!value) return Colors.grey50;
+    return value.trim() !== "" ? Colors.green30 : Colors.red30;
   };
 
   return (
-    <View flex bg-white>
-      <KeyboardTrackingView trackInteractive style={{ flex: 1, backgroundColor: Colors.white }}>
-        <AppBar back title={t("checkout.title")} />
-        <View flex backgroundColor={Colors.white}>
-          <ScrollView
-            style={{ paddingHorizontal: 20 }}
-            showsVerticalScrollIndicator={false}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+        <View flex bg-white>
+          <AppBar back title={t("checkout.title")} />
+          <KeyboardAwareScrollView
+            contentContainerStyle={{ paddingBottom: 200 }}
           >
-            {renderAddressSection()}
-
-            <View marginV-10 gap-10>
-              <Text h2_bold>{t("checkout.voucher")}</Text>
-              <VoucherDropdown
-                value={voucher}
-                items={activeVouchers}
-                onSelect={handleVoucherSelect}
-              />
-            </View>
-
-            <View style={styles.borderInset} />
-
-            <View marginV-10 gap-10>
-              <Text h2_bold>{t("checkout.payment_method")}</Text>
-              <PaymentPicker
-                value={selectedPayment}
-                items={paymentMethods}
-                onSelect={handlePaymentSelect}
-              />
-            </View>
-
-            <View style={styles.borderInset} />
-
-            <View marginV-10 gap-10>
-              <Text h2_bold>{t("checkout.product")}</Text>
+            <View flex paddingH-20 backgroundColor={Colors.white}>
+              {renderAddressSection()}
+              {renderPaymentMethodSection()}
               {renderOrderItems()}
             </View>
-
-            <View style={styles.borderInset} />
-
-            <View marginV-10>
-              <Text h2_bold>Note</Text>
-              <TextInput
-                value={note}
-                placeholder={t("address.note")}
-                onChangeText={(value) => setNote(value)}
-                multiline={true}
-                numberOfLines={3}
-                style={{
-                  fontSize: 14,
-                  minHeight: 80,
-                  width: "100%",
-                  padding: 15,
-                  backgroundColor: "#ffffff",
-                  borderRadius: 8,
-                  textAlignVertical: "top",
-                  borderWidth: 1,
-                  borderColor: "#E5E7EB",
-                  marginTop: 10,
-                }}
-              />
-            </View>
-          </ScrollView>
-
-          <View
-            style={{
-              borderTopWidth: 1,
-              borderLeftWidth: 1,
-              borderRightWidth: 1,
-              borderTopColor: "#E0E0E0",
-              borderLeftColor: "#E0E0E0",
-              borderRightColor: "#E0E0E0",
-              borderTopLeftRadius: 13,
-              borderTopRightRadius: 13,
-              backgroundColor: "#FFFFFF",
-              padding: 20,
-            }}
-          >
-            <View>
-              <View row centerV spread>
-                <Text h3_bold>{t("checkout.subtotal")}</Text>
-                <Text h3_bold>{formatCurrency({ price: totalPrice })}</Text>
-              </View>
-              <View row centerV spread marginT-10>
-                <Text h3_bold>{t("checkout.voucher")}</Text>
-                {selectedVoucher ? (
-                  <View style={styles.voucherSummary}>
-                    <View style={styles.voucherBadge}>
-                      <Text style={styles.voucherCode}>{selectedVoucher.code}</Text>
-                    </View>
-                    <Text style={styles.voucherDiscount}>
-                      -{selectedVoucher.formatted_discount}
-                    </Text>
-                  </View>
-                ) : (
-                  <Text style={styles.noVoucherText}>{t("checkout.no_voucher_applied")}</Text>
-                )}
-              </View>
-              <View row centerV spread marginV-10>
-                <Text h3_bold>{t("checkout.total_payment")}</Text>
-                <View>
-                  {discountedPrice !== totalPrice && (
-                    <Text
-                      h3
-                      style={{
-                        textDecorationLine: "line-through",
-                        color: Colors.grey30,
-                        fontSize: 12,
-                        textAlign: "right",
-                      }}
-                    >
-                      {formatCurrency({ price: totalPrice })}
-                    </Text>
-                  )}
-                  <Text h3_bold secondary>
-                    {formatCurrency({ price: discountedPrice })}
-                  </Text>
-                </View>
-              </View>
-
-              <Button
-                label={t("checkout.payment").toString()}
-                labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-                backgroundColor={Colors.primary}
-                padding-20
-                style={{ height: 50 }}
-                borderRadius={13}
-                onPress={() => handlePayment()}
-              />
-            </View>
-          </View>
-          <AppDialog
-            visible={paymentDialog}
-            title={"Xác nhận xóa sản phẩm"}
-            description={
-              "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
-            }
-            closeButtonLabel={t("common.cancel")}
-            confirmButtonLabel={"Xóa"}
-            severity="info"
-            onClose={() => setPaymentDialog(false)}
-          />
-
+          </KeyboardAwareScrollView>
+          {renderBottomSheet()}
           <AppDialog {...dialogConfig} onClose={hideDialog} />
         </View>
-      </KeyboardTrackingView>
-
-    </View >
-
+      </Animated.View>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  bottomContainer: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 8,
     backgroundColor: Colors.white,
   },
-  totalSection: {
-    padding: 10,
-    backgroundColor: "#f8f8f8",
-    marginHorizontal: 20,
-    borderRadius: 8,
+  summaryContainer: {
+    padding: 20,
+    backgroundColor: Colors.white,
+    transform: [{ translateY: 0 }],
   },
-  borderInset: {
-    width: 370,
-    height: 2,
-    backgroundColor: "#717658",
-    alignSelf: "center",
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  noAddressContainer: {
-    padding: 16,
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  noAddressText: {
-    marginBottom: 16,
-    color: "#666",
-  },
-  addressContainer: {
-    padding: 16,
+  priceRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  addressTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  addressText: {
-    color: "#666",
-    marginBottom: 4,
-  },
-  recipientText: {
-    color: "#666",
-  },
-  selectAddressText: {
-    color: "#666",
-  },
-  buttonText: {
-    color: "#fff",
-  },
-  voucherSummary: {
-    alignItems: 'flex-end',
-  },
-  voucherBadge: {
-    backgroundColor: Colors.primary + '20', // Semi-transparent primary color
-    paddingHorizontal: 8,
+    marginBottom: 12,
     paddingVertical: 4,
-    borderRadius: 6,
-    marginBottom: 4,
   },
-  voucherCode: {
-    color: Colors.primary,
-    fontWeight: 'bold',
+  priceLabel: {
     fontSize: 14,
-  },
-  voucherDiscount: {
-    color: Colors.secondary,
-    fontSize: 12,
-  },
-  noVoucherText: {
     color: Colors.grey30,
-    fontStyle: 'italic',
+    fontWeight: "500",
+  },
+  priceValue: {
     fontSize: 14,
+    color: Colors.grey10,
+    fontWeight: "600",
+  },
+  discountValue: {
+    fontSize: 14,
+    color: Colors.red30,
+    fontWeight: "600",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.grey60,
+    marginVertical: 16,
+    opacity: 0.3,
+  },
+  totalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingVertical: 4,
+  },
+  totalLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.grey10,
+  },
+  totalValue: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.primary,
+  },
+  paymentButton: {
+    height: 52,
+    borderRadius: 16,
+    backgroundColor: Colors.primary,
+    marginTop: 8,
+  },
+  paymentButtonLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 12,
+    fontSize: 16,
+  },
+  validInput: {
+    borderColor: Colors.green30,
+  },
+  invalidInput: {
+    borderColor: Colors.red30,
   },
 });

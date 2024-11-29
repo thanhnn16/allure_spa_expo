@@ -1,172 +1,119 @@
-import { PaymentMethod } from '@/app/(app)/check-out';
-import { Ionicons } from '@expo/vector-icons';
-import { useRef, useState } from 'react';
-import { Animated, StyleSheet } from 'react-native'
-import { Card, Text, TouchableOpacity, View, Image, Colors } from 'react-native-ui-lib'
+import { PaymentMethod } from "@/app/(app)/check-out";
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import {
+  Colors,
+  Text,
+  View,
+  TouchableOpacity,
+  ExpandableSection,
+} from "react-native-ui-lib";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface PaymentPickerProps {
-    value?: PaymentMethod | null;
-    items?: PaymentMethod[];
-    onSelect?: (value: PaymentMethod) => void;
+  value?: PaymentMethod | null;
+  items?: PaymentMethod[];
+  onSelect?: (value: PaymentMethod) => void;
 }
 
-const PaymentPicker = ({ value, items, onSelect} : PaymentPickerProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const animation = useRef(new Animated.Value(0)).current;
-
-    const toggleDropdown = () => {
-        const toValue = isOpen ? 0 : 1;
-        setIsOpen(!isOpen);
-
-        Animated.timing(animation, {
-            toValue,
-            duration: 300,
-            useNativeDriver: false,
-        }).start();
-    };
-
-    const handleSelect = (method: PaymentMethod) => {
-        onSelect?.(method);
-        setIsOpen(false);
-    };
-
-    const rotateIcon = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["0deg", "180deg"],
-    });
-
-    return (
-        <View>
-            <TouchableOpacity onPress={onSelect ? toggleDropdown : undefined}>
-                <View
-                    row centerV spread padding-15
-                    style={{
-                        borderWidth: 1,
-                        borderColor: "#E0E0E0",
-                        borderRadius: 10,
-                        backgroundColor: "#FCFCFC",
-                    }}
-                >
-                    <Text h3>
-                        {value?.name}
-                    </Text>
-                    {onSelect && (
-                        <Animated.View style={{ transform: [{ rotate: rotateIcon }] }}>
-                            <Ionicons name="chevron-down" size={24} color={Colors.grey10} />
-                        </Animated.View>
-                    )}
-                </View>
-            </TouchableOpacity>
-
-            {isOpen && (
-                <Animated.View
-                    style={[
-                        dropdownStyles.container,
-                        {
-                            maxHeight: animation.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 300],
-                            }),
-                        },
-                    ]}
-                >
-                    {items?.map((method) => (
-                        <TouchableOpacity
-                            key={method.id}
-                            style={{
-                                ...dropdownStyles.item,
-                                ...(value?.name === method.name ? dropdownStyles.selectedItem : {}),
-                            }}
-                            onPress={() => handleSelect(method)}
-                        >
-                            <View row centerV flex>
-                                <Ionicons
-                                    name={method.iconName as any}
-                                    size={24}
-                                    color={Colors.grey10}
-                                    style={{ marginRight: 10 }}
-                                />
-                                <Text grey10>{method.name}</Text>
-                            </View>
-                            {value?.name === method.name && (
-                                <Ionicons
-                                    name="checkmark-circle"
-                                    size={20}
-                                    color={Colors.primary}
-                                />
-                            )}
-                        </TouchableOpacity>
-                    ))
-                    }
-                </Animated.View>
-            )}
-        </View>
-    );
+const presets = {
+  container: {
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingVertical: 4,
+    borderColor: Colors.border,
+  },
+  item: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.border,
+  },
 };
 
-export default PaymentPicker
+const PaymentPicker = ({ value, items, onSelect }: PaymentPickerProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { t } = useLanguage();
 
-const styles = StyleSheet.create({
-    paymentOption: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#E0E0E0",
-    },
-    selectedOption: {
-        backgroundColor: "#f0f0f0",
-    },
-    optionLeft: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    paymentIconContainer: {
-        width: 80,
-        height: 40,
-        backgroundColor: "#f8f8f8",
-        justifyContent: "center",
-        alignItems: "center",
-        marginRight: 10,
-    },
-    paymentIcon: {
-        width: "100%",
-        height: "100%",
-        resizeMode: "contain",
-    },
-    paymentItemText: {
-        fontSize: 14,
-        color: "#000000",
-    },
-    checkIconContainer: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        backgroundColor: Colors.primary,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-});
+  const handleSelect = (method: PaymentMethod) => {
+    onSelect?.(method);
+    setIsOpen(false);
+  };
 
+  const renderHeader = () => (
+    <TouchableOpacity
+      onPress={() => onSelect && setIsOpen(!isOpen)}
+      style={presets.container}
+    >
+      <View row spread centerV padding-12>
+        <View row centerV>
+          {value && (
+            <Ionicons
+              name={value.iconName as any}
+              size={20}
+              color={Colors.primary}
+              style={{ marginRight: 8 }}
+            />
+          )}
+          <Text text80 color={value ? Colors.text : Colors.grey30}>
+            {value?.name || t("checkout.select_payment_method")}
+          </Text>
+        </View>
+        <MaterialCommunityIcons
+          name={isOpen ? "chevron-up" : "chevron-down"}
+          size={20}
+          color={Colors.grey30}
+        />
+      </View>
+    </TouchableOpacity>
+  );
 
-const dropdownStyles = StyleSheet.create({
-    container: {
-        backgroundColor: "#f8f8f8",
-        borderRadius: 8,
-        overflow: "hidden",
-        marginTop: 5,
-    },
-    item: {
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#E0E0E0",
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    selectedItem: {
-        backgroundColor: "#f0f0f0",
-        justifyContent: "space-between",
-    },
-});
+  const renderContent = () => (
+    <View marginT-4 style={[presets.container, { overflow: "hidden" }]}>
+      {items?.map((method, index) => (
+        <TouchableOpacity
+          key={method.id}
+          onPress={() => handleSelect(method)}
+          style={[
+            presets.item,
+            index === items.length - 1 && { borderBottomWidth: 0 },
+          ]}
+        >
+          <View row spread centerV>
+            <View row centerV flex>
+              <Ionicons
+                name={method.iconName as any}
+                size={20}
+                color={value?.id === method.id ? Colors.primary : Colors.grey30}
+                style={{ marginRight: 8 }}
+              />
+              <Text
+                text80
+                color={value?.id === method.id ? Colors.primary : Colors.text}
+              >
+                {method.name}
+              </Text>
+            </View>
+            {value?.id === method.id && (
+              <MaterialCommunityIcons
+                name="check-circle"
+                size={18}
+                color={Colors.primary}
+              />
+            )}
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+
+  return (
+    <ExpandableSection expanded={isOpen} sectionHeader={renderHeader()}>
+      {renderContent()}
+    </ExpandableSection>
+  );
+};
+
+export default PaymentPicker;

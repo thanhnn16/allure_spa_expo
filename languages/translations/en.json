@@ -20,7 +20,9 @@
     "loading": "Loading...",
     "staff": "Staff",
     "view_detail": "View Detail",
-    "accept": "Accept"
+    "accept": "Accept",
+    "add_note": "Add Note",
+    "hide_note": "Hide Note"
   },
   "auth": {
     "login": {
@@ -439,7 +441,17 @@
     "payment_error_message": "An error occurred while processing the payment. Please try again later.",
     "no_voucher_applied": "No voucher applied",
     "create_order_failed": "Create order failed",
-    "create_order_failed_message": "An error occurred while creating the order. Please try again later."
+    "create_order_failed_message": "An error occurred while creating the order. Please try again later.",
+    "select_voucher": "Select voucher",
+    "proceed_to_payment": "Proceed to Payment",
+    "add_note": "Add note",
+    "saved_address": "Saved Address", 
+    "temp_address": "Temporary Address",
+    "address_required_title": "Address Required",
+    "address_required_message": "Please select a delivery address",
+    "temp_address_invalid": "Please fill in all address fields",
+    "street_address": "Street Address",
+    "order_summary": "Order Summary"
   },
   "transaction": {
     "payment_success": "Payment Success",

@@ -1,214 +1,218 @@
-import { Animated, StyleSheet, } from 'react-native'
-import { Colors, Text, TouchableOpacity, View } from 'react-native-ui-lib'
-import React, { useRef, useState } from 'react'
-import { Ionicons } from '@expo/vector-icons';
-import { Voucher } from '@/types/voucher.type';
+import { Voucher } from "@/types/voucher.type";
+import { useState } from "react";
+import {
+  Colors,
+  Text,
+  View,
+  TouchableOpacity,
+  ExpandableSection,
+} from "react-native-ui-lib";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StyleSheet } from "react-native";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface VoucherDropdownProps {
-    value: Voucher | null;
-    items: Voucher[];
-    onSelect: (voucher: Voucher | null) => void;
+  value: Voucher | null;
+  items: Voucher[];
+  onSelect: (voucher: Voucher | null) => void;
 }
 
-const VoucherDropdown = ({
-    value,
-    items,
-    onSelect,
-}: VoucherDropdownProps) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const animation = useRef(new Animated.Value(0)).current;
+const VoucherDropdown = ({ value, items, onSelect }: VoucherDropdownProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { t } = useLanguage();
 
-    const toggleDropdown = () => {
-        const toValue = isOpen ? 0 : 1;
-        setIsOpen(!isOpen);
+  const handleSelect = (voucher: Voucher) => {
+    if (value?.id === voucher.id) {
+      onSelect(null);
+    } else {
+      onSelect(voucher);
+    }
+    setIsOpen(false);
+  };
 
-        Animated.timing(animation, {
-            toValue,
-            duration: 300,
-            useNativeDriver: false,
-        }).start();
-    };
+  const isVoucherValid = (voucher: Voucher): boolean => {
+    const now = new Date();
+    const endDate = new Date(voucher.end_date);
+    return endDate > now && voucher.remaining_uses > 0;
+  };
 
-    const rotateIcon = animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["0deg", "180deg"],
-    });
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN");
+  };
 
-    const handleSelect = (voucher: Voucher) => {
-        if (value?.id === voucher.id) {
-            onSelect(null);
-        } else {
-            onSelect(voucher);
-        }
-    };
+  const renderHeader = () => (
+    <TouchableOpacity
+      onPress={() => setIsOpen(!isOpen)}
+      style={[styles.header, value && styles.headerSelected]}
+    >
+      <View row spread centerV>
+        <View row centerV flex>
+          <MaterialCommunityIcons
+            name="ticket-percent-outline"
+            size={16}
+            color={value ? Colors.primary : Colors.grey30}
+            style={{ marginRight: 6 }}
+          />
+          <View>
+            <Text text80 color={value ? Colors.text : Colors.grey30}>
+              {value ? value.code : t("checkout.select_voucher")}
+            </Text>
+            {value && (
+              <Text text90 color={Colors.grey30}>
+                {value.formatted_discount}
+              </Text>
+            )}
+          </View>
+        </View>
+        <MaterialCommunityIcons
+          name={isOpen ? "chevron-up" : "chevron-down"}
+          size={18}
+          color={Colors.grey30}
+        />
+      </View>
+    </TouchableOpacity>
+  );
 
-    const isVoucherValid = (voucher: Voucher): boolean => {
-        const now = new Date();
-        const endDate = new Date(voucher.end_date);
-        return endDate > now && voucher.remaining_uses > 0;
-    };
+  const renderVoucherStatus = (item: Voucher) => {
+    const isValid = isVoucherValid(item);
+    if (!isValid) {
+      return (
+        <View style={styles.statusBadge}>
+          <Text white text90>
+            {item.remaining_uses <= 0 ? "Hết lượt" : "Hết hạn"}
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const renderVoucherItem = (item: Voucher) => {
+    const isValid = isVoucherValid(item);
+    const isSelected = value?.id === item.id;
 
     return (
-        <View>
-            <TouchableOpacity onPress={toggleDropdown}>
-                <View
-                    row centerV spread padding-15
-                    style={{
-                        borderWidth: 1,
-                        borderColor: "#E0E0E0",
-                        borderRadius: 10,
-                        backgroundColor: "#FCFCFC",
-                    }}
-                >
-                    <Text h3>{value?.code || "Không có"}</Text>
-                    <Animated.View
-                        style={[
-                            { transform: [{ rotate: rotateIcon }] },
-                        ]}
-                    >
-                        <Ionicons name="chevron-down" size={20} color="#BCBABA" />
-                    </Animated.View>
+      <TouchableOpacity
+        key={item.id}
+        onPress={() => isValid && handleSelect(item)}
+        disabled={!isValid}
+        style={[
+          styles.voucherItem,
+          !isValid && styles.disabledVoucher,
+          isSelected && styles.selectedVoucher,
+        ]}
+      >
+        <View row spread>
+          {/* Left side - Code, Description and Status */}
+          <View flex-3>
+            <View row centerV marginB-4>
+              <Text
+                text80
+                color={isValid ? Colors.primary : Colors.grey40}
+                marginR-8
+              >
+                {item.code}
+              </Text>
+              {isSelected && (
+                <View style={styles.selectedBadge}>
+                  <Text white text90>
+                    Đang chọn
+                  </Text>
                 </View>
-            </TouchableOpacity>
+              )}
+              {renderVoucherStatus(item)}
+            </View>
+            <Text text90 grey30 numberOfLines={2} marginB-4>
+              {item.description}
+            </Text>
+            <View row centerV>
+              <MaterialCommunityIcons
+                name="clock-outline"
+                size={12}
+                color={Colors.grey40}
+                style={{ marginRight: 4 }}
+              />
+              <Text text90 grey40>
+                HSD: {formatDate(item.end_date)}
+              </Text>
+            </View>
+          </View>
 
-            {isOpen && (
-                <Animated.View
-                    style={[
-                        dropdownStyles.container,
-                        {
-                            maxHeight: animation.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, 300],
-                            }),
-                        },
-                    ]}
-                >
-                    {items.map((item) => {
-                        const isValid = isVoucherValid(item);
-                        return (
-                            <TouchableOpacity
-                                key={item.id}
-                                style={{
-                                    ...dropdownStyles.item,
-                                    ...(value?.code === item.code ? dropdownStyles.selectedItem : {}),
-                                    ...((!isValid) ? dropdownStyles.disabledItem : {}),
-                                }}
-                                onPress={() => {
-                                    if (isValid) {
-                                        handleSelect(item);
-                                        toggleDropdown();
-                                    }
-                                }}
-                                disabled={!isValid}
-                            >
-                                <View style={dropdownStyles.voucherInfo}>
-                                    <View style={dropdownStyles.voucherHeader}>
-                                        <Text style={dropdownStyles.voucherCode}>{item.code}</Text>
-                                        {!isValid && (
-                                            <View style={dropdownStyles.expiredBadge}>
-                                                <Text style={dropdownStyles.expiredText}>
-                                                    {item.remaining_uses <= 0 ? 'Hết lượt dùng' : 'Hết hạn'}
-                                                </Text>
-                                            </View>
-                                        )}
-                                    </View>
-                                    <Text style={dropdownStyles.description}>{item.description}</Text>
-                                    <View style={dropdownStyles.voucherMeta}>
-                                        <Text style={dropdownStyles.metaText}>
-                                            HSD: {item.end_date_formatted}
-                                        </Text>
-                                        <Text style={dropdownStyles.metaText}>
-                                            Còn lại: {item.remaining_uses} lượt
-                                        </Text>
-                                    </View>
-                                </View>
-                                <View row centerV gap-5>
-                                    {value?.code === item.code && (
-                                        <View>
-                                            <Ionicons
-                                                name="checkmark-circle"
-                                                size={16}
-                                                color={Colors.primary}
-                                            />
-                                        </View>
-                                    )}
-                                    <Text style={dropdownStyles.discountText}>
-                                        Giảm {item.formatted_discount}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        );
-                    })}
-                </Animated.View>
-            )}
+          {/* Right side - Discount Value */}
+          <View flex-2 right>
+            <Text text80 color={isValid ? Colors.secondary : Colors.grey40}>
+              {item.formatted_discount}
+            </Text>
+            <Text text90 grey40 marginT-4>
+              Còn {item.remaining_uses} lượt
+            </Text>
+          </View>
         </View>
+      </TouchableOpacity>
     );
+  };
+
+  const renderContent = () => (
+    <View style={styles.dropdownContent}>{items.map(renderVoucherItem)}</View>
+  );
+
+  return (
+    <ExpandableSection
+      expanded={isOpen}
+      sectionHeader={renderHeader()}
+      onPress={() => setIsOpen(!isOpen)}
+    >
+      {renderContent()}
+    </ExpandableSection>
+  );
 };
 
-export default VoucherDropdown
-
-const dropdownStyles = StyleSheet.create({
-    container: {
-        backgroundColor: "#f8f8f8",
-        borderRadius: 8,
-        overflow: "hidden",
-        marginTop: 5,
-    },
-    item: {
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#E0E0E0",
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-    selectedItem: {
-        backgroundColor: "#f0f0f0",
-        justifyContent: "space-between",
-    },
-    voucherInfo: {
-        flex: 1,
-        marginRight: 10,
-    },
-    voucherHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 4,
-    },
-    voucherCode: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: Colors.primary,
-        marginRight: 8,
-    },
-    description: {
-        fontSize: 13,
-        color: Colors.grey30,
-        marginBottom: 4,
-    },
-    voucherMeta: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-    metaText: {
-        fontSize: 12,
-        color: Colors.grey40,
-    },
-    discountText: {
-        color: Colors.secondary,
-        fontWeight: 'bold',
-    },
-    expiredBadge: {
-        backgroundColor: Colors.grey50,
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 4,
-    },
-    expiredText: {
-        color: Colors.white,
-        fontSize: 10,
-    },
-    disabledItem: {
-        opacity: 0.6,
-        backgroundColor: Colors.grey60 + '10',
-    },
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: Colors.white,
+    borderRadius: 8,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: Colors.grey60,
+  },
+  headerSelected: {
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary + "08",
+  },
+  dropdownContent: {
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.grey60,
+    borderRadius: 8,
+    marginTop: 4,
+    maxHeight: 300,
+  },
+  voucherItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.grey60,
+  },
+  selectedVoucher: {
+    backgroundColor: Colors.primary + "08",
+  },
+  disabledVoucher: {
+    opacity: 0.6,
+    backgroundColor: Colors.grey60 + "10",
+  },
+  statusBadge: {
+    backgroundColor: Colors.grey40,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  selectedBadge: {
+    backgroundColor: Colors.green30,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginRight: 4,
+  },
 });
+
+export default VoucherDropdown;

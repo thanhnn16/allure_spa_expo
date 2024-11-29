@@ -19,7 +19,9 @@
     "loading": "読み込み中...",
     "staff": "スタッフ",
     "view_detail": "詳細を見る",
-    "accept": "受け入れる"
+    "accept": "受け入れる",
+    "add_note": "追加ノート",
+    "hide_note": "ノートを非表示"
   },
   "auth": {
     "login": {
@@ -514,7 +516,17 @@
     "payment_error_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。",
     "no_voucher_applied": "割引クーポンが適用されていません",
     "create_order_failed": "注文作成に失敗しました",
-    "create_order_failed_message": "注文作成中にエラーが発生しました。後でもう一度お試しください。"
+    "create_order_failed_message": "注文作成中にエラーが発生しました。後でもう一度お試しください。",
+    "select_voucher": "割引クーポンを選択",
+    "proceed_to_payment": "支払いに進む",
+    "add_note": "ノートを追加",
+    "saved_address": "保存済みの住所",
+    "temp_address": "一時的な住所",
+    "address_required_title": "住所が必要です",
+    "address_required_message": "配達先住所を選択してください",
+    "temp_address_invalid": "すべての住所フィールドを入力してください",
+    "street_address": "住所",
+    "order_summary": "注文の要約"
   },
   "transaction": {
     "payment_success": "支払い成功",
