@@ -69,7 +69,7 @@ const ExpandableCalendarComponent: React.FC<ExpandableCalendarProps> = ({
   firstDay = 1,
   markedDates,
   allowShadow = false,
-  hideArrows = false,
+  hideArrows = true,
   disableAllTouchEventsForDisabledDays = false,
   disableAllTouchEventsForInactiveDays = false,
   showWeekNumbers = false,
@@ -98,13 +98,7 @@ const ExpandableCalendarComponent: React.FC<ExpandableCalendarProps> = ({
     theme={theme}
     customHeaderTitle={customHeaderTitle}
     {...props}
-    calendarStyle={{
-      paddingLeft: 16,
-      paddingRight: 16,
-    }}
-    headerStyle={{
-      paddingHorizontal: 16,
-    }}
+    disableWeekScroll
   />
 );
 
@@ -740,7 +734,6 @@ const ScheduledPage = () => {
         color: Colors.text,
         fontSize: Platform.OS === "ios" ? 12 : 14,
         fontWeight: "600",
-        paddingBottom: 8,
         paddingTop: 8,
       },
       header: {
@@ -748,7 +741,6 @@ const ScheduledPage = () => {
         justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 16,
-        paddingVertical: Platform.OS === "ios" ? 8 : 12,
       },
       headerContainer: {
         flex: 1,
@@ -785,7 +777,6 @@ const ScheduledPage = () => {
         }}
       >
         <ExpandableCalendarComponent
-          key="expandable-calendar"
           markedDates={getMarkedDates()}
           theme={calendarTheme}
           customHeaderTitle={
