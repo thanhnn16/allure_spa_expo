@@ -247,7 +247,7 @@ const ServiceDetailPage = () => {
         setComboName(t("package.single_no_discount"));
         break;
     }
-  }, [combo]);
+  }, [combo, service, t]);
 
   // Loading skeleton
   const renderSkeletonView = () => {
@@ -547,27 +547,30 @@ const ServiceDetailPage = () => {
             />
 
             <ServiceBookingDialog
-              visible={bookingDialog}
-              title={t("service.serviceDetail.book_now")}
-              closeButtonLabel={t("common.cancel")}
-              confirmButtonLabel={t("service.book_now")}
-              secondaryConfirmButtonLabel={t("checkout.pay_online")}
-              severity="info"
-              onClose={() => {
-                setBookingDialog(false);
-                setCombo(0); // Reset combo when dialog closes
-              }}
-              onConfirm={handleBooking}
-              onConfrimSecondary={handlePayment}
-              closeButton={true}
-              confirmButton={true}
-              secondaryConfirmButton={true}
-              showActionSheet={showDialog}
-              setShowActionSheet={setShowDialog}
-              setCombo={setCombo}
-              singlePrice={service?.single_price}
-              combo5Price={service?.combo_5_price}
-              combo10Price={service?.combo_10_price}
+                visible={bookingDialog}
+                title={t("service.serviceDetail.book_now")}
+                closeButtonLabel={t("common.cancel")}
+                confirmButtonLabel={t("service.book_now")}
+                secondaryConfirmButtonLabel={t("checkout.pay_online")}
+                severity="info"
+                onClose={() => {
+                  setBookingDialog(false);
+                  setCombo(0); // Reset combo when dialog closes
+                }}
+                onConfirm={handleBooking}
+                onConfrimSecondary={handlePayment}
+                closeButton={true}
+                confirmButton={true}
+                secondaryConfirmButton={true}
+                showActionSheet={showDialog}
+                setShowActionSheet={setShowDialog}
+                setCombo={(selectedCombo) => {
+                  setCombo(selectedCombo);
+                  setBookingDialog(false); // Close the dialog
+                }}
+                singlePrice={service?.single_price}
+                combo5Price={service?.combo_5_price}
+                combo10Price={service?.combo_10_price}
             />
           </View>
         )}
