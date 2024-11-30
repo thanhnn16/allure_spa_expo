@@ -33,7 +33,8 @@ class OrderService {
         try {
             const response = await AxiosInstance().post(`/orders/${orderId}/payment-link`, {
                 returnUrl: paymentData.returnUrl,
-                cancelUrl: paymentData.cancelUrl
+                cancelUrl: paymentData.cancelUrl,
+                useDiscountedAmount: true
             });
 
             return response.data;

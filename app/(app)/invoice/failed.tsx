@@ -5,7 +5,6 @@ import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
 import { useLanguage } from "@/hooks/useLanguage";
 
-
 export default function InvoiceFailed() {
   const { t } = useLanguage();
 
@@ -16,7 +15,7 @@ export default function InvoiceFailed() {
   }>();
 
   const getContent = () => {
-    if (params.payment_method === 'cash') {
+    if (params.payment_method === "cash") {
       return {
         title: t("invoice.order_failed"),
         message: params.reason || t("invoice.order_failed_message"),
@@ -43,9 +42,8 @@ export default function InvoiceFailed() {
   const content = getContent();
 
   return (
-    <View flex bg-$background>
+    <View flex bg-white>
       <AppBar title={content.title} />
-
       <View flex padding-20 center>
         <MaterialIcons
           name={content.icon as any}
@@ -61,7 +59,7 @@ export default function InvoiceFailed() {
           {content.message}
         </Text>
 
-        <View absB width={'100%'} marginB-10 gap-10>
+        <View absB absL absR marginB-32 gap-10>
           <AppButton
             title="Liên hệ hỗ trợ"
             onPress={() => router.replace("/(app)/(tabs)/chat")}

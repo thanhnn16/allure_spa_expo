@@ -29,6 +29,7 @@ interface OrderState {
         items: CheckoutOrderItem[];
         totalAmount: number;
     };
+    finalAmount: number;
 }
 
 const initialState: OrderState = {
@@ -43,7 +44,8 @@ const initialState: OrderState = {
     tempOrder: {
         items: [],
         totalAmount: 0
-    }
+    },
+    finalAmount: 0
 };
 
 const initialPagination = {
@@ -97,6 +99,7 @@ const orderSlice = createSlice({
 
             state.orders = action.payload.products || [];
             state.totalAmount = action.payload.totalAmount;
+            state.finalAmount = action.payload.finalAmount || action.payload.totalAmount;
             state.fromCart = action.payload.fromCart || false;
         },
         clearOrder: (state: OrderState) => {
@@ -228,6 +231,7 @@ const orderSlice = createSlice({
             .addCase(createOrder.fulfilled, (state: OrderState, action: any) => {
                 state.isLoading = false;
                 state.selectedOrder = action.payload;
+                state.finalAmount = action.payload.final_amount || action.payload.total_amount;
             })
             .addCase(createOrder.rejected, (state: OrderState, action: any) => {
                 state.isLoading = false;
