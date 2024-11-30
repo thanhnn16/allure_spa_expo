@@ -34,6 +34,9 @@ const addressSlice = createSlice({
         state.addresses[index] = action.payload;
       }
     },
+    setError: (state: AddressState, action: any) => {
+      state.error = action.payload;
+    }
   },
   extraReducers: (builder: any) => {
     builder
@@ -55,7 +58,7 @@ const addressSlice = createSlice({
       })
       .addCase(fetchAddresses.rejected, (state: any, action: any) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.error.message || 'An error occurred';
       })
       // Add address
       .addCase(addAddress.pending, (state: any) => {

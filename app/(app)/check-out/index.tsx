@@ -232,11 +232,9 @@ export default function Checkout() {
   const loadSelectedAddress = async () => {
     try {
       const addresses = await dispatch(fetchAddresses()).unwrap();
-
       if (addresses && addresses.length > 0) {
         const defaultAddress =
           addresses.find((addr: Address) => addr.is_default) || addresses[0];
-
         if (defaultAddress) {
           setSelectedAddress(defaultAddress);
           dispatch(setReduxSelectedAddress(defaultAddress));
@@ -247,7 +245,9 @@ export default function Checkout() {
         }
       }
     } catch (error) {
-      console.error("Error loading addresses:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to load addresses";
+      showDialog(t("common.error"), errorMessage, "error");
     }
   };
 
@@ -370,7 +370,8 @@ export default function Checkout() {
         throw new Error(orderResponse.message || "Failed to create order");
       }
 
-      const { id: orderId, total_amount: serverCalculatedAmount } = orderResponse.data;
+      const { id: orderId, total_amount: serverCalculatedAmount } =
+        orderResponse.data;
 
       // Xử lý thanh toán dựa trên phương thức được chọn
       if (selectedPayment.id === 1) {
@@ -406,7 +407,6 @@ export default function Checkout() {
         dispatch(clearCart());
       }
       dispatch(clearTempOrder());
-
     } catch (error: any) {
       console.error("Payment error:", error);
       showDialog(
