@@ -67,3 +67,8 @@ export interface AddressWardResponse {
     data: AddressWard[];
     error: string | null;
 }
+
+export interface TempAddress extends Address {
+    full_name: string;
+    phone_number: string;
+}

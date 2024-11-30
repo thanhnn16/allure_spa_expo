@@ -1,4 +1,3 @@
-import { StyleSheet } from "react-native";
 import {
   Text,
   TouchableOpacity,
@@ -6,9 +5,8 @@ import {
   Colors,
   Picker,
   PickerValue,
-  TextField,
 } from "react-native-ui-lib";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -18,25 +16,19 @@ import {
   getAddressWardThunk,
 } from "@/redux/features/address/getAddressThunk";
 import {
+  Address,
   AddressDistrict,
   AddressProvince,
   AddressWard,
+  TempAddress,
 } from "@/types/address.type";
 import Animated, { FadeIn } from "react-native-reanimated";
-
-interface TempAddress {
-  full_name: string;
-  phone_number: string;
-  address: string;
-  ward: string;
-  district: string;
-  province: string;
-}
+import AddressTextInput from "../address/AddressTextInput";
 
 interface PaymentAddressComponentProps {
   isPayment?: boolean;
   onPress?: () => void;
-  selectAddress?: PaymentAddressProps | null;
+  selectAddress?: Address | null;
   addressType: "saved" | "temp";
   setAddressType: (type: "saved" | "temp") => void;
   tempAddress: TempAddress;
@@ -47,20 +39,6 @@ interface PaymentAddressComponentProps {
     severity: "success" | "error" | "info" | "warning"
   ) => void;
   userProfile?: any;
-}
-
-interface MappedProvince {
-  value: string;
-  label: string;
-  id: number;
-  name: string;
-}
-
-interface MappedDistrict {
-  value: string;
-  label: string;
-  id: number;
-  name: string;
 }
 
 const getAddressTypeConfig = (type: string) => {
@@ -86,17 +64,7 @@ const getAddressTypeConfig = (type: string) => {
   }
 };
 
-export interface PaymentAddressProps {
-  addressType: string;
-  fullName: string;
-  phoneNumber: string;
-  address: string;
-  district: string;
-  province: string;
-}
-
 const PaymentAddress = ({
-  isPayment,
   onPress,
   selectAddress,
   addressType,
@@ -115,58 +83,60 @@ const PaymentAddress = ({
   const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
   const [ward, setWard] = useState<AddressWard>();
   const [wardList, setWardList] = useState<AddressWard[]>([]);
-  const [provinceId, setProvinceId] = useState<string>("");
-  const [districtId, setDistrictId] = useState<string>("");
-  const [wardId, setWardId] = useState<string>("");
 
   const getProvince = async () => {
     try {
       const response = await dispatch(getAddressProvinceThunk({}));
-      setProvinceList(response.payload.data);
+      if (response.payload?.data) {
+        setProvinceList(response.payload.data);
+      } else {
+        throw new Error("No province data received");
+      }
     } catch (error: any) {
-      showDialog(
-        t("common.error"),
-        error.message || t("address.province_load_error"),
-        "error"
-      );
+      console.error("Province loading error:", error);
+      showDialog(t("common.error"), t("address.province_load_error"), "error");
     }
   };
 
   const getDistrict = async (provinceId: string) => {
     try {
+      if (!provinceId) {
+        throw new Error("Province ID is required");
+      }
       const response = await dispatch(
         getAddressDistrictThunk({ query: Number(provinceId) })
       );
-      setDistrictList(response.payload.data);
+      if (response.payload?.data) {
+        setDistrictList(response.payload.data);
+      } else {
+        throw new Error("No district data received");
+      }
     } catch (error: any) {
-      showDialog(
-        t("common.error"),
-        error.message || t("address.district_load_error"),
-        "error"
-      );
+      showDialog(t("common.error"), t("address.district_load_error"), "error");
     }
   };
 
   const getWard = async (districtId: string) => {
     try {
+      if (!districtId) {
+        throw new Error("District ID is required");
+      }
       const response = await dispatch(
         getAddressWardThunk({ query: Number(districtId) })
       );
-      setWardList(response.payload.data);
+      if (response.payload?.data) {
+        setWardList(response.payload.data);
+      } else {
+        throw new Error("No ward data received");
+      }
     } catch (error: any) {
-      showDialog(
-        t("common.error"),
-        error.message || t("address.ward_load_error"),
-        "error"
-      );
+      showDialog(t("common.error"), t("address.ward_load_error"), "error");
     }
   };
 
   useEffect(() => {
-    if (addressType === "temp") {
-      getProvince();
-    }
-  }, [addressType]);
+    getProvince();
+  }, []);
 
   const handleFieldChange = (field: keyof TempAddress, value: string) => {
     setTempAddress((prev) => ({
@@ -259,7 +229,7 @@ const PaymentAddress = ({
                       row
                       centerV
                       backgroundColor={
-                        getAddressTypeConfig(selectAddress.addressType).bgColor
+                        getAddressTypeConfig(selectAddress.address_type).bgColor
                       }
                       paddingH-8
                       paddingV-4
@@ -267,26 +237,27 @@ const PaymentAddress = ({
                     >
                       <MaterialCommunityIcons
                         name={
-                          getAddressTypeConfig(selectAddress.addressType)
+                          getAddressTypeConfig(selectAddress.address_type)
                             .icon as any
                         }
                         size={14}
                         color={
-                          getAddressTypeConfig(selectAddress.addressType).color
+                          getAddressTypeConfig(selectAddress.address_type).color
                         }
                         style={{ marginRight: 4 }}
                       />
                       <Text
                         text90
                         style={{
-                          color: getAddressTypeConfig(selectAddress.addressType)
-                            .color,
+                          color: getAddressTypeConfig(
+                            selectAddress.address_type
+                          ).color,
                           fontWeight: "600",
                         }}
                       >
                         {t(
                           `address.${
-                            selectAddress.addressType?.toLowerCase() || "other"
+                            selectAddress.address_type?.toLowerCase() || "other"
                           }`
                         )}
                       </Text>
@@ -298,15 +269,38 @@ const PaymentAddress = ({
                     color={Colors.grey30}
                   />
                 </View>
-                <Text text70 marginB-5 style={{ fontWeight: "600" }}>
-                  {userProfile?.full_name}
+
+                <Text
+                  text70
+                  marginB-5
+                  color={Colors.grey10}
+                  style={{
+                    fontWeight: "600",
+                    fontSize: 16,
+                  }}
+                >
+                  {userProfile?.full_name || ""}
                 </Text>
-                <Text grey30 text80 marginB-5>
-                  {userProfile?.phone_number}
+                <Text
+                  text80
+                  marginB-5
+                  color={Colors.grey30}
+                  style={{
+                    fontSize: 14,
+                  }}
+                >
+                  {userProfile?.phone_number || ""}
                 </Text>
-                <Text grey30 text80 style={{ lineHeight: 20 }}>
-                  {selectAddress.address}, {selectAddress.district},{" "}
-                  {selectAddress.province}
+                <Text
+                  text80
+                  color={Colors.grey30}
+                  style={{
+                    lineHeight: 20,
+                    fontSize: 14,
+                  }}
+                >
+                  {selectAddress.address}, {selectAddress.ward},{" "}
+                  {selectAddress.district}, {selectAddress.province}
                 </Text>
               </>
             ) : (
@@ -322,50 +316,24 @@ const PaymentAddress = ({
           </TouchableOpacity>
         ) : (
           <View>
-            {[
-              {
-                key: "full_name",
-                label: t("address.full_name"),
-                icon: "account-outline",
-                value: userProfile?.full_name || "",
-                editable: false,
-              },
-              {
-                key: "phone_number",
-                label: t("address.phone_number"),
-                icon: "phone-outline",
-                value: userProfile?.phone_number || "",
-                editable: false,
-                keyboardType: "phone-pad",
-              },
-            ].map((field) => (
-              <View key={field.key} marginB-10>
-                <TextField
-                  value={field.value}
-                  onChangeText={(text) =>
-                    handleFieldChange(field.key as keyof TempAddress, text)
-                  }
-                  placeholder={field.label}
-                  editable={field.editable}
-                  leadingAccessory={
-                    <View marginR-10>
-                      <MaterialCommunityIcons
-                        name={field.icon as any}
-                        size={20}
-                        color={Colors.grey30}
-                      />
-                    </View>
-                  }
-                  keyboardType={field.keyboardType as any}
-                  fieldStyle={[styles.field]}
-                />
-              </View>
-            ))}
+            <AddressTextInput
+              value={tempAddress.full_name}
+              placeholder={t("address.name")}
+              onChangeText={(value) => handleFieldChange("full_name", value)}
+            />
+
+            <AddressTextInput
+              value={tempAddress.phone_number}
+              placeholder={t("address.phone_number")}
+              onChangeText={(value) => handleFieldChange("phone_number", value)}
+              keyboardType="phone-pad"
+              maxLength={10}
+            />
 
             <Picker
               placeholder={t("address.province")}
               floatingPlaceholder
-              value={provinceId}
+              value={province?.id}
               label={province?.name}
               enableModalBlur={true}
               onChange={(value: PickerValue) => {
@@ -374,14 +342,14 @@ const PaymentAddress = ({
                     (item) => item.id === value
                   );
                   if (selectedProvince) {
-                    setProvinceId(selectedProvince.id);
+                    setProvince({
+                      id: selectedProvince.id,
+                      name: selectedProvince.name,
+                    } as AddressProvince);
                     handleFieldChange("province", selectedProvince.name);
-                    getDistrict(selectedProvince.id);
-
+                    getDistrict(String(selectedProvince?.id));
                     setDistrict(undefined);
                     setWard(undefined);
-                    setDistrictId("");
-                    setWardId("");
                     handleFieldChange("district", "");
                     handleFieldChange("ward", "");
                   }
@@ -397,13 +365,11 @@ const PaymentAddress = ({
               }))}
             />
 
-            {provinceId && (
+            {province?.id && (
               <Picker
                 placeholder={t("address.district")}
-                searchPlaceholder={t("address.search_a_district")}
-                topBarProps={{ title: t("address.district") }}
                 floatingPlaceholder
-                value={districtId}
+                value={district?.id}
                 label={district?.name}
                 enableModalBlur={true}
                 onChange={(value: PickerValue) => {
@@ -412,17 +378,20 @@ const PaymentAddress = ({
                       (item) => item.id === value
                     );
                     if (selectedDistrict) {
-                      setDistrictId(selectedDistrict.id);
+                      setDistrict({
+                        id: selectedDistrict.id,
+                        name: selectedDistrict.name,
+                      } as AddressDistrict);
                       handleFieldChange("district", selectedDistrict.name);
-                      getWard(selectedDistrict.id);
-
+                      getWard(String(selectedDistrict?.id));
                       setWard(undefined);
-                      setWardId("");
                       handleFieldChange("ward", "");
                     }
                   }
                 }}
+                topBarProps={{ title: t("address.district") }}
                 showSearch
+                searchPlaceholder={t("address.search_a_district")}
                 searchStyle={{ placeholderTextColor: Colors.grey50 }}
                 items={districtList.map((item: AddressDistrict) => ({
                   value: item.id,
@@ -431,11 +400,11 @@ const PaymentAddress = ({
               />
             )}
 
-            {districtId && (
+            {district?.id && (
               <Picker
                 placeholder={t("address.ward")}
                 floatingPlaceholder
-                value={wardId}
+                value={ward?.id}
                 label={ward?.name}
                 enableModalBlur={true}
                 onChange={(value: PickerValue) => {
@@ -444,7 +413,10 @@ const PaymentAddress = ({
                       (item) => item.id === value
                     );
                     if (selectedWard) {
-                      setWardId(selectedWard.id);
+                      setWard({
+                        id: selectedWard.id,
+                        name: selectedWard.name,
+                      } as AddressWard);
                       handleFieldChange("ward", selectedWard.name);
                     }
                   }
@@ -460,41 +432,18 @@ const PaymentAddress = ({
               />
             )}
 
-            <TextField
-              value={tempAddress.address}
-              placeholder={t("address.street_address")}
-              onChangeText={(text) => handleFieldChange("address", text)}
-              leadingAccessory={
-                <View marginR-10>
-                  <MaterialCommunityIcons
-                    name="map-marker-outline"
-                    size={20}
-                    color={Colors.grey30}
-                  />
-                </View>
-              }
-              fieldStyle={[styles.field]}
-            />
+            {ward?.id && (
+              <AddressTextInput
+                value={tempAddress.address}
+                placeholder={t("address.address")}
+                onChangeText={(value) => handleFieldChange("address", value)}
+              />
+            )}
           </View>
         )}
       </Animated.View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  field: {
-    borderWidth: 1,
-    borderColor: Colors.grey50,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    backgroundColor: Colors.white,
-    height: 44,
-    marginBottom: 10,
-  },
-  pickerContainer: {
-    marginBottom: 10,
-  },
-});
 
 export default PaymentAddress;

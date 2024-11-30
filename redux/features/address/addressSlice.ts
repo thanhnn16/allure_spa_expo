@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchAddresses, addAddress, updateAddress, deleteAddress } from './addressThunk';
 import { AddressDistrictResponse, AddressProvince, AddressProvinceResponse, AddressState, AddressWardResponse } from '@/types/address.type';
 import { getAddressDistrictThunk, getAddressProvinceThunk, getAddressWardThunk } from './getAddressThunk';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Address } from '../../../types/address.type';
 
 // Initial state
 const initialState: AddressState = {
@@ -19,6 +21,9 @@ const addressSlice = createSlice({
   reducers: {
     setSelectedAddress: (state: any, action: any) => {
       state.selectedAddress = action.payload;
+      if (action.payload) {
+        AsyncStorage.setItem('selectedAddress', JSON.stringify(action.payload));
+      }
     },
     clearAddressError: (state: any) => {
       state.error = null;
@@ -40,6 +45,13 @@ const addressSlice = createSlice({
       .addCase(fetchAddresses.fulfilled, (state: any, action: any) => {
         state.loading = false;
         state.addresses = action.payload;
+
+        if (!state.selectedAddress) {
+          const defaultAddress = action.payload.find((addr: Address) => addr.is_default) || action.payload[0];
+          if (defaultAddress) {
+            state.selectedAddress = defaultAddress;
+          }
+        }
       })
       .addCase(fetchAddresses.rejected, (state: any, action: any) => {
         state.loading = false;
@@ -98,7 +110,7 @@ const addressSlice = createSlice({
       .addCase(getAddressProvinceThunk.rejected, (state: AddressDistrictResponse, action: any) => {
         state.loading = false;
         state.error = action.payload as string;
-      }) 
+      })
       .addCase(getAddressDistrictThunk.pending, (state: AddressDistrictResponse) => {
         state.loading = true;
         state.error = null;

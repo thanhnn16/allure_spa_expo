@@ -18,10 +18,6 @@ interface PaymentItemProps {
 const PaymentItem = ({ orderItem }: PaymentItemProps) => {
   const { t } = useLanguage();
 
-  useEffect(() => {
-    console.log("PaymentItem received orderItem:", orderItem);
-  }, [orderItem]);
-
   if (
     !orderItem.item_id ||
     !orderItem.item_type ||
@@ -50,9 +46,6 @@ const PaymentItem = ({ orderItem }: PaymentItemProps) => {
     ? (itemData as ServiceDetailResponeModel)?.service_name
     : (itemData as Product)?.name;
   const imageUrl = itemData?.media?.[0]?.full_url;
-
-  console.log("itemName", itemName);
-  console.log("imageUrl", imageUrl);
 
   return (
     <View

@@ -15,9 +15,10 @@ interface VoucherDropdownProps {
   value: Voucher | null;
   items: Voucher[];
   onSelect: (voucher: Voucher | null) => void;
+  isLoading?: boolean;
 }
 
-const VoucherDropdown = ({ value, items, onSelect }: VoucherDropdownProps) => {
+const VoucherDropdown = ({ value, items, onSelect, isLoading }: VoucherDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useLanguage();
 
@@ -55,10 +56,16 @@ const VoucherDropdown = ({ value, items, onSelect }: VoucherDropdownProps) => {
             style={{ marginRight: 6 }}
           />
           <View>
-            <Text text80 color={value ? Colors.text : Colors.grey30}>
-              {value ? value.code : t("checkout.select_voucher")}
-            </Text>
-            {value && (
+            {isLoading ? (
+              <Text text80 color={Colors.grey30}>
+                {t("common.loading")}...
+              </Text>
+            ) : (
+              <Text text80 color={value ? Colors.text : Colors.grey30}>
+                {value ? value.code : t("checkout.select_voucher")}
+              </Text>
+            )}
+            {value && !isLoading && (
               <Text text90 color={Colors.grey30}>
                 {value.formatted_discount}
               </Text>
@@ -154,7 +161,23 @@ const VoucherDropdown = ({ value, items, onSelect }: VoucherDropdownProps) => {
   };
 
   const renderContent = () => (
-    <View style={styles.dropdownContent}>{items.map(renderVoucherItem)}</View>
+    <View style={styles.dropdownContent}>
+      {isLoading ? (
+        <View padding-12 center>
+          <Text text80 grey30>
+            {t("common.loading")}...
+          </Text>
+        </View>
+      ) : items.length === 0 ? (
+        <View padding-12 center>
+          <Text text80 grey30>
+            {t("checkout.no_vouchers_available")}
+          </Text>
+        </View>
+      ) : (
+        items.map(renderVoucherItem)
+      )}
+    </View>
   );
 
   return (

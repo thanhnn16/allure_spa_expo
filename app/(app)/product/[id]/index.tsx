@@ -67,23 +67,29 @@ export default function DetailsScreen() {
 
   const user_id = useSelector((state: RootState) => state.auth.user?.id);
 
-  const { product, isLoading, media } = useSelector(
-    (state: RootState) => state.product
-  );
+  const product = useSelector((state: RootState) => state.product.product);
+
+  const { isLoading, media } = useSelector((state: RootState) => state.product);
   const windowWidth = Dimensions.get("window").width;
 
-  const [isFavorite, setIsFavorite] = useState(product?.is_favorite);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-
   useEffect(() => {
-    const fetchProduct = async () => {
-      await dispatch(getProductThunk({ product_id: Number(id), user_id }));
-      setIsInitialLoading(false);
+    const fetchInitialData = async () => {
+      try {
+        await Promise.all([
+          dispatch(getProductThunk({ product_id: Number(id), user_id })),
+        ]);
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      } finally {
+        setIsInitialLoading(false);
+      }
     };
 
-    fetchProduct();
+    fetchInitialData();
     return () => {
       dispatch(clearProduct());
     };
@@ -96,7 +102,9 @@ export default function DetailsScreen() {
   }, [product, quantity]);
 
   useEffect(() => {
-    setIsFavorite(product?.is_favorite);
+    if (product) {
+      setIsFavorite(product?.is_favorite);
+    }
   }, [product]);
 
   const handleOpenImage = (index: number) => {

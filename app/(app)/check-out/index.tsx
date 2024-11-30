@@ -4,7 +4,7 @@ import PaymentItem from "@/components/payment/PaymentItem";
 import { useLanguage } from "@/hooks/useLanguage";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useNavigation } from "expo-router";
-import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
 
@@ -27,46 +27,25 @@ import { clearTempOrder } from "@/redux/features/order/orderSlice";
 import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk";
 import { RootState } from "@/redux/store";
 import OrderService from "@/services/OrderService";
-import { Address } from "@/types/address.type";
+import { Address, TempAddress } from "@/types/address.type";
 import { CheckoutOrderItem } from "@/types/order.type";
 import { Voucher } from "@/types/voucher.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { useLocalSearchParams } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import * as Linking from "expo-linking";
-import {
-  getAddressDistrictThunk,
-  getAddressProvinceThunk,
-  getAddressWardThunk,
-} from "@/redux/features/address/getAddressThunk";
-import {
-  AddressDistrict,
-  AddressProvince,
-  AddressWard,
-} from "@/types/address.type";
-import PaymentAddress, {
-  PaymentAddressProps,
-} from "@/components/payment/PaymentAddress";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import PaymentAddress from "@/components/payment/PaymentAddress";
 import { StyleSheet } from "react-native";
 import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { setSelectedAddress as setReduxSelectedAddress } from "@/redux/features/address/addressSlice";
 
 export interface PaymentMethod {
   id: number;
   name: string;
   iconName: string;
   iconType?: "Ionicons" | "MaterialCommunityIcons";
-}
-
-interface TempAddress {
-  full_name: string;
-  phone_number: string;
-  address: string;
-  ward: string;
-  district: string;
-  province: string;
 }
 
 const presets = {
@@ -130,8 +109,7 @@ export default function Checkout() {
 
   const tempOrder = useSelector((state: RootState) => state.order.tempOrder);
   const checkoutItems = useSelector(selectCheckoutItems) as CheckoutOrderItem[];
-  const userProfile = useSelector((state: RootState) => state.auth.user);
-  const vouchers = useSelector((state: RootState) => state.voucher.vouchers);
+  const userProfile = useSelector((state: RootState) => state.user.user);
 
   const tempOrderItems = tempOrder.items.map((item: CheckoutOrderItem) => ({
     item_id: item.item_id,
@@ -155,17 +133,20 @@ export default function Checkout() {
     ward: "",
     district: "",
     province: "",
+    user_id: userProfile?.id || "",
+    address_type: "others",
+    is_default: false,
+    is_temporary: true,
   });
 
-  const [province, setProvince] = useState<AddressProvince>();
-  const [provinceList, setProvinceList] = useState<AddressProvince[]>([]);
-  const [district, setDistrict] = useState<AddressDistrict>();
-  const [districtList, setDistrictList] = useState<AddressDistrict[]>([]);
-  const [ward, setWard] = useState<AddressWard>();
-  const [wardList, setWardList] = useState<AddressWard[]>([]);
-
   const isTempAddressValid = () => {
-    return Object.values(tempAddress).every((value) => value.trim() !== "");
+    if (addressType !== "temp") return true;
+    return (
+      tempAddress.address?.trim() !== "" &&
+      tempAddress.ward?.trim() !== "" &&
+      tempAddress.district?.trim() !== "" &&
+      tempAddress.province?.trim() !== ""
+    );
   };
 
   const calculateTotalPrice = () => {
@@ -215,7 +196,6 @@ export default function Checkout() {
   };
 
   const handleVoucherSelect = (voucher: Voucher | null) => {
-    setVoucher(voucher);
     setSelectedVoucher(voucher);
     if (voucher) {
       const newPrice = calculateDiscountedPrice(totalPrice, voucher);
@@ -225,16 +205,79 @@ export default function Checkout() {
     }
   };
 
+  const reduxSelectedAddress = useSelector(
+    (state: RootState) => state.address.selectedAddress
+  );
+
   const loadSelectedAddress = async () => {
     try {
-      const savedAddress = await AsyncStorage.getItem("selectedAddress");
-      if (savedAddress) {
-        setSelectedAddress(JSON.parse(savedAddress));
+      const addresses = await dispatch(fetchAddresses()).unwrap();
+
+      if (addresses && addresses.length > 0) {
+        const defaultAddress =
+          addresses.find((addr: Address) => addr.is_default) || addresses[0];
+
+        if (defaultAddress) {
+          setSelectedAddress(defaultAddress);
+          dispatch(setReduxSelectedAddress(defaultAddress));
+          await AsyncStorage.setItem(
+            "selectedAddress",
+            JSON.stringify(defaultAddress)
+          );
+        }
       }
     } catch (error) {
-      console.error("Lỗi khi lấy địa chỉ:", error);
+      console.error("Error loading addresses:", error);
     }
   };
+
+  useEffect(() => {
+    const initializeCheckout = async () => {
+      try {
+        if (!userProfile) return;
+
+        try {
+          const addresses = await dispatch(fetchAddresses()).unwrap();
+          if (addresses && addresses.length > 0) {
+            const defaultAddress =
+              addresses.find((addr: Address) => addr.is_default) ||
+              addresses[0];
+            if (defaultAddress) {
+              setSelectedAddress(defaultAddress);
+              dispatch(setReduxSelectedAddress(defaultAddress));
+            }
+          }
+        } catch (addressError) {
+          console.error("Error loading addresses:", addressError);
+        }
+
+        try {
+          await loadVouchers();
+        } catch (voucherError) {
+          console.error("Error loading vouchers:", voucherError);
+        }
+      } catch (error) {
+        console.error("Error initializing checkout:", error);
+      }
+    };
+
+    initializeCheckout();
+  }, [userProfile]);
+
+  useEffect(() => {
+    if (reduxSelectedAddress) {
+      setSelectedAddress(reduxSelectedAddress);
+      setAddressType("saved");
+    }
+  }, [reduxSelectedAddress]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadSelectedAddress();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const handlePayment = async () => {
     try {
@@ -257,7 +300,6 @@ export default function Checkout() {
         return;
       }
 
-      // Format order data với địa chỉ tạm thời nếu được chọn
       const orderData = {
         payment_method_id: selectedPayment.id,
         shipping_address_id:
@@ -276,14 +318,11 @@ export default function Checkout() {
         })),
       };
 
-      // Create order
       const orderResponse = await OrderService.createOrder(orderData);
       const { id: orderId, total_amount: serverCalculatedAmount } =
         orderResponse.data;
 
-      // Handle payment methods
       if (selectedPayment.id === 1) {
-        // Cash payment
         router.replace({
           pathname: "/(app)/invoice/success",
           params: {
@@ -297,7 +336,6 @@ export default function Checkout() {
           dispatch(clearCart());
         }
       } else if (selectedPayment.id === 3) {
-        // Bank transfer
         const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
 
         const paymentData = {
@@ -330,58 +368,28 @@ export default function Checkout() {
     }
   };
 
-  const getProvince = async () => {
+  const [isLoadingVouchers, setIsLoadingVouchers] = useState(false);
+
+  const loadVouchers = async () => {
     try {
-      const response = await dispatch(getAddressProvinceThunk({}));
-      const mappedProvinces = response.payload.data.map((p: any) => ({
-        value: p.code.toString(),
-        label: p.name,
-      }));
-      setProvinceList(mappedProvinces);
-    } catch (error: any) {
-      showDialog(
-        t("common.error"),
-        error.message || t("address.province_load_error"),
-        "error"
-      );
+      setIsLoadingVouchers(true);
+      const vouchersResponse = await dispatch(getAllVouchersThunk()).unwrap();
+      if (vouchersResponse) {
+        const activeVouchers = vouchersResponse.filter(
+          (v: Voucher) => v.is_active && v.remaining_uses > 0
+        );
+        setactiveVoucher(activeVouchers);
+      }
+    } catch (error) {
+      console.error("Error loading vouchers:", error);
+    } finally {
+      setIsLoadingVouchers(false);
     }
   };
 
   useEffect(() => {
-    const initializeCheckout = async () => {
-      try {
-        await Promise.all([
-          // Load addresses
-          dispatch(fetchAddresses()).unwrap(),
-          // Load vouchers
-          dispatch(getAllVouchersThunk()),
-          // Load selected address from storage
-          loadSelectedAddress(),
-        ]);
-
-        // Update active vouchers after fetching
-        if (vouchers) {
-          setactiveVoucher(vouchers.filter((v: Voucher) => v.is_active));
-        }
-      } catch (error) {
-        console.error("Error initializing checkout:", error);
-      }
-    };
-
-    initializeCheckout();
-  }, [dispatch]);
-
-  useEffect(() => {
     setDiscountedPrice(totalPrice);
   }, [totalPrice]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      loadSelectedAddress();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
 
   useEffect(() => {
     if (source === "direct" && tempOrder.items.length === 0) {
@@ -404,13 +412,9 @@ export default function Checkout() {
     };
   }, [source, tempOrder.items, checkoutItems]);
 
-  useEffect(() => {
-    if (addressType === "temp") {
-      getProvince();
-    }
-  }, [addressType]);
-
   const renderAddressSection = () => {
+    const addressToShow = selectedAddress || reduxSelectedAddress;
+
     return (
       <View style={presets.section}>
         <Text text70 bold marginB-12>
@@ -419,15 +423,13 @@ export default function Checkout() {
         <PaymentAddress
           isPayment={true}
           onPress={() => router.push("/(app)/address")}
-          selectAddress={
-            selectedAddress
-              ? convertAddressToPaymentProps(selectedAddress)
-              : null
-          }
+          selectAddress={addressToShow}
           addressType={addressType}
           setAddressType={setAddressType}
           tempAddress={tempAddress}
-          setTempAddress={setTempAddress}
+          setTempAddress={
+            setTempAddress as React.Dispatch<React.SetStateAction<TempAddress>>
+          }
           showDialog={showDialog}
           userProfile={userProfile}
         />
@@ -489,31 +491,27 @@ export default function Checkout() {
     return orderItems.length > 0;
   };
 
-  const convertAddressToPaymentProps = (
-    address: Address
-  ): PaymentAddressProps => {
-    return {
-      addressType: address.address_type || "default",
-      fullName: userProfile?.full_name || "",
-      phoneNumber: userProfile?.phone_number || "",
-      address: address.address,
-      district: address.district,
-      province: address.province,
-    };
-  };
-
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["20%"], []);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
+  const renderVoucherSection = () => (
+    <View marginB-16>
+      <Text text70 bold marginB-12>
+        {t("checkout.voucher")}
+      </Text>
+      <VoucherDropdown
+        value={selectedVoucher}
+        items={activeVouchers}
+        onSelect={handleVoucherSelect}
+        isLoading={isLoadingVouchers}
+      />
+    </View>
+  );
 
   const renderBottomSheet = () => (
     <BottomSheet
       ref={bottomSheetRef}
       snapPoints={snapPoints}
-      onChange={handleSheetChanges}
       enablePanDownToClose={false}
       style={[
         styles.bottomContainer,
@@ -521,17 +519,7 @@ export default function Checkout() {
       ]}
     >
       <BottomSheetView style={styles.summaryContainer}>
-        <View marginB-16>
-          <Text text70 bold marginB-12>
-            {t("checkout.voucher")}
-          </Text>
-          <VoucherDropdown
-            value={selectedVoucher}
-            items={activeVouchers}
-            onSelect={handleVoucherSelect}
-          />
-        </View>
-
+        {renderVoucherSection()}
         <View style={styles.priceRow}>
           <Text style={styles.priceLabel}>{t("checkout.subtotal")}</Text>
           <Text style={styles.priceValue}>

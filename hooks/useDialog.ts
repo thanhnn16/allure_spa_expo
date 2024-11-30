@@ -6,13 +6,13 @@ export const useDialog = () => {
     visible: false,
     title: '',
     description: '',
-    severity: 'info'
+    severity: 'info',
   });
 
   const showDialog = (
     title: string,
     description: string,
-    severity: DialogConfig['severity'] = 'info'
+    severity: DialogConfig['severity'] = 'info',
   ) => {
     setDialogConfig({
       visible: true,
