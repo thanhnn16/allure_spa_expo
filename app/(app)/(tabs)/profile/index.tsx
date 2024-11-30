@@ -11,19 +11,72 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 
 import { Href, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AppDialog from "@/components/dialog/AppDialog";
-import { Linking, ScrollView } from "react-native";
+import { Linking, ScrollView, Animated } from "react-native";
 import VoucherIcon from "@/assets/icons/discount-shape.svg";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import { useDispatch } from "react-redux";
-import * as MailComposer from 'expo-mail-composer';
+import * as MailComposer from "expo-mail-composer";
 
 const ProfilePage = () => {
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const { user, signOut, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
+
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const shineAnim = useRef(new Animated.Value(0)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
+
+  const pulseAnimation = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.2,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.sequence([
+      Animated.timing(shineAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shineAnim, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.sequence([
+      Animated.timing(glowAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(glowAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      pulseAnimation();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLoginConfirm = () => {
     setLoginDialogVisible(false);
@@ -44,13 +97,11 @@ const ProfilePage = () => {
   };
 
   const handleSentEmail = () => {
-    return (
-      MailComposer.composeAsync({
-        subject: 'Help & Support Allure Spa',
-        body: 'Please describe your problem or question here:',
-        recipients: ['thanhnn16.work@gmail.com'],
-      })
-    );
+    return MailComposer.composeAsync({
+      subject: "Help & Support Allure Spa",
+      body: "Please describe your problem or question here:",
+      recipients: ["thanhnn16.work@gmail.com"],
+    });
   };
 
   return (
@@ -96,26 +147,77 @@ const ProfilePage = () => {
               </View>
             </View>
             <View gap-6 center>
-
-
               <TouchableOpacity
                 center
-                backgroundColor="#FFFFFF"
-                style={{
-                  borderRadius: 10,
-                  width: 52,
-                  height: 36,
-                  elevation: 5,
-                }}
                 onPress={() => {
+                  pulseAnimation();
                   router.push("/(app)/reward");
                 }}
               >
-                <Image
-                  width={20}
-                  height={20}
-                  source={require("@/assets/images/gift.png")}
-                />
+                <Animated.View
+                  style={{
+                    transform: [{ scale: scaleAnim }],
+                    backgroundColor: Colors.surface,
+                    borderRadius: 12,
+                    width: 56,
+                    height: 40,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    elevation: 8,
+                    shadowColor: Colors.primary,
+                    shadowOffset: {
+                      width: 0,
+                      height: 4,
+                    },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 4.5,
+                    overflow: "hidden",
+                    borderWidth: 1.5,
+                    borderColor: Colors.primary_light,
+                  }}
+                >
+                  <Animated.View
+                    style={{
+                      position: 'absolute',
+                      top: -5,
+                      left: -5,
+                      right: -5,
+                      bottom: -5,
+                      borderRadius: 16,
+                      backgroundColor: Colors.primary,
+                      opacity: glowAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 0.2],
+                      }),
+                    }}
+                  />
+                  <Animated.View
+                    style={{
+                      width: "150%",
+                      height: "100%",
+                      position: "absolute",
+                      backgroundColor: Colors.primary,
+                      opacity: 0.15,
+                      transform: [
+                        {
+                          translateX: shineAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [-84, 84],
+                          }),
+                        },
+                        {
+                          skewX: "-25deg",
+                        },
+                      ],
+                    }}
+                  />
+                  <Image
+                    width={28}
+                    height={28}
+                    source={require("@/assets/images/gift.png")}
+                    tintColor={Colors.primary}
+                  />
+                </Animated.View>
               </TouchableOpacity>
             </View>
           </Card>
