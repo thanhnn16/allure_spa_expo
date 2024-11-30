@@ -616,5 +616,126 @@
     "no_result": "Không tìm thấy kết quả",
     "recent_searches": "Tìm kiếm gần đây",
     "clear_all": "Xóa tất cả"
+  },
+  "policy": {
+    "purchase_policy": {
+      "title": "Chính sách Mua hàng",
+      "order": {
+        "title": "Đặt hàng",
+        "title1": "Đặt hàng sản phẩm",
+        "content1": [
+          "Khách hàng có thể dễ dàng đặt mua mỹ phẩm và đặt lịch hẹn spa trực tiếp trên ứng dụng Allure Spa.",
+          "Sau khi đặt hàng thành công, khách hàng sẽ nhận được xác nhận qua email hoặc thông báo trên ứng dụng.",
+          "Đối với các sản phẩm mỹ phẩm, vui lòng kiểm tra kỹ thông tin sản phẩm và số lượng trước khi xác nhận đặt hàng."
+        ],
+        "title2": "Thông tin đặt hàng",
+        "content2": [
+            "Khách hàng cần cung cấp thông tin chính xác và đầy đủ để đảm bảo quá trình giao hàng diễn ra thuận lợi.",
+            "Allure Spa sẽ không chịu trách nhiệm nếu thông tin đặt hàng sai sót dẫn đến việc giao hàng không thành công."
+          ]
+      },
+      "payment": {
+        "title": "Thanh toán",
+        "title1": "Phương thức thanh toán",
+        "methods": [
+          "Allure Spa chấp nhận các phương thức thanh toán bao gồm thẻ tín dụng, thẻ ghi nợ, và các phương thức thanh toán trực tuyến như PayPal.",
+          "Thanh toán cần phải hoàn tất trước khi đơn hàng được xử lý và vận chuyển.",
+          "Tất cả các giao dịch thanh toán trực tuyến đều được bảo mật thông qua cổng thanh toán SSL."
+        ],
+        "title2": "Xác nhận thanh toán",
+        "processing": [
+          "Sau khi khách hàng hoàn tất thanh toán, Allure Spa sẽ tiến hành xác nhận và xử lý đơn hàng.",
+          "Trong trường hợp thanh toán không thành công, khách hàng sẽ nhận được thông báo và hướng dẫn cụ thể để thực hiện lại quá trình thanh toán."
+        ]
+      },
+      "shipping": {
+        "title": "Vận chuyển",
+        "title1": "Thời gian giao hàng",
+        "delivery_time": [
+          "Đơn hàng mỹ phẩm sẽ được vận chuyển trong vòng 3-5 ngày làm việc kể từ ngày xác nhận đơn hàng.",
+          "Thời gian giao hàng có thể thay đổi tùy thuộc vào địa điểm giao hàng và điều kiện vận chuyển."
+        ],
+        "title2": "Thời gian giao hàng",
+        "shipping_fee": [
+          "Chi phí vận chuyển sẽ được tính dựa trên địa điểm giao hàng và sẽ hiển thị tại thời điểm thanh toán.",
+          "Khách hàng có thể kiểm tra chi phí vận chuyển trước khi xác nhận đặt hàng."
+        ],
+        "title3": "Theo dõi đơn hàng",
+        "tracking": [
+          "Sau khi đơn hàng được gửi đi, khách hàng sẽ nhận được thông tin theo dõi để tiện theo dõi quá trình giao hàng.",
+          "Khách hàng có thể liên hệ với bộ phận chăm sóc khách hàng nếu có bất kỳ vấn đề gì trong quá trình vận chuyển."
+        ]
+      }
+    },
+    "return_policy": {
+      "title": "Chính sách Đổi trả",
+      "conditions": {
+        "title": "Điều kiện đổi trả",
+        "title1": "Điều kiện chung",
+        "general_conditions": [
+          "Allure Spa chấp nhận đổi trả sản phẩm trong vòng 14 ngày kể từ ngày nhận hàng.",
+          "Sản phẩm phải còn nguyên vẹn, chưa qua sử dụng, và bao bì không bị hỏng hóc.",
+          "Khách hàng cần giữ lại hóa đơn và các giấy tờ liên quan khi thực hiện đổi trả.",
+          "Để bắt đầu quy trình đổi trả, vui lòng liên hệ với bộ phận chăm sóc khách hàng qua email support@allurespa.com hoặc gọi số hotline."
+        ],
+        "title2": "Sản phẩm không đủ điều kiện đổi trả:",
+        "not_eligible": [
+          "Các sản phẩm đã qua sử dụng hoặc bao bì bị hỏng sẽ không đủ điều kiện để đổi trả.",
+          "Các sản phẩm khuyến mãi hoặc giảm giá đặc biệt không được chấp nhận đổi trả, trừ khi có lỗi từ nhà sản xuất."
+        ]
+      },
+      "process": {
+        "title": "Quy trình đổi trả",
+        "title1": "Liên hệ chăm sóc khách hàng:",
+        "steps": [
+          "Khách hàng liên hệ với bộ phận chăm sóc khách hàng để thông báo về nhu cầu đổi trả và cung cấp thông tin đơn hàng cùng lý do đổi trả."
+        ],
+        "title2": "Gửi sản phẩm đổi trả",
+        "steps2": [
+          "Sau khi được hướng dẫn, khách hàng gửi sản phẩm cần đổi trả về địa chỉ mà Allure Spa cung cấp.",
+          "Khách hàng chịu trách nhiệm về chi phí vận chuyển khi đổi trả sản phẩm, ngoại trừ trường hợp sản phẩm bị lỗi hoặc không đúng với đơn đặt hàng."
+        ],
+        "title3": "Kiểm tra và xử lý đổi trả",
+        "steps3": [
+          "Sau khi nhận được sản phẩm đổi trả, Allure Spa sẽ tiến hành kiểm tra và xác nhận tình trạng sản phẩm.",
+          "Nếu sản phẩm đủ điều kiện, Allure Spa sẽ thực hiện đổi trả hoặc hoàn tiền theo yêu cầu của khách hàng."
+        ]
+      },
+      "refund": {
+        "title": "Hoàn tiền",
+        "title1": "Quy trình hoàn tiền",
+        "process": [
+          "Sau khi nhận và kiểm tra sản phẩm trả lại, Allure Spa sẽ xử lý hoàn tiền trong vòng 5-7 ngày làm việc.",
+          "Số tiền hoàn lại sẽ được trả về tài khoản thanh toán ban đầu của khách hàng.",
+          "Khách hàng sẽ nhận được thông báo qua email khi việc hoàn tiền hoàn tất."
+        ],
+        "title2": "Chi phí hoàn tiền",
+        "costs": [
+          "Chi phí hoàn tiền sẽ bao gồm toàn bộ giá trị sản phẩm và chi phí vận chuyển ban đầu (nếu có).",
+          "Trong trường hợp sản phẩm bị lỗi hoặc không đúng với đơn đặt hàng, Allure Spa sẽ chịu trách nhiệm chi phí vận chuyển và hoàn tiền đầy đủ cho khách hàng."
+        ]
+      },
+      "reschedule": {
+        "title": "Đổi lịch hẹn spa",
+        "title1": "Thay đổi lịch hẹn:",
+        "conditions": [
+          "Khách hàng có thể đổi lịch hẹn spa miễn phí nếu thông báo trước 24 giờ so với thời gian hẹn ban đầu.",
+          "Đối với thông báo đổi lịch muộn hơn, Allure Spa sẽ tính phí hủy lịch hẹn tương đương với 50% giá trị dịch vụ đã đặt."
+        ]
+      }
+    },
+    "privacy_policy": {
+      "title": "Chính sách Bảo mật",
+      "title1": "Thu thập và sử dụng thông tin",
+      "data_collection": [
+        "Allure Spa cam kết bảo mật thông tin cá nhân của khách hàng và chỉ sử dụng thông tin này cho mục đích cung cấp dịch vụ tốt nhất.",
+        "Thông tin cá nhân của khách hàng sẽ không được chia sẻ với bên thứ ba, ngoại trừ khi có yêu cầu pháp lý hoặc để hoàn thành đơn hàng."
+      ],
+        "title2": "Bảo mật thanh toán",
+      "payment_security": [
+        "Allure Spa sử dụng các cổng thanh toán bảo mật SSL để đảm bảo an toàn cho các giao dịch trực tuyến.",
+        "Khách hàng có thể an tâm khi sử dụng các phương thức thanh toán trực tuyến trên ứng dụng của chúng tôi."
+      ]
+    }
   }
 }
