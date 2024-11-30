@@ -68,7 +68,15 @@ export interface AddressWardResponse {
     error: string | null;
 }
 
-export interface TempAddress extends Address {
+export interface TempAddress {
     full_name: string;
     phone_number: string;
+    province: string;
+    district: string;
+    ward: string;
+    address: string;
+    user_id: string;
+    address_type: string;
+    is_default: boolean;
+    is_temporary: boolean;
 }

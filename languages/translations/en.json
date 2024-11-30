@@ -418,6 +418,7 @@
     "default": "Default",
     "voucher": "Voucher",
     "no_voucher": "No Voucher",
+    "no_voucher_available": "No voucher available",
     "payment_method": "Payment Method",
     "pay_when_receive": "Pay when receive",
     "pay_online": "Pay online",

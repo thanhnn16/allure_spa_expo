@@ -145,6 +145,15 @@ const PaymentAddress = ({
     }));
   };
 
+  const handlePhoneNumberChange = (value: string) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    handleFieldChange("phone_number", numericValue);
+  };
+
+  const isPhoneNumberValid = (phone: string) => {
+    return /^[0-9]{10}$/.test(phone);
+  };
+
   return (
     <View>
       <View
@@ -320,14 +329,18 @@ const PaymentAddress = ({
               value={tempAddress.full_name}
               placeholder={t("address.name")}
               onChangeText={(value) => handleFieldChange("full_name", value)}
+              error={tempAddress.full_name !== "" && tempAddress.full_name.length < 2}
+              errorMessage={t("address.name_too_short")}
             />
 
             <AddressTextInput
               value={tempAddress.phone_number}
               placeholder={t("address.phone_number")}
-              onChangeText={(value) => handleFieldChange("phone_number", value)}
+              onChangeText={handlePhoneNumberChange}
               keyboardType="phone-pad"
               maxLength={10}
+              error={tempAddress.phone_number !== "" && !isPhoneNumberValid(tempAddress.phone_number)}
+              errorMessage={t("address.invalid_phone")}
             />
 
             <Picker
@@ -437,6 +450,8 @@ const PaymentAddress = ({
                 value={tempAddress.address}
                 placeholder={t("address.address")}
                 onChangeText={(value) => handleFieldChange("address", value)}
+                error={tempAddress.address !== "" && tempAddress.address.length < 5}
+                errorMessage={t("address.address_too_short")}
               />
             )}
           </View>

@@ -493,6 +493,7 @@
     "default": "デフォルト",
     "voucher": "バウチャー",
     "no_voucher": "バウチャーなし",
+    "no_voucher_available": "利用可能なバウチャーはありません",
     "payment_method": "支払い方法",
     "select_address": "住所を選択してください",
     "select_payment_method": "支払い方法を選択してください",

@@ -1,4 +1,5 @@
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
+import { OrderRequest } from "@/types/order.type";
 
 interface PaymentLinkResponse {
     success: boolean;
@@ -15,9 +16,14 @@ interface PaymentLinkResponse {
 }
 
 class OrderService {
-    async createOrder(data: any): Promise<any> {
-        const response = await AxiosInstance().post("/orders", data);
-        return response.data;
+    async createOrder(data: OrderRequest): Promise<any> {
+        try {
+            const response = await AxiosInstance().post("/orders", data);
+            return response.data;
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.message || 'Failed to create order';
+            throw new Error(errorMessage);
+        }
     }
 
     async processPayment(orderId: string, paymentData: {

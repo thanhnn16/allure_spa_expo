@@ -391,6 +391,7 @@
     "default": "Mặc định",
     "voucher": "Voucher",
     "no_voucher": "Không có Voucher",
+    "no_voucher_available": "Không có voucher nào có sẵn",
     "payment_method": "Phương thức thanh toán",
     "pay_when_receive": "Thanh toán khi nhận hàng",
     "pay_online": "Thanh toán online",

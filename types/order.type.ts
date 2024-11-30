@@ -1,5 +1,6 @@
 import { Product } from "./product.type";
 import { ServiceDetailResponeModel, ServiceResponeModel } from "./service.type";
+import { TempAddress } from "./address.type";
 
 export interface OrderItem {
     id: number;
@@ -77,4 +78,30 @@ export interface CheckoutOrderItem {
     service?: ServiceDetailResponeModel;
     name?: string;
     image?: string;
+}
+
+export interface OrderRequest {
+    payment_method_id: number;
+    shipping_address_id?: number | null;
+    temporary_address?: {
+        full_name: string;
+        phone_number: string;
+        province: string;
+        district: string;
+        ward: string;
+        address: string;
+    } | null;
+    voucher_id?: number | null;
+    note?: string;
+    order_items: OrderItemRequest[];
+    total_amount: number;
+    discount_amount?: number;
+}
+
+export interface OrderItemRequest {
+    item_type: 'product' | 'service';
+    item_id: number;
+    quantity: number;
+    price: number;
+    service_type?: 'single' | 'combo_5' | 'combo_10';
 }

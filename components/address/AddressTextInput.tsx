@@ -1,4 +1,5 @@
 import { TextField, Typography, View } from "react-native-ui-lib";
+import { Colors } from "react-native-ui-lib";
 
 interface AddressTextInputProps {
   value: string;
@@ -7,6 +8,8 @@ interface AddressTextInputProps {
   editable?: boolean;
   maxLength?: number;
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  error?: boolean;
+  errorMessage?: string;
 }
 
 const AddressTextInput = ({
@@ -15,6 +18,9 @@ const AddressTextInput = ({
   maxLength,
   onChangeText,
   keyboardType,
+  error = false,
+  errorMessage = "",
+  editable = true,
 }: AddressTextInputProps) => (
   <View marginB-10>
     <TextField
@@ -22,15 +28,22 @@ const AddressTextInput = ({
       placeholder={placeholder}
       floatingPlaceholder
       onChangeText={onChangeText}
-      enableErrors
+      enableErrors={!!error}
       validateOnChange
       floatingPlaceholderStyle={Typography.h3}
       labelStyle={Typography.h3}
       h3
-      // validate={['required', (value) => value.length == 10]}
-      // validationMessage={['Field is required', 'Password is too short']}
+      validationMessage={error ? errorMessage : undefined}
+      error={!!error}
       maxLength={maxLength}
       keyboardType={keyboardType}
+      editable={editable}
+      style={[
+        error && {
+          borderColor: Colors.red30,
+          borderWidth: 1,
+        },
+      ]}
     />
   </View>
 );

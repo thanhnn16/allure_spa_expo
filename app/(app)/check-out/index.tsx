@@ -28,18 +28,18 @@ import { getAllVouchersThunk } from "@/redux/features/voucher/getAllVoucherThunk
 import { RootState } from "@/redux/store";
 import OrderService from "@/services/OrderService";
 import { Address, TempAddress } from "@/types/address.type";
-import { CheckoutOrderItem } from "@/types/order.type";
+import { CheckoutOrderItem, OrderRequest } from "@/types/order.type";
 import { Voucher } from "@/types/voucher.type";
 import formatCurrency from "@/utils/price/formatCurrency";
 import { useLocalSearchParams } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
-import * as Linking from "expo-linking";
 import PaymentAddress from "@/components/payment/PaymentAddress";
 import { StyleSheet } from "react-native";
 import VoucherDropdown from "@/components/payment/VoucherDropdown";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setSelectedAddress as setReduxSelectedAddress } from "@/redux/features/address/addressSlice";
+import * as Linking from "expo-linking";
 
 export interface PaymentMethod {
   id: number;
@@ -101,7 +101,6 @@ export default function Checkout() {
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]);
   const [activeVouchers, setactiveVoucher] = useState<Voucher[]>([]);
-  const [voucher, setVoucher] = useState<Voucher | null>(null);
   const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
   const { dialogConfig, showDialog, hideDialog } = useDialog();
   const [note, setNote] = useState("");
@@ -141,11 +140,32 @@ export default function Checkout() {
 
   const isTempAddressValid = () => {
     if (addressType !== "temp") return true;
+
+    // Validate required fields
+    const requiredFields = [
+      "full_name",
+      "phone_number",
+      "province",
+      "district",
+      "ward",
+      "address",
+    ];
+
+    const hasAllRequiredFields = requiredFields.every(
+      (field) =>
+        tempAddress[field as keyof TempAddress]?.toString().trim() !== ""
+    );
+
+    // Validate field lengths and formats
+    const isValidPhoneNumber = /^[0-9]{10}$/.test(tempAddress.phone_number);
+    const isValidName = tempAddress.full_name.length >= 2;
+    const isValidAddress = tempAddress.address.length >= 5;
+
     return (
-      tempAddress.address?.trim() !== "" &&
-      tempAddress.ward?.trim() !== "" &&
-      tempAddress.district?.trim() !== "" &&
-      tempAddress.province?.trim() !== ""
+      hasAllRequiredFields &&
+      isValidPhoneNumber &&
+      isValidName &&
+      isValidAddress
     );
   };
 
@@ -282,6 +302,8 @@ export default function Checkout() {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
+
+      // Validate địa chỉ
       if (addressType === "saved" && !selectedAddress) {
         showDialog(
           t("checkout.address_required_title"),
@@ -300,14 +322,15 @@ export default function Checkout() {
         return;
       }
 
-      const orderData = {
+      // Tính toán số tiền giảm giá
+      const discountAmount = selectedVoucher ? totalPrice - discountedPrice : 0;
+
+      // Chuẩn bị dữ liệu đơn hàng
+      const orderData: OrderRequest = {
         payment_method_id: selectedPayment.id,
-        shipping_address_id:
-          addressType === "saved" ? selectedAddress?.id : null,
-        temp_address: addressType === "temp" ? tempAddress : null,
-        voucher_id: selectedVoucher?.id || null,
-        note: note || "",
-        items: orderItems.map((item: CheckoutOrderItem) => ({
+        total_amount: totalPrice,
+        discount_amount: discountAmount,
+        order_items: orderItems.map((item: CheckoutOrderItem) => ({
           item_id: item.item_id,
           item_type: item.item_type,
           quantity: item.quantity,
@@ -316,13 +339,42 @@ export default function Checkout() {
             service_type: item.service_type || "single",
           }),
         })),
+        note: note || undefined,
       };
 
-      const orderResponse = await OrderService.createOrder(orderData);
-      const { id: orderId, total_amount: serverCalculatedAmount } =
-        orderResponse.data;
+      // Thêm thông tin địa chỉ dựa vào loại được chọn
+      if (addressType === "saved" && selectedAddress) {
+        orderData.shipping_address_id = Number(selectedAddress.id);
+      } else if (addressType === "temp") {
+        orderData.temporary_address = {
+          full_name: tempAddress.full_name,
+          phone_number: tempAddress.phone_number,
+          province: tempAddress.province,
+          district: tempAddress.district,
+          ward: tempAddress.ward,
+          address: tempAddress.address,
+        };
+      }
 
+      // Thêm voucher nếu có
+      if (selectedVoucher) {
+        orderData.voucher_id = selectedVoucher.id;
+      }
+
+      console.log("Order Data:", JSON.stringify(orderData, null, 2)); // Log để debug
+
+      // Gọi API tạo đơn hàng
+      const orderResponse = await OrderService.createOrder(orderData);
+
+      if (!orderResponse.success) {
+        throw new Error(orderResponse.message || "Failed to create order");
+      }
+
+      const { id: orderId, total_amount: serverCalculatedAmount } = orderResponse.data;
+
+      // Xử lý thanh toán dựa trên phương thức được chọn
       if (selectedPayment.id === 1) {
+        // Tiền mặt
         router.replace({
           pathname: "/(app)/invoice/success",
           params: {
@@ -332,35 +384,34 @@ export default function Checkout() {
             payment_method: "cash",
           },
         });
-        if (source !== "direct") {
-          dispatch(clearCart());
-        }
       } else if (selectedPayment.id === 3) {
-        const scheme = __DEV__ ? "exp+allurespa" : "allurespa";
+        // Chuyển khoản
+        const returnUrl = Linking.createURL("/invoice/success");
+        const cancelUrl = Linking.createURL("/invoice/failed");
 
-        const paymentData = {
-          returnUrl: `${scheme}://invoice/success?order_id=${orderId}&amount=${serverCalculatedAmount}&payment_method=bank_transfer&payment_time=${new Date().toISOString()}`,
-          cancelUrl: `${scheme}://invoice/failed?type=cancel&order_id=${orderId}&payment_method=bank_transfer`,
-        };
+        const paymentResponse = await OrderService.processPayment(orderId, {
+          returnUrl,
+          cancelUrl,
+        });
 
-        const paymentResponse = await OrderService.processPayment(
-          orderId,
-          paymentData
-        );
-
-        if (paymentResponse.data?.checkoutUrl) {
+        if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
           await Linking.openURL(paymentResponse.data.checkoutUrl);
+        } else {
+          throw new Error("Failed to generate payment link");
         }
       }
 
+      // Clear giỏ hàng nếu đặt hàng từ giỏ hàng
       if (source !== "direct") {
         dispatch(clearCart());
       }
-    } catch (error) {
+      dispatch(clearTempOrder());
+
+    } catch (error: any) {
       console.error("Payment error:", error);
       showDialog(
         t("common.error"),
-        t("checkout.create_order_failed_message"),
+        error.message || t("checkout.create_order_failed_message"),
         "error"
       );
     } finally {
