@@ -179,7 +179,7 @@ const OrderDetail = () => {
     return <OrderSkeleton />;
   }
 
-  const subTotal = selectedOrder.order_items.reduce(
+  const subTotal = selectedOrder.order_items?.reduce(
     (acc: any, item: any) => acc + item.price * item.quantity,
     0
   );
@@ -203,8 +203,9 @@ const OrderDetail = () => {
           )}
 
           {selectedOrder.status === "completed" &&
-            new Date().getTime() - new Date(selectedOrder.created_at).getTime() <= 2 * 30 * 24 * 60 * 60 * 1000
-            && (
+            new Date().getTime() -
+              new Date(selectedOrder.created_at).getTime() <=
+              2 * 30 * 24 * 60 * 60 * 1000 && (
               <View style={styles.section}>
                 <View row spread centerV>
                   <Text h2_bold>{t("transaction_detail.review_products")}</Text>
@@ -214,10 +215,11 @@ const OrderDetail = () => {
                 ) ? (
                   <>
                     <Text h3 marginV-8 color={Colors.grey30}>
-                      {`${selectedOrder.order_items.filter(
-                        (item: OrderItem) => !item.is_rated
-                      ).length
-                        } ${t("transaction_detail.product_need_review")}`}
+                      {`${
+                        selectedOrder.order_items.filter(
+                          (item: OrderItem) => !item.is_rated
+                        ).length
+                      } ${t("transaction_detail.product_need_review")}`}
                     </Text>
                     <View flex>
                       <AppButton

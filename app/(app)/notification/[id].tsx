@@ -74,7 +74,8 @@ const NotificationDetail: React.FC = () => {
       case "new_order":
       case "order_status":
         actionText = t("notification.view_order");
-        // onActionPress = () => router.push(`/(app)/order/${notification.data?.order_id}`);
+        onActionPress = () =>
+          router.push(`/(app)/order/${notification.data?.order_id}`);
         break;
 
       case "new_message":
