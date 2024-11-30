@@ -99,6 +99,7 @@ const SubSection3 = ({  title }) => (
     </View>
 );
 
+// @ts-ignore
 const SubSection = ({ data }) => (
     <View>
       {data.map((item, index) => (
