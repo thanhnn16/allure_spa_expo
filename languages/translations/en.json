@@ -640,5 +640,126 @@
     "no_result": "No result",
     "recent_searches": "Recent searches",
     "clear_all": "Clear all"
+  },
+  "policy": {
+    "purchase_policy": {
+      "title": "Purchase Policy",
+      "order": {
+        "title": "Order",
+        "title1": "Placing an Order",
+        "content1": [
+          "Customers can easily order cosmetics and book spa appointments directly through the Allure Spa app.",
+          "Once the order is successfully placed, customers will receive confirmation via email or notification on the app.",
+          "For cosmetic products, please carefully check the product information and quantity before confirming the order."
+        ],
+        "title2": "Order Information",
+        "content2": [
+          "Customers are required to provide accurate and complete information to ensure smooth delivery.",
+          "Allure Spa is not responsible for unsuccessful delivery if the order information is incorrect."
+        ]
+      },
+      "payment": {
+        "title": "Payment",
+        "title1": "Payment Methods",
+        "methods": [
+          "Allure Spa accepts various payment methods, including credit cards, debit cards, and online payment options such as PayPal.",
+          "Payment must be completed before the order is processed and shipped.",
+          "All online transactions are secured via SSL payment gateways."
+        ],
+        "title2": "Payment Confirmation",
+        "processing": [
+          "Once the payment is completed, Allure Spa will confirm and process the order.",
+          "In case the payment fails, customers will receive a notification and detailed instructions on how to reattempt the payment."
+        ]
+      },
+      "shipping": {
+        "title": "Shipping",
+        "title1": "Delivery Time",
+        "delivery_time": [
+          "Cosmetic orders will be shipped within 3-5 working days from the order confirmation date.",
+          "Delivery time may vary depending on the shipping location and shipping conditions."
+        ],
+        "title2": "Shipping Costs",
+        "shipping_fee": [
+          "Shipping fees will be calculated based on the delivery address and displayed at checkout.",
+          "Customers can check the shipping costs before confirming the order."
+        ],
+        "title3": "Order Tracking",
+        "tracking": [
+          "Once the order is shipped, customers will receive tracking information to follow the delivery process.",
+          "Customers can contact customer service if they encounter any issues during shipping."
+        ]
+      }
+    },
+    "return_policy": {
+      "title": "Return Policy",
+      "conditions": {
+        "title": "Return Conditions",
+        "title1": "General Conditions",
+        "general_conditions": [
+          "Allure Spa accepts returns within 14 days from the date of receiving the goods.",
+          "Products must be in original, unused condition, and the packaging should not be damaged.",
+          "Customers need to retain the receipt and relevant documents when returning the product.",
+          "To initiate the return process, please contact customer service at support@allurespa.com or call the hotline."
+        ],
+        "title2": "Products Not Eligible for Return",
+        "not_eligible": [
+          "Used products or those with damaged packaging are not eligible for return.",
+          "Promotional or special discounted products cannot be returned, unless there is a manufacturing defect."
+        ]
+      },
+      "process": {
+        "title": "Return Process",
+        "title1": "Contact Customer Service",
+        "steps": [
+          "Customers should contact customer service to notify their intention to return the product and provide the order details and reason for the return."
+        ],
+        "title2": "Return the Product",
+        "steps2": [
+          "After receiving instructions, customers should return the product to the address provided by Allure Spa.",
+          "Customers are responsible for the return shipping cost, except in cases where the product is defective or not as described."
+        ],
+        "title3": "Return Inspection and Processing",
+        "steps3": [
+          "After receiving the returned product, Allure Spa will inspect and verify the product condition.",
+          "If the product is eligible, Allure Spa will proceed with the exchange or refund as requested by the customer."
+        ]
+      },
+      "refund": {
+        "title": "Refund",
+        "title1": "Refund Process",
+        "process": [
+          "After receiving and inspecting the returned product, Allure Spa will process the refund within 5-7 working days.",
+          "The refund will be credited to the original payment method used by the customer.",
+          "Customers will receive a notification via email once the refund is processed."
+        ],
+        "title2": "Refund Costs",
+        "costs": [
+          "Refund costs will include the full product value and any original shipping charges (if applicable).",
+          "In cases where the product is defective or not as ordered, Allure Spa will cover the return shipping and provide a full refund."
+        ]
+      },
+      "reschedule": {
+        "title": "Reschedule Spa Appointment",
+        "title1": "Rescheduling the Appointment",
+        "conditions": [
+          "Customers can reschedule their spa appointment for free if they notify at least 24 hours prior to the original appointment time.",
+          "If the notification is made less than 24 hours in advance, Allure Spa will charge a cancellation fee of 50% of the booked service price."
+        ]
+      }
+    },
+    "privacy_policy": {
+      "title": "Privacy Policy",
+      "title1": "Collection and Use of Information",
+      "data_collection": [
+        "Allure Spa is committed to protecting customers' personal information and using it solely for providing the best service.",
+        "Customers' personal information will not be shared with third parties unless required by law or necessary to complete the order."
+      ],
+      "title2": "Payment Security",
+      "payment_security": [
+        "Allure Spa uses SSL-secured payment gateways to ensure the safety of online transactions.",
+        "Customers can trust the online payment methods available on our app."
+      ]
+    }
   }
 }
