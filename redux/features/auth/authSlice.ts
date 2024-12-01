@@ -3,13 +3,14 @@ import { createSlice } from '@reduxjs/toolkit';
 import { loginThunk } from "./loginThunk";
 import { registerThunk } from "./registerThunk";
 import { logoutThunk } from "./logoutThunk";
+import { AuthError } from "@/types/auth.type";
 
 interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isGuest: boolean;
   isLoading: boolean;
-  error: string | null;
+  error: AuthError | null;
   zaloAccessToken: string | null;
   zaloRefreshToken: string | null;
   zaloExpiresIn: number | null;
@@ -60,69 +61,60 @@ export const authSlice = createSlice({
       state.zaloExpiresIn = null;
     }
   },
-  extraReducers: (builder: any) => {
+  extraReducers: (builder) => {
     // Login
     builder
-      .addCase(loginThunk.pending, (state: AuthState) => {
+      .addCase(loginThunk.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(loginThunk.fulfilled, (state: AuthState, action: any) => {
+      .addCase(loginThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
         state.isGuest = false;
       })
-      .addCase(loginThunk.rejected, (state: AuthState, action: any) => {
+      .addCase(loginThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload as AuthError;
       })
 
     // Register  
     builder
-      .addCase(registerThunk.pending, (state: AuthState) => {
+      .addCase(registerThunk.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerThunk.fulfilled, (state: AuthState, action: any) => {
+      .addCase(registerThunk.fulfilled, (state, action) => {
         state.isLoading = false;
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
         state.isGuest = false;
       })
-      .addCase(registerThunk.rejected, (state: AuthState, action: any) => {
+      .addCase(registerThunk.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload as string;
+        state.error = action.payload as AuthError;
       })
+
     // Logout
     builder
-      .addCase(logoutThunk.pending, (state: AuthState) => {
+      .addCase(logoutThunk.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(logoutThunk.fulfilled, (state: AuthState) => {
-        // Reset to initial state
-        state.token = null;
-        state.isAuthenticated = false;
-        state.isGuest = false;
-        state.isLoading = false;
-        state.error = null;
-        state.zaloAccessToken = null;
-        state.zaloRefreshToken = null;
-        state.zaloExpiresIn = null;
+      .addCase(logoutThunk.fulfilled, (state) => {
+        return {
+          ...initialState,
+          isLoading: false
+        };
       })
-      .addCase(logoutThunk.rejected, (state: AuthState) => {
-        // Still reset state even if API call fails
-        state.token = null;
-        state.isAuthenticated = false;
-        state.isGuest = false;
-        state.isLoading = false;
-        state.error = null;
-        state.zaloAccessToken = null;
-        state.zaloRefreshToken = null;
-        state.zaloExpiresIn = null;
+      .addCase(logoutThunk.rejected, (state) => {
+        return {
+          ...initialState,
+          isLoading: false
+        };
       });
   }
 });

@@ -26,7 +26,7 @@ export const loginThunk = createAsyncThunk(
         if (!token) {
           return rejectWithValue({
             code: 'NO_TOKEN',
-            message: 'No token received from server'
+            message: translate('auth.errors.NO_TOKEN')
           });
         }
 
@@ -44,8 +44,8 @@ export const loginThunk = createAsyncThunk(
       }
 
       return rejectWithValue({
-        code: res.data.status_code || 'UNKNOWN_ERROR',
-        message: res.data.message || translate('auth.login.unknown_error')
+        code: res.data.message,
+        message: translate(`auth.errors.${res.data.message}`)
       });
 
     } catch (error: any) {
@@ -65,25 +65,16 @@ export const loginThunk = createAsyncThunk(
         }
       }
 
-      if (error.response?.data?.status_code) {
-        switch (error.response.data.status_code) {
-          case AuthErrorCode.USER_NOT_FOUND:
-          case AuthErrorCode.WRONG_PASSWORD:
-            return rejectWithValue({
-              code: error.response.data.status_code,
-              message: translate('auth.login.invalid_credentials')
-            });
-          default:
-            return rejectWithValue({
-              code: error.response.data.status_code,
-              message: error.response.data.message || translate('auth.login.unknown_error')
-            });
-        }
+      if (error.response?.data?.message) {
+        return rejectWithValue({
+          code: error.response.data.message,
+          message: translate(`auth.errors.${error.response.data.message}`)
+        });
       }
 
       return rejectWithValue({
         code: AuthErrorCode.SERVER_ERROR,
-        message: translate('auth.login.server_error')
+        message: translate('auth.errors.SERVER_ERROR')
       });
     }
   }
