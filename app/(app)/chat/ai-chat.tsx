@@ -193,14 +193,22 @@ const AIChatScreen = () => {
     );
   };
 
-  // Add new function to handle guiding message click
-  const handleGuidingMessage = (messageId: string) => {
+  // Sửa hàm handleGuidingMessage
+  const handleGuidingMessage = async (messageId: string) => {
     const message = GUIDING_MESSAGES.find((m) => m.id === messageId);
     if (message) {
-      setMessage(
-        message.messages[currentLanguage as keyof typeof message.messages]
-      );
-      handleSend();
+      const guidingMessage = message.messages[currentLanguage as keyof typeof message.messages];
+      try {
+        await dispatch(
+          sendTextMessage({
+            text: guidingMessage,
+          })
+        ).unwrap();
+        setMessageStatus("Đã gửi");
+      } catch (err: any) {
+        console.error("Failed to send guiding message:", err);
+        setMessageStatus(`Lỗi: ${err.message}`);
+      }
     }
   };
 
@@ -323,15 +331,14 @@ const AIChatScreen = () => {
   const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
 
   return (
-    <KeyboardTrackingView
-      style={{ flex: 1, backgroundColor: Colors.white }}
-      trackInteractive
-    >
+    <View flex bg-white>
       <AppBar back title={t("chat.chat_with_ai")} />
-      <View flex useSafeArea>
-        {renderChatUI()}
-      </View>
-    </KeyboardTrackingView>
+      <KeyboardTrackingView style={{ flex: 1 }} trackInteractive>
+        <View flex>
+          {renderChatUI()}
+        </View>
+      </KeyboardTrackingView>
+    </View>
   );
 };
 
