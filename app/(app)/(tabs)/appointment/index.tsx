@@ -20,8 +20,8 @@ import {
   RefreshControl,
   Platform,
   ListRenderItem,
-  ListRenderItemInfo,
   KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import {
@@ -30,7 +30,6 @@ import {
   SkeletonView,
   Text,
   TouchableOpacity,
-  Keyboard,
   View,
 } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
@@ -117,7 +116,6 @@ const CancelModal = React.memo(
   }) => {
     const [note, setNote] = useState("");
     const { t } = useLanguage();
-    const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
 
     const handleConfirm = useCallback(() => {
       onConfirm(note);
@@ -127,61 +125,72 @@ const CancelModal = React.memo(
     return (
       <Modal visible={isVisible} transparent animationType="fade">
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{ flex: 1 }}
         >
-          <View flex center backgroundColor={Colors.rgba(Colors.black, 0.5)}>
-            <Animated.View
-              entering={FadeInDown}
-              style={{
-                width: "85%",
-                backgroundColor: Colors.white,
-                borderRadius: 20,
-                padding: 20,
-                ...(Platform.OS === "ios"
-                  ? {
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={Keyboard.dismiss}
+            style={{ flex: 1 }}
+          >
+            <View
+              flex
+              center
+              backgroundColor={Colors.rgba(Colors.black, 0.5)}
+              style={{ justifyContent: 'center' }}
+            >
+              <Animated.View
+                entering={FadeInDown}
+                style={{
+                  width: "85%",
+                  backgroundColor: Colors.white,
+                  borderRadius: 20,
+                  padding: 20,
+                  ...(Platform.OS === "ios"
+                    ? {
                       shadowColor: "#000",
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: 0.15,
                       shadowRadius: 10,
                     }
-                  : {
+                    : {
                       elevation: 8,
                     }),
-              }}
-            >
-              <Text h2_bold marginB-15>
-                {t("appointment.cancel_appointment")}
-              </Text>
-
-              <TextInput
-                style={{
-                  minHeight: 100,
-                  borderColor: Colors.grey40,
-                  borderWidth: 1,
-                  borderRadius: 15,
-                  padding: 15,
-                  marginBottom: 20,
-                  textAlignVertical: "top",
                 }}
-                placeholderTextColor={Colors.grey40}
-                placeholder={t("appointment.cancel_appointment_reason")}
-                value={note}
-                onChangeText={setNote}
-                multiline
-              />
-              <AppButton
-                type="outline"
-                title={t("appointment.cancel_appointment")}
-                onPress={handleConfirm}
-                loading={loading}
-              />
+              >
+                <Text h2_bold marginB-15>
+                  {t("appointment.cancel_appointment")}
+                </Text>
 
-              <View gap-10>
-                <AppButton type="text" title={t("close")} onPress={onClose} />
-              </View>
-            </Animated.View>
-          </View>
+                <TextInput
+                  style={{
+                    minHeight: 100,
+                    borderColor: Colors.grey40,
+                    borderWidth: 1,
+                    borderRadius: 15,
+                    padding: 15,
+                    marginBottom: 20,
+                    textAlignVertical: "top",
+                  }}
+                  placeholderTextColor={Colors.grey40}
+                  placeholder={t("appointment.cancel_appointment_reason")}
+                  value={note}
+                  onChangeText={setNote}
+                  multiline
+                />
+                <AppButton
+                  type="outline"
+                  title={t("appointment.cancel_appointment")}
+                  onPress={handleConfirm}
+                  loading={loading}
+                />
+
+                <View gap-10>
+                  <AppButton type="text" title={t("close")} onPress={onClose} />
+                </View>
+              </Animated.View>
+            </View>
+          </TouchableOpacity>
         </KeyboardAvoidingView>
       </Modal>
     );
@@ -411,15 +420,13 @@ const AppointmentItem = React.memo(
                     backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                   >
                     <Text h4 color={Colors.red10}>
-                      {`${t("appointment.cancelled_by")}: ${
-                        item.cancelled_by_user.full_name
-                      }`}
+                      {`${t("appointment.cancelled_by")}: ${item.cancelled_by_user.full_name
+                        }`}
                     </Text>
                     {item.cancellation_note && (
                       <Text marginT-5 h4 color={Colors.red10}>
-                        {`${t("appointment.cancel_reason")}: ${
-                          item.cancellation_note
-                        }`}
+                        {`${t("appointment.cancel_reason")}: ${item.cancellation_note
+                          }`}
                       </Text>
                     )}
                   </View>
@@ -497,8 +504,6 @@ const ScheduledPage = () => {
   const [allAppointments, setAllAppointments] = useState<
     AppointmentResponeModelParams[]
   >([]);
-
-  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -671,17 +676,17 @@ const ScheduledPage = () => {
           marked: true,
           dotColor:
             statusColors[
-              appointment.status.toLowerCase() as keyof typeof statusColors
+            appointment.status.toLowerCase() as keyof typeof statusColors
             ],
           selected: date === selectedDate,
           selectedColor:
             date === selectedDate
               ? Colors.rgba(
-                  statusColors[
-                    appointment.status.toLowerCase() as keyof typeof statusColors
-                  ],
-                  0.1
-                )
+                statusColors[
+                appointment.status.toLowerCase() as keyof typeof statusColors
+                ],
+                0.1
+              )
               : undefined,
         };
       }
@@ -914,137 +919,141 @@ const ScheduledPage = () => {
   }, [i18n.locale]);
 
   return (
-    <KeyboardTrackingView style={{ flex: 1 }}>
-      <View flex bg-white>
-        <AppBar
-          title={t("appointment.title")}
-          rightComponent={renderViewModeToggle()}
-        />
+    <View flex bg-white>
+      <AppBar
+        title={t("appointment.title")}
+        rightComponent={renderViewModeToggle()}
+      />
 
-        {viewMode === "list" ? (
-          <>
-            <View height={46} center paddingH-24>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {items.map((item) => renderItem(item))}
-              </ScrollView>
-            </View>
-            <View flex paddingH-24>
-              {loading ? (
-                <View>
-                  {[1, 2, 3].map((_, index) => (
-                    <View key={index}>{renderSkeletonItem()}</View>
-                  ))}
-                </View>
-              ) : !appointments || (appointments.length === 0 && !loading) ? (
-                <View flex center>
-                  <View center gap-10>
-                    <MaterialCommunityIcons
-                      name="calendar-blank"
-                      size={64}
-                      color={Colors.grey40}
-                    />
-                    <Text h2_bold center>
-                      {t("appointment.no_appointments_title")}
-                    </Text>
-                    <Text h3 center grey30>
-                      {t(
-                        `appointment.no_${
-                          selectedItem === 1
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+      >
+        <View flex>
+          {viewMode === "list" ? (
+            <>
+              <View height={46} center paddingH-24>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  {items.map((item) => renderItem(item))}
+                </ScrollView>
+              </View>
+              <View flex paddingH-24>
+                {loading ? (
+                  <View>
+                    {[1, 2, 3].map((_, index) => (
+                      <View key={index}>{renderSkeletonItem()}</View>
+                    ))}
+                  </View>
+                ) : !appointments || (appointments.length === 0 && !loading) ? (
+                  <View flex center>
+                    <View center gap-10>
+                      <MaterialCommunityIcons
+                        name="calendar-blank"
+                        size={64}
+                        color={Colors.grey40}
+                      />
+                      <Text h2_bold center>
+                        {t("appointment.no_appointments_title")}
+                      </Text>
+                      <Text h3 center grey30>
+                        {t(
+                          `appointment.no_${selectedItem === 1
                             ? "appointments"
                             : selectedItem === 6
-                            ? "next_7days"
-                            : selectedItem === 2
-                            ? "pending"
-                            : selectedItem === 5
-                            ? "confirmed"
-                            : selectedItem === 3
-                            ? "completed"
-                            : "cancelled"
-                        }`
-                      )}
-                    </Text>
-                    <AppButton
-                      type="primary"
-                      title={t("appointment.book_for_service_package")}
-                      onPress={() => {
-                        router.push("/(app)/service-package");
-                      }}
-                    />
-                    <AppButton
-                      type="outline"
-                      title={t("appointment.find_service")}
-                      onPress={() => {
-                        router.push("/(app)/see-more?type=service");
-                      }}
-                    />
+                              ? "next_7days"
+                              : selectedItem === 2
+                                ? "pending"
+                                : selectedItem === 5
+                                  ? "confirmed"
+                                  : selectedItem === 3
+                                    ? "completed"
+                                    : "cancelled"
+                          }`
+                        )}
+                      </Text>
+                      <AppButton
+                        type="primary"
+                        title={t("appointment.book_for_service_package")}
+                        onPress={() => {
+                          router.push("/(app)/service-package");
+                        }}
+                      />
+                      <AppButton
+                        type="outline"
+                        title={t("appointment.find_service")}
+                        onPress={() => {
+                          router.push("/(app)/see-more?type=service");
+                        }}
+                      />
+                    </View>
                   </View>
-                </View>
-              ) : (
-                <FlatList
-                  showsVerticalScrollIndicator={false}
-                  data={appointments}
-                  renderItem={renderFlatListItem}
-                  keyExtractor={(item) => item.id.toString()}
-                  maxToRenderPerBatch={10}
-                  windowSize={10}
-                  removeClippedSubviews={true}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={loading}
-                      onRefresh={() => {
-                        let params: {
-                          from_date: string | null;
-                          to_date: string | null;
-                          status: string | null;
-                        } = {
-                          from_date: null,
-                          to_date: null,
-                          status: null,
-                        };
+                ) : (
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    data={appointments}
+                    renderItem={renderFlatListItem}
+                    keyExtractor={(item) => item.id.toString()}
+                    maxToRenderPerBatch={10}
+                    windowSize={10}
+                    removeClippedSubviews={true}
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={loading}
+                        onRefresh={() => {
+                          let params: {
+                            from_date: string | null;
+                            to_date: string | null;
+                            status: string | null;
+                          } = {
+                            from_date: null,
+                            to_date: null,
+                            status: null,
+                          };
 
-                        // Lấy params dựa trên item đang được chọn
-                        const selectedItemData = items.find(
-                          (item) => item.id === selectedItem
-                        );
-                        if (selectedItemData) {
-                          if (selectedItemData.id === 6) {
-                            params = {
-                              from_date: moment().format("YYYY-MM-DD"),
-                              to_date: moment()
-                                .add(7, "days")
-                                .format("YYYY-MM-DD"),
-                              status: "confirmed",
-                            };
-                          } else if (selectedItemData.status) {
-                            params = {
-                              ...params,
-                              status: selectedItemData.status,
-                            };
+                          // Lấy params dựa trên item đang được chọn
+                          const selectedItemData = items.find(
+                            (item) => item.id === selectedItem
+                          );
+                          if (selectedItemData) {
+                            if (selectedItemData.id === 6) {
+                              params = {
+                                from_date: moment().format("YYYY-MM-DD"),
+                                to_date: moment()
+                                  .add(7, "days")
+                                  .format("YYYY-MM-DD"),
+                                status: "confirmed",
+                              };
+                            } else if (selectedItemData.status) {
+                              params = {
+                                ...params,
+                                status: selectedItemData.status,
+                              };
+                            }
                           }
-                        }
 
-                        dispatch(resetAppointmentState());
-                        dispatch(getAppointments(params));
-                      }}
-                      colors={[Colors.primary]}
-                    />
-                  }
-                />
-              )}
-            </View>
-          </>
-        ) : (
-          renderCalendarView()
-        )}
+                          dispatch(resetAppointmentState());
+                          dispatch(getAppointments(params));
+                        }}
+                        colors={[Colors.primary]}
+                      />
+                    }
+                  />
+                )}
+              </View>
+            </>
+          ) : (
+            renderCalendarView()
+          )}
 
-        <CancelModal
-          isVisible={isModalVisible}
-          onClose={handleCloseModal}
-          onConfirm={handleConfirmCancel}
-          loading={loading}
-        />
-      </View>
-    </KeyboardTrackingView>
+          <CancelModal
+            isVisible={isModalVisible}
+            onClose={handleCloseModal}
+            onConfirm={handleConfirmCancel}
+            loading={loading}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
