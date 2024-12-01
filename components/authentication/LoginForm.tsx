@@ -3,8 +3,6 @@ import { Colors, View, Text } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import { useLanguage } from "@/hooks/useLanguage";
 import AppButton from "@/components/buttons/AppButton";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/redux/store";
 import { ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
