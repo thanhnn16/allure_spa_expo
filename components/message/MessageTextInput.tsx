@@ -1,6 +1,4 @@
-import { View, TouchableOpacity, Image, Colors, Button } from 'react-native-ui-lib'
-import { StyleSheet, TextInput } from 'react-native'
-import { BlurView } from 'expo-blur'
+import { View, TouchableOpacity, Image, Colors, Button, TextField } from 'react-native-ui-lib'
 import * as ImagePicker from "expo-image-picker";
 import { Href, router } from 'expo-router';
 
@@ -45,14 +43,11 @@ const MessageTextInput = ({
     };
 
     return (
-        <BlurView
-            intensity={200}
-            tint='light'
-            style={{
-                flexDirection: 'row',
-                paddingVertical: 10,
-                paddingHorizontal: 16,
-            }}
+        <View
+            row
+            padding-10
+            paddingH-16
+            backgroundColor={Colors.white}
         >
             {isCamera && (
                 <View width={40} height={40} centerV marginT-5>
@@ -62,13 +57,26 @@ const MessageTextInput = ({
                 </View>
             )}
 
-            <View row flex style={styles.inputContainer}>
-                <TextInput
+            <View
+                row
+                flex
+                br100
+                centerV
+                marginR-10
+                borderWidth={1}
+                padding-5
+                paddingL-10
+                style={{ borderColor: Colors.border }}
+            >
+                <TextField
                     placeholder={placeholder}
                     value={message}
                     onChangeText={setMessage}
                     onSubmitEditing={handleSend}
-                    style={isAI ? styles.inputAI : styles.input}
+                    containerStyle={{ width: isAI ? '85%' : '95%' }}
+                    enableErrors={false}
+                    fieldStyle={{ marginTop: 0 }}
+                    placeholderTextColor={Colors.text_secondary}
                 />
                 {isAI && (
                     <View flex right centerV marginR-5>
@@ -77,7 +85,6 @@ const MessageTextInput = ({
                         </TouchableOpacity>
                     </View>
                 )}
-
             </View>
 
             <Button
@@ -86,27 +93,8 @@ const MessageTextInput = ({
                 backgroundColor={Colors.primary}
                 onPress={handleSend}
             />
-        </BlurView>
+        </View>
     );
 }
 
 export default MessageTextInput
-
-const styles = StyleSheet.create({
-    input: {
-        width: '95%',
-    },
-    inputAI: {
-        width: '85%',
-    },
-    inputContainer: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 20,
-        paddingVertical: 5,
-        paddingStart: 10,
-        marginRight: 10,
-    },
-
-})

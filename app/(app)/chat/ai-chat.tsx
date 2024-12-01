@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
-import { Colors, Keyboard, Text, View } from "react-native-ui-lib";
+import { ActivityIndicator, FlatList, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, Keyboard } from "react-native";
+import { Colors, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 
 import AppBar from "@/components/app-bar/AppBar";
@@ -247,71 +247,81 @@ const AIChatScreen = () => {
   };
 
   const renderChatUI = () => (
-    <>
-      {renderEmptyState()}
-      <FlatList
-        data={messages.filter(hasValidContent)}
-        renderItem={({ item, index }) => {
-          const messageText = item.parts?.[0]?.text || "";
-          const hasImages = item.parts?.some((p: any) => p.image);
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+    >
+      <View flex>
+        {renderEmptyState()}
+        <FlatList
+          data={messages.filter(hasValidContent)}
+          renderItem={({ item, index }) => {
+            const messageText = item.parts?.[0]?.text || "";
+            const hasImages = item.parts?.some((p: any) => p.image);
 
-          if (!messageText.trim() && !hasImages) return null;
+            if (!messageText.trim() && !hasImages) return null;
 
-          return (
-            <MessageBubble
-              key={`message-${item.id || index}`}
-              message={{
-                id: item.id || `msg-${index}`,
-                message: messageText,
-                sender_id: item.role === "user" ? "user" : "ai",
-                created_at: new Date().toISOString(),
-                attachments:
-                  item.parts
-                    ?.filter((p: any) => p.image)
-                    ?.map((p: any) => p.image.data) || [],
-              }}
-              isOwn={item.role === "user"}
-              isThinking={
-                item.role === "model" &&
-                isThinking &&
-                index === messages.length - 1
-              }
-            />
-          );
-        }}
-        ref={scrollRef}
-        onContentSizeChange={() => {
-          requestAnimationFrame(() => {
-            scrollRef.current?.scrollToEnd({ animated: true });
-          });
-        }}
-        keyExtractor={(item, index) => item.id || `msg-${index}`}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: 16,
-        }}
-        ListFooterComponent={handleRead}
-      />
+            return (
+              <MessageBubble
+                key={`message-${item.id || index}`}
+                message={{
+                  id: item.id || `msg-${index}`,
+                  message: messageText,
+                  sender_id: item.role === "user" ? "user" : "ai",
+                  created_at: new Date().toISOString(),
+                  attachments:
+                    item.parts
+                      ?.filter((p: any) => p.image)
+                      ?.map((p: any) => p.image.data) || [],
+                }}
+                isOwn={item.role === "user"}
+                isThinking={
+                  item.role === "model" &&
+                  isThinking &&
+                  index === messages.length - 1
+                }
+              />
+            );
+          }}
+          ref={scrollRef}
+          onContentSizeChange={() => {
+            requestAnimationFrame(() => {
+              scrollRef.current?.scrollToEnd({ animated: true });
+            });
+          }}
+          keyExtractor={(item, index) => item.id || `msg-${index}`}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingBottom: 16,
+          }}
+          ListFooterComponent={handleRead}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+          automaticallyAdjustKeyboardInsets={true}
+          onScrollBeginDrag={Keyboard.dismiss}
+        />
 
-      {selectedImages.length > 0 && (
-        <SelectImagesBar
+        {selectedImages.length > 0 && (
+          <SelectImagesBar
+            selectedImages={selectedImages}
+            setSelectedImages={setSelectedImages}
+          />
+        )}
+
+        <MessageTextInput
+          placeholder={t("chat.chat_with_ai") + "..."}
+          message={message}
+          setMessage={setMessage}
+          handleSend={handleSend}
+          isCamera={true}
+          isAI={true}
           selectedImages={selectedImages}
           setSelectedImages={setSelectedImages}
         />
-      )}
-
-      <MessageTextInput
-        placeholder={t("chat.chat_with_ai") + "..."}
-        message={message}
-        setMessage={setMessage}
-        handleSend={handleSend}
-        isCamera={true}
-        isAI={true}
-        selectedImages={selectedImages}
-        setSelectedImages={setSelectedImages}
-      />
-    </>
+      </View>
+    </KeyboardAvoidingView>
   );
 
   useEffect(() => {
@@ -328,16 +338,12 @@ const AIChatScreen = () => {
     }
   }, [messages]);
 
-  const KeyboardTrackingView = Keyboard.KeyboardTrackingView;
-
   return (
     <View flex bg-white>
       <AppBar back title={t("chat.chat_with_ai")} />
-      <KeyboardTrackingView style={{ flex: 1 }} trackInteractive>
-        <View flex>
-          {renderChatUI()}
-        </View>
-      </KeyboardTrackingView>
+      <View useSafeArea flex>
+        {renderChatUI()}
+      </View>
     </View>
   );
 };

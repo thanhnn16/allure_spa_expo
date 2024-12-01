@@ -12,6 +12,7 @@ const colorScheme = {
   gray: '#AAAAAA',
   primary_blur: 'rgba(113, 118, 88, 0.08)',
   primary_light: 'rgba(113, 118, 88, 0.12)',
+  text_secondary: '#687076',
   surface: '#FFFFFF',
   card_bg: '#FAFAFA',
   surface_light: '#F8F9FA',
