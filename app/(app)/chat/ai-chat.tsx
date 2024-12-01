@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, Keyboard } from "react-native";
+import { FlatList, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard } from "react-native";
 import { Colors, Text, View } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
+import { Ionicons } from "@expo/vector-icons";
 
 import AppBar from "@/components/app-bar/AppBar";
 import SelectImagesBar from "@/components/images/SelectImagesBar";
@@ -11,6 +12,9 @@ import {
   fetchAiConfigs,
   sendImageMessage,
   sendTextMessage,
+  clearMessages,
+  addTemporaryMessage,
+  removeTemporaryMessage,
 } from "@/redux/features/ai/aiSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useAuth } from "@/hooks/useAuth";
@@ -91,11 +95,13 @@ const AIChatScreen = () => {
       });
   }, [dispatch]);
 
+  const [hasInitialized, setHasInitialized] = useState(false);
+
   useEffect(() => {
     const sendInitialContext = async () => {
-      try {
-        if (!configs || configs.length === 0) return;
+      if (hasInitialized || !configs || configs.length === 0) return;
 
+      try {
         const activeConfig = configs.find(
           (config: any) =>
             config.type === "general_assistant" && config.is_active
@@ -118,6 +124,8 @@ const AIChatScreen = () => {
             isSystemMessage: true,
           })
         ).unwrap();
+
+        setHasInitialized(true);
       } catch (error) {
         console.error("Failed to send user context:", error);
         setMessageStatus("Lỗi: Không thể khởi tạo chat");
@@ -125,7 +133,18 @@ const AIChatScreen = () => {
     };
 
     sendInitialContext();
-  }, [configs]);
+  }, [configs, hasInitialized]);
+
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  const handleNewChat = () => {
+    dispatch(clearMessages());
+    setMessage("");
+    setSelectedImages([]);
+    setMessageStatus("Đã gửi");
+    setHasInitialized(false);
+  };
 
   const handleSend = async () => {
     if (!message.trim() && selectedImages.length === 0) return;
@@ -133,10 +152,9 @@ const AIChatScreen = () => {
     const currentMessage = message;
     setMessage("");
     setSelectedImages([]);
+    setMessageStatus("Đã gửi");
 
     try {
-      setMessageStatus("Đang gửi");
-
       const activeConfig = configs.find(
         (config: any) => config.type === "general_assistant" && config.is_active
       );
@@ -144,6 +162,8 @@ const AIChatScreen = () => {
       if (!activeConfig) {
         throw new Error("Chưa có cấu hình AI hoạt động");
       }
+
+      dispatch(addTemporaryMessage("AI đang suy nghĩ..."));
 
       if (selectedImages.length > 0) {
         const imageData = [];
@@ -169,28 +189,12 @@ const AIChatScreen = () => {
         ).unwrap();
       }
 
-      setMessageStatus("Đã gửi");
+      dispatch(removeTemporaryMessage());
     } catch (err: any) {
       console.error("Failed to send message:", err);
       setMessageStatus(`Lỗi: ${err.message}`);
+      dispatch(removeTemporaryMessage());
     }
-  };
-
-  const handleRead = () => {
-    if (!hasMessages) return null;
-
-    return (
-      <View row centerV right paddingH-10>
-        <Text>{messageStatus}</Text>
-        {messageStatus === "Đang gửi" && (
-          <ActivityIndicator
-            size="small"
-            color={Colors.primary}
-            style={{ marginLeft: 5 }}
-          />
-        )}
-      </View>
-    );
   };
 
   // Sửa hàm handleGuidingMessage
@@ -246,6 +250,20 @@ const AIChatScreen = () => {
     );
   };
 
+  useEffect(() => {
+    if (messages.length > 0 && !isFirstLoad) {
+      setTimeout(() => {
+        scrollRef.current?.scrollToOffset({ offset: 0, animated: true });
+      }, 100);
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (isFirstLoad && messages.length > 0) {
+      setIsFirstLoad(false);
+    }
+  }, []);
+
   const renderChatUI = () => (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -253,9 +271,13 @@ const AIChatScreen = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <View flex>
-        {renderEmptyState()}
         <FlatList
-          data={messages.filter(hasValidContent)}
+          inverted
+          data={[...messages.filter((msg: any) =>
+            !msg.isTemporary &&
+            !msg.isSystemMessage &&
+            hasValidContent
+          )].reverse()}
           renderItem={({ item, index }) => {
             const messageText = item.parts?.[0]?.text || "";
             const hasImages = item.parts?.some((p: any) => p.image);
@@ -263,63 +285,89 @@ const AIChatScreen = () => {
             if (!messageText.trim() && !hasImages) return null;
 
             return (
-              <MessageBubble
-                key={`message-${item.id || index}`}
-                message={{
-                  id: item.id || `msg-${index}`,
-                  message: messageText,
-                  sender_id: item.role === "user" ? "user" : "ai",
-                  created_at: new Date().toISOString(),
-                  attachments:
-                    item.parts
-                      ?.filter((p: any) => p.image)
-                      ?.map((p: any) => p.image.data) || [],
-                }}
-                isOwn={item.role === "user"}
-                isThinking={
-                  item.role === "model" &&
-                  isThinking &&
-                  index === messages.length - 1
-                }
-              />
+              <View>
+                <MessageBubble
+                  key={`message-${item.id || index}`}
+                  message={{
+                    id: item.id || `msg-${index}`,
+                    message: messageText,
+                    sender_id: item.role === "user" ? "user" : "ai",
+                    created_at: new Date().toISOString(),
+                    attachments:
+                      item.parts
+                        ?.filter((p: any) => p.image)
+                        ?.map((p: any) => p.image.data) || [],
+                  }}
+                  isOwn={item.role === "user"}
+                />
+                {item.role === "user" && (
+                  <View row right paddingH-10 marginT-4 marginB-8>
+                    <Text text90 color={Colors.grey30}>
+                      {messageStatus}
+                    </Text>
+                  </View>
+                )}
+              </View>
             );
           }}
           ref={scrollRef}
           onContentSizeChange={() => {
-            requestAnimationFrame(() => {
-              scrollRef.current?.scrollToEnd({ animated: true });
-            });
+            if (initialLoading) {
+              setInitialLoading(false);
+            }
           }}
+          initialScrollIndex={0}
           keyExtractor={(item, index) => item.id || `msg-${index}`}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
+            flexGrow: 1,
             paddingHorizontal: 16,
-            paddingBottom: 16,
+            paddingTop: 16,
+            justifyContent: hasMessages ? 'flex-start' : 'flex-end'
           }}
-          ListFooterComponent={handleRead}
+          ListEmptyComponent={renderEmptyState()}
+          ListHeaderComponent={
+            isThinking && (
+              <View marginB-16 paddingH-16>
+                <MessageBubble
+                  message={{
+                    id: 'thinking',
+                    message: 'AI đang suy nghĩ...',
+                    sender_id: 'ai',
+                    created_at: new Date().toISOString(),
+                    attachments: [],
+                  }}
+                  isOwn={false}
+                  isThinking={true}
+                />
+              </View>
+            )
+          }
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           automaticallyAdjustKeyboardInsets={true}
           onScrollBeginDrag={Keyboard.dismiss}
         />
 
-        {selectedImages.length > 0 && (
-          <SelectImagesBar
+        <View>
+          {selectedImages.length > 0 && (
+            <SelectImagesBar
+              selectedImages={selectedImages}
+              setSelectedImages={setSelectedImages}
+            />
+          )}
+
+          <MessageTextInput
+            placeholder={t("chat.chat_with_ai") + "..."}
+            message={message}
+            setMessage={setMessage}
+            handleSend={handleSend}
+            isCamera={true}
+            isAI={true}
             selectedImages={selectedImages}
             setSelectedImages={setSelectedImages}
           />
-        )}
-
-        <MessageTextInput
-          placeholder={t("chat.chat_with_ai") + "..."}
-          message={message}
-          setMessage={setMessage}
-          handleSend={handleSend}
-          isCamera={true}
-          isAI={true}
-          selectedImages={selectedImages}
-          setSelectedImages={setSelectedImages}
-        />
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -330,17 +378,19 @@ const AIChatScreen = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      setTimeout(() => {
-        scrollRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    }
-  }, [messages]);
-
   return (
     <View flex bg-white>
-      <AppBar back title={t("chat.chat_with_ai")} />
+      <AppBar
+        back
+        title={t("chat.chat_with_ai")}
+        rightComponent={
+          hasMessages && (
+            <TouchableOpacity onPress={handleNewChat}>
+              <Ionicons name="create-outline" size={24} color={Colors.primary} />
+            </TouchableOpacity>
+          )
+        }
+      />
       <View useSafeArea flex>
         {renderChatUI()}
       </View>
