@@ -14,7 +14,11 @@ const AppBar = ({ title, rightComponent, back }: AppBarProps) => {
   return (
     <View paddingH-16 row centerV spread>
       {back ? (
-        <Pressable onPress={router.back}>
+        <Pressable onPress={() => {
+          if (router.canGoBack()) {
+            router.back();
+          }
+        }}>
           <View width={48} height={48} centerV>
             <Image source={BackIcon} />
           </View>
