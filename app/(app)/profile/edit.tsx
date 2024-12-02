@@ -220,19 +220,19 @@ const ProfileEdit = (props: ProfileEditProps) => {
         <View marginT-20>
           {[
             {
-              placeholder: "Họ và tên",
+              placeholder: t("auth.register.fullname"),
               value: name,
               icon: NameIcon,
               onChangeText: setName,
             },
             {
-              placeholder: "Số điện thoại",
+              placeholder: t("auth.register.phone_number"),
               value: phone,
               icon: PhoneIcon,
               onChangeText: setPhone,
             },
             {
-              placeholder: "Email",
+              placeholder: t("auth.register.email"),
               value: email,
               icon: EmailIcon,
               onChangeText: setEmail,
@@ -271,9 +271,9 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     // backgroundColor: "red",
                   }}
                 >
-                  <Picker.Item label="Nam" value="male" />
-                  <Picker.Item label="Nữ" value="female" />
-                  <Picker.Item label="Khác" value="other" />
+                  <Picker.Item label={t("auth.edit_profile.male")} value="male" />
+                  <Picker.Item label={t("auth.edit_profile.femail")} value="female" />
+                  <Picker.Item label={t("auth.edit_profile.other")} value="other" />
                 </Picker>
               </View>
             </View>
@@ -317,10 +317,10 @@ const ProfileEdit = (props: ProfileEditProps) => {
           visible={isDialogVisible}
           onClose={() => setDialogVisible(false)}
           closeButton={false}
-          confirmButtonLabel="OK"
+          confirmButtonLabel={t("auth.edit_profile.agree")}
           severity="success"
-          title="Cập nhật thông tin thành công"
-          description="Thông tin của bạn đã được cập nhật thành công"
+          title={t("auth.edit_profile.success")}
+          description={t("auth.edit_profile.success_description")}
           onConfirm={() => {
             setDialogVisible(false);
             router.back();
@@ -329,32 +329,32 @@ const ProfileEdit = (props: ProfileEditProps) => {
         <AppDialog
           visible={!!error}
           onConfirm={() => setError(null)}
-          confirmButtonLabel="OK"
+          confirmButtonLabel={t("auth.edit_profile.agree")}
           closeButton={false}
           severity="error"
-          title="Lỗi"
-          description={error || "Có lỗi đã xảy ra, vui lòng thử lại"}
+          title={t("auth.edit_profile.error")}
+          description={error || t("auth.edit_profile.error_description")}
         />
         <AppDialog
           visible={uploadAvatarLoading}
           severity="info"
-          title="Đang tải lên ảnh đại diện"
+          title={t("auth.edit_profile.is_upload_avatar")}
           closeButton={false}
           confirmButton={false}
         />
         <AppDialog
           visible={loading}
           severity="info"
-          title="Đang thay đổi thông tin"
-          description="Vui lòng đợi trong giây lát"
+          title={t("auth.edit_profile.is_upload_profile")}
+          description={t("auth.edit_profile.is_upload_profile_description")}
           closeButton={false}
           confirmButton={false}
         />
         <AppDialog
           visible={uploadAvatarSuccess}
           severity="success"
-          title="Tải lên ảnh đại diện thành công"
-          description="Ảnh đại diện của bạn đã được cập nhật thành công"
+          title={t("auth.edit_profile.upload_avatar_success")}
+          description={t("auth.edit_profile.upload_avatar_description")}
           closeButton={false}
           confirmButtonLabel="Đóng"
           onConfirm={() => {

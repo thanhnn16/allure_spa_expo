@@ -5,7 +5,7 @@ export const updateUserThunk = createAsyncThunk(
   "user/updateUser",
   async (data: any, { rejectWithValue }: any) => {
     try {
-      const res: any = await AxiosInstance().put<User>(`user/profile`, data);
+      const res: any = await AxiosInstance().patch<User>(`user/profile`, data);
       if (res.data.success) {
         return res.data.data;
       }

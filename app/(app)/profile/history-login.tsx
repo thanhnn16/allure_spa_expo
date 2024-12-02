@@ -1,4 +1,5 @@
 import AppBar from '@/components/app-bar/AppBar'
+import { useLanguage } from '@/hooks/useLanguage'
 import { Feather } from '@expo/vector-icons'
 import { ScrollView, StyleSheet } from 'react-native'
 import { View, Text, Colors } from 'react-native-ui-lib'
@@ -77,44 +78,17 @@ const data = [
 ]
 
 const HistoryLogin = () => {
+  const { t } = useLanguage()
   return (
     <View flex bg-white>
 
-      <AppBar back title="History Login" />
-      <ScrollView style={{flex: 1, paddingHorizontal: 20}}>
-        <Text h2>Thiết bị hiện tại</Text>
+      <AppBar back title={t("auth.history_login.title")}/>
+      <ScrollView style={{ flex: 1, paddingHorizontal: 20 }}>
+        <Text h2_bold>{t("auth.history_login.current_device")}</Text>
         <View style={styles.section}>
-          <View row gap-12>
-          <View
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 12,
-              backgroundColor: Colors.primary_blur,
-              borderWidth: 1,
-              borderColor: Colors.primary_light,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Feather
-              name={"smartphone" as any}
-              size={24}
-              color={Colors.primary}
-            />
-          </View>
-          <View>
-            <Text h3_bold>iPhone 16 Pro Max</Text>
-            <Text h3>IP: 192.168.1.1</Text>
-            <Text h4>TP. Hồ Chí Minh ∙ đang hoạt động</Text>
-          </View>
-          </View>
-        </View>
-        <Text h2>Các thiết bị khác</Text>
-        {data.map((item) => (
-          <View key={item.id} style={styles.section}>
-            <View row gap-12>
+          <View gap-12 paddingB-20>
             <View
+              paddingT-12
               style={{
                 width: 56,
                 height: 56,
@@ -124,6 +98,7 @@ const HistoryLogin = () => {
                 borderColor: Colors.primary_light,
                 alignItems: "center",
                 justifyContent: "center",
+                alignSelf: "center",
               }}
             >
               <Feather
@@ -132,11 +107,44 @@ const HistoryLogin = () => {
                 color={Colors.primary}
               />
             </View>
+            <Text center h3_bold>iPhone 16 Pro Max</Text>
+          </View>
+          <View row gap-12>
+
             <View>
-              <Text h3_bold>{item.device}</Text>
-              <Text h3>IP: {item.ip}</Text>
-              <Text h4>{item.location} ∙ {item.status}</Text>
+
+              <Text h3>IP: 192.168.1.1</Text>
+              <Text h4>TP. Hồ Chí Minh ∙ đang hoạt động</Text>
             </View>
+          </View>
+        </View>
+        <Text h2_bold>{t("auth.history_login.other_device")}</Text>
+        {data.map((item) => (
+          <View key={item.id} style={styles.section}>
+            <View row gap-12>
+              <View
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 12,
+                  backgroundColor: Colors.primary_blur,
+                  borderWidth: 1,
+                  borderColor: Colors.primary_light,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Feather
+                  name={"smartphone" as any}
+                  size={24}
+                  color={Colors.primary}
+                />
+              </View>
+              <View>
+                <Text h3_bold>{item.device}</Text>
+                <Text h3>IP: {item.ip}</Text>
+                <Text h4>{item.location} ∙ {item.status}</Text>
+              </View>
             </View>
           </View>
         ))}

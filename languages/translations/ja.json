@@ -89,7 +89,50 @@
       "invalid_full_name": "無効な氏名",
       "empty_password": "パスワードが入力されていません",
       "invalid_password_special_char": "パスワードに特殊文字を含めることはできません",
-      "invalid_password_length": "パスワードは8文字以上でないといけません"
+      "invalid_password_length": "パスワードは8文字以上でないといけません",
+      "email": "メール"
+    },
+    "edit_profile": {
+      "male": "男性",
+      "femaile": "女性",
+      "other": "その他",
+      "agree": "同意する",
+      "success": "更新成功",
+      "success_description": "情報が正常に更新されました",
+      "error": "更新失敗",
+      "error_description": "情報の更新中にエラーが発生しました。後でもう一度お試しください",
+      "is_upload_avatar": "アバターをアップロードしています",
+      "upload_avatar_success": "アバターが正常にアップロードされました",
+      "upload_avatar_description": "アバターが正常にアップロードされました",
+      "is_upload_profile": "プロフィールをアップロードしています",
+      "is_upload_profile_description": "プロフィールが正常にアップロードされました"
+    },
+    "change_password": {
+      "title": "パスワードを変更",
+      "description": "新しいパスワードを入力してください",
+      "current_password": "現在のパスワード",
+      "enter_current_password": "現在のパスワードを入力してください",
+      "enter_new_password": "新しいパスワードを入力してください",
+      "enter_confirm_password": "新しいパスワードを確認してください",
+      "confirm_new_password": "新しいパスワードを確認",
+      "change_password": "パスワードを変更",
+      "close": "閉じる",
+      "success": "パスワード変更成功",
+      "success_description": "パスワードが正常に変更されました",
+      "error": "パスワード変更失敗",
+      "error_description": "パスワードの変更中にエラーが発生しました。後でもう一度お試しください",
+      "loading": "パスワード",
+      "loading_description": "パスワードを変更する間、お待ちください",
+      "empty_current_password": "現在のパスワードが入力されていません",
+      "empty_new_password": "新しいパスワードが入力されていません",
+      "empty_confirm_password": "新しいパスワードが入力されていません",
+      "password_current_new_mismatch": "Current password and new password must be different"
+    },
+    "history_login": {
+      "title": "ログイン履歴",
+      "no_history": "ログイン履歴がありません",
+      "current_device": "現在のデバイス",
+      "other_device": "他のデバイス"
     },
     "art": {
       "title": "スキンケアのアート",

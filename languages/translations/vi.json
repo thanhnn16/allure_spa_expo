@@ -93,7 +93,50 @@
       "invalid_full_name": "Họ và tên không được chứa số",
       "empty_password": "Bạn chưa nhập mật khẩu",
       "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
-      "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự"
+      "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự",
+      "email": "Email"
+    },
+    "edit_profile": {
+      "male": "Nam",
+      "femaile": "Nữ",
+      "other": "Khác",
+      "agree": "Đồng ý",
+      "success": "Cập nhật thành công",
+      "success_description": "Thông tin của bạn đã được cập nhật thành công",
+      "error": "Cập nhật thất bại",
+      "error_description": "Có lỗi xảy ra khi cập nhật thông tin của bạn, vui lòng thử lại sau",
+      "is_upload_avatar": "Đang tải ảnh đại diện",
+      "upload_avatar_success": "Tải ảnh đại diện thành công",
+      "upload_avatar_description": "Ảnh đại diện của bạn đã được cập nhật thành công",
+      "is_upload_profile": "Đang tải hồ sơ",
+      "is_upload_profile_description": "Hãy chờ một chút khi chúng tôi tải hồ sơ của bạn"
+    },
+    "change_password": {
+      "title": "Đổi mật khẩu",
+      "description": "Mật khẩu mới của bạn phải khác với mật khẩu từng sử dụng",
+      "current_password": "Mật khẩu hiện tại",
+      "enter_current_password": "Nhập mật khẩu hiện tại",
+      "enter_new_password": "Nhập mật khẩu mới",
+      "enter_confirm_password": "Nhập lại mật khẩu mới",
+      "confirm_new_password": "Xác nhận mật khẩu mới",
+      "change_password": "Đổi mật khẩu",
+      "close": "Đóng",
+      "success": "Đổi mật khẩu thành công",
+      "success_description": "Mật khẩu của bạn đã được thay đổi thành công",
+      "error": "Đổi mật khẩu thất bại",
+      "error_description": "Có lỗi xảy ra khi thay đổi mật khẩu của bạn, vui lòng thử lại sau",
+      "loading": "Đang đổi mật khẩu",
+      "loading_description": "Vui lòng chờ một chút khi chúng tôi đổi mật khẩu của bạn",
+      "empty_current_password": "Bạn chưa nhập mật khẩu hiện tại",
+      "empty_new_password": "Bạn chưa nhập mật khẩu mới",
+      "empty_confirm_password": "Bạn chưa xác nhận mật khẩu mới",
+      "password_current_new_mismatch": "Mật khẩu hiện tại và mật khẩu mới không được giống nhau"
+    },
+    "history_login": {
+      "title": "Lịch sử đăng nhập",
+      "no_history": "Không có lịch sử đăng nhập",
+      "current_device": "Thiết bị hiện tại",
+      "other_device": "Các thiết bị khác"
     }
   },
   "pageTitle": {
