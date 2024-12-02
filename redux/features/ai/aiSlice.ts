@@ -10,6 +10,7 @@ interface AiState {
     role: 'user' | 'model';
     parts: Array<{ text?: string; image?: { data: string; mimeType: string } }>;
     isSystemMessage?: boolean;
+    isTemporary?: boolean;
   }>;
   isLoading: boolean;
   isThinking: boolean;
@@ -107,8 +108,8 @@ interface AiMessage {
 
 // Cập nhật helper function
 const getActiveConfig = (configs: any[]) => {
-  return configs?.find(config => 
-    config.type === 'general_assistant' && 
+  return configs?.find(config =>
+    config.type === 'general_assistant' &&
     config.is_active
   );
 };
@@ -391,11 +392,12 @@ const aiSlice = createSlice({
     addTemporaryMessage: (state: AiState, action: any) => {
       state.messages.push({
         role: 'model',
-        parts: [{ text: action.payload }]
+        parts: [{ text: action.payload }],
+        isTemporary: true
       });
     },
     removeTemporaryMessage: (state: AiState) => {
-      if (state.messages.length > 0) {
+      if (state.messages.length > 0 && state.messages[state.messages.length - 1].isTemporary) {
         state.messages.pop();
       }
     },
@@ -443,7 +445,11 @@ const aiSlice = createSlice({
         state.isThinking = false;
         state.error = null;
 
-        // Chỉ thêm response vào messages nếu không phải là system message
+        // Remove temporary message if exists
+        if (state.messages.length > 0 && state.messages[state.messages.length - 1].isTemporary) {
+          state.messages.pop();
+        }
+
         if (!action.payload.skipResponse) {
           state.messages.push({
             role: 'model',

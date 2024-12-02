@@ -39,11 +39,11 @@ const AppDialog = ({
 }: AppDialogProps) => {
   const { t } = useLanguage();
 
-  const defaultCloseLabel = t("common.cancel");
+  const defaultCloseLabel = t("close");
   const defaultConfirmLabel = t("common.confirm");
 
   const iconMap = {
-    success: "check-circle", 
+    success: "check-circle",
     error: "error",
     info: "info",
     warning: "warning",
@@ -88,7 +88,7 @@ const AppDialog = ({
         <View paddingH-20>
           {confirmButton && (
             <AppButton
-              title={loading ? "" : confirmButtonLabel}
+              title={loading ? "" : confirmButtonLabel || defaultConfirmLabel}
               onPress={onConfirm}
               type="primary"
               disabled={loading}
@@ -100,7 +100,7 @@ const AppDialog = ({
           )}
           {closeButton && (
             <AppButton
-              title={loading ? "" : closeButtonLabel}
+              title={loading ? "" : closeButtonLabel || defaultCloseLabel}
               onPress={onClose}
               type="text"
               disabled={loading}

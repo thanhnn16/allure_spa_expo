@@ -91,11 +91,20 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
                 </>
             )}
 
-            {isThinking && (
-                <View style={styles.thinkingContainer}>
-                  <View style={styles.thinkingDot} />
-                  <View style={styles.thinkingDot} />
-                  <View style={styles.thinkingDot} />
+            {isThinking && !isOwn && (
+                <View
+                    style={[
+                        styles.bubble,
+                        styles.otherBubble,
+                        styles.thinkingBubble
+                    ]}
+                >
+                    <Text>AI đang suy nghĩ...</Text>
+                    <ActivityIndicator
+                        size="small"
+                        color={Colors.primary}
+                        style={{ marginLeft: 5 }}
+                    />
                 </View>
             )}
           </View>
@@ -188,6 +197,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 4,
   },
+  thinkingBubble: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginTop: 4
+  }
 });
 
 export default MessageBubble;

@@ -17,7 +17,7 @@ const CarouselBanner: React.FC = () => {
     const handleOpenWebView = (url: string | null) => {
         if (url) {
             router.push({
-                pathname: '/webview',
+                pathname: '/(app)/webview',
                 params: { url },
             });
         }
@@ -33,7 +33,7 @@ const CarouselBanner: React.FC = () => {
                 pageControlPosition={PageControlPosition.UNDER}
                 containerStyle={styles.carousel}
             >
-                {banners.map((item, index) => (
+                {banners.map((item: any, index: number) => (
                     <TouchableOpacity
                         key={index}
                         style={styles.slideContainer}

@@ -65,7 +65,7 @@ export default function DetailsScreen() {
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  const user_id = useSelector((state: RootState) => state.auth.user?.id);
+  const user_id = useSelector((state: RootState) => state.user.user?.id);
 
   const product = useSelector((state: RootState) => state.product.product);
 
