@@ -12,7 +12,8 @@ import {
 } from "@/utils/animated/home/header";
 import {Href, router} from "expo-router";
 import {useCallback, useEffect, useMemo, useState} from "react";
-import { Dimensions } from "react-native";
+import { Dimensions, FlatList, Pressable } from "react-native";
+import { Event } from "../../reward";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -325,6 +326,11 @@ const HomePage = () => {
     ]);
   }, [dispatch]);
 
+  const handleOpenImage = (index: number) => {
+    console.log(index);
+    router.push(`/reward/${index}`);
+  }
+
   const renderContent = () => (
       <View flex>
         <Animated.View entering={FadeIn.duration(500)}>
@@ -334,7 +340,6 @@ const HomePage = () => {
         <Animated.View entering={FadeInDown.duration(400).delay(100)}>
           <CategoryItem />
         </Animated.View>
-
         {upcomingAppointment && (
             <Animated.View entering={FadeInUp.duration(600).delay(300)}>
               <View paddingH-20 gap-10>
@@ -375,6 +380,57 @@ const HomePage = () => {
             </Animated.View>
         )}
       </View>
+      )}
+
+      <View paddingH-16>
+        <Text h1_bold marginV-16>Sự kiện nổi bật</Text>
+
+        <FlatList
+          data={Event}
+          renderItem={({ item }) => (
+            <View
+              key={item.id}
+              marginR-16
+              style={{
+                padding: 8,
+                backgroundColor: Colors.white,
+                borderRadius: 16,
+                marginBottom: 16,
+                shadowColor: Colors.grey40,
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                borderColor: Colors.primary_light,
+                borderWidth: 1,
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+              }}
+            >
+              <Pressable onPress={() => handleOpenImage(item.id)}>
+                <View width={300} height={160}>
+                  <Image
+                    source={{ uri: item.url }}
+                    cover
+                    style={{ borderRadius: 12, overflow: "hidden" }}
+                  />
+                </View>
+                <View>
+                  <Text h2_bold primary>{item.title}</Text>
+                  <Text>18/11/2024 - 21/11/2024</Text>
+                  <Text>{item.description}</Text>
+                </View>
+              </Pressable>
+            </View>
+          )
+          }
+          keyExtractor={(item) => item.id.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+    </View >
   );
 
   const greetingHeaderStyle = hideStyle(

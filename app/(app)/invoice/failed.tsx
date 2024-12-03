@@ -28,14 +28,14 @@ export default function InvoiceFailed() {
         title: t("invoice.payment_cancelled"),
         message: t("invoice.payment_cancel_message"),
         icon: "cancel",
-        iconColor: Colors.orange30,
+        iconColor: Colors.secondary,
       };
     }
     return {
       title: t("invoice.payment_failed"),
       message: params.reason || t("invoice.payment_failed_message"),
       icon: "error",
-      iconColor: Colors.red30,
+      iconColor: Colors.red40,
     };
   };
 
@@ -47,23 +47,22 @@ export default function InvoiceFailed() {
       <View flex padding-20 center>
         <MaterialIcons
           name={content.icon as any}
-          size={120}
+          size={256}
           color={content.iconColor}
           style={{ marginBottom: 30 }}
         />
-
-        <Text h2_bold center marginB-20>
+        <Text h1_bold center marginB-20>
           {content.title}
         </Text>
-        <Text h3 body center marginB-30>
+        <Text h2 body center marginB-30>
           {content.message}
         </Text>
 
-        <View absB absL absR marginB-32 gap-10>
+        <View absB absL absR marginB-16 gap-10 paddingH-16>
           <AppButton
             title="Liên hệ hỗ trợ"
             onPress={() => router.replace("/(app)/(tabs)/chat")}
-            type="primary"
+            type="outline"
           />
           <AppButton
             title={t("common.back_to_home")}

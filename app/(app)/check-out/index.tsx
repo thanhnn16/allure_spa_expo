@@ -9,7 +9,6 @@ import { Animated } from "react-native";
 import * as Haptics from "expo-haptics";
 
 import {
-  Button,
   Colors,
   Text,
   View,
@@ -40,6 +39,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setSelectedAddress as setReduxSelectedAddress } from "@/redux/features/address/addressSlice";
 import * as Linking from "expo-linking";
+import AppButton from "@/components/buttons/AppButton";
 
 export interface PaymentMethod {
   id: number;
@@ -160,6 +160,9 @@ export default function Checkout() {
     const isValidPhoneNumber = /^[0-9]{10}$/.test(tempAddress.phone_number);
     const isValidName = tempAddress.full_name.length >= 2;
     const isValidAddress = tempAddress.address.length >= 5;
+    const isValidProvince = tempAddress.province.length >= 2;
+    const isValidDistrict = tempAddress.district.length >= 2;
+    const isValidWard = tempAddress.ward.length >= 2;
 
     return (
       hasAllRequiredFields &&
@@ -314,6 +317,7 @@ export default function Checkout() {
       }
 
       if (addressType === "temp" && !isTempAddressValid()) {
+        console.log("Temp address:", tempAddress);
         showDialog(
           t("checkout.address_required_title"),
           t("checkout.temp_address_invalid"),
@@ -596,13 +600,11 @@ export default function Checkout() {
           </Text>
         </View>
 
-        <Button
-          label={t("checkout.proceed_to_payment")}
-          disabled={!isFormValid() || isLoading}
+        <AppButton
+          title={t("checkout.proceed_to_payment")}
+          disabled={isLoading || !isFormValid()}
           onPress={handlePayment}
-          style={[styles.paymentButton, isLoading && { opacity: 0.7 }]}
-          labelStyle={styles.paymentButtonLabel}
-          loading={isLoading}
+          type={"primary"}
         />
       </BottomSheetView>
     </BottomSheet>
