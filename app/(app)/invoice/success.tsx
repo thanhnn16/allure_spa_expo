@@ -9,6 +9,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 
 import { Dimensions } from "react-native";
 import formatCurrency from "@/utils/price/formatCurrency";
+import { Ionicons } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -94,6 +95,15 @@ export default function InvoiceSuccess() {
           </View>
         ) : (
           <View>
+
+            <Ionicons name="checkmark-circle" size={256} color={Colors.primary} />
+            <Text h1_bold center marginB-10>
+            {t("transaction.payment_success")}
+            </Text>
+            <Text h2 center marginB-10>
+            {t("transaction.your_order")} #{paymentDetails?.orderCode} {t("transaction.has_been_confirmed")}
+            </Text>
+
             <Text h1 primary center marginB-10>
               {paymentDetails?.paymentMethod === "cash"
                 ? t("invoice.order_details")
@@ -132,11 +142,10 @@ export default function InvoiceSuccess() {
         <View width={"100%"} gap-12 absB marginB-10>
           <AppButton
             title={"Xem chi tiết đơn hàng"}
-            buttonStyle={{ backgroundColor: Colors.secondary }}
             onPress={() =>
               router.replace(`/order/${paymentDetails?.orderCode}`)
             }
-            type="primary"
+            type="outline"
           />
           <AppButton
             title={t("common.back_to_home")}
