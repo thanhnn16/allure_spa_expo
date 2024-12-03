@@ -32,16 +32,16 @@ const ChangePassword = (props: ChangePasswordProps) => {
 
   const handleChangePassword = async () => {
     setLoading(true);
-    if (newPassword !== currentPassword) {
-      setNewPasswordError("Mật khẩu cũ và mật khẩu mới không được trùng nhau");
+    if (newPassword === currentPassword) {
+      setNewPasswordError(i18n.t("auth.register.password_current_new_mismatch"));
       setLoading(false);
-      setError("Mật khẩu cũ và mật khẩu mới không được trùng nhau");
+      setError;
       return;
     }
     if (newPassword !== confirmPassword) {
-      setConfirmPasswordError("Mật khẩu xác nhận không khớp");
+      setConfirmPasswordError(i18n.t("auth.register.password_mismatch"));
       setLoading(false);
-      setError("Mật khẩu xác nhận không khớp");
+      setError(i18n.t("auth.register.password_mismatch"));
       return;
     }
     try {
@@ -54,7 +54,6 @@ const ChangePassword = (props: ChangePasswordProps) => {
       );
       if (changePasswordThunk.fulfilled.match(resultAction)) {
         setLoading(false);
-        console.log("Change password success");
         navigation.goBack();
       } else {
         if (resultAction.payload) {
@@ -114,16 +113,16 @@ const ChangePassword = (props: ChangePasswordProps) => {
 
   return (
     <View flex bg-white>
-      <AppBar title="Đổi mật khẩu mới" back />
+      <AppBar title={i18n.t("auth.change_password.title")} back />
 
       <View flex paddingH-18>
         <View paddingV-24>
-          <Text h3>Mật khẩu mới của bạn phải khác với mật khẩu từng sử dụng</Text>
+          <Text h3>{i18n.t("auth.change_password.description")}</Text>
         </View>
 
         <TextInput
-          title={i18n.t("auth.register.current_password")}
-          placeholder={i18n.t("auth.register.current_password")}
+          title={i18n.t("auth.change_password.current_password")}
+          placeholder={i18n.t("auth.change_password.enter_current_password")}
           secureTextEntry
           value={currentPassword}
           onChangeText={setCurrentPassword}
@@ -139,12 +138,12 @@ const ChangePassword = (props: ChangePasswordProps) => {
           }}
           style={{ alignSelf: "flex-end", marginBottom: 20 }}
         >
-          <Text h3 secondary>Quên mật khẩu ?</Text>
+          <Text h3 secondary>{i18n.t("auth.login.forgot_password")}</Text>
         </TouchableOpacity>
 
         <TextInput
           title={i18n.t("auth.register.password")}
-          placeholder={i18n.t("auth.register.password")}
+          placeholder={i18n.t("auth.change_password.enter_new_password")}
           secureTextEntry
           value={newPassword}
           onChangeText={setNewPassword}
@@ -156,7 +155,7 @@ const ChangePassword = (props: ChangePasswordProps) => {
 
         <TextInput
           title={i18n.t("auth.register.confirm_password")}
-          placeholder={i18n.t("auth.register.confirm_password")}
+          placeholder={i18n.t("auth.change_password.enter_confirm_password")}
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
@@ -168,7 +167,7 @@ const ChangePassword = (props: ChangePasswordProps) => {
 
         <View marginT-32>
           <AppButton
-            title="Đổi mật khẩu"
+            title={i18n.t("auth.change_password.change_password")}
             type="primary"
             onPress={handleChangePassword}
             disabled={
@@ -185,28 +184,28 @@ const ChangePassword = (props: ChangePasswordProps) => {
       <AppDialog
         visible={successDialog}
         severity="success"
-        title="Đổi mật khẩu thành công"
-        confirmButtonLabel="Đóng"
+        title={i18n.t("auth.change_password.success")}
+        confirmButtonLabel={i18n.t("auth.change_password.close")}
         closeButton={false}
-        description="Mật khẩu của bạn đã được thay đổi"
+        description={i18n.t("auth.change_password.success_description")}
         onConfirm={() => setSuccessDialog(false)}
       />
 
       <AppDialog
         visible={!!error}
         severity="error"
-        title="Đổi mật khẩu thất bại"
+        title={i18n.t("auth.change_password.error")}
         confirmButtonLabel="Đóng"
         closeButton={false}
-        description={error}
+        description={error || i18n.t("auth.change_password.error_description")}
         onConfirm={() => setError(null)}
       />
 
       <AppDialog
         visible={loading}
         severity="info"
-        title="Đang thay đổi mật khẩu"
-        description="Vui lòng đợi trong giây lát"
+        title={i18n.t("auth.change_password.loading")}
+        description={i18n.t("auth.change_password.loading_description")}
         closeButton={false}
         confirmButton={false}
       />

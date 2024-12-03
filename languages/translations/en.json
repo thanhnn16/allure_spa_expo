@@ -94,7 +94,52 @@
       "invalid_full_name": "Full name must not contain numbers",
       "empty_password": "You have not entered a password",
       "invalid_password_special_char": "Password must not contain special characters",
-      "invalid_password_length": "Password must be at least 8 characters long"
+      "invalid_password_length": "Password must be at least 8 characters long",
+      "email": "Email"
+    },
+    "edit_profile": {
+      "male": "Male",
+      "femaile": "Femail",
+      "other": "Other",
+      "agree": "Agree",
+      "success": "Update successful",
+      "success_description": "Your information has been updated successfully",
+      "error": "Update failed",
+      "error_description": "An error occurred while updating your information, please try again later",
+      "is_upload_avatar": "Is uploading your avatar",
+      "upload_avatar_success": "Upload avatar successfully",
+      "upload_avatar_description": "Your avatar has been uploaded successfully",
+      "is_upload_profile": "Is uploading your profile",
+      "is_upload_profile_description": "Please wait a moment while we upload your profile"
+    },
+    "change_password": {
+      "title": "Change Password",
+      "description": "Your new password must be different from previous used passwords",
+      "current_password": "Current Password",
+      "enter_current_password": "Enter your current password",
+      "enter_new_password": "Enter your new password",
+      "enter_confirm_password": "Confirm your new password",
+      "confirm_new_password": "Confirm your new password",
+      "change_password": "Change Password",
+      "close": "Close",
+      "success": "Change password successful",
+      "success_description": "Your password has been changed successfully",
+      "error": "Change password failed",
+      "error_description": "An error occurred while changing your password, please try again later",
+      "loading": "Changing your password",
+      "loading_description": "Please wait a moment while we change your password",
+      "empty_current_password": "You have not entered your current password",
+      "empty_new_password": "You have not entered a new password",
+      "empty_confirm_password": "You have not confirmed your new password",
+      "invalid_password_special_char": "Password must not contain special characters",
+      "invalid_password_length": "Password must be at least 8 characters long",
+      "password_current_new_mismatch": "Current password and new password must be different"
+    },
+    "history_login": {
+      "title": "Login History",
+      "no_history": "No login history",
+      "current_device": "Current Device",
+      "other_device": "Other Devices"
     }
   },
   "terms": "Terms of Service",
