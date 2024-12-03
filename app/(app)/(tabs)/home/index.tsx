@@ -13,7 +13,7 @@ import {
 import { router } from "expo-router";
 import { useCallback, useEffect, useMemo } from "react";
 import { Dimensions, FlatList, Pressable } from "react-native";
-import { Event } from "../../reward";
+import { Event } from "../../event";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -211,7 +211,7 @@ const HomePage = () => {
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
     Dimensions.get("window");
 
-  const handlePressMore = useCallback((type: "service" | "product") => {
+  const handlePressMore = useCallback((type: "services" | "products") => {
     router.push({
       pathname: "/(app)/see-more",
       params: { type },
@@ -344,7 +344,7 @@ const HomePage = () => {
               data={servicesList}
               renderItem={renderServiceItem}
               onPressMore={() => {
-                handlePressMore("service");
+                handlePressMore("services");
               }}
               onEndReached={loadMoreServices}
               isLoadingMore={isLoading && currentPage > 1}
@@ -359,7 +359,7 @@ const HomePage = () => {
             data={products}
             renderItem={renderProductItem}
             onPressMore={() => {
-              handlePressMore("product");
+              handlePressMore("products");
             }}
           />
         </Animated.View>

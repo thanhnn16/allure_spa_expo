@@ -14,3 +14,26 @@ export const searchItems = createAsyncThunk(
         }
     }
 );
+
+export const searchMoreItems = createAsyncThunk(
+    'search/searchMoreItems',
+    async ({ type, sort_by, limit = 10, min_price, max_price }: 
+        { 
+            query: string; 
+            type?: string; 
+            limit?: number; 
+            sort_by?: string; 
+            min_price?: number; 
+            max_price?: number 
+        }
+    ) => {
+        try {
+            const response = await AxiosInstance().get(`/search`, {
+                params: { type, sort_by, limit, min_price, max_price }
+            });
+            return response.data.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+);

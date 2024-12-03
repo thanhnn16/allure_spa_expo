@@ -60,9 +60,11 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
         </View>
 
         <View bottom paddingB-5>
-          <Text h2_bold secondary>
+          {item?.price && (
+            <Text h2_bold secondary>
             {formatCurrency({ price: item.price })}
           </Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
