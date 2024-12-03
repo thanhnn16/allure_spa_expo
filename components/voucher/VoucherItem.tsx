@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import moment from 'moment';
 import { Voucher } from '@/types/voucher.type';
 import { Text, View, Image, Colors } from 'react-native-ui-lib';
 import VoucherMoney from '@/assets/icons/money-4.svg';
@@ -14,8 +14,8 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
 
     const VoucherIcon = voucher.discount_type === 'percentage' ? VoucherPrecent : VoucherMoney;
 
-    const formattedStartDate = format(new Date(voucher.start_date), 'yyyy-MM-dd');
-    const formattedEndDate = format(new Date(voucher.end_date), 'yyyy-MM-dd');
+    const formattedStartDate = moment(voucher.start_date).format('YYYY-MM-DD');
+    const formattedEndDate = moment(voucher.end_date).format('YYYY-MM-DD');
 
     return (
         <View
