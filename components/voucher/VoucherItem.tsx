@@ -1,8 +1,8 @@
-import { Voucher } from '@/types/voucher.type'
-import { Text, View, Image, Colors } from 'react-native-ui-lib'
-
-import VoucherMoney from '@/assets/icons/money-4.svg'
-import VoucherPrecent from '@/assets/icons/ticket-discount.svg'
+import moment from 'moment';
+import { Voucher } from '@/types/voucher.type';
+import { Text, View, Image, Colors } from 'react-native-ui-lib';
+import VoucherMoney from '@/assets/icons/money-4.svg';
+import VoucherPrecent from '@/assets/icons/ticket-discount.svg';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface VoucherItemProps {
@@ -13,6 +13,10 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
     const { t } = useLanguage();
 
     const VoucherIcon = voucher.discount_type === 'percentage' ? VoucherPrecent : VoucherMoney;
+
+    const formattedStartDate = moment(voucher.start_date).format('YYYY-MM-DD');
+    const formattedEndDate = moment(voucher.end_date).format('YYYY-MM-DD');
+
     return (
         <View
             paddingV-10
@@ -30,21 +34,17 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
             }}
         >
             <View row spread centerV marginB-10 paddingH-15>
-                <View
-                    row gap-15 centerV
-                >
-                    <Image
-                        source={VoucherIcon}
-                    />
+                <View row gap-15 centerV>
+                    <Image source={VoucherIcon} />
                     <Text h3_bold>{voucher.code}</Text>
                 </View>
                 <View centerV>
                     <Text h3_bold
-                        style={
-                            voucher.is_active ?
-                                { color: Colors.primary }
-                                : { color: Colors.secondary }
-                        }
+                          style={
+                              voucher.is_active ?
+                                  { color: Colors.primary }
+                                  : { color: Colors.secondary }
+                          }
                     >{voucher.is_active ? t('voucher.active') : t('voucher.expired')}</Text>
                 </View>
             </View>
@@ -73,10 +73,26 @@ const VoucherItem = ({ voucher }: VoucherItemProps) => {
                         <Text h3>{t('voucher.expires_on')} </Text>
                         <Text h3>{voucher.end_date_formatted}</Text>
                     </View>
+                    <View row centerV>
+                        <Text h3>{t('voucher.start_date')} </Text>
+                        <Text h3>{formattedStartDate}</Text>
+                    </View>
+                    <View row centerV>
+                        <Text h3>{t('voucher.end_date')} </Text>
+                        <Text h3>{formattedEndDate}</Text>
+                    </View>
+                    <View row centerV>
+                        <Text h3>{t('voucher.remaining_uses')} </Text>
+                        <Text h3>{voucher.remaining_uses}</Text>
+                    </View>
+                    <View row centerV>
+                        <Text h3>{t('voucher.total_uses')} </Text>
+                        <Text h3>{voucher.total_uses}</Text>
+                    </View>
                 </View>
             </View>
         </View>
-    )
-}
+    );
+};
 
-export default VoucherItem
+export default VoucherItem;

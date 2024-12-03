@@ -10,7 +10,7 @@ import formatCurrency from "@/utils/price/formatCurrency";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import moment from "moment";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Dimensions,
   FlatList,
@@ -31,6 +31,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Switch,
 } from "react-native-ui-lib";
 import { useDispatch, useSelector } from "react-redux";
 import { CalendarProvider, ExpandableCalendar } from "react-native-calendars";
@@ -504,6 +505,8 @@ const ScheduledPage = () => {
   const [allAppointments, setAllAppointments] = useState<
     AppointmentResponeModelParams[]
   >([]);
+  const [hidePastAppointments, setHidePastAppointments] = useState(false);
+  const [hiddenAppointmentsCount, setHiddenAppointmentsCount] = useState(0);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -528,6 +531,15 @@ const ScheduledPage = () => {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    if (appointments) {
+      const pastAppointments = appointments.filter((appointment: AppointmentResponeModelParams) =>
+        moment(appointment.start).isBefore(moment(), 'day')
+      );
+      setHiddenAppointmentsCount(pastAppointments.length);
+    }
+  }, [appointments]);
+
   const items = [
     { id: 1, name: t("appointment.all") },
     { id: 6, name: t("appointment.7upcoming") },
@@ -539,20 +551,18 @@ const ScheduledPage = () => {
 
   const handleItemPress = (item: { id: number; status?: string }) => {
     setSelectedItem(item.id);
+    setHidePastAppointments(false);
+
     let params: {
-      from_date: string | null;
-      to_date: string | null;
+      from_date?: string | null;
+      to_date?: string | null;
       status?: string | null;
     } = {
-      from_date: moment().format("YYYY-MM-DD"),
-      to_date: moment().add(7, "days").format("YYYY-MM-DD"),
       status: item.status,
     };
 
     if (item.id === 1) {
       params = {
-        from_date: null,
-        to_date: null,
         status: null,
       };
     }
@@ -564,6 +574,7 @@ const ScheduledPage = () => {
         status: "confirmed",
       };
     }
+
     dispatch(resetAppointmentState());
     dispatch(getAppointments(params));
   };
@@ -918,6 +929,38 @@ const ScheduledPage = () => {
     moment.locale(i18n.locale);
   }, [i18n.locale]);
 
+  const filteredAppointments = useMemo(() => {
+    if (!appointments) return [];
+
+    return appointments.filter((appointment: AppointmentResponeModelParams) => {
+      if (hidePastAppointments) {
+        return !moment(appointment.start).isBefore(moment(), 'day');
+      }
+      return true;
+    });
+  }, [appointments, hidePastAppointments]);
+
+  const renderHidePastAppointmentsButton = () => (
+    <TouchableOpacity
+      onPress={() => setHidePastAppointments(!hidePastAppointments)}
+      marginB-4
+    >
+      <View row centerV marginV-4 gap-4>
+        <MaterialCommunityIcons
+          name={hidePastAppointments ? "eye-off" : "eye"}
+          size={16}
+          color={Colors.primary}
+        />
+        <Text h4 color={Colors.primary}>
+          {hidePastAppointments
+            ? `${t("appointment.show_past_appointments")} (${t("appointment.hidden")} ${hiddenAppointmentsCount})`
+            : `${t("appointment.hide_past_appointments")}`
+          }
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <View flex bg-white>
       <AppBar
@@ -936,6 +979,9 @@ const ScheduledPage = () => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {items.map((item) => renderItem(item))}
                 </ScrollView>
+              </View>
+              <View paddingH-24>
+                {renderHidePastAppointmentsButton()}
               </View>
               <View flex paddingH-24>
                 {loading ? (
@@ -990,7 +1036,7 @@ const ScheduledPage = () => {
                 ) : (
                   <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={appointments}
+                    data={filteredAppointments}
                     renderItem={renderFlatListItem}
                     keyExtractor={(item) => item.id.toString()}
                     maxToRenderPerBatch={10}
