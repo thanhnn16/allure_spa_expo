@@ -1,5 +1,5 @@
 import { Dimensions, Pressable, StyleSheet } from 'react-native'
-import { AnimatedImage, Carousel, Colors, PageControlPosition, Text, View, Image } from 'react-native-ui-lib'
+import { AnimatedImage, Carousel, Colors, PageControlPosition, Text, View } from 'react-native-ui-lib'
 import React from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import AppBar from '@/components/app-bar/AppBar';
@@ -40,7 +40,6 @@ const index = () => {
   return (
     <View flex bg-white>
       <AppBar back title="Reward Detail" />
-
       <View flex paddingH-16>
         <View
           width={windowWidth * 0.925}
@@ -71,76 +70,78 @@ const index = () => {
                   cover
                   key={index}
                 />
+                <View
+                  absB-12 absL-12
+                  style={{
+                    zIndex: 1,
+                  }}
+                >
+                  <Text h2_bold>Khuyến mãi {item.id}</Text>
+                </View>
               </Pressable>
             ))}
           </Carousel>
         </View>
 
-        <Text h2_bold marginT-16>GIAM12</Text>
-        <View row gap-4 centerV>
-          <Image
-            width={16}
-            height={16}
-            marginB-2
-            source={require("@/assets/images/allureCoin.png")}
-          />
-          <Text color={Colors.primary} h3_bold>
-            100
-          </Text>
-        </View>
-        <Text h3 marginT-16>Giảm: 12%</Text>
-        <Text h4>Tối thiểu: 15.000đ ∙ Tối đa 100.000đ</Text>
-      </View>
-
-
-      <View paddingH-16>
         <View marginT-12 style={styles.section}>
-          <View row centerV spread>
-            <View row centerV gap-8>
-              <View
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 12,
-                  backgroundColor: Colors.primary_blur,
-                  borderWidth: 1,
-                  borderColor: Colors.primary_light,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Feather
-                  name={'credit-card' as any}
+          <View row gap-8>
+            <View
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 12,
+                backgroundColor: Colors.primary_blur,
+                borderWidth: 1,
+                borderColor: Colors.primary_light,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Feather
+                name={'credit-card' as any}
+                size={24}
+                color={Colors.primary}
+              />
+            </View>
+            <View row spread centerV gap-28>
+              <View>
+                <Text h3_bold>GIAM12</Text>
+                <Text h3>Giảm: 12%</Text>
+                <Text h4>Tối thiểu: 15.000đ ∙ Tối đa 100.000đ</Text>
+              </View>
+
+              <View>
+                <Ionicons
+                  name="bookmark-outline"
                   size={24}
                   color={Colors.primary}
                 />
               </View>
-              <View>
-                <Text h3_bold>GIAM12</Text>
-                <View row gap-4 centerV>
-                  <Image
-                    width={16}
-                    height={16}
-                    marginB-2
-                    source={require("@/assets/images/allureCoin.png")}
-                  />
-                  <Text color={Colors.primary} h3_bold>
-                    100
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View width={100}>
-              <AppButton
-                type="primary"
-                title="Đổi"
-                onPress={() => { }}
-              />
             </View>
           </View>
         </View>
-      </View>
 
+        <View width={150} br20 marginT-8 padding-5 backgroundColor={Colors.primary_light}>
+          <Text h3_bold primary center>Đang diễn ra</Text>
+        </View>
+
+        {/* <View width={150} br20 marginT-8 padding-5 backgroundColor={Colors.secondary}>
+          <Text h3_bold white center>Hết hạn</Text>
+        </View> */}
+
+        <Text h2_bold marginT-16>Sự kiện {id}</Text>
+
+        <View row centerV gap-8>
+          <Ionicons
+            name="time-outline"
+            size={24}
+            color={Colors.primary}
+          />
+          <Text h3_bold>18/11/2024 - 21/11/2024</Text>
+        </View>
+
+        <Text h3 marginT-16>Mô tả sự kiện {id}</Text>
+      </View>
     </View>
   )
 }
