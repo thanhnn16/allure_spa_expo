@@ -191,7 +191,11 @@
     "max": "Tối đa",
     "min_order": "Đơn hàng tối thiểu",
     "description": "Mô tả",
-    "expires_on": "Hết hạn vào"
+    "expires_on": "Hết hạn vào",
+    "start_date": "Ngày bắt đầu",
+    "end_date": "Ngày kết thúc",
+    "remaining_uses": "Số lần sử dụng còn lại",
+    "total_uses": "Số lần sử dụng tổng cộng"
   },
   "aboutapp": {
     "title": "Giới thiệu về ứng dụng",
