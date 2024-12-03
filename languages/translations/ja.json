@@ -499,7 +499,10 @@
     "search_a_district": "区市町村を検索",
     "search_a_ward": "ワードを検索",
     "set_default_address": "デフォルトの住所に設定",
-    "set_default_address_confirm": "この住所をデフォルトに設定してもよろしいですか？"
+    "set_default_address_confirm": "この住所をデフォルトに設定してもよろしいですか？",
+    "name_too_short": "名前が短すぎます",
+    "invalid_phone": "無効な電話番号",
+    "address_too_short": "住所が短すぎます"
   },
   "date": {
     "formats": {

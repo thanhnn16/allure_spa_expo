@@ -312,7 +312,7 @@ const HomePage = () => {
 
   const handleOpenImage = (index: number) => {
     console.log(index);
-    router.push(`/reward/${index}`);
+    router.push(`/event/${index}`);
   }
 
   const renderContent = () => (

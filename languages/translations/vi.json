@@ -388,7 +388,10 @@
     "search_a_ward": "Tìm kiếm phường/xã",
     "delete_address_confirm": "Bạn có chắc chắn muốn xóa địa chỉ này không?",
     "set_default_address": "Đặt làm địa chỉ mặc định",
-    "set_default_address_confirm": "Bạn có chắc chắn muốn đặt địa chỉ này làm mặc định không?"
+    "set_default_address_confirm": "Bạn có chắc chắn muốn đặt địa chỉ này làm mặc định không?",
+    "name_too_short": "Tên quá ngắn",
+    "invalid_phone": "Số điện thoại không hợp lệ",
+    "address_too_short": "Địa chỉ quá ngắn"
   },
   "time": {
     "today": "Hôm nay",

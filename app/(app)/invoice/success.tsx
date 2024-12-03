@@ -94,7 +94,7 @@ export default function InvoiceSuccess() {
             <SkeletonView height={20} width={screenWidth * 0.7} marginB-10 />
           </View>
         ) : (
-          <View>
+          <View center>
 
             <Ionicons name="checkmark-circle" size={256} color={Colors.primary} />
             <Text h1_bold center marginB-10>
@@ -104,7 +104,7 @@ export default function InvoiceSuccess() {
             {t("transaction.your_order")} #{paymentDetails?.orderCode} {t("transaction.has_been_confirmed")}
             </Text>
 
-            <Text h1 primary center marginB-10>
+            {/* <Text h1 primary center marginB-10>
               {paymentDetails?.paymentMethod === "cash"
                 ? t("invoice.order_details")
                 : t("invoice.payment_details")}
@@ -135,7 +135,7 @@ export default function InvoiceSuccess() {
                 <Text h3>{t("invoice.order_code")}</Text>
                 <Text h3>{paymentDetails?.orderCode || "-"}</Text>
               </View>
-            </View>
+            </View> */}
           </View>
         )}
 
