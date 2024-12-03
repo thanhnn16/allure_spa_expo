@@ -595,7 +595,10 @@
       "confirmed": "Confirmed"
     },
     "no_appointments_for_selected_date": "You have no appointments for the selected date",
-    "past": "Past"
+    "past": "Past",
+    "hide_past_appointments": "Hide past appointments",
+    "show_past_appointments": "Show past appointments",
+    "hidden": "hidden"
   },
   "orders": {
     "title": "Orders",

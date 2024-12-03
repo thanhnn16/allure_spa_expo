@@ -670,7 +670,10 @@
       "confirmed": "確認済み"
     },
     "no_appointments_for_selected_date": "選択した日付に予約がありません",
-    "past": "過去"
+    "past": "過去",
+    "hide_past_appointments": "過去の予約を非表示",
+    "show_past_appointments": "過去の予約を表示",
+    "hidden": "非表示"
   },
   "orders": {
     "title": "注文",

@@ -572,7 +572,10 @@
       "confirmed": "Đã xác nhận"
     },
     "no_appointments_for_selected_date": "Bạn không có lịch hẹn nào cho ngày đã chọn",
-    "past": "Đã qua"
+    "past": "Đã qua",
+    "hide_past_appointments": "Ẩn lịch hẹn đã qua",
+    "show_past_appointments": "Hiển thị lịch hẹn đã qua",
+    "hidden": "Đã ẩn"
   },
   "orders": {
     "title": "Đơn hàng",
