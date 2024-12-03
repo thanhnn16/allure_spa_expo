@@ -46,9 +46,9 @@ const index = () => {
           style={{
             alignSelf: "center",
             overflow: "hidden",
+            borderRadius: 12,
           }}
           height={200}
-          br50
           marginT-10
         >
           <Carousel
@@ -121,7 +121,24 @@ const index = () => {
           </View>
         </View>
 
+        <View width={150} br20 marginT-8 padding-5 backgroundColor={Colors.primary_light}>
+          <Text h3_bold primary center>Đang diễn ra</Text>
+        </View>
+
+        {/* <View width={150} br20 marginT-8 padding-5 backgroundColor={Colors.secondary}>
+          <Text h3_bold white center>Hết hạn</Text>
+        </View> */}
+
         <Text h2_bold marginT-16>Sự kiện {id}</Text>
+
+        <View row centerV gap-8>
+          <Ionicons
+            name="time-outline"
+            size={24}
+            color={Colors.primary}
+          />
+          <Text h3_bold>18/11/2024 - 21/11/2024</Text>
+        </View>
 
         <Text h3 marginT-16>Mô tả sự kiện {id}</Text>
       </View>

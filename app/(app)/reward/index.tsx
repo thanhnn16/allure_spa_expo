@@ -12,14 +12,14 @@ import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface RewardProps { }
 
-interface EventProps {
+export interface EventProps {
   id: number;
   title: string;
   description: string;
   url: string;
 }
 
-const Event = [
+export const Event = [
   {
     id: 1,
     title: "Sự kiện 1",
@@ -66,41 +66,14 @@ const Reward: React.FC<RewardProps> = () => {
       <View flex bg-white>
         <AppBar back title={t("reward.title")} />
         <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
-          <Text h1_bold marginV-16>Sự kiện nổi bật</Text>
 
-          <FlatList
-            data={Event}
-            renderItem={({ item }) => (
-              <View
-                marginR-16
-                style={styles.section}
-              >
-                <Pressable onPress={() => handleOpenImage(item.id)}>
-                  <View width={300} height={160}>
-                    <Image
-                      source={{ uri: item.url }}
-                      cover
-                      style={{ borderRadius: 12, overflow: "hidden" }}
-                    />
-                  </View>
-                  <View paddingT-8>
-                    <Text h2_bold>{item.title}</Text>
-                    <Text>{item.description}</Text>
-                  </View>
-                </Pressable>
-              </View>
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
 
           <Text h1_bold marginV-16>Tất cả sự kiện</Text>
 
           {Event.map((item: EventProps, index: number) => (
             <View
-              paddingT-12
               style={styles.section}
+              key={index}
             >
               <Pressable onPress={() => handleOpenImage(item.id)} key={index}>
                 <View width={'100%'} height={160}>
@@ -110,9 +83,15 @@ const Reward: React.FC<RewardProps> = () => {
                     style={{ borderRadius: 12, overflow: "hidden" }}
                   />
                 </View>
-                <View paddingT-8>
-                  <Text h2_bold>{item.title}</Text>
-                  <Text>{item.description}</Text>
+                <View paddingT-12>
+                  <View width={150} br20 marginT-8 padding-5 backgroundColor={Colors.primary_light}>
+                    <Text h3_bold primary center>Đang diễn ra</Text>
+                  </View>
+                  <View paddingT-8>
+                    <Text h2_bold>{item.title}</Text>
+                    <Text h3>18/11/2024 - 21/11/2024</Text>
+                    <Text h3>{item.description}</Text>
+                  </View>
                 </View>
               </Pressable>
             </View>
@@ -127,9 +106,9 @@ export default Reward;
 
 const styles = StyleSheet.create({
   section: {
-    padding: 16,
+    padding: 8,
     backgroundColor: Colors.white,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 16,
     shadowColor: Colors.grey40,
     shadowOffset: {
