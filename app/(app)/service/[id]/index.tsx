@@ -287,63 +287,68 @@ const ServiceDetailPage = () => {
     );
   };
 
+
+
   const renderDialogContent = () => (
-    <View padding-20 bg-white br30 gap-10>
-      <Text text60BO marginB-10 color={Colors.primary}>
-        {t("package.select_combo")}
-      </Text>
-      <TouchableOpacity
-        br20
-        centerV
-        paddingH-20
-        paddingV-15
-        style={{
-          backgroundColor: Colors.primary + "10",
-        }}
-        onPress={() => {
-          setCombo(0);
-          setShowDialog(false);
-        }}
-      >
-        <Text h3>
-          {t("package.single_no_discount")}
+      <View padding-20 bg-white br30 gap-10>
+        <Text text60BO marginB-10 color={Colors.primary}>
+          {t("package.select_combo")}
         </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        br20
-        centerV
-        paddingH-20
-        paddingV-15
-        style={{
-          backgroundColor: Colors.primary + "10",
-        }}
-        onPress={() => {
-          setCombo(1);
-          setShowDialog(false);
-        }}
-      >
-        <Text h3>
-          {t("package.combo5_discount")}
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        br20
-        centerV
-        paddingH-20
-        paddingV-15
-        style={{
-          backgroundColor: Colors.primary + "10",
-        }}
-        onPress={() => {
-          setCombo(2);
-          setShowDialog(false);
-        }}
-      >
-        <Text h3>
-          {t("package.combo10_discount")}
-        </Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity
+            br20
+            centerV
+            paddingH-20
+            paddingV-15
+            style={{
+              backgroundColor: Colors.primary + "10",
+            }}
+            onPress={() => {
+              setCombo(0);
+              setSelectedCombo(0);
+              setShowDialog(false);
+            }}
+        >
+          <Text h3>
+            {t("package.single_no_discount")}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            br20
+            centerV
+            paddingH-20
+            paddingV-15
+            style={{
+              backgroundColor: Colors.primary + "10",
+            }}
+            onPress={() => {
+              setCombo(1);
+              setSelectedCombo(1);
+              setShowDialog(false);
+            }}
+        >
+          <Text h3>
+            {t("package.combo5_discount")}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+            br20
+            centerV
+            paddingH-20
+            paddingV-15
+            style={{
+              backgroundColor: Colors.primary + "10",
+            }}
+            onPress={() => {
+              setCombo(2);
+              setSelectedCombo(2);
+              setShowDialog(false);
+            }}
+        >
+          <Text h3>
+            {t("package.combo10_discount")}
+          </Text>
+        </TouchableOpacity>
+      </View>
   );
 
   return (
@@ -555,7 +560,6 @@ const ServiceDetailPage = () => {
                 severity="info"
                 onClose={() => {
                   setBookingDialog(false);
-                  setCombo(0); // Reset combo when dialog closes
                 }}
                 onConfirm={handleBooking}
                 onConfrimSecondary={handlePayment}
@@ -566,8 +570,9 @@ const ServiceDetailPage = () => {
                 setShowActionSheet={setShowDialog}
                 setCombo={(selectedCombo) => {
                   setCombo(selectedCombo);
-                  setBookingDialog(false); // Close the dialog
+                  setSelectedCombo(selectedCombo);
                 }}
+                selectedCombo={selectedCombo}
                 singlePrice={service?.single_price}
                 combo5Price={service?.combo_5_price}
                 combo10Price={service?.combo_10_price}
