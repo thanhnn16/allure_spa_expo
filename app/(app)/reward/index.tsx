@@ -98,7 +98,7 @@ const Reward: React.FC<RewardProps> = () => {
                     </View>
                     <View>
                       <Text h3_bold>{item.code}</Text>
-                      <Text h3>Giảm: {item.value}</Text>
+                      <Text h3>{t("exchange_reward.discount")}: {item.value}</Text>
                       <View row gap-4 centerV>
                         <Image
                           width={16}
@@ -112,10 +112,10 @@ const Reward: React.FC<RewardProps> = () => {
                       </View>
                     </View>
                   </View>
-                  <View width={100}>
+                  <View width={128}>
                     <AppButton
                       type="primary"
-                      title="Đổi"
+                      title={t("exchange_reward.exchange")}
                       onPress={() => { }}
                     />
                   </View>

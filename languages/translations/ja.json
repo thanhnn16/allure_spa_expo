@@ -888,5 +888,29 @@
         "お客様は、当社アプリで提供されるオンライン決済方法に安心してご利用いただけます。"
       ]
     }
+  },
+  "see_more": {
+    "filter": "フィルタ",
+    "search": "検索",
+    "category": "カテゴリ",
+    "services": "サービス",
+    "products": "製品",
+    "none": "なし",
+    "sort": "並び替え",
+    "from_a_to_z": "AからZへ",
+    "from_z_to_a": "ZからAへ",
+    "price_low_to_high": "価格が低い順",
+    "price_high_to_low": "価格が高い順",
+    "rating": "評価",
+    "apply": "適用",
+    "price": "価格",
+    "reset": "リセット",
+    "all": "すべて"
+  },
+  "exchange_reward": {
+    "discount": "割引",
+    "exchange": "交換",
+    "min": "最小",
+    "max": "最大"
   }
 }

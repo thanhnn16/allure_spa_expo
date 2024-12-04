@@ -189,11 +189,11 @@ const SeeMore = () => {
 
   const getCategoryName = (value: string) => {
     if (value === 'services') {
-      return 'Dịch vụ';
+      return t('see_more.services');
     } else if (value === 'products') {
-      return 'Sản phẩm';
+      return t('see_more.products');
     } else {
-      return 'Không có';
+      return t('see_more.none');
     }
   }
 
@@ -201,15 +201,15 @@ const SeeMore = () => {
     if (value === 'name_asc') {
       return 'Từ A-Z';
     } else if (value === 'name_desc') {
-      return 'Từ Z-A';
+      return t('see_more.from_z_to_a');
     } else if (value === 'price_asc') {
-      return 'Giá tăng dần';
+      return t('see_more.price_low_to_high');
     } else if (value === 'price_desc') {
-      return 'Giá giảm dần';
+      return t('see_more.price_high_to_low');
     } else if (value === 'rating') {
-      return 'Đánh giá cao nhất';
+      return t('see_more.rating');
     } else {
-      return 'Không có';
+      return t('see_more.none');
     }
   }
 
@@ -262,12 +262,12 @@ const SeeMore = () => {
         <View flex paddingH-20 marginB-16>
           <AppSearch />
           <View row marginT-12 spread>
-            <Text h2_bold>Bộ lọc</Text>
+            <Text h2_bold>{t("see_more.filter")}</Text>
             <TouchableOpacity
               onPress={() => filterBottomSheetRef.current?.expand()}
             >
               <View row spread centerV gap-4>
-                <Text h2 primary>Bộ lọc (3)</Text>
+                <Text h2 primary>{t("see_more.filter")} (3)</Text>
                 <Image
                   source={FilterIcon}
                   style={{ width: 20, height: 20 }}
@@ -287,9 +287,9 @@ const SeeMore = () => {
           enableOverDrag={true}
         >
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
-            <Text h2_bold>Bộ lọc</Text>
+            <Text h2_bold>{t("see_more.filter")}</Text>
             <View row spread centerV paddingV-8>
-              <Text h3>Danh mục</Text>
+              <Text h3>{t("see_more.category")}</Text>
               <Chip
                 label={getCategoryName(categoryValue)}
                 rightElement={
@@ -306,7 +306,7 @@ const SeeMore = () => {
               />
             </View>
             <View row spread centerV paddingV-8>
-              <Text h3>Sắp xếp theo</Text>
+              <Text h3>{t("see_more.sort")}</Text>
               <Chip
                 label={getSortName(sortValue)}
                 rightElement={
@@ -323,8 +323,8 @@ const SeeMore = () => {
               />
             </View>
             <View row spread centerV paddingV-8>
-              <Text h3>Giá</Text>
-              <Text h3>Tất cả</Text>
+              <Text h3>{t("see_more.price")}</Text>
+              <Text h3>{t("see_more.all")}</Text>
             </View>
             <View>
               <Slider
@@ -342,7 +342,7 @@ const SeeMore = () => {
             <View paddingV-8 gap-8>
               <AppButton
                 type="primary"
-                title="Áp dụng"
+                title={t("see_more.apply")}
                 onPress={() => {
                   handleFilterCategory(categoryValue)
                   handleSort(sortValue)
@@ -352,7 +352,7 @@ const SeeMore = () => {
               {(categoryValue !== "none" || sortValue !== "none" || sliderPriceValue !== 0) && (
                 <AppButton
                   type="outline"
-                  title="Xóa bộ lọc"
+                  title={t("see_more.reset")}
                   onPress={() => resetFilters()}
                 />
               )}
@@ -370,14 +370,14 @@ const SeeMore = () => {
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
             <Text h2_bold center>Danh mục</Text>
             <RadioGroup initialValue={categoryValue} onValueChange={setCategoryValue}>
-              <RadioButton value={'none'} label={'Dịch vụ'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'products'} label={'Sản phẩm'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'services'} label={'Không có'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'none'} label={t("see_more.services")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'products'} label={t("see_more.products")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'services'} label={t("see_more.none")} color={Colors.primary} paddingV-8 />
             </RadioGroup>
             <View paddingV-12 gap-8>
               <AppButton
                 type="primary"
-                title="Chọn"
+                title={t("see_more.apply")}
                 onPress={() => {
                   categoryBottomSheetRef.current?.close()
                   filterBottomSheetRef.current?.expand()
@@ -397,17 +397,17 @@ const SeeMore = () => {
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
             <Text h2_bold center>Sắp xếp theo</Text>
             <RadioGroup initialValue={sortValue} onValueChange={setSortValue}>
-              <RadioButton value={'name_asc'} label={'Từ A-Z'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'name_desc'} label={'Từ Z-A'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'price_asc'} label={'Giá tăng dần'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'price_desc'} label={'Giá giảm dần'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'rating'} label={'Đánh giá cao nhất'} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'none'} label={'Không có'} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'name_asc'} label={t("see_more.from_a_to_z")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'name_desc'} label={t("see_more.from_z_to_a")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'price_asc'} label={t("see_more.price_low_to_high")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'price_desc'} label={t("see_more.price_high_to_low")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'rating'} label={t("see_more.rating")} color={Colors.primary} paddingV-8 />
+              <RadioButton value={'none'} label={t("see_more.none")} color={Colors.primary} paddingV-8 />
             </RadioGroup>
             <View paddingV-12 gap-8>
               <AppButton
                 type="primary"
-                title="Chọn"
+                title={t("see_more.apply")}
                 onPress={() => {
                   sortBottomSheetRef.current?.close()
                   filterBottomSheetRef.current?.expand()

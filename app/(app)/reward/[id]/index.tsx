@@ -5,6 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import AppBar from '@/components/app-bar/AppBar';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import AppButton from '@/components/buttons/AppButton';
+import { useLanguage } from '@/hooks/useLanguage';
 
 interface MediaProps {
   id: number;
@@ -32,6 +33,7 @@ const media = [
 
 const index = () => {
   const { id } = useLocalSearchParams();
+  const { t } = useLanguage();
   const [index, setIndex] = React.useState(0);
   const windowWidth = Dimensions.get("window").width;
   const handleOpenImage = (index: number) => {
@@ -88,8 +90,8 @@ const index = () => {
             100
           </Text>
         </View>
-        <Text h3 marginT-16>Giảm: 12%</Text>
-        <Text h4>Tối thiểu: 15.000đ ∙ Tối đa 100.000đ</Text>
+        <Text h3 marginT-16>{t("exchange_reward.discount")}: 12%</Text>
+        <Text h4>{t("exchange_reward.min")}: 15.000đ ∙ {t("exchange_reward.max")} 100.000đ</Text>
       </View>
 
 
@@ -130,10 +132,10 @@ const index = () => {
                 </View>
               </View>
             </View>
-            <View width={100}>
+            <View width={128}>
               <AppButton
                 type="primary"
-                title="Đổi"
+                title={t("exchange_reward.exchange")}
                 onPress={() => { }}
               />
             </View>

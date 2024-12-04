@@ -494,7 +494,7 @@
     "select_voucher": "Select voucher",
     "proceed_to_payment": "Proceed to Payment",
     "add_note": "Add note",
-    "saved_address": "Saved Address", 
+    "saved_address": "Saved Address",
     "temp_address": "Temporary Address",
     "address_required_title": "Address Required",
     "address_required_message": "Please select a delivery address",
@@ -813,5 +813,29 @@
         "Customers can trust the online payment methods available on our app."
       ]
     }
+  },
+  "see_more": {
+    "filter": "Filter",
+    "search": "Search for products, services",
+    "category": "Category",
+    "services": "Services",
+    "products": "Products",
+    "none": "None",
+    "sort": "Sort",
+    "from_a_to_z": "From A to Z",
+    "from_z_to_a": "From Z to A",
+    "price_low_to_high": "Price low to high",
+    "price_high_to_low": "Price high to low",
+    "rating": "Top Rating",
+    "apply": "Apply",
+    "price": "Price",
+    "reset": "Reset filters",
+    "all": "All"
+  },
+  "exchange_reward": {
+    "discount": "Discount",
+    "exchange": "Exchange",
+    "min": "Min discount",
+    "max": "Max"
   }
 }

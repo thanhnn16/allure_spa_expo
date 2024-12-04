@@ -790,5 +790,29 @@
         "Khách hàng có thể an tâm khi sử dụng các phương thức thanh toán trực tuyến trên ứng dụng của chúng tôi."
       ]
     }
+  },
+  "see_more": {
+    "filter": "Bộ lọc",
+    "search": "Tìm kiếm mỹ phẩm, dịch vụ",
+    "category": "Danh mục",
+    "services": "Dịch vụ",
+    "products": "Sản phẩm",
+    "none": "Không có",
+    "sort": "Sắp xếp",
+    "from_a_to_z": "A đến Z",
+    "from_z_to_a": "Z đến A",
+    "price_low_to_high": "Giá thấp đến cao",
+    "price_high_to_low": "Giá cao đến thấp",
+    "rating": "Đánh giá",
+    "apply": "Áp dụng",
+    "price": "Giá",
+    "reset": "Đặt lại",
+    "all": "Tất cả"
+  },
+  "exchange_reward": {
+    "discount": "Giảm",
+    "exchange": "Đổi",
+    "min": "Tối thiểu",
+    "max": "Tối đa"
   }
 }
