@@ -300,7 +300,7 @@ const ServiceDetailPage = () => {
             paddingH-20
             paddingV-15
             style={{
-              backgroundColor: Colors.primary + "10",
+              backgroundColor: selectedCombo === 0 ? Colors.primary + "50" : Colors.primary + "10",
             }}
             onPress={() => {
               setCombo(0);
@@ -318,7 +318,7 @@ const ServiceDetailPage = () => {
             paddingH-20
             paddingV-15
             style={{
-              backgroundColor: Colors.primary + "10",
+              backgroundColor: selectedCombo === 1 ? Colors.primary + "50" : Colors.primary + "10",
             }}
             onPress={() => {
               setCombo(1);
@@ -336,7 +336,7 @@ const ServiceDetailPage = () => {
             paddingH-20
             paddingV-15
             style={{
-              backgroundColor: Colors.primary + "10",
+              backgroundColor: selectedCombo === 2 ? Colors.primary + "50" : Colors.primary + "10",
             }}
             onPress={() => {
               setCombo(2);
