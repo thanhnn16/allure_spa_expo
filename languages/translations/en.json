@@ -388,7 +388,10 @@
     "search_a_district": "Search a district",
     "search_a_ward": "Search a ward",
     "set_default_address": "Set default address",
-    "set_default_address_confirm": "Are you sure you want to set this address as default?"
+    "set_default_address_confirm": "Are you sure you want to set this address as default?",
+    "name_too_short": "Name is too short",
+    "invalid_phone": "Invalid phone number",
+    "address_too_short": "Address is too short"
   },
   "time": {
     "today": "Today",

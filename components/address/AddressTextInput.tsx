@@ -41,8 +41,12 @@ const AddressTextInput = ({
       style={[
         error && {
           borderColor: Colors.red30,
+          borderRadius: 8,
           borderWidth: 1,
         },
+        {
+          paddingVertical: 10,
+        }
       ]}
     />
   </View>

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { searchItems } from './searchThunk';
+import { searchItems, searchMoreItems } from './searchThunk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SearchState {
@@ -62,7 +62,7 @@ export const searchSlice = createSlice({
       state.recentSearches = [];
       AsyncStorage.removeItem(RECENT_SEARCHES_KEY);
     },
-    setCurrentSearchText: (state: SearchState, action: PayloadAction<string>) => {
+    setCurrentSearchText: (state: SearchState, action: any) => {
       state.currentSearchText = action.payload;
     }
   },
@@ -77,6 +77,18 @@ export const searchSlice = createSlice({
         state.results = action.payload;
       })
       .addCase(searchItems.rejected, (state: SearchState, action: any) => {
+        state.loading = false;
+        state.error = action.error.message || 'Something went wrong';
+      })
+      .addCase(searchMoreItems.pending, (state: SearchState) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchMoreItems.fulfilled, (state: SearchState, action: any) => {
+        state.loading = false;
+        state.results = action.payload;
+      })
+      .addCase(searchMoreItems.rejected, (state: SearchState, action: any) => {
         state.loading = false;
         state.error = action.error.message || 'Something went wrong';
       });

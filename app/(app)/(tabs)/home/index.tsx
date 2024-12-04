@@ -13,7 +13,7 @@ import {
 import {Href, router} from "expo-router";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import { Dimensions, FlatList, Pressable } from "react-native";
-import { Event } from "../../reward";
+import { Event } from "../../event";
 import Animated, {
   FadeIn,
   FadeInDown,
@@ -227,7 +227,7 @@ const HomePage = () => {
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
       Dimensions.get("window");
 
-  const handlePressMore = useCallback((type: "service" | "product") => {
+  const handlePressMore = useCallback((type: "services" | "products") => {
     router.push({
       pathname: "/(app)/see-more",
       params: { type },
@@ -328,7 +328,7 @@ const HomePage = () => {
 
   const handleOpenImage = (index: number) => {
     console.log(index);
-    router.push(`/reward/${index}`);
+    router.push(`/event/${index}`);
   }
 
   const renderContent = () => (
@@ -350,35 +350,35 @@ const HomePage = () => {
             </Animated.View>
         )}
 
-        {servicesList &&
-            Array.isArray(servicesList) &&
-            servicesList.length > 0 && (
-                <Animated.View entering={FadeInUp.duration(600).delay(400)}>
-                  <SectionContainer
-                      title={t("home.featured_services")}
-                      data={servicesList}
-                      renderItem={renderServiceItem}
-                      onPressMore={() => {
-                        handlePressMore("service");
-                      }}
-                      onEndReached={loadMoreServices}
-                      isLoadingMore={isLoading && currentPage > 1}
-                  />
-                </Animated.View>
-            )}
-
-        {products && products.length > 0 && (
-            <Animated.View entering={FadeInUp.duration(600).delay(500)}>
-              <SectionContainer
-                  title={t("home.featured_products")}
-                  data={products}
-                  renderItem={renderProductItem}
-                  onPressMore={() => {
-                    handlePressMore("product");
-                  }}
-              />
-            </Animated.View>
+      {servicesList &&
+        Array.isArray(servicesList) &&
+        servicesList.length > 0 && (
+          <Animated.View entering={FadeInUp.duration(600).delay(400)}>
+            <SectionContainer
+              title={t("home.featured_services")}
+              data={servicesList}
+              renderItem={renderServiceItem}
+              onPressMore={() => {
+                handlePressMore("services");
+              }}
+              onEndReached={loadMoreServices}
+              isLoadingMore={isLoading && currentPage > 1}
+            />
+          </Animated.View>
         )}
+
+      {products && products.length > 0 && (
+        <Animated.View entering={FadeInUp.duration(600).delay(500)}>
+          <SectionContainer
+            title={t("home.featured_products")}
+            data={products}
+            renderItem={renderProductItem}
+            onPressMore={() => {
+              handlePressMore("products");
+            }}
+          />
+        </Animated.View>
+      )}
 
         <View paddingH-16>
           <Text h1_bold marginV-16>Sự kiện nổi bật</Text>

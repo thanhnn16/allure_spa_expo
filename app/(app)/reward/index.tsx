@@ -9,43 +9,46 @@ import AppBar from "@/components/app-bar/AppBar";
 import { Dimensions, Pressable } from "react-native";
 import { Href, router } from "expo-router";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
+import { Feather, Ionicons } from "@expo/vector-icons";
+import AppButton from "@/components/buttons/AppButton";
 
 interface RewardProps { }
 
-export interface EventProps {
+interface RewardDataProps {
   id: number;
-  title: string;
-  description: string;
-  url: string;
+  code: string;
+  value: number;
+  min_order_value: number;
+  max_discount_amount: number;
+  point: number;
 }
 
-export const Event = [
+export const RewardData: RewardDataProps[] = [
   {
     id: 1,
-    title: "Sự kiện 1",
-    description: "Mô tả sự kiện 1",
-    url: "https://picsum.photos/300/200",
+    code: "DISCOUNT10",
+    value: 10,
+    min_order_value: 50,
+    max_discount_amount: 10,
+    point: 100,
   },
   {
     id: 2,
-    title: "Sự kiện 2",
-    description: "Mô tả sự kiện 2",
-    url: "https://picsum.photos/300/200",
+    code: "FREESHIP",
+    value: 100,
+    min_order_value: 30,
+    max_discount_amount: 0,
+    point: 50,
   },
   {
     id: 3,
-    title: "Sự kiện 3",
-    description: "Mô tả sự kiện 3",
-    url: "https://picsum.photos/300/200",
+    code: "SAVE20",
+    value: 20,
+    min_order_value: 100,
+    max_discount_amount: 20,
+    point: 200,
   },
-  {
-    id: 4,
-    title: "Sự kiện 4",
-    description: "Mô tả sự kiện 4",
-    url: "https://picsum.photos/300/200",
-  },
-]
-
+];
 const Reward: React.FC<RewardProps> = () => {
   const { t } = useLanguage();
   // const [selectedPage, setSelectedPage] = React.useState(0);
@@ -67,30 +70,54 @@ const Reward: React.FC<RewardProps> = () => {
         <AppBar back title={t("reward.title")} />
         <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
 
-
-          <Text h1_bold marginV-16>Tất cả sự kiện</Text>
-
-          {Event.map((item: EventProps, index: number) => (
+          {RewardData.map((item: RewardDataProps, index: number) => (
             <View
               style={styles.section}
               key={index}
             >
               <Pressable onPress={() => handleOpenImage(item.id)} key={index}>
-                <View width={'100%'} height={160}>
-                  <AnimatedImage
-                    source={{ uri: item.url }}
-                    cover
-                    style={{ borderRadius: 12, overflow: "hidden" }}
-                  />
-                </View>
-                <View paddingT-12>
-                  <View width={150} br20 marginT-8 padding-5 backgroundColor={Colors.primary_light}>
-                    <Text h3_bold primary center>Đang diễn ra</Text>
+                <View centerV row spread>
+                  <View row gap-8>
+                    <View
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 12,
+                        backgroundColor: Colors.primary_blur,
+                        borderWidth: 1,
+                        borderColor: Colors.primary_light,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Feather
+                        name={'credit-card' as any}
+                        size={24}
+                        color={Colors.primary}
+                      />
+                    </View>
+                    <View>
+                      <Text h3_bold>{item.code}</Text>
+                      <Text h3>Giảm: {item.value}</Text>
+                      <View row gap-4 centerV>
+                        <Image
+                          width={16}
+                          height={16}
+                          marginB-2
+                          source={require("@/assets/images/allureCoin.png")}
+                        />
+                        <Text color={Colors.primary} h3_bold>
+                          100
+                        </Text>
+                      </View>
+                    </View>
                   </View>
-                  <View paddingT-8>
-                    <Text h2_bold>{item.title}</Text>
-                    <Text h3>18/11/2024 - 21/11/2024</Text>
-                    <Text h3>{item.description}</Text>
+                  <View width={100}>
+                    <AppButton
+                      type="primary"
+                      title="Đổi"
+                      onPress={() => { }}
+                    />
                   </View>
                 </View>
               </Pressable>
@@ -98,8 +125,8 @@ const Reward: React.FC<RewardProps> = () => {
           ))}
 
         </ScrollView>
-      </View>
-    </GestureHandlerRootView>
+      </View >
+    </GestureHandlerRootView >
   );
 };
 export default Reward;
