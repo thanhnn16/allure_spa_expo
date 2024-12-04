@@ -386,11 +386,18 @@ export default function DetailsScreen() {
             <Text h2_bold marginB-10>
               {product?.name}
             </Text>
-            <View row marginB-10>
+            <View row centerV marginB-10>
               <Image source={TagIcon} size={24} />
-              <Text h2_medium secondary marginL-5>
-                {formatCurrency({ price: Number(totalPrice) })}
-              </Text>
+              <View>
+                {quantity > 1 && (
+                  <Text h3 gray marginL-5>
+                    {formatCurrency({ price: product.price })}
+                  </Text>
+                )}
+                <Text h2_medium secondary marginL-5>
+                  {formatCurrency({ price: Number(totalPrice) })}
+                </Text>
+              </View>
 
               <View flex centerV row gap-15 right>
                 <TouchableOpacity onPress={handleShare}>
@@ -460,7 +467,7 @@ export default function DetailsScreen() {
             <Animated.Image
               source={{ uri: media[index].full_url }}
               style={[
-                { width: 60, height: 45, alignSelf: "flex-end" },
+                { width: 60, height: 45, alignSelf: "flex-end", borderRadius: 8, overflow: "hidden" },
                 animatedStyle,
               ]}
             />
