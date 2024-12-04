@@ -60,12 +60,14 @@ const HomePage = () => {
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
     useHeaderDimensions();
 
+
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
       "worklet";
       scrollOffset.value = event.contentOffset.y;
     },
   });
+
 
   const handleNotificationPress = () => {
     if (isGuest) {

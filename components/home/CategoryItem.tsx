@@ -63,9 +63,10 @@ const RenderCategory: React.FC = () => {
         pathname: "/webview",
         params: { url: item.url },
       });
-    } else if (item.route) {
-      router.push(item.route as Href<string>);
-    }
+    } 
+    // else if (item.route) {
+    //   router.push(item.route as Href<string>);
+    // }
   };
 
   const renderCateItem = ({ item }: { item: CategoryItem }) => {

@@ -25,6 +25,7 @@ const TabLayout: React.FC = () => {
         name="home/index"
         options={{
           title: "Trang chủ",
+          unmountOnBlur: false,
           tabBarLabel: () => null,
           tabBarIcon: ({ focused, size }) => (
             <Ionicons
@@ -34,6 +35,7 @@ const TabLayout: React.FC = () => {
             />
           ),
         }}
+        
       />
       <Tabs.Screen
         name="chat/index"
