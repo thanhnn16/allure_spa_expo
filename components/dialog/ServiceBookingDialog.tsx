@@ -30,28 +30,49 @@ interface ServiceBookingDialogProps {
   singlePrice?: number;
   combo5Price?: number;
   combo10Price?: number;
+  selectedCombo: number;
+
 }
 
 
 const ServiceBookingDialog = ({
-  visible,
-  onClose,
-  onConfirm,
-  onConfrimSecondary,
-  title,
-  loading = false,
-  setCombo,
-  singlePrice,
-  combo5Price,
-  combo10Price,
-}: ServiceBookingDialogProps) => {
+                                visible,
+                                onClose,
+                                onConfirm,
+                                onConfrimSecondary,
+                                title,
+                                loading = false,
+                                setCombo,
+                                singlePrice,
+                                combo5Price,
+                                combo10Price,
+                                selectedCombo,
+                              }: ServiceBookingDialogProps) => {
   const { t } = useLanguage();
-  const [selectedCombo, setSelectedCombo] = React.useState(0);
+  const [selectedComboState, setSelectedComboState] = React.useState(selectedCombo);
 
   const handleComboSelect = (comboType: number) => {
-    setSelectedCombo(comboType);
+    setSelectedComboState(comboType);
     setCombo(comboType);
   };
+
+  React.useEffect(() => {
+    setSelectedComboState(selectedCombo);
+  }, [selectedCombo]);
+
+  React.useEffect(() => {
+    switch (selectedComboState) {
+      case 1:
+        setCombo(1);
+        break;
+      case 2:
+        setCombo(2);
+        break;
+      default:
+        setCombo(0);
+        break;
+    }
+  }, [selectedComboState]);
 
   return (
     <Dialog
