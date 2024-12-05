@@ -592,7 +592,8 @@
     "address_required_message": "配達先住所を選択してください",
     "temp_address_invalid": "すべての住所フィールドを入力してください",
     "street_address": "住所",
-    "order_summary": "注文の要約"
+    "order_summary": "注文の要約",
+    "missing_address_info": "住所情報が不足しています"
   },
   "transaction": {
     "payment_success": "支払い成功",

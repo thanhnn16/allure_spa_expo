@@ -519,7 +519,8 @@
     "address_required_message": "Please select a delivery address",
     "temp_address_invalid": "Please fill in all address fields",
     "street_address": "Street Address",
-    "order_summary": "Order Summary"
+    "order_summary": "Order Summary",
+    "missing_address_info": "Missing address information"
   },
   "transaction": {
     "payment_success": "Payment Success",

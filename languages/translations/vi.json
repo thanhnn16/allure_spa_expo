@@ -494,7 +494,8 @@
     "address_required_message": "Vui lòng chọn địa chỉ giao hàng",
     "temp_address_invalid": "Vui lòng điền đầy đủ các trường địa chỉ",
     "street_address": "Địa chỉ",
-    "order_summary": "Tổng hợp đơn hàng"
+    "order_summary": "Tổng hợp đơn hàng",
+    "missing_address_info": "Thiếu thông tin của"
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
