@@ -92,9 +92,7 @@ const AboutApp = () => {
             ))}
 
             <Text marginT-20 h2_bold>{t("aboutapp.why_choose")}</Text>
-            <Text h2>
-            {t("aboutapp.why_choose_content")}
-            </Text>
+            <Text h2>{t("aboutapp.why_choose_content")}</Text>
           </View>
         </View>
       </ScrollView>
