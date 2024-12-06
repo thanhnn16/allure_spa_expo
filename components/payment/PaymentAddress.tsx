@@ -6,7 +6,7 @@ import {
   Picker,
   PickerValue,
 } from "react-native-ui-lib";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -265,8 +265,7 @@ const PaymentAddress = ({
                         }}
                       >
                         {t(
-                          `address.${
-                            selectAddress.address_type?.toLowerCase() || "other"
+                          `address.${selectAddress.address_type?.toLowerCase() || "other"
                           }`
                         )}
                       </Text>
@@ -325,6 +324,41 @@ const PaymentAddress = ({
           </TouchableOpacity>
         ) : (
           <View>
+            {(
+              tempAddress.full_name.length < 3 || 
+              tempAddress.phone_number.length < 3 ||
+              tempAddress.province.length < 3 ||
+              tempAddress.district.length < 3 ||
+              tempAddress.ward.length < 3 ||
+              tempAddress.address.length < 3
+            ) && (
+              <View
+                row
+                gap-8
+                style={{
+                  padding: 8,
+                  backgroundColor: Colors.primary_light,
+                  borderRadius: 8,
+                  marginBottom: 16,
+                  borderColor: Colors.primary,
+                  borderWidth: 1,
+                }}
+              >
+                <Ionicons
+                  name="location-outline"
+                  size={16}
+                  color={Colors.primary}
+                />
+                <Text h3>
+                  {t("checkout.missing_address_info")}: {" "}
+                  {tempAddress.full_name.length < 3 ? t("address.name") : ""}
+                  {tempAddress.phone_number.length < 3 ? t("address.phone_number") + ", " : ""}
+                  {tempAddress.province.length < 3 ? t("address.province") + ", " : ""}
+                  {tempAddress.district.length < 3 ? t("address.district") + ", " : ""}
+                  {tempAddress.ward.length < 3 ? t("address.ward") + ", " : ""}
+                  {tempAddress.address.length < 5 ? t("address.address") + ", " : ""}
+                </Text>
+              </View>)}
             <AddressTextInput
               value={tempAddress.full_name}
               placeholder={t("address.name")}

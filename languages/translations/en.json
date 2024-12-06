@@ -257,7 +257,26 @@
     "name_app": "App Name: ",
     "developer": "Developer: ",
     "version": "Version: ",
-    "date_release": "Release Date: "
+    "date_release": "Release Date: ",
+    "section1": "Home Page",
+    "content1": "The home page interface displays the Spa's logo, featured services, best-selling products, and the latest news. Customers can quickly navigate to the shopping cart, search for products, or update notifications and personal information.",
+    "section2": "Product and Service Details",
+    "content2": "Customers can view detailed information about cosmetic products and treatments, including names, images, prices, descriptions, ingredients, usage instructions, as well as read and leave comments and reviews about the products and services.",
+    "section3": "Smart Search",
+    "content3": "The search function helps customers easily find products or services by entering names or related keywords.",
+    "section4": "Appointment Booking",
+    "content4": "Customers can book appointments with the Spa directly from the application, select services, convenient dates and times, and know the total cost in advance.",
+    "section5": "Online Ordering",
+    "content5": "Easily add products to the cart, view order details and shipping information before payment. Customers only need to log in to complete shopping transactions.",
+    "section6": "Order Management",
+    "content6": "The application provides a list and details of placed orders, helping customers track the status and history of their purchases.",
+    "section7": "Convenient Payment",
+    "content7": "Customers can choose suitable payment and shipping methods, as well as manage personal information and orders directly within the application.",
+    "section8": "Notifications and Offers",
+    "content8": "The application updates notifications, promotional programs, and special offers from the Spa, ensuring customers don't miss any opportunities.",
+    "featured": "Top features for Allure Spa app",
+    "why_choose": "Why choose Allure Spa app?",
+    "why_choose_content": "The Allure Spa application is not just a platform for purchasing cosmetics and beauty care services, but also a useful tool that allows customers to easily interact, review, and give feedback on service quality. This helps the Spa continuously improve its quality, providing the best experiences for users."
   },
   "deleteaccount": {
     "title": "Delete Account",
@@ -494,13 +513,14 @@
     "select_voucher": "Select voucher",
     "proceed_to_payment": "Proceed to Payment",
     "add_note": "Add note",
-    "saved_address": "Saved Address", 
+    "saved_address": "Saved Address",
     "temp_address": "Temporary Address",
     "address_required_title": "Address Required",
     "address_required_message": "Please select a delivery address",
     "temp_address_invalid": "Please fill in all address fields",
     "street_address": "Street Address",
-    "order_summary": "Order Summary"
+    "order_summary": "Order Summary",
+    "missing_address_info": "Missing address information"
   },
   "transaction": {
     "payment_success": "Payment Success",
@@ -813,5 +833,29 @@
         "Customers can trust the online payment methods available on our app."
       ]
     }
+  },
+  "see_more": {
+    "filter": "Filter",
+    "search": "Search for products, services",
+    "category": "Category",
+    "services": "Services",
+    "products": "Products",
+    "none": "None",
+    "sort": "Sort",
+    "from_a_to_z": "From A to Z",
+    "from_z_to_a": "From Z to A",
+    "price_low_to_high": "Price low to high",
+    "price_high_to_low": "Price high to low",
+    "rating": "Top Rating",
+    "apply": "Apply",
+    "price": "Price",
+    "reset": "Reset filters",
+    "all": "All"
+  },
+  "exchange_reward": {
+    "discount": "Discount",
+    "exchange": "Exchange",
+    "min": "Min discount",
+    "max": "Max"
   }
 }

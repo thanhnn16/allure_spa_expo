@@ -32,7 +32,7 @@ const ChangePassword = (props: ChangePasswordProps) => {
 
   const handleChangePassword = async () => {
     setLoading(true);
-    if (newPassword !== currentPassword) {
+    if (newPassword === currentPassword) {
       setNewPasswordError(i18n.t("auth.register.password_current_new_mismatch"));
       setLoading(false);
       setError;
