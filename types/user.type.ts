@@ -16,4 +16,6 @@ export interface User {
   deleted_at: string | null;
   avatar_url: string | null;
   media: any | null;
+  phone_verified_at: string | null;
+  email_verified_at: string | null;
 }

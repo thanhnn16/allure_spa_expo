@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, Card } from "react-native-ui-lib";
+import { View, Text, TouchableOpacity, Image, Card, Colors, Button } from "react-native-ui-lib";
 import ArrowRight from "@/assets/icons/arrow.svg";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -8,6 +8,7 @@ import { Href, router } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { useDispatch } from "react-redux";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
+import { Ionicons } from '@expo/vector-icons';
 
 interface ProfileDetailProps { }
 
@@ -24,6 +25,76 @@ const ProfileDetail = (props: ProfileDetailProps) => {
     };
     fetchUser();
   }, [user?.avatar_url]);
+
+  const needsVerification = user && (!user.phone_verified_at || !user.email_verified_at);
+
+  const renderVerificationStatus = () => {
+    if (!needsVerification) {
+      return (
+        <Card marginT-16 padding-16 bg-grey70>
+          <View row centerV marginB-12>
+            <Ionicons name="checkmark-circle" size={20} color={Colors.green30} />
+            <Text h3_bold marginL-8 green30>{t("profile.verification_complete")}</Text>
+          </View>
+          
+          <View row spread centerV marginB-8>
+            <View row centerV flex-1>
+              <Ionicons name="phone-portrait-outline" size={16} color={Colors.grey40} />
+              <Text h3 grey40 marginL-8>{t("profile.phone_verified")}</Text>
+            </View>
+            <Ionicons name="checkmark-circle" size={16} color={Colors.green30} />
+          </View>
+
+          <View row spread centerV>
+            <View row centerV flex-1>
+              <Ionicons name="mail-outline" size={16} color={Colors.grey40} />
+              <Text h3 grey40 marginL-8>{t("profile.email_verified")}</Text>
+            </View>
+            <Ionicons name="checkmark-circle" size={16} color={Colors.green30} />
+          </View>
+        </Card>
+      );
+    }
+
+    return (
+      <Card marginT-16 padding-16 bg-grey70>
+        <View row centerV marginB-12>
+          <Ionicons name="warning" size={20} color={Colors.red30} />
+          <Text h3_bold marginL-8 red30>{t("profile.verification_required")}</Text>
+        </View>
+        
+        {!user?.phone_verified_at && (
+          <View row spread centerV marginB-8>
+            <View row centerV flex-1>
+              <Ionicons name="phone-portrait-outline" size={16} color={Colors.grey40} />
+              <Text h3 grey40 marginL-8>{t("profile.phone_not_verified")}</Text>
+            </View>
+            <Button 
+              label={t("profile.verify_now")}
+              size="small"
+              backgroundColor={Colors.primary}
+              onPress={() => router.push("/(app)/profile/verify-phone")}
+            />
+          </View>
+        )}
+
+        {!user?.email_verified_at && (
+          <View row spread centerV>
+            <View row centerV flex-1>
+              <Ionicons name="mail-outline" size={16} color={Colors.grey40} />
+              <Text h3 grey40 marginL-8>{t("profile.email_not_verified")}</Text>
+            </View>
+            <Button 
+              label={t("profile.verify_now")}
+              size="small"
+              backgroundColor={Colors.primary}
+              onPress={() => router.push("/(app)/profile/verify-email")}
+            />
+          </View>
+        )}
+      </Card>
+    );
+  };
 
   return (
     <View flex bg-white>
@@ -50,6 +121,9 @@ const ProfileDetail = (props: ProfileDetailProps) => {
           <Text h1_bold>{user?.full_name || t("profile.username")}</Text>
           <Text h2 gray>{user?.phone_number || ""}</Text>
         </View>
+
+        {renderVerificationStatus()}
+
         <Card width={"100%"} marginT-20>
           {[
             {

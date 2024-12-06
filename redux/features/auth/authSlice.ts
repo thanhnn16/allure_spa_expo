@@ -4,6 +4,7 @@ import { loginThunk } from "./loginThunk";
 import { registerThunk } from "./registerThunk";
 import { logoutThunk } from "./logoutThunk";
 import { AuthError } from "@/types/auth.type";
+import { sendVerificationEmailThunk, verifyEmailThunk } from "./emailVerificationThunk";
 
 interface AuthState {
   token: string | null;
@@ -14,6 +15,8 @@ interface AuthState {
   zaloAccessToken: string | null;
   zaloRefreshToken: string | null;
   zaloExpiresIn: number | null;
+  isVerifyingEmail: boolean;
+  verificationError: string | null;
 }
 
 const initialState: AuthState = {
@@ -24,7 +27,9 @@ const initialState: AuthState = {
   error: null,
   zaloAccessToken: null,
   zaloRefreshToken: null,
-  zaloExpiresIn: null
+  zaloExpiresIn: null,
+  isVerifyingEmail: false,
+  verificationError: null
 };
 
 export const authSlice = createSlice({
@@ -61,60 +66,90 @@ export const authSlice = createSlice({
       state.zaloExpiresIn = null;
     }
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder: any) => {
     // Login
     builder
-      .addCase(loginThunk.pending, (state) => {
+      .addCase(loginThunk.pending, (state: AuthState) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(loginThunk.fulfilled, (state, action) => {
+      .addCase(loginThunk.fulfilled, (state: AuthState, action: any) => {
         state.isLoading = false;
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
         state.isGuest = false;
       })
-      .addCase(loginThunk.rejected, (state, action) => {
+      .addCase(loginThunk.rejected, (state: AuthState, action: any) => {
         state.isLoading = false;
         state.error = action.payload as AuthError;
       })
 
     // Register  
     builder
-      .addCase(registerThunk.pending, (state) => {
+      .addCase(registerThunk.pending, (state: AuthState) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerThunk.fulfilled, (state, action) => {
+      .addCase(registerThunk.fulfilled, (state: AuthState, action: any) => {
         state.isLoading = false;
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
         state.isGuest = false;
       })
-      .addCase(registerThunk.rejected, (state, action) => {
+      .addCase(registerThunk.rejected, (state: AuthState, action: any) => {
         state.isLoading = false;
         state.error = action.payload as AuthError;
       })
 
     // Logout
     builder
-      .addCase(logoutThunk.pending, (state) => {
+      .addCase(logoutThunk.pending, (state: AuthState) => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(logoutThunk.fulfilled, (state) => {
+      .addCase(logoutThunk.fulfilled, (state: AuthState) => {
         return {
           ...initialState,
           isLoading: false
         };
       })
-      .addCase(logoutThunk.rejected, (state) => {
+      .addCase(logoutThunk.rejected, (state: AuthState) => {
         return {
           ...initialState,
           isLoading: false
         };
+      });
+
+    // Send Verification Email
+    builder
+      .addCase(sendVerificationEmailThunk.pending, (state: AuthState) => {
+        state.isVerifyingEmail = true;
+        state.verificationError = null;
+      })
+      .addCase(sendVerificationEmailThunk.fulfilled, (state: AuthState) => {
+        state.isVerifyingEmail = false;
+        state.verificationError = null;
+      })
+      .addCase(sendVerificationEmailThunk.rejected, (state: AuthState, action: any) => {
+        state.isVerifyingEmail = false;
+        state.verificationError = action.payload?.message || null;
+      })
+
+    // Verify Email
+    builder
+      .addCase(verifyEmailThunk.pending, (state: AuthState) => {
+        state.isVerifyingEmail = true;
+        state.verificationError = null;
+      })
+      .addCase(verifyEmailThunk.fulfilled, (state: AuthState) => {
+        state.isVerifyingEmail = false;
+        state.verificationError = null;
+      })
+      .addCase(verifyEmailThunk.rejected, (state: AuthState, action: any) => {
+        state.isVerifyingEmail = false;
+        state.verificationError = action.payload?.message || null;
       });
   }
 });

@@ -21,13 +21,24 @@
     "view_detail": "Xem chi tiết",
     "accept": "Đồng ý",
     "add_note": "Thêm ghi chú",
-    "hide_note": "Ẩn ghi chú"
+    "hide_note": "Ẩn ghi chú",
+    "please_wait": "Vui lòng chờ..."
   },
   "email_verify": {
+    "title": "Xác thực email",
+    "enter_code": "Nhập code",
+    "description": "Vui lòng nhập code được gửi đến email của bạn",
+    "code_placeholder": "Nhập code",
+    "verify": "Xác thực",
+    "resend_code": "Gửi lại code",
     "success": "Xác thực email thành công!",
     "success_description": "Cảm ơn bạn đã xác thực email. Bây giờ bạn có thể sử dụng đầy đủ các tính năng của ứng dụng.",
     "failed": "Xác thực email thất bại!",
-    "failed_description": "Có lỗi xảy ra trong quá trình xác thực email của bạn. Vui lòng thử lại sau hoặc liên hệ hỗ trợ."
+    "failed_description": "Có lỗi xảy ra trong quá trình xác thực email của bạn. Vui lòng thử lại sau hoặc liên hệ hỗ trợ.",
+    "confirm_email": "Xác thực email",
+    "confirm_email_description": "Đây có đúng là địa chỉ email của bạn không?",
+    "edit_email": "Đổi email",
+    "send_verification": "Gửi xác thực"
   },
   "auth": {
     "login": {
@@ -178,7 +189,16 @@
     "voucher": "Voucher",
     "voucher_description": "Xem tất cả voucher của tôi",
     "service_package": "Gói dịch vụ",
-    "service_package_description": "Xem tất cả gói dịch vụ của tôi"
+    "service_package_description": "Xem tất cả gói dịch vụ của tôi",
+    "phone_not_verified": "Số điện thoại chưa được xác thực",
+    "email_not_verified": "Email chưa được xác thực",
+    "verify_now": "Xác thực ngay",
+    "verify_phone": "Xác thực số điện thoại",
+    "verify_email": "Xác thực email",
+    "verification_required": "Vui lòng xác thực số điện thoại và email",
+    "verification_complete": "Xác thực hoàn tất",
+    "phone_verified": "Số điện thoại đã xác thực",
+    "email_verified": "Email đã xác thực"
   },
   "settings": {
     "title": "Cài đặt",

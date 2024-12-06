@@ -22,13 +22,24 @@
     "view_detail": "View Detail",
     "accept": "Accept",
     "add_note": "Add Note",
-    "hide_note": "Hide Note"
+    "hide_note": "Hide Note",
+    "please_wait": "Please wait..."
   },
   "email_verify": {
+    "title": "Verify Email",
+    "enter_code": "Enter code",
+    "description": "Please enter the code sent to your email",
+    "code_placeholder": "Enter code",
+    "verify": "Verify",
+    "resend_code": "Resend Code",
     "success": "Email verification successful!",
     "success_description": "Thank you for verifying your email. Now you can use all the features of the app.",
     "failed": "Email verification failed!",
-    "failed_description": "An error occurred during the email verification process. Please try again later or contact support."
+    "failed_description": "An error occurred during the email verification process. Please try again later or contact support.",
+    "confirm_email": "Confirm Email",
+    "confirm_email_description": "Please double check that the email is correct",
+    "edit_email": "Edit Email",
+    "send_verification": "Send Verification"
   },
   "auth": {
     "login": {
@@ -226,7 +237,16 @@
     "voucher": "Voucher",
     "voucher_description": "View all vouchers of me",
     "service_package": "Service Package",
-    "service_package_description": "View all service packages of me"
+    "service_package_description": "View all service packages of me",
+    "phone_not_verified": "Phone number not verified",
+    "email_not_verified": "Email not verified",
+    "verify_now": "Verify now",
+    "verify_phone": "Verify phone",
+    "verify_email": "Verify email",
+    "verification_required": "Verification required",
+    "verification_complete": "Verification complete",
+    "phone_verified": "Phone verified",
+    "email_verified": "Email verified"
   },
   "settings": {
     "title": "Settings",

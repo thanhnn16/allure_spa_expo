@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Colors,
+  Hint,
 } from "react-native-ui-lib";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -18,12 +19,14 @@ import VoucherIcon from "@/assets/icons/discount-shape.svg";
 import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import { useDispatch } from "react-redux";
 import * as MailComposer from "expo-mail-composer";
+import { Ionicons } from '@expo/vector-icons';
 
 const ProfilePage = () => {
   const { t } = useLanguage();
   const dispatch = useDispatch();
   const { user, signOut, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
+  const [showVerificationHint, setShowVerificationHint] = useState(false);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const shineAnim = useRef(new Animated.Value(0)).current;
@@ -102,6 +105,20 @@ const ProfilePage = () => {
       body: "Please describe your problem or question here:",
       recipients: ["thanhnn16.work@gmail.com"],
     });
+  };
+
+  const needsVerification = user && (!user.phone_verified_at || !user.email_verified_at);
+
+  const getVerificationMessage = () => {
+    if (!user) return "";
+    const messages = [];
+    if (!user.phone_verified_at) {
+      messages.push(t("profile.phone_not_verified"));
+    }
+    if (!user.email_verified_at) {
+      messages.push(t("profile.email_not_verified"));
+    }
+    return messages.join("\n");
   };
 
   return (
@@ -229,6 +246,7 @@ const ProfilePage = () => {
                 description: t("profile.edit_personal_info"),
                 icon: require("@/assets/images/people.png"),
                 onPress: () => handleNavigation("/(app)/profile/detail"),
+                showWarning: needsVerification,
               },
               {
                 title: t("profile.service_package"),
@@ -291,7 +309,29 @@ const ProfilePage = () => {
                       </Text>
                     ) : null}
                   </View>
-                  <Image source={ArrowRight} />
+                  <View row centerV>
+                    {item.showWarning && (
+                      <Hint
+                        visible={showVerificationHint}
+                        message={getVerificationMessage()}
+                        color={Colors.red30}
+                        onBackgroundPress={() => setShowVerificationHint(false)}
+                        position={Hint.positions.BOTTOM}
+                      >
+                        <TouchableOpacity
+                          onPress={() => setShowVerificationHint(true)}
+                          marginR-8
+                        >
+                          <Ionicons
+                            name="warning"
+                            size={20}
+                            color={Colors.red30}
+                          />
+                        </TouchableOpacity>
+                      </Hint>
+                    )}
+                    <Image source={ArrowRight} />
+                  </View>
                 </View>
               </TouchableOpacity>
             ))}

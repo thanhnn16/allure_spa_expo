@@ -21,13 +21,24 @@
     "view_detail": "詳細を見る",
     "accept": "受け入れる",
     "add_note": "追加ノート",
-    "hide_note": "ノートを非表示"
+    "hide_note": "ノートを非表示",
+    "please_wait": "お待ちください..."
   },
   "email_verify": {
+    "title": "メール認証",
+    "enter_code": "コードを入力",
+    "description": "メールに送信されたコードを入力してください",
+    "code_placeholder": "コードを入力",
+    "verify": "確認",
+    "resend_code": "コードを再送信",
     "success": "メール認証が成功しました！",
     "success_description": "メール認証が成功しました。これでアプリのすべての機能を使用できます。",
     "failed": "メール認証に失敗しました！",
-    "failed_description": "メール認証プロセス中にエラーが発生しました。後でもう一度お試しください、またはサポートにお問い合わせください。"
+    "failed_description": "メール認証プロセス中にエラーが発生しました。後でもう一度お試しください、またはサポートにお問い合わせください。",
+    "confirm_email": "メールを確認",
+    "confirm_email_description": "これが正しいメールアドレスであるかどうかを確認してください",
+    "edit_email": "メールを編集",
+    "send_verification": "認証を送信"
   },
   "auth": {
     "login": {
@@ -348,7 +359,16 @@
     "history_login": "ログイン履歴",
     "dowload_information": "情報をダウンロード",
     "delete_account": "アカウントを削除",
-    "change_info": "情報を変更"
+    "change_info": "情報を変更",
+    "phone_not_verified": "電話番号が確認されていません",
+    "email_not_verified": "メールアドレスが確認されていません",
+    "verify_now": "今すぐ確認",
+    "verify_phone": "電話番号を確認",
+    "verify_email": "メールアドレスを確認",
+    "verification_required": "電話番号とメールアドレスの確認が必要です",
+    "verification_complete": "確認が完了しました",
+    "phone_verified": "電話番号が確認されています",
+    "email_verified": "メールアドレスが確認されています"
   },
   "settings": {
     "title": "設定",
