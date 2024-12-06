@@ -22,6 +22,7 @@ import notificationReducer from './features/notification/notificationSlice';
 import bannerReducer from '@/redux/features/banner/bannerSlice';
 import servicePackageReducer from './features/servicePackage/servicePackageSlice';
 import languageReducer from './features/language/languageSlice';
+import historyLoginReducer from './features/history-login/userHistoryLoginSlice';
 
 const persistConfig = {
     key: 'root',
@@ -51,6 +52,7 @@ const rootReducer: any = combineReducers({
     notification: notificationReducer,
     servicePackage: servicePackageReducer,
     language: languageReducer,
+    historylogin: historyLoginReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;
