@@ -23,6 +23,12 @@
     "add_note": "Thêm ghi chú",
     "hide_note": "Ẩn ghi chú"
   },
+  "email_verify": {
+    "success": "Xác thực email thành công!",
+    "success_description": "Cảm ơn bạn đã xác thực email. Bây giờ bạn có thể sử dụng đầy đủ các tính năng của ứng dụng.",
+    "failed": "Xác thực email thất bại!",
+    "failed_description": "Có lỗi xảy ra trong quá trình xác thực email của bạn. Vui lòng thử lại sau hoặc liên hệ hỗ trợ."
+  },
   "auth": {
     "login": {
       "title": "Đăng nhập",
@@ -703,9 +709,9 @@
         ],
         "title2": "Thông tin đặt hàng",
         "content2": [
-            "Khách hàng cần cung cấp thông tin chính xác và đầy đủ để đảm bảo quá trình giao hàng diễn ra thuận lợi.",
-            "Allure Spa sẽ không chịu trách nhiệm nếu thông tin đặt hàng sai sót dẫn đến việc giao hàng không thành công."
-          ]
+          "Khách hàng cần cung cấp thông tin chính xác và đầy đủ để đảm bảo quá trình giao hàng diễn ra thuận lợi.",
+          "Allure Spa sẽ không chịu trách nhiệm nếu thông tin đặt hàng sai sót dẫn đến việc giao hàng không thành công."
+        ]
       },
       "payment": {
         "title": "Thanh toán",
@@ -804,7 +810,7 @@
         "Allure Spa cam kết bảo mật thông tin cá nhân của khách hàng và chỉ sử dụng thông tin này cho mục đích cung cấp dịch vụ tốt nhất.",
         "Thông tin cá nhân của khách hàng sẽ không được chia sẻ với bên thứ ba, ngoại trừ khi có yêu cầu pháp lý hoặc để hoàn thành đơn hàng."
       ],
-        "title2": "Bảo mật thanh toán",
+      "title2": "Bảo mật thanh toán",
       "payment_security": [
         "Allure Spa sử dụng các cổng thanh toán bảo mật SSL để đảm bảo an toàn cho các giao dịch trực tuyến.",
         "Khách hàng có thể an tâm khi sử dụng các phương thức thanh toán trực tuyến trên ứng dụng của chúng tôi."

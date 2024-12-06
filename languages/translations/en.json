@@ -24,6 +24,12 @@
     "add_note": "Add Note",
     "hide_note": "Hide Note"
   },
+  "email_verify": {
+    "success": "Email verification successful!",
+    "success_description": "Thank you for verifying your email. Now you can use all the features of the app.",
+    "failed": "Email verification failed!",
+    "failed_description": "An error occurred during the email verification process. Please try again later or contact support."
+  },
   "auth": {
     "login": {
       "title": "Login",
