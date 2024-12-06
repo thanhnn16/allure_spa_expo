@@ -36,7 +36,7 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             <Ionicons name="checkmark-circle" size={20} color={Colors.green30} />
             <Text h3_bold marginL-8 green30>{t("profile.verification_complete")}</Text>
           </View>
-          
+
           <View row spread centerV marginB-8>
             <View row centerV flex-1>
               <Ionicons name="phone-portrait-outline" size={16} color={Colors.grey40} />
@@ -62,18 +62,18 @@ const ProfileDetail = (props: ProfileDetailProps) => {
           <Ionicons name="warning" size={20} color={Colors.red30} />
           <Text h3_bold marginL-8 red30>{t("profile.verification_required")}</Text>
         </View>
-        
+
         {!user?.phone_verified_at && (
           <View row spread centerV marginB-8>
             <View row centerV flex-1>
               <Ionicons name="phone-portrait-outline" size={16} color={Colors.grey40} />
               <Text h3 grey40 marginL-8>{t("profile.phone_not_verified")}</Text>
             </View>
-            <Button 
+            <Button
               label={t("profile.verify_now")}
               size="small"
               backgroundColor={Colors.primary}
-              onPress={() => router.push("/(app)/profile/verify-phone")}
+              onPress={() => router.push("/(app)/profile/verify-phone" as Href)}
             />
           </View>
         )}
@@ -84,11 +84,11 @@ const ProfileDetail = (props: ProfileDetailProps) => {
               <Ionicons name="mail-outline" size={16} color={Colors.grey40} />
               <Text h3 grey40 marginL-8>{t("profile.email_not_verified")}</Text>
             </View>
-            <Button 
+            <Button
               label={t("profile.verify_now")}
               size="small"
               backgroundColor={Colors.primary}
-              onPress={() => router.push("/(app)/profile/verify-email")}
+              onPress={() => router.push("/(app)/profile/verify-email" as Href)}
             />
           </View>
         )}
