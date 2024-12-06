@@ -33,7 +33,8 @@ const ProfileDetail = (props: ProfileDetailProps) => {
           <Image
             width={128}
             height={128}
-            borderRadius={128}
+            br100
+            errorSource={require("@/assets/images/logo/logo.png")}
             style={{ borderColor: "#D5D6CD", borderWidth: 1 }}
             source={
               user?.avatar_url
@@ -61,9 +62,9 @@ const ProfileDetail = (props: ProfileDetailProps) => {
             {
               title: t("profile.change_password"),
               icon: require("@/assets/images/key.png"),
-              onPress: () => { 
+              onPress: () => {
                 router.push("/(app)/profile/change-password");
-               },
+              },
             },
             {
               title: t("profile.history_login"),
