@@ -791,7 +791,10 @@
     "notes": "メモ",
     "next_session": "次のセッション",
     "start_time": "開始時間",
-    "end_time": "終了時間"
+    "end_time": "終了時間",
+    "view_history": "履歴を見る",
+    "service_history": "サービス履歴",
+    "no_service_history": "サービス履歴がありません"
   },
   "notification": {
     "title": "通知",

@@ -39,7 +39,7 @@ const ServicePackageDetailScreen = () => {
     if (isLoadingDetail || isLoadingHistory) {
         return (
             <View flex bg-background>
-                <AppBar back title={t("service_package.treatment_history")} />
+                <AppBar back title={t("service_package.service_history")} />
                 <View padding-16>
                     {/* SkeletonView cho next session */}
                     <Card marginB-16 elevation={2} enableShadow containerStyle={{ borderRadius: 16 }}>
@@ -186,7 +186,7 @@ const ServicePackageDetailScreen = () => {
 
     return (
         <View flex bg-background>
-            <AppBar back title={t("service_package.treatment_history")} />
+            <AppBar back title={t("service_package.service_history")} />
 
             <ScrollView>
                 <View padding-16>
@@ -206,7 +206,7 @@ const ServicePackageDetailScreen = () => {
                                 color={Colors.icon}
                             />
                             <Text text70 marginT-16 color={Colors.icon}>
-                                {t("service_package.no_treatment_history")}
+                                {t("service_package.no_service_history")}
                             </Text>
                         </View>
                     )}

@@ -716,7 +716,10 @@
     "notes": "Notes",
     "next_session": "Next session",
     "start_time": "Start time",
-    "end_time": "End time"
+    "end_time": "End time",
+    "view_history": "View history",
+    "service_history": "Service History",
+    "no_service_history": "No service history"
   },
   "notification": {
     "title": "Notification",

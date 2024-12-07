@@ -693,7 +693,10 @@
     "notes": "Ghi chú",
     "next_session": "Buổi điều trị tiếp theo",
     "start_time": "Bắt đầu",
-    "end_time": "Kết thúc"
+    "end_time": "Kết thúc",
+    "view_history": "Xem lịch sử",
+    "service_history": "Lịch sử dịch vụ",
+    "no_service_history": "Không có lịch sử dịch vụ"
   },
   "notification": {
     "title": "Thông báo",

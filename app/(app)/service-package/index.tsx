@@ -331,7 +331,7 @@ const ServicePackageScreen = () => {
                   {renderNextAppointment(pkg.next_appointment_details)}
 
                   {/* Booking button */}
-                  <View row marginT-16>
+                  <View gap-8 marginT-16>
                     {pkg.remaining_sessions > 0 && (
                       <AppButton
                         marginR-8
@@ -343,7 +343,7 @@ const ServicePackageScreen = () => {
                     <AppButton
                       marginL-8
                       title={t("service_package.view_history")}
-                      type="secondary"
+                      type="outline"
                       onPress={() => router.push(`/(app)/service-package/${pkg.id}` as Href)}
                     />
                   </View>
