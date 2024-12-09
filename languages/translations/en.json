@@ -710,7 +710,16 @@
     "book_appointment": "Book Appointment",
     "expires_on": "Expires on",
     "no_expiry": "No time limit",
-    "unlimited_time": "Unlimited time"
+    "unlimited_time": "Unlimited time",
+    "session_number": "Session #${number}",
+    "result": "Result",
+    "notes": "Notes",
+    "next_session": "Next session",
+    "start_time": "Start time",
+    "end_time": "End time",
+    "view_history": "View history",
+    "service_history": "Service History",
+    "no_service_history": "No service history"
   },
   "notification": {
     "title": "Notification",

@@ -16,7 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import { Dimensions } from "react-native";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -331,15 +331,22 @@ const ServicePackageScreen = () => {
                   {renderNextAppointment(pkg.next_appointment_details)}
 
                   {/* Booking button */}
-                  {pkg.remaining_sessions > 0 && (
-                    <View marginT-24>
+                  <View gap-8 marginT-16>
+                    {pkg.remaining_sessions > 0 && (
                       <AppButton
+                        marginR-8
                         title={t("service_package.book_appointment")}
                         type="outline"
                         onPress={() => handleBooking(pkg)}
                       />
-                    </View>
-                  )}
+                    )}
+                    <AppButton
+                      marginL-8
+                      title={t("service_package.view_history")}
+                      type="outline"
+                      onPress={() => router.push(`/(app)/service-package/${pkg.id}` as Href)}
+                    />
+                  </View>
                 </View>
               </Card>
             ))

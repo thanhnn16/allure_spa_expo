@@ -785,7 +785,16 @@
     "book_appointment": "予約を立てる",
     "expires_on": "期限切れ",
     "no_expiry": "時間制限なし",
-    "unlimited_time": "時間制限なし"
+    "unlimited_time": "時間制限なし",
+    "session_number": "セッション #${number}",
+    "result": "結果",
+    "notes": "メモ",
+    "next_session": "次のセッション",
+    "start_time": "開始時間",
+    "end_time": "終了時間",
+    "view_history": "履歴を見る",
+    "service_history": "サービス履歴",
+    "no_service_history": "サービス履歴がありません"
   },
   "notification": {
     "title": "通知",
