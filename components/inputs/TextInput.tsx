@@ -1,4 +1,4 @@
-import { KeyboardTypeOptions, TextInput as RNTextInput } from 'react-native';
+import { KeyboardTypeOptions } from 'react-native';
 import { View, Text, TextField } from 'react-native-ui-lib';
 import Colors from '@/constants/Colors';
 
@@ -12,7 +12,6 @@ export type TextInputProps = {
     secureTextEntry?: boolean;
     label?: string; // Thêm prop label
     onBlur?: () => void; // Add onBlur prop
-    style?: any;
 }
 
 export const TextInput = ({
@@ -25,27 +24,36 @@ export const TextInput = ({
                               maxLength,
                               label, // Thêm label vào props
                               onBlur, // Add onBlur to destructuring
-                              style,
                           }: TextInputProps) => {
     return (
         <View width="100%">
             {title && <Text text70BO marginB-8 color={Colors.text}>{title}</Text>}
-            <RNTextInput
+            <TextField
                 value={value}
                 onChangeText={onChangeText}
-                placeholder={placeholder}
+                secureTextEntry={secureTextEntry}
                 keyboardType={keyboardType}
-                onBlur={onBlur}
-                style={[
-                    {
-                        height: 48,
-                        paddingHorizontal: 16,
-                        borderWidth: 1,
-                        borderRadius: 8,
-                        borderColor: Colors.gray,
-                    },
-                    style
-                ]}
+                maxLength={maxLength}
+                floatingPlaceholder={false} // Tắt floatingPlaceholder
+                label={label} // Sử dụng label
+                labelStyle={{ color: Colors.text, marginBottom: 4, fontWeight: 'bold' }} // Tùy chỉnh kiểu label
+                placeholder={placeholder}
+                placeholderTextColor={Colors.gray}
+                containerStyle={{
+                    width: '100%',
+                    borderWidth: 1,
+                    borderColor: Colors.gray,
+                    borderRadius: 8,
+                    paddingHorizontal: 16,
+                    height: 48,
+                    marginBottom: 5,
+                }}
+                style={{
+                    height: 48,
+                    color: Colors.text,
+                }}
+                enableErrors={false}
+                onBlur={onBlur} // Add onBlur to TextField
             />
         </View>
     );
