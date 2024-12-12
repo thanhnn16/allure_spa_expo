@@ -55,7 +55,7 @@
       "by_continue": "ログインすることにより、あなたは",
       "and": "および",
       "of_us": "当社の",
-      "forgot_password": "パスワードを忘れましたか？",
+      "forgot_password": "パ���ワードを忘れましたか？",
       "success": "ログイン成功",
       "error": "ログイン失敗",
       "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください",
@@ -200,6 +200,7 @@
     "chat": {
       "customer_care": "カスタマーケア",
       "chat_with_ai": "Hanaとチャット",
+      "ai_description": "Hanaとチャットして、アドバイスとサポートを受ける",
       "send": "送信",
       "chat_with": "チャット"
     },
@@ -222,23 +223,34 @@
       "dowload_information": "情報をダウンロード",
       "delete_account": "アカウントを削除",
       "change_info": "情報を変更",
-      "voucher": "クーポン",
-      "voucher_description": "自分のクーポンを見る",
-      "service_package": "サービスパッケージ",
-      "service_package_description": "自分のサービスパッケージを見る"
+      "phone_not_verified": "電話番号が確認されていません",
+      "email_not_verified": "メールアドレスが確認されていません",
+      "verify_now": "今すぐ確認",
+      "verify_phone": "電話番号を確認",
+      "verify_email": "メールアドレスを確認",
+      "verification_required": "電話番号とメールアドレスの確認が必要です",
+      "verification_complete": "確認が完了しました",
+      "phone_verified": "電話番号が確認されています",
+      "email_verified": "メールアドレスが確認されています",
+      "start_time": "開始時間",
+      "next_session": "次のセッション",
+      "back_home": "ホームに戻る",
+      "review_completed": "評価済み"
+    },
+    "settings": {
+      "title": "設定",
+      "language": "言語",
+      "darkMode": "ダークモード",
+      "notifications": "通知"
     },
     "voucher": {
       "title": "クーポン",
       "all": "すべて",
-      "active": "アクティブ",
-      "expired": "期限切れ",
-      "no_voucher": "クーポンがありません!",
-      "buy_product_for_voucher": "割引を受けるために商品を購入してください",
-      "discount": "割引",
-      "max": "最大",
-      "min_order": "最小注文",
-      "description": "説明",
-      "expires_on": "有効期限"
+      "birthday": "誕生日",
+      "event": "イベント",
+      "prominent": "目立つ",
+      "gift": "ギフト",
+      "many_offers_comingsoon": "多くのオファーが近日公開予定"
     },
     "reward": {
       "title": "報酬",
@@ -251,31 +263,12 @@
     },
     "aboutapp": {
       "title": "アプリについて",
-      "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
+      "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに単にアクセスできるようにもします。",
       "title2": "Allure Spaアプリケーションの基本情報:",
-      "name_app": "アプリ名: ",
-      "developer": "開発者: ",
-      "version": "バージョン: ",
-      "date_release": "発売日: ",
-      "section1": "ホームページ",
-      "content1": "ホームページのインターフェイスには、スパのロゴ、注目のサービス、ベストセラー商品、最新ニュースが表示されます。お客様は、ショッピングカート、製品検索、通知および個人情報の更新に迅速にアクセスできます。",
-      "section2": "商品およびサービスの詳細",
-      "content2": "お客様は、化粧品およびトリートメントの詳細情報（名前、画像、価格、説明、成分、使用方法）を確認し、商品やサービスに対するコメントや評価を読むことや、コメントを残すことができます。",
-      "section3": "スマート検索",
-      "content3": "検索機能を使うことで、お客様は名前や関連キーワードを入力するだけで、製品やサービスを簡単に見つけることができます。",
-      "section4": "予約",
-      "content4": "お客様は、アプリケーションから直接スパの予約を行い、サービス、便利な日時、予め合計費用を知ることができます。",
-      "section5": "オンライン注文",
-      "content5": "簡単にカートに商品を追加し、支払い前に注文の詳細と配送情報を確認することができます。お客様はログインするだけで買い物が完了します。",
-      "section6": "注文管理",
-      "content6": "アプリケーションでは、注文のリストと詳細が提供され、購入の状況や履歴を追跡することができます。",
-      "section7": "便利な支払い",
-      "content7": "お客様は適切な支払い方法と配送方法を選択し、アプリケーション内で個人情報と注文を管理することができます。",
-      "section8": "通知と特典",
-      "content8": "アプリケーションは、スパからの通知、プロモーションプログラム、特別なオファーを更新し、お客様がチャンスを逃さないようにします。",
-      "featured": "特徴",
-      "why_choose": "なぜAllure Spaアプリを選ぶのですか？",
-      "why_choose_content": "Allure Spaアプリは、化粧品や美容ケアサービスを購入するためのプラットフォームにとどまらず、顧客がサービスの質について簡単にやり取りし、評価し、フィードバックを提供できる便利なツールでもあります。これにより、スパは品質を絶えず向上させ、ユーザーに最高の体験を提供します。"
+      "name_app": "アプリ名: Allure Spa",
+      "developer": "開発者: Allure Spa",
+      "version": "バージョン: 1.0.0",
+      "date_release": "発売日: 01/01/2021"
     },
     "deleteaccount": {
       "title": "アカウントを削除",
@@ -285,6 +278,21 @@
       "description2": "データをメールに送信するよう当社に依頼してください。",
       "verify_yes": "はい、データを電子メールに送信します",
       "verify_no": "結構です！"
+    },
+    "forgot_password": {
+      "title": "パスワードの復元",
+      "description": "登録済みのメールアドレスを入力してください。パスワード復元用のリンクをメールで送信します。",
+      "email_label": "メールアドレス",
+      "email_placeholder": "メールアドレスを入力",
+      "email_hint": "パスワード復元手順のメールが数分以内に届きます",
+      "continue": "続ける",
+      "back_to_login": "ログインに戻る",
+      "success_title": "リクエスト送信完了",
+      "success_message": "パスワードをリセットするためのメールをご確認ください",
+      "error_title": "エラー",
+      "error_message": "パスワードリセットリクエストを送信できません",
+      "email_required": "メールアドレスを入力してください",
+      "email_invalid": "無効なメールアドレス形式です"
     }
   },
   "terms": "利用規約",
@@ -368,7 +376,11 @@
     "verification_required": "電話番号とメールアドレスの確認が必要です",
     "verification_complete": "確認が完了しました",
     "phone_verified": "電話番号が確認されています",
-    "email_verified": "メールアドレスが確認されています"
+    "email_verified": "メールアドレスが確認されています",
+    "start_time": "開始時間",
+    "next_session": "次のセッション",
+    "back_home": "ホームに戻る",
+    "review_completed": "評価済み"
   },
   "settings": {
     "title": "設定",
@@ -397,7 +409,7 @@
   "aboutapp": {
     "title": "アプリについて",
     "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに単にアクセスできるようにもします。",
-    "title2": "Allure Spaアプリケーションの基本情報:",
+    "title2": "Allure Spaアプリケーシ��ンの基本情報:",
     "name_app": "アプリ名: Allure Spa",
     "developer": "開発者: Allure Spa",
     "version": "バージョン: 1.0.0",
@@ -608,7 +620,7 @@
     "payment_error_message": "支払い処理中にエラーが発生しました。後でもう一度お試しください。",
     "no_voucher_applied": "割引クーポンが適用されていません",
     "create_order_failed": "注文作成に失敗しました",
-    "create_order_failed_message": "注文作成中にエラーが発生しました。後でもう一度お試しください。",
+    "create_order_failed_message": "注文作成中���エラーが発生しました。後でもう一度お試しください。",
     "select_voucher": "割引クーポンを選択",
     "proceed_to_payment": "支払いに進む",
     "add_note": "ノートを追加",
@@ -721,7 +733,7 @@
     "no_appointments_for_selected_date": "選択した日付に予約がありません",
     "past": "過去",
     "hide_past_appointments": "過去の予約を非表示",
-    "show_past_appointments": "過去の予約を表示",
+    "show_past_appointments": "過去���予約を示",
     "hidden": "非表示"
   },
   "orders": {
@@ -790,7 +802,7 @@
     "result": "結果",
     "notes": "メモ",
     "next_session": "次のセッション",
-    "start_time": "開始時間",
+    "start_time": "開始時",
     "end_time": "終了時間",
     "view_history": "履歴を見る",
     "service_history": "サービス履歴",
@@ -846,7 +858,7 @@
         "methods": [
           "Allure Spaでは、クレジットカード、デビットカード、PayPalなどのオンライン支払い方法を受け付けています。",
           "支払いは、注文が処理および発送される前に完了する必要があります。",
-          "すべてのオンライン取引は、SSL決済ゲートウェイを使用して保護されています。"
+          "すべてのオンライン取引は、SSL決��ゲートウェイを使用し保護されています。"
         ],
         "title2": "支払い確認",
         "processing": [
@@ -917,7 +929,7 @@
         ],
         "title2": "返金費用",
         "costs": [
-          "返金には、商品の全額と元の配送費（該当する場合）が含まれます。",
+          "返金には、商品の全額と元配送費（該当する場合）が含まれます。",
           "商品に欠陥がある場合や注文と異なる場合、Allure Spaは返品送料を負担し、全額返金いたします。"
         ]
       },
@@ -940,7 +952,7 @@
       "title2": "支払いのセキュリティ",
       "payment_security": [
         "Allure Spaは、オンライン取引の安全性を確保するためにSSLセキュア決済ゲートウェイを使用しています。",
-        "お客様は、当社アプリで提供されるオンライン決済方法に安心してご利用いただけます。"
+        "お客様は、当社アプリで提供されるオンライン決済方法に安心してご利用い��だけます。"
       ]
     }
   },

@@ -1,17 +1,18 @@
 import React, { forwardRef } from "react";
 import { Button, View } from "react-native-ui-lib";
 import Colors from "@/constants/Colors";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ViewStyle, TextStyle } from "react-native";
 
 export interface AppButtonProps {
-  type: "text" | "primary" | "secondary" | "outline";
   title?: string;
   onPress?: () => void;
-  buttonStyle?: any;
-  titleStyle?: any;
+  type?: "primary" | "outline" | "text";
   disabled?: boolean;
   loading?: boolean;
   children?: React.ReactNode;
+  buttonStyle?: ViewStyle;
+  titleStyle?: TextStyle;
+  [key: string]: any;
 }
 
 const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
@@ -38,11 +39,11 @@ const AppButton = forwardRef<unknown, AppButtonProps>((props, ref) => {
             ...props.titleStyle,
           },
         };
-      case "secondary":
+      case "primary":
         return {
-          backgroundColor: Colors.secondary,
+          backgroundColor: Colors.primary,
           labelStyle: {
-            color: Colors.primary,
+            color: Colors.background,
             fontSize: 14,
             fontFamily: "SFProText-Bold",
             ...props.titleStyle,

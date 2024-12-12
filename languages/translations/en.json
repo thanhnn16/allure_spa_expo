@@ -157,6 +157,21 @@
       "no_history": "No login history",
       "current_device": "Current Device",
       "other_device": "Other Devices"
+    },
+    "forgot_password": {
+      "title": "Password Recovery",
+      "description": "Please enter your registered email address. We will send a password recovery link to your email.",
+      "email_label": "Email Address",
+      "email_placeholder": "Enter your email address",
+      "email_hint": "You will receive password recovery instructions via email within minutes",
+      "continue": "Continue",
+      "back_to_login": "Back to Login",
+      "success_title": "Request Sent Successfully",
+      "success_message": "Please check your email to reset your password",
+      "error_title": "Error",
+      "error_message": "Unable to send password reset request",
+      "email_required": "Please enter your email",
+      "email_invalid": "Invalid email format"
     }
   },
   "terms": "Terms of Service",

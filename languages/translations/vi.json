@@ -154,6 +154,21 @@
       "no_history": "Không có lịch sử đăng nhập",
       "current_device": "Thiết bị hiện tại",
       "other_device": "Các thiết bị khác"
+    },
+    "forgot_password": {
+      "title": "Khôi phục mật khẩu",
+      "description": "Vui lòng nhập địa chỉ email đã đăng ký. Chúng tôi sẽ gửi link khôi phục mật khẩu qua email của bạn.",
+      "email_label": "Địa chỉ email",
+      "email_placeholder": "Nhập địa chỉ email của bạn",
+      "email_hint": "Bạn sẽ nhận được email hướng dẫn khôi phục mật khẩu trong vài phút",
+      "continue": "Tiếp tục",
+      "back_to_login": "Quay lại đăng nhập",
+      "success_title": "Gửi yêu cầu thành công",
+      "success_message": "Vui lòng kiểm tra email để đặt lại mật khẩu",
+      "error_title": "Lỗi",
+      "error_message": "Không thể gửi yêu cầu đặt lại mật khẩu",
+      "email_required": "Vui lòng nhập email",
+      "email_invalid": "Email không hợp lệ"
     }
   },
   "pageTitle": {
@@ -253,7 +268,7 @@
   },
   "deleteaccount": {
     "title": "Xóa tài khoản",
-    "description": " Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
+    "description": "Bạn có thể vui lòng chia sẻ với chúng tôi những gì không hoạt động không? Chúng tôi sẽ sửa lỗi ngay khi phát hiện ra chúng. Nếu có điều gì bất thường lọt khỏi tầm tay, chúng tôi sẽ rất biết ơn nếu nhận ra và báo cao cho chúng tôi.",
     "placeholder": "Nhập nội dung",
     "next": "Tiếp theo",
     "description2": "Bạn nên yêu cầu chúng tôi gửi dữ liệu tới email của bạn.",
@@ -747,7 +762,7 @@
         "title1": "Phương thức thanh toán",
         "methods": [
           "Allure Spa chấp nhận các phương thức thanh toán bao gồm thẻ tín dụng, thẻ ghi nợ, và các phương thức thanh toán trực tuyến như PayPal.",
-          "Thanh toán cần phải hoàn tất trước khi đơn hàng được xử lý và vận chuyển.",
+          "Thanh toán cần phải hoàn tất trước khi đơn hàng đ��ợc xử lý và vận chuyển.",
           "Tất cả các giao dịch thanh toán trực tuyến đều được bảo mật thông qua cổng thanh toán SSL."
         ],
         "title2": "Xác nhận thanh toán",
@@ -806,7 +821,7 @@
         "title3": "Kiểm tra và xử lý đổi trả",
         "steps3": [
           "Sau khi nhận được sản phẩm đổi trả, Allure Spa sẽ tiến hành kiểm tra và xác nhận tình trạng sản phẩm.",
-          "Nếu sản phẩm đủ điều kiện, Allure Spa sẽ thực hiện đổi trả hoặc hoàn tiền theo yêu cầu của khách hàng."
+          "Nếu sản phẩm đủ điều ki��n, Allure Spa sẽ thực hiện đổi trả hoặc hoàn tiền theo yêu cầu của khách hàng."
         ]
       },
       "refund": {
@@ -827,7 +842,7 @@
         "title": "Đổi lịch hẹn spa",
         "title1": "Thay đổi lịch hẹn:",
         "conditions": [
-          "Khách hàng có thể đổi lịch hẹn spa miễn phí nếu thông báo trước 24 giờ so với thời gian hẹn ban đầu.",
+          "Khách hàng có thể đổi lịch hẹn spa miễn phí nếu thông báo trước 24 giờ so với thời gian h���n ban đầu.",
           "Đối với thông báo đổi lịch muộn hơn, Allure Spa sẽ tính phí hủy lịch hẹn tương đương với 50% giá trị dịch vụ đã đặt."
         ]
       }

@@ -3,10 +3,11 @@ import { Colors, View, Text } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import { useLanguage } from "@/hooks/useLanguage";
 import AppButton from "@/components/buttons/AppButton";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
 import AppDialog from "../dialog/AppDialog";
+import { useRouter, Href, Router } from "expo-router";
 
 interface LoginFormProps {
   onBackPress: () => void;
@@ -21,6 +22,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
   const [passwordError, setPasswordError] = useState("");
   const { signIn } = useAuth();
   const { showDialog, dialogConfig, hideDialog } = useDialog();
+  const router = useRouter() as Router;
 
   const validatePhoneNumber = (phone: string) => {
     if (!phone) {
@@ -104,9 +106,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
           marginTop: 20,
         }}
       >
-        <Text style={{ color: Colors.primary, fontSize: 16 }}>
-          {t("auth.login.forgot_password")}
-        </Text>
+        <TouchableOpacity onPress={() => router.push("/forgot-password" as Href<string>)}>
+          <Text style={{ color: Colors.primary, fontSize: 16 }}>
+            {t("auth.login.forgot_password")}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <View marginV-20 gap-12>
