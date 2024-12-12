@@ -9,19 +9,13 @@ import { ActivityIndicator } from "react-native";
 interface AppDialogProps {
   visible: boolean;
   title: string;
-  description?: string;
+  description: string;
+  severity: "success" | "error" | "info" | "warning";
+  onClose: () => void;
   closeButton?: boolean;
   confirmButton?: boolean;
-  secondaryConfirmButton?: boolean;
-  secondaryConfirmButtonLabel?: string;
-  closeButtonLabel?: string;
-  confirmButtonLabel?: string;
-  onClose?: () => void;
   onConfirm?: () => void;
-  onConfrimSecondary?: () => void;
-  severity: "success" | "error" | "info" | "warning";
   loading?: boolean;
-  children?: React.ReactNode;
 }
 
 const AppDialog = ({
@@ -33,8 +27,6 @@ const AppDialog = ({
   description,
   closeButton = true,
   confirmButton = true,
-  closeButtonLabel,
-  confirmButtonLabel,
   loading = false,
 }: AppDialogProps) => {
   const { t } = useLanguage();
@@ -88,10 +80,9 @@ const AppDialog = ({
         <View paddingH-20>
           {confirmButton && (
             <AppButton
-              title={loading ? "" : confirmButtonLabel || defaultConfirmLabel}
+              title={defaultConfirmLabel}
               onPress={onConfirm}
               type="primary"
-              disabled={loading}
             >
               {loading && (
                 <ActivityIndicator size="small" color={Colors.background} />
@@ -100,10 +91,9 @@ const AppDialog = ({
           )}
           {closeButton && (
             <AppButton
-              title={loading ? "" : closeButtonLabel || defaultCloseLabel}
+              title={defaultCloseLabel}
               onPress={onClose}
               type="text"
-              disabled={loading}
             >
               {loading && (
                 <ActivityIndicator size="small" color={Colors.background} />

@@ -55,7 +55,7 @@
       "by_continue": "ログインすることにより、あなたは",
       "and": "および",
       "of_us": "当社の",
-      "forgot_password": "パスワードを忘れましたか？",
+      "forgot_password": "パ���ワードを忘れましたか？",
       "success": "ログイン成功",
       "error": "ログイン失敗",
       "unknown_error": "不明なエラーが発生しました。後でもう一度お試しください",
@@ -117,7 +117,7 @@
       "success": "更新成功",
       "success_description": "情報が正常に更新されました",
       "error": "更新失敗",
-      "error_description": "情報の更新中にエラーが発生しました。後でもう一度お試しください",
+      "error_description": "情報の更新中にエラーが発生しました。後でもう一度お試しく���さい",
       "is_upload_avatar": "アバターをアップロードしています",
       "upload_avatar_success": "アバターが正常にアップロードされました",
       "upload_avatar_description": "アバターが正常にアップロードされました",
@@ -137,7 +137,7 @@
       "success": "パスワード変更成功",
       "success_description": "パスワードが正常に変更されました",
       "error": "パスワード変更失敗",
-      "error_description": "パスワードの変更中にエラーが発生しました。後でもう一度お試しください",
+      "error_description": "パ���ワードの変更中にエラーが発生しました。後でもう一度お試しください",
       "loading": "パスワード",
       "loading_description": "パスワードを変更する間、お待ちください",
       "empty_current_password": "現在のパスワードが入力されていません",
@@ -222,10 +222,15 @@
       "dowload_information": "情報をダウンロード",
       "delete_account": "アカウントを削除",
       "change_info": "情報を変更",
-      "voucher": "クーポン",
-      "voucher_description": "自分のクーポンを見る",
-      "service_package": "サービスパッケージ",
-      "service_package_description": "自分のサービスパッケージを見る"
+      "phone_not_verified": "電話番号が確認されていません",
+      "email_not_verified": "メールアドレスが確認されていません",
+      "verify_now": "今すぐ確認",
+      "verify_phone": "電話番号を確認",
+      "verify_email": "メールアドレスを確認",
+      "verification_required": "電話番号とメールアドレスの確認が必要です",
+      "verification_complete": "確認が完了しました",
+      "phone_verified": "電話番号が確認されています",
+      "email_verified": "メールアドレスが確認されています"
     },
     "voucher": {
       "title": "クーポン",
@@ -251,7 +256,7 @@
     },
     "aboutapp": {
       "title": "アプリについて",
-      "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに簡単にアクセスできるようにもします。",
+      "title1": "Allure Spa アプリは、美容を愛し、日本の高品質なスパ製品やサービスを探したい人にとって最適なソリューションです。Allure Spa の顧客専用に設計されたこのアプリは、便利なショッピング体験を提供するだけでなく、顧客が高級な美容トリートメントに���単にアクセスできるようにもします。",
       "title2": "Allure Spaアプリケーションの基本情報:",
       "name_app": "アプリ名: ",
       "developer": "開発者: ",
@@ -264,7 +269,7 @@
       "section3": "スマート検索",
       "content3": "検索機能を使うことで、お客様は名前や関連キーワードを入力するだけで、製品やサービスを簡単に見つけることができます。",
       "section4": "予約",
-      "content4": "お客様は、アプリケーションから直接スパの予約を行い、サービス、便利な日時、予め合計費用を知ることができます。",
+      "content4": "お客様は、アプリケーションから直接��パの予約を行い、サービス、便利な日時、予め合計費用を知ることができます。",
       "section5": "オンライン注文",
       "content5": "簡単にカートに商品を追加し、支払い前に注文の詳細と配送情報を確認することができます。お客様はログインするだけで買い物が完了します。",
       "section6": "注文管理",
@@ -275,7 +280,7 @@
       "content8": "アプリケーションは、スパからの通知、プロモーションプログラム、特別なオファーを更新し、お客様がチャンスを逃さないようにします。",
       "featured": "特徴",
       "why_choose": "なぜAllure Spaアプリを選ぶのですか？",
-      "why_choose_content": "Allure Spaアプリは、化粧品や美容ケアサービスを購入するためのプラットフォームにとどまらず、顧客がサービスの質について簡単にやり取りし、評価し、フィードバックを提供できる便利なツールでもあります。これにより、スパは品質を絶えず向上させ、ユーザーに最高の体験を提供します。"
+      "why_choose_content": "Allure Spaアプリは、化粧品や美容ケアサービスを購入するためのプラットフォームにとどまらず、顧客がサービスの質���ついて簡単にやり取りし、評価し、フィードバックを提供できる便利なツールでもあります。これにより、スパは品質を絶えず向上させ、ユーザーに最高の体験を提供します。"
     },
     "deleteaccount": {
       "title": "アカウントを削除",
@@ -285,6 +290,17 @@
       "description2": "データをメールに送信するよう当社に依頼してください。",
       "verify_yes": "はい、データを電子メールに送信します",
       "verify_no": "結構です！"
+    },
+    "forgot_password": {
+      "title": "パスワードをお忘れの方",
+      "description": "パスワード再設定の手順をメールでお送りします",
+      "email_placeholder": "メールアドレスを入力",
+      "send_verify": "送信",
+      "empty_email": "メールアドレスを入力してください",
+      "invalid_email": "無効なメールアドレス形式です",
+      "verify_sent_title": "メール送信完了",
+      "verify_sent_desc": "パスワード再設定の手順をメールでお送りしました",
+      "verify_send_failed": "メールを送信できませんでした。後でもう一度お試しください"
     }
   },
   "terms": "利用規約",
@@ -355,7 +371,7 @@
     "settings": "設定",
     "more": "もっと見る",
     "edit_profile": "プロフィールを編集",
-    "change_password": "パスワードを変更",
+    "change_password": "パスワードを変���",
     "history_login": "ログイン履歴",
     "dowload_information": "情報をダウンロード",
     "delete_account": "アカウントを削除",
@@ -387,7 +403,7 @@
   },
   "reward": {
     "title": "報酬",
-    "cosmetic": "化粧品",
+    "cosmetic": "化���品",
     "spa": "スパ",
     "changed": "475 交換済み",
     "change_now": "今すぐ変更",
@@ -791,7 +807,7 @@
     "title": "通知",
     "all_notifications": "すべての通知",
     "mark_all_as_read": "すべてを読みました",
-    "loading": "通知を読み込んでいます...",
+    "loading": "通知を��み込んでいます...",
     "loading_more": "さらに読み込んでいます...",
     "read": "読みました",
     "unread": "未読",

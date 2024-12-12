@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Colors, View, Text } from "react-native-ui-lib";
+import { Colors, View, Text, TouchableOpacity } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import { useLanguage } from "@/hooks/useLanguage";
 import AppButton from "@/components/buttons/AppButton";
@@ -7,6 +7,7 @@ import { ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
 import AppDialog from "../dialog/AppDialog";
+import { router } from "expo-router";
 
 interface LoginFormProps {
   onBackPress: () => void;
@@ -73,6 +74,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
     }
   };
 
+  const handleForgotPassword = () => {
+    router.push("/(auth)/forgot-password");
+  };
+
   return (
     <>
       <TextInput
@@ -82,6 +87,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
         onBlur={() => validatePhoneNumber(phoneNumber)}
+        marginB-20
       />
       {phoneError ? <Text style={{ color: "red" }}>{phoneError}</Text> : null}
 
@@ -92,22 +98,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
         value={password}
         onChangeText={setPassword}
         onBlur={() => validatePassword(password)}
+        marginB-20
       />
       {passwordError ? (
         <Text style={{ color: "red" }}>{passwordError}</Text>
       ) : null}
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          marginTop: 20,
-        }}
-      >
-        <Text style={{ color: Colors.primary, fontSize: 16 }}>
+      <TouchableOpacity onPress={handleForgotPassword}>
+        <Text
+          style={{
+            color: Colors.primary,
+            textAlign: "right",
+            marginBottom: 20,
+            fontSize: 16
+          }}
+        >
           {t("auth.login.forgot_password")}
         </Text>
-      </View>
+      </TouchableOpacity>
 
       <View marginV-20 gap-12>
         <AppButton

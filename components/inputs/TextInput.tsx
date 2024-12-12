@@ -10,21 +10,21 @@ export type TextInputProps = {
     keyboardType?: KeyboardTypeOptions;
     maxLength?: number;
     secureTextEntry?: boolean;
-    label?: string; // Thêm prop label
-    onBlur?: () => void; // Add onBlur prop
+    autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+    onBlur?: () => void;
 }
 
 export const TextInput = ({
-                              title,
-                              placeholder,
-                              value,
-                              onChangeText,
-                              secureTextEntry,
-                              keyboardType,
-                              maxLength,
-                              label, // Thêm label vào props
-                              onBlur, // Add onBlur to destructuring
-                          }: TextInputProps) => {
+    title,
+    placeholder,
+    value,
+    onChangeText,
+    secureTextEntry,
+    keyboardType,
+    maxLength,
+    autoCapitalize,
+    onBlur,
+}: TextInputProps) => {
     return (
         <View width="100%">
             {title && <Text text70BO marginB-8 color={Colors.text}>{title}</Text>}
@@ -34,11 +34,10 @@ export const TextInput = ({
                 secureTextEntry={secureTextEntry}
                 keyboardType={keyboardType}
                 maxLength={maxLength}
-                floatingPlaceholder={false} // Tắt floatingPlaceholder
-                label={label} // Sử dụng label
-                labelStyle={{ color: Colors.text, marginBottom: 4, fontWeight: 'bold' }} // Tùy chỉnh kiểu label
+                autoCapitalize={autoCapitalize}
                 placeholder={placeholder}
                 placeholderTextColor={Colors.gray}
+                onBlur={onBlur}
                 containerStyle={{
                     width: '100%',
                     borderWidth: 1,
@@ -52,8 +51,6 @@ export const TextInput = ({
                     height: 48,
                     color: Colors.text,
                 }}
-                enableErrors={false}
-                onBlur={onBlur} // Add onBlur to TextField
             />
         </View>
     );

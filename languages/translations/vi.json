@@ -154,6 +154,17 @@
       "no_history": "Không có lịch sử đăng nhập",
       "current_device": "Thiết bị hiện tại",
       "other_device": "Các thiết bị khác"
+    },
+    "forgot_password": {
+      "title": "Quên mật khẩu",
+      "description": "Vui lòng nhập email của bạn để nhận hướng dẫn đặt lại mật khẩu",
+      "email_placeholder": "Nhập email của bạn",
+      "send_verify": "Gửi yêu cầu",
+      "empty_email": "Vui lòng nhập email",
+      "invalid_email": "Email không hợp lệ",
+      "verify_sent_title": "Đã gửi email",
+      "verify_sent_desc": "Vui lòng kiểm tra email của bạn để đặt lại mật khẩu",
+      "verify_send_failed": "Không thể gửi email. Vui lòng thử lại sau"
     }
   },
   "pageTitle": {
@@ -185,7 +196,7 @@
     "history_login": "Lịch sử đăng nhập",
     "dowload_information": "Tải thông tin xuống",
     "delete_account": "Xóa tài khoản",
-    "change_info": "Đổi thông tin",
+    "change_info": "Đ��i thông tin",
     "voucher": "Voucher",
     "voucher_description": "Xem tất cả voucher của tôi",
     "service_package": "Gói dịch vụ",
@@ -214,7 +225,7 @@
     "no_voucher": "Bạn không có voucher nào cả!",
     "buy_product_for_voucher": "Mua sản phẩm để nhận thêm ưu đãi nhé",
     "discount": "Giảm giá",
-    "max": "Tối đa",
+    "max": "Tối ��a",
     "min_order": "Đơn hàng tối thiểu",
     "description": "Mô tả",
     "expires_on": "Hết hạn vào",
@@ -356,7 +367,7 @@
     "select_combo": "Chọn gói combo",
     "no_discount": "Không giảm giá",
     "combo5_discount": "Giảm 20% + 1 buổi free (6 buổi)",
-    "combo10_discount": "Giảm 30% + 3 buổi free (13 buổi)",
+    "combo10_discount": "Gi���m 30% + 3 buổi free (13 buổi)",
     "online_payment_flexible": "Thanh toán online - Sử dụng linh hoạt"
   },
   "service": {
@@ -515,7 +526,7 @@
     "proceed_to_payment": "Tiến hành thanh toán",
     "add_note": "Thêm ghi chú",
     "saved_address": "Địa chỉ đã lưu",
-    "temp_address": "Địa chỉ tạm",
+    "temp_address": "Địa ch��� tạm",
     "address_required_title": "Địa chỉ cần thiết",
     "address_required_message": "Vui lòng chọn địa chỉ giao hàng",
     "temp_address_invalid": "Vui lòng điền đầy đủ các trường địa chỉ",
@@ -573,7 +584,7 @@
     "completed": "Đã hoàn thành",
     "cancelled": "Bị huỷ",
     "times": "Số lần",
-    "not_started": "Chưa tiến hành",
+    "not_started": "Ch��a tiến hành",
     "pending": "Chờ xác nhận",
     "confirmed": "Đã xác nhận",
     "available_slots": "Còn trống {available_slots} chỗ",

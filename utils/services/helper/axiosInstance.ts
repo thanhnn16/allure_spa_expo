@@ -1,9 +1,13 @@
-import axios, { AxiosInstance as AxiosInstanceType, AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosInstance as AxiosInstanceType, AxiosError, InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AxiosInstance = (contentType: string = 'application/json'): AxiosInstanceType => {
     const axiosInstance = axios.create({
-        baseURL: `https://allurespa.io.vn/api/`
+        baseURL: 'https://allurespa.io.vn/api',
+        headers: {
+            'Content-Type': contentType,
+            'Accept': 'application/json'
+        }
     });
 
     axiosInstance.interceptors.request.use(
@@ -18,10 +22,9 @@ const AxiosInstance = (contentType: string = 'application/json'): AxiosInstanceT
         },
         (err: AxiosError) => Promise.reject(err)
     );
-
     axiosInstance.interceptors.response.use(
-        res => res,
-        err => Promise.reject(err)
+        (res: AxiosResponse) => res,
+        (err: AxiosError) => Promise.reject(err)
     );
 
     return axiosInstance;

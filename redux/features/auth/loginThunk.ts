@@ -30,6 +30,14 @@ export const loginThunk = createAsyncThunk(
           });
         }
 
+        console.log('=== ACCESS TOKEN ===');
+        console.log(token);
+        console.log('==================');
+        
+        console.log('=== USER INFO ===');
+        console.log(JSON.stringify(user, null, 2));
+        console.log('================');
+
         await AsyncStorage.setItem('userToken', token);
         dispatch(setUser(user));
 

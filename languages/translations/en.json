@@ -157,6 +157,17 @@
       "no_history": "No login history",
       "current_device": "Current Device",
       "other_device": "Other Devices"
+    },
+    "forgot_password": {
+      "title": "Forgot Password",
+      "description": "Please enter your email to receive password reset instructions",
+      "email_placeholder": "Enter your email",
+      "send_verify": "Send Request",
+      "empty_email": "Please enter your email",
+      "invalid_email": "Invalid email format",
+      "verify_sent_title": "Email Sent",
+      "verify_sent_desc": "Please check your email to reset your password",
+      "verify_send_failed": "Could not send email. Please try again later"
     }
   },
   "terms": "Terms of Service",
