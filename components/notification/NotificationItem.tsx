@@ -6,10 +6,12 @@ import { handleNotificationNavigation } from "@/utils/services/notification/noti
 
 export type NotificationType =
   | "new_appointment"
+  | "appointment_new"
   | "appointment_status"
   | "appointment_cancelled"
   | "appointment_reminder"
   | "new_order"
+  | "order_new"
   | "order_status"
   | "order_cancelled"
   | "order_completed"
@@ -52,6 +54,12 @@ export const notificationTypeMap: Record<
     bgColor: "#FFF5EE",
     group: "appointment",
   },
+  appointment_new: {
+    iconName: "calendar",
+    iconColor: Colors.secondary,
+    bgColor: "#FFF5EE",
+    group: "appointment",
+  },
   appointment_status: {
     iconName: "clock",
     iconColor: Colors.secondary,
@@ -71,6 +79,12 @@ export const notificationTypeMap: Record<
     group: "appointment",
   },
   new_order: {
+    iconName: "shopping-bag",
+    iconColor: Colors.primary,
+    bgColor: Colors.primary_light,
+    group: "order",
+  },
+  order_new: {
     iconName: "shopping-bag",
     iconColor: Colors.primary,
     bgColor: Colors.primary_light,

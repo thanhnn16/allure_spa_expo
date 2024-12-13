@@ -419,6 +419,7 @@
     "phone": "Điện thoại",
     "home": "Nhà riêng",
     "work": "Nơi làm việc",
+    "shipping": "Địa chỉ giao hàng",
     "others": "Khác",
     "save": "Lưu",
     "cancel": "Hủy",
@@ -690,7 +691,7 @@
     "expires_on": "Hết hạn vào",
     "no_expiry": "Không giới hạn thời gian",
     "unlimited_time": "Không giới hạn thời gian",
-    "session_number": "Buổi #${number}",
+    "session_number": "Buổi %{number}",
     "result": "Kết quả",
     "notes": "Ghi chú",
     "next_session": "Buổi điều trị tiếp theo",
@@ -717,7 +718,8 @@
     "view_conversation": "Xem cuộc hội thoại",
     "view_payment": "Xem thanh toán",
     "view_promotion": "Xem khuyến mãi",
-    "view_review": "Xem đánh giá"
+    "view_review": "Xem đánh giá",
+    "not_found": "Không tìm thấy thông báo"
   },
   "search": {
     "title": "Tìm kiếm",

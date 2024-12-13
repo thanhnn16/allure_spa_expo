@@ -59,9 +59,9 @@ const initialState: ServicePackageState = {
     packages: [],
     currentPackage: null,
     usageHistory: [],
-    isLoading: false,
-    isLoadingDetail: false,
-    isLoadingHistory: false,
+    isLoading: true,
+    isLoadingDetail: true,
+    isLoadingHistory: true,
     error: null,
 };
 

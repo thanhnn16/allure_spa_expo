@@ -1,9 +1,9 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, ActivityIndicator } from "react-native";
 import { Colors, Text, View } from "react-native-ui-lib";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams, Href } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -18,6 +18,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import AppButton from "@/components/buttons/AppButton";
 import { useTranslatedNotification } from "@/hooks/useTranslatedNotification";
 import { useFormattedTime } from "@/hooks/useFormattedTime";
+import { fetchNotificationDetail } from "@/redux/features/notification/notificationThunks";
 
 // Thêm type definition cho ngôn ngữ được hỗ trợ
 type SupportedLanguage = "en" | "vi" | "ja";
@@ -27,25 +28,43 @@ const NotificationDetail: React.FC = () => {
 
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const dispatch = useDispatch();
+
+  // Lấy notification từ redux store
   const notification = useSelector((state: RootState) =>
     state.notification.notifications.find(
       (n: Notification) => n.id === Number(id)
     )
   );
 
-  const translatedNotification = useTranslatedNotification(notification);
+  const loading = useSelector((state: RootState) => state.notification.loading);
 
-  const formattedTime = useFormattedTime(notification.created_at_timestamp);
+  // Fetch notification detail khi component mount
+  useEffect(() => {
+    dispatch(fetchNotificationDetail(Number(id)));
+  }, [dispatch, id]);
+
+  if (loading) {
+    return (
+      <View flex center>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   if (!notification) {
     return (
       <View flex center>
         <Text h2_bold color={Colors.grey40}>
-          Không tìm thấy thông báo
+          {t("notification.not_found")}
         </Text>
       </View>
     );
   }
+
+  const translatedNotification = useTranslatedNotification(notification);
+
+  const formattedTime = useFormattedTime(notification.created_at_timestamp);
 
   const { iconName, iconColor, bgColor } =
     notificationTypeMap[notification.type as NotificationType] ||
@@ -62,17 +81,21 @@ const NotificationDetail: React.FC = () => {
 
     const type = notification.type as NotificationType;
     let actionText = "";
-    let onActionPress = () => {};
+    let onActionPress = () => { };
 
     switch (type) {
       case "new_appointment":
+      case "appointment_new":
       case "appointment_status":
         actionText = t("notification.view_appointment");
-        // onActionPress = () => router.push(`/appointments/${notification.data?.appointment_id}`);
+        onActionPress = () => router.push(`/(app)/appointment/${notification.data?.appointment_id}`);
         break;
 
       case "new_order":
+      case "order_new":
       case "order_status":
+      case "order_cancelled":
+      case "order_completed":
         actionText = t("notification.view_order");
         onActionPress = () =>
           router.push(`/(app)/order/${notification.data?.order_id}`);
@@ -92,7 +115,7 @@ const NotificationDetail: React.FC = () => {
 
       case "new_review":
         actionText = t("notification.view_review");
-        // onActionPress = () => router.push(`/reviews/${notification.data?.review_id}`);
+        onActionPress = () => router.push(`/rating/${notification.data?.review_id}`);
         break;
 
       default:

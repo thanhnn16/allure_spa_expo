@@ -18,7 +18,7 @@ import { ScrollView } from "react-native";
 
 const ServicePackageDetailScreen = () => {
     const { id } = useLocalSearchParams();
-    const { t } = useLanguage();
+    const { t, currentLanguage } = useLanguage();
     const dispatch = useDispatch<AppDispatch>();
     const screenWidth = Dimensions.get('window').width;
 
@@ -82,6 +82,7 @@ const ServicePackageDetailScreen = () => {
     }
 
     const formatDateTime = (dateString: string) => {
+        moment.locale(currentLanguage);
         return moment(dateString).format('DD/MM/YYYY HH:mm');
     };
 
@@ -97,7 +98,7 @@ const ServicePackageDetailScreen = () => {
                 <View row spread>
                     <View>
                         <Text text70BO color={Colors.text}>
-                            {t("service_package.session")} #{currentPackage?.total_sessions - index}
+                            {t("service_package.session_number", { number: index + 1 })}
                         </Text>
 
                         {/* Thời gian */}
@@ -108,7 +109,7 @@ const ServicePackageDetailScreen = () => {
                                 color={Colors.icon}
                             />
                             <Text text80 color={Colors.text} marginL-4>
-                                {session.start_time}
+                                {formatDateTime(session.start_time)}
                             </Text>
                         </View>
 
@@ -190,12 +191,10 @@ const ServicePackageDetailScreen = () => {
 
             <ScrollView>
                 <View padding-16>
-                    {/* Hiển thị thông tin buổi dịch vụ tiếp theo */}
                     {renderNextSession()}
 
-                    {/* Lịch sử các buổi điều trị */}
-                    {currentPackage?.treatment_sessions?.length ? (
-                        currentPackage.treatment_sessions.map((session: any, index: number) =>
+                    {usageHistory && usageHistory.length > 0 ? (
+                        usageHistory.map((session: any, index: number) =>
                             renderTreatmentSession(session, index)
                         )
                     ) : (

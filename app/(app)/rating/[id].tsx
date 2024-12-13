@@ -73,7 +73,7 @@ const RatingPage: React.FC = () => {
       <View style={{ flex: 1 }}>
         {ratings.length === 0 ? (
           <View flex center>
-            <Text h3_medium>{t("rating.no_reviews")}</Text>
+            <Text h3_medium>{t("rating.no_review")}</Text>
           </View>
         ) : (
           <FlatList

@@ -411,6 +411,7 @@
     "address": "住所",
     "home": "ホーム",
     "work": "仕事",
+    "shipping": "配送先住所",
     "company": "会社",
     "others": "その他",
     "name": "名前",
@@ -707,7 +708,7 @@
     "expires_on": "期限",
     "no_expiry": "時間なし",
     "unlimited_time": "時間なし",
-    "session_number": "回 #${number}",
+    "session_number": "回 %{number}",
     "result": "結果",
     "notes": "コメント",
     "next_session": "次のセッション",
@@ -734,7 +735,8 @@
     "view_conversation": "会話を表示",
     "view_payment": "支払いを表示",
     "view_promotion": "プロモーションを表示",
-    "view_review": "レビューを表示"
+    "view_review": "レビューを表示",
+    "not_found": "通知が見つかりません"
   },
   "search": {
     "title": "検索",

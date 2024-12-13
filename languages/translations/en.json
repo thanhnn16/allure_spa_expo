@@ -411,6 +411,7 @@
     "address": "Address",
     "home": "Home",
     "work": "Work",
+    "shipping": "Shipping",
     "company": "Company",
     "others": "Other",
     "name": "Name",
@@ -714,7 +715,7 @@
     "expires_on": "Expires on",
     "no_expiry": "No time limit",
     "unlimited_time": "Unlimited time",
-    "session_number": "Session #${number}",
+    "session_number": "Session %{number}",
     "result": "Result",
     "notes": "Notes",
     "next_session": "Next session",
@@ -741,7 +742,8 @@
     "view_conversation": "View conversation",
     "view_payment": "View payment",
     "view_promotion": "View promotion",
-    "view_review": "View review"
+    "view_review": "View review",
+    "not_found": "Notification not found"
   },
   "search": {
     "title": "Search",
