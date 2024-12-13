@@ -31,7 +31,7 @@ import AppBar from "@/components/app-bar/AppBar";
 import { set } from "lodash";
 import AppButton from "@/components/buttons/AppButton";
 
-interface ProfileEditProps { }
+interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
   const { t } = useLanguage();
@@ -247,11 +247,15 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     borderBottomWidth: 0.5,
                     flex: 1,
                     height: 40,
+
                     borderColor: "#D5D6CD",
                   }}
                   placeholder={item.placeholder}
                   value={item.value}
                   onChangeText={item.onChangeText}
+                  editable={
+                    item.placeholder !== t("auth.register.phone_number")
+                  }
                 />
               </View>
             </View>
@@ -271,9 +275,18 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     // backgroundColor: "red",
                   }}
                 >
-                  <Picker.Item label={t("auth.edit_profile.male")} value="male" />
-                  <Picker.Item label={t("auth.edit_profile.femail")} value="female" />
-                  <Picker.Item label={t("auth.edit_profile.other")} value="other" />
+                  <Picker.Item
+                    label={t("auth.edit_profile.male")}
+                    value="male"
+                  />
+                  <Picker.Item
+                    label={t("auth.edit_profile.femail")}
+                    value="female"
+                  />
+                  <Picker.Item
+                    label={t("auth.edit_profile.other")}
+                    value="other"
+                  />
                 </Picker>
               </View>
             </View>

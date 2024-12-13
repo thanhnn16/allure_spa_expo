@@ -18,9 +18,12 @@ const HistoryLogin = () => {
   const { history, isLoading} = useSelector((state: RootState) => state.historylogin);
 
   useEffect(() => {
-    dispatch(getUserHistoryLogin())
-    setUserHistory(history.data);
-  }, [])
+    const fetchData = async () => {
+      await dispatch(getUserHistoryLogin());
+      setUserHistory(history.data);
+    };
+    fetchData();
+  }, [dispatch, history.data])
 
   if (isLoading) {
     return <View flex center>
