@@ -1,84 +1,35 @@
 import AppBar from '@/components/app-bar/AppBar'
 import { useLanguage } from '@/hooks/useLanguage'
+import { getUserHistoryLogin } from '@/redux/features/history-login/getUserHistoryLogin'
+import { RootState } from '@/redux/store'
+import { UserHistoryLogin } from '@/types/user.type'
 import { Feather } from '@expo/vector-icons'
+import { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
 import { View, Text, Colors } from 'react-native-ui-lib'
-
-const data = [
-  {
-    id: 1,
-    device: "iPhone 16 Pro Max",
-    ip: "192.168.1.1",
-    location: "TP. Hồ Chí Minh",
-    status: "hoạt động 10 ngày trước"
-  },
-  {
-    id: 2,
-    device: "Samsung Galaxy S21",
-    ip: "192.168.1.2",
-    location: "TP. Hà Nội",
-    status: "hoạt động 3 tháng trước"
-  },
-  {
-    id: 3,
-    device: "Google Pixel 6",
-    ip: "192.168.1.3",
-    location: "TP. Đà Nẵng",
-    status: "hoạt động 1 tháng trước"
-  },
-  {
-    id: 4,
-    device: "OnePlus 9",
-    ip: "192.168.1.4",
-    location: "TP. Hải Phòng",
-    status: "hoạt động 2 tuần trước"
-  },
-  {
-    id: 5,
-    device: "Samsung Galaxy S21",
-    ip: "192.168.1.5",
-    location: "TP. Cần Thơ",
-    status: "hoạt động 3 tháng trước"
-  },
-  {
-    id: 6,
-    device: "Xiaomi Mi 11",
-    ip: "192.168.1.6",
-    location: "TP. Nha Trang",
-    status: "hoạt động 1 tuần trước"
-  },
-  {
-    id: 7,
-    device: "Samsung Galaxy S21",
-    ip: "192.168.1.7",
-    location: "TP. Huế",
-    status: "hoạt động 3 tháng trước"
-  },
-  {
-    id: 8,
-    device: "Oppo Find X3",
-    ip: "192.168.1.8",
-    location: "TP. Vũng Tàu",
-    status: "hoạt động 2 tháng trước"
-  },
-  {
-    id: 9,
-    device: "Samsung Galaxy S21",
-    ip: "192.168.1.9",
-    location: "TP. Quy Nhơn",
-    status: "hoạt động 3 tháng trước"
-  },
-  {
-    id: 10,
-    device: "Huawei P40",
-    ip: "192.168.1.10",
-    location: "TP. Phú Quốc",
-    status: "hoạt động 3 tháng trước"
-  },
-]
+import { useDispatch, useSelector } from 'react-redux'
 
 const HistoryLogin = () => {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
+  const dispatch = useDispatch();
+
+  const [userHistory, setUserHistory] = useState<UserHistoryLogin[]>([]);
+
+  const { history, isLoading} = useSelector((state: RootState) => state.historylogin);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(getUserHistoryLogin());
+      setUserHistory(history.data);
+    };
+    fetchData();
+  }, [dispatch, history.data])
+
+  if (isLoading) {
+    return <View flex center>
+      <Text>Loading...</Text>
+    </View>
+  }
   return (
     <View flex bg-white>
 
@@ -119,7 +70,7 @@ const HistoryLogin = () => {
           </View>
         </View>
         <Text h2_bold>{t("auth.history_login.other_device")}</Text>
-        {data.map((item) => (
+        {userHistory.map((item: any) => (
           <View key={item.id} style={styles.section}>
             <View row gap-12>
               <View
@@ -141,8 +92,8 @@ const HistoryLogin = () => {
                 />
               </View>
               <View>
-                <Text h3_bold>{item.device}</Text>
-                <Text h3>IP: {item.ip}</Text>
+                <Text h3_bold>{item.device_type}</Text>
+                <Text h3>IP: {item.ip_address}</Text>
                 <Text h4>{item.location} ∙ {item.status}</Text>
               </View>
             </View>

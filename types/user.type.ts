@@ -19,3 +19,14 @@ export interface User {
   phone_verified_at: string | null;
   email_verified_at: string | null;
 }
+
+export interface UserHistoryLogin {
+  id: number;
+  user_id: string;
+  ip_address: string;
+  user_agent: string;
+  login_at: string;
+  status: string;
+  device_type: string;
+  location: string;
+}

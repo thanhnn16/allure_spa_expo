@@ -388,15 +388,16 @@ export default function DetailsScreen() {
             </Text>
             <View row centerV marginB-10>
               <Image source={TagIcon} size={24} />
-              <View>
+              <View row gap-4 centerV>
+              <Text h2_medium secondary marginL-5>
+                  {formatCurrency({ price: product.price })}
+                </Text>
                 {quantity > 1 && (
                   <Text h3 gray marginL-5>
-                    {formatCurrency({ price: product.price })}
+                    {formatCurrency({ price: Number(totalPrice) })}
                   </Text>
                 )}
-                <Text h2_medium secondary marginL-5>
-                  {formatCurrency({ price: Number(totalPrice) })}
-                </Text>
+                
               </View>
 
               <View flex centerV row gap-15 right>

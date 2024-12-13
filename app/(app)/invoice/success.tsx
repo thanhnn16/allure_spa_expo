@@ -95,13 +95,19 @@ export default function InvoiceSuccess() {
           </View>
         ) : (
           <View center>
-
-            <Ionicons name="checkmark-circle" size={256} color={Colors.primary} />
+            <Ionicons
+              name="checkmark-circle"
+              size={256}
+              color={Colors.primary}
+            />
             <Text h1_bold center marginB-10>
-              {t("transaction.payment_success")}
+              {paymentDetails?.paymentMethod === "cash"
+                ? t("invoice.order_details")
+                : t("invoice.payment_details")}
             </Text>
             <Text h2 center marginB-10>
-              {t("transaction.your_order")} #{paymentDetails?.orderCode} {t("transaction.has_been_confirmed")}
+              {t("transaction.your_order")} #{paymentDetails?.orderCode}{" "}
+              {t("transaction.has_been_confirmed")}
             </Text>
 
             {/* <Text h1 primary center marginB-10>
@@ -142,9 +148,7 @@ export default function InvoiceSuccess() {
         <View width={"100%"} gap-12 absB marginB-10>
           <AppButton
             title={"Xem chi tiết đơn hàng"}
-            onPress={() =>
-              router.push(`/order/${paymentDetails?.orderCode}`)
-            }
+            onPress={() => router.push(`/order/${paymentDetails?.orderCode}`)}
             type="outline"
           />
           <AppButton

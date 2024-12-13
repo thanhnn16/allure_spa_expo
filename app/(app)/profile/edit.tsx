@@ -32,7 +32,7 @@ import { set } from "lodash";
 import AppButton from "@/components/buttons/AppButton";
 import { Ionicons } from '@expo/vector-icons';
 
-interface ProfileEditProps { }
+interface ProfileEditProps {}
 
 const ProfileEdit = (props: ProfileEditProps) => {
   const { t } = useLanguage();
@@ -270,6 +270,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     borderBottomWidth: 0.5,
                     flex: 1,
                     height: 40,
+
                     borderColor: "#D5D6CD",
                     color: item.editable ? '#000000' : '#999999', // Text màu xám nếu không thể sửa
                   }}
@@ -314,9 +315,18 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     // backgroundColor: "red",
                   }}
                 >
-                  <Picker.Item label={t("auth.edit_profile.male")} value="male" />
-                  <Picker.Item label={t("auth.edit_profile.femail")} value="female" />
-                  <Picker.Item label={t("auth.edit_profile.other")} value="other" />
+                  <Picker.Item
+                    label={t("auth.edit_profile.male")}
+                    value="male"
+                  />
+                  <Picker.Item
+                    label={t("auth.edit_profile.femail")}
+                    value="female"
+                  />
+                  <Picker.Item
+                    label={t("auth.edit_profile.other")}
+                    value="other"
+                  />
                 </Picker>
               </View>
             </View>
