@@ -30,6 +30,7 @@ import { processImageForUpload } from "@/utils/helpers/imageHelper";
 import AppBar from "@/components/app-bar/AppBar";
 import { set } from "lodash";
 import AppButton from "@/components/buttons/AppButton";
+import { Ionicons } from '@expo/vector-icons';
 
 interface ProfileEditProps {}
 
@@ -59,6 +60,10 @@ const ProfileEdit = (props: ProfileEditProps) => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Thêm state để kiểm tra trạng thái xác thực
+  const isPhoneVerified = !!user?.phone_verified_at;
+  const isEmailVerified = !!user?.email_verified_at;
+
   React.useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -81,18 +86,24 @@ const ProfileEdit = (props: ProfileEditProps) => {
 
   const handleSaveChanges = async () => {
     try {
-      //validate email format
-      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-      if (!emailRegex.test(email)) {
-        setError("Invalid email format");
-        return;
+      // Chỉ validate email nếu chưa xác thực và có thay đổi
+      if (!isEmailVerified && email !== user?.email) {
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!emailRegex.test(email)) {
+          setError("Invalid email format");
+          return;
+        }
       }
-      //validate phone number format
-      const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
-      if (!phoneRegex.test(phone)) {
-        setError("Invalid phone number format");
-        return;
+
+      // Chỉ validate số điện thoại nếu chưa xác thực và có thay đổi
+      if (!isPhoneVerified && phone !== user?.phone_number) {
+        const phoneRegex = /(0[3|5|7|8|9])+([0-9]{8})\b/;
+        if (!phoneRegex.test(phone)) {
+          setError("Invalid phone number format");
+          return;
+        }
       }
+
       // Update user info
       setLoading(true);
       await dispatch(
@@ -182,6 +193,13 @@ const ProfileEdit = (props: ProfileEditProps) => {
     return date.toISOString().split("T")[0]; // Returns YYYY-MM-DD format
   };
 
+  // Thêm hàm tính ngày tối đa cho phép (16 năm trước)
+  const getMaxDate = () => {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() - 16);
+    return date;
+  };
+
   return (
     <View flex bg-white>
       <AppBar back title={t("profile.edit_profile")} />
@@ -192,6 +210,8 @@ const ProfileEdit = (props: ProfileEditProps) => {
             height={128}
             borderRadius={128}
             style={{ borderColor: "#D5D6CD", borderWidth: 1 }}
+            center
+            errorSource={require("@/assets/images/logo/logo.png")}
             source={
               avatar.uri
                 ? { uri: avatar.uri }
@@ -224,18 +244,21 @@ const ProfileEdit = (props: ProfileEditProps) => {
               value: name,
               icon: NameIcon,
               onChangeText: setName,
+              editable: true, // Tên luôn có thể sửa
             },
             {
               placeholder: t("auth.register.phone_number"),
               value: phone,
               icon: PhoneIcon,
               onChangeText: setPhone,
+              editable: !isPhoneVerified, // Chỉ có thể sửa nếu chưa xác thực
             },
             {
               placeholder: t("auth.register.email"),
               value: email,
               icon: EmailIcon,
               onChangeText: setEmail,
+              editable: !isEmailVerified, // Chỉ có thể sửa nếu chưa xác thực
             },
           ].map((item, index) => (
             <View key={index} marginT-20>
@@ -249,15 +272,32 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     height: 40,
 
                     borderColor: "#D5D6CD",
+                    color: item.editable ? '#000000' : '#999999', // Text màu xám nếu không thể sửa
                   }}
                   placeholder={item.placeholder}
                   value={item.value}
                   onChangeText={item.onChangeText}
-                  editable={
-                    item.placeholder !== t("auth.register.phone_number")
-                  }
+                  editable={item.editable}
                 />
+                {/* Hiển thị icon xác thực nếu đã verify */}
+                {((item.icon === PhoneIcon && isPhoneVerified) || 
+                  (item.icon === EmailIcon && isEmailVerified)) && (
+                  <View marginL-5>
+                    <Ionicons 
+                      name="checkmark-circle" 
+                      size={16} 
+                      color="#4CAF50"
+                    />
+                  </View>
+                )}
               </View>
+              {/* Hiển thị thông báo nếu đã xác thực */}
+              {((item.icon === PhoneIcon && isPhoneVerified) || 
+                (item.icon === EmailIcon && isEmailVerified)) && (
+                <Text marginT-5 style={{color: '#999999', fontSize: 12}}>
+                  {t("profile.verified_field")}
+                </Text>
+              )}
             </View>
           ))}
           <View marginT-20>
@@ -313,6 +353,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
                   mode="date"
                   is24Hour={true}
                   onChange={handleDateChange}
+                  maximumDate={getMaxDate()}
                 />
               )}
             </View>

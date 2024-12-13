@@ -203,7 +203,8 @@
     "feel_about_product": "Feel about product",
     "type_content": "Type content",
     "images": "Images",
-    "send_review": "Send review"
+    "send_review": "Send review",
+    "no_review": "This product/service has no reviews"
   },
   "chat": {
     "customer_care": "Customer care",
@@ -246,7 +247,8 @@
     "verification_required": "Verification required",
     "verification_complete": "Verification complete",
     "phone_verified": "Phone verified",
-    "email_verified": "Email verified"
+    "email_verified": "Email verified",
+    "verified_field": "Verified"
   },
   "settings": {
     "title": "Settings",
@@ -255,12 +257,12 @@
     "notifications": "Notifications"
   },
   "voucher": {
-    "title": "クーポン",
-    "all": "すべて",
-    "active": "アクティブ",
-    "expired": "期限切れ",
-    "no_voucher": "クーポンがありません!",
-    "buy_product_for_voucher": "割引を受けるために商品を購入してください",
+    "title": "Voucher",
+    "all": "All",
+    "active": "Active",
+    "expired": "Expired",
+    "no_voucher": "No voucher!",
+    "buy_product_for_voucher": "Buy product to get discount",
     "discount": "Discount",
     "max": "max",
     "min_order": "Min order",
@@ -378,6 +380,7 @@
     "1_seat": "1 seat",
     "2_seat": "2 seat",
     "back_to_home": "Back to home page",
+    "view_appointments": "View appointments",
     "scheduled_successfully": "Scheduled successfully",
     "propose": "Pay now to apply discount voucher",
     "update_information": "Update information",

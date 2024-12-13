@@ -198,7 +198,8 @@
     "verification_required": "Vui lòng xác thực số điện thoại và email",
     "verification_complete": "Xác thực hoàn tất",
     "phone_verified": "Số điện thoại đã xác thực",
-    "email_verified": "Email đã xác thực"
+    "email_verified": "Email đã xác thực",
+    "verified_field": "Đã xác thực"
   },
   "settings": {
     "title": "Cài đặt",
@@ -298,7 +299,8 @@
     "feel_about_product": "Cảm nghĩ về sản phẩm",
     "type_content": "Nhập nội dung",
     "images": "Hình ảnh",
-    "send_review": "Gửi đánh giá"
+    "send_review": "Gửi đánh giá",
+    "no_review": "Sản phẩm/dịch vụ này không có đánh giá"
   },
   "chat": {
     "customer_care": "Chăm sóc khách hàng",

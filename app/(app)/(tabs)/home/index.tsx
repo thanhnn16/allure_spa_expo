@@ -10,8 +10,8 @@ import {
   showStyle,
   useHeaderDimensions,
 } from "@/utils/animated/home/header";
-import {Href, router} from "expo-router";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import { Href, router } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, FlatList, Pressable } from "react-native";
 import { Event } from "../../event";
 import Animated, {
@@ -46,7 +46,7 @@ import { useDialog } from "@/hooks/useDialog";
 const HomePage = () => {
   const { t } = useLanguage();
   const dispatch = useDispatch();
-  const { user, isGuest,signOut } = useAuth();
+  const { user, isGuest, signOut } = useAuth();
 
   const { showDialog, dialogConfig, hideDialog } = useDialog();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
@@ -54,11 +54,11 @@ const HomePage = () => {
   const scrollOffset = useSharedValue(0);
   useSelector((state: RootState) => state.servicePackage);
   const { servicesList, isLoading, hasMore, currentPage } = useSelector(
-      (state: RootState) => state.service
+    (state: RootState) => state.service
   );
   const { products } = useSelector((state: RootState) => state.product);
   const { HEADER_HEIGHT, SCROLL_THRESHOLD, OPACITY_THRESHOLD } =
-      useHeaderDimensions();
+    useHeaderDimensions();
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -70,19 +70,19 @@ const HomePage = () => {
   const handleNotificationPress = () => {
     if (isGuest) {
       showDialog(
-          "Thông báo",
-          "Bạn cần đăng nhập để sử dụng chức năng này",
-          "error"
+        "Thông báo",
+        "Bạn cần đăng nhập để sử dụng chức năng này",
+        "error"
       );
     } else {
       router.push("/notification");
     }
   };
 
-    const handleLoginConfirm = () => {
-        setLoginDialogVisible(false);
-        signOut();
-    };
+  const handleLoginConfirm = () => {
+    setLoginDialogVisible(false);
+    signOut();
+  };
 
   const handleDialogClose = () => {
     setLoginDialogVisible(false);
@@ -97,135 +97,145 @@ const HomePage = () => {
   })();
 
   const renderHeader = () => (
-      <View bg-white paddingH-20>
-        <Animated.View style={[greetingHeaderStyle]}>
-          <View row spread marginB-10>
-            <View row centerV gap-10>
-              <Image
-                  width={32}
-                  height={32}
-                  borderRadius={30}
-                  source={require("@/assets/images/logo/logo.png")}
-              />
-              <View centerV>
-                <Text h2_bold>
-                  {user?.full_name || translate("common.guest")}
-                </Text>
-                <Text h4>{currentGreeting}</Text>
-              </View>
+    <View bg-white paddingH-20>
+      <Animated.View style={[greetingHeaderStyle]}>
+        <View row spread marginB-10>
+          <View row centerV gap-10>
+            <Image
+              width={32}
+              height={32}
+              borderRadius={30}
+              source={require("@/assets/images/logo/logo.png")}
+            />
+            <View centerV>
+              <Text h2_bold>
+                {user?.full_name || translate("common.guest")}
+              </Text>
+              <Text h4>{currentGreeting}</Text>
             </View>
           </View>
-          <WeatherView />
-        </Animated.View>
-
-        <View
-            row
-            centerV
-            gap-15
-            absR
-            style={{ zIndex: 2 }}
-            right-0
-            top-0
-            paddingV-10
-            marginH-20
-        >
-          <HomeHeaderButton
-              onPress={handleNotificationPress}
-              iconName="notifications-outline"
-              type="notification"
-          />
-          <HomeHeaderButton
-              onPress={() => {
-                router.push("/cart");
-              }}
-              iconName="cart-outline"
-              type="cart"
-          />
         </View>
+        <WeatherView />
+      </Animated.View>
 
-        <Animated.View
-            style={[
-              searchBarStyle,
-              {
-                position: "absolute",
-                bottom: 10,
-                left: 20,
-                right: 20,
-              },
-            ]}
-        >
-          <Text h0_bold color="#717658" marginB-10>
-            {translate("home.discover")}
-          </Text>
-          <AppSearch isHome />
-        </Animated.View>
-        <AppDialog
-            visible={dialogConfig.visible}
-            title={dialogConfig.title}
-            description={dialogConfig.description}
-            severity={dialogConfig.severity}
-            onClose={handleDialogClose}
-            onConfirm={handleLoginConfirm}
+      <View
+        row
+        centerV
+        gap-15
+        absR
+        style={{ zIndex: 2 }}
+        right-0
+        top-0
+        paddingV-10
+        marginH-20
+      >
+        <HomeHeaderButton
+          onPress={handleNotificationPress}
+          iconName="notifications-outline"
+          type="notification"
+        />
+        <HomeHeaderButton
+          onPress={() => {
+            router.push("/cart");
+          }}
+          iconName="cart-outline"
+          type="cart"
         />
       </View>
+
+      <Animated.View
+        style={[
+          searchBarStyle,
+          {
+            position: "absolute",
+            bottom: 10,
+            left: 20,
+            right: 20,
+          },
+        ]}
+      >
+        <Text h0_bold color="#717658" marginB-10>
+          {translate("home.discover")}
+        </Text>
+        <AppSearch isHome />
+      </Animated.View>
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        severity={dialogConfig.severity}
+        onClose={handleDialogClose}
+        onConfirm={handleLoginConfirm}
+      />
+    </View>
   );
 
   const renderSkeletonContent = () => (
-      <View flex paddingH-20>
-        {/* Banner skeleton */}
-        <View marginB-20>
-          <SkeletonView
-              height={160}
-              width={WINDOW_WIDTH - 40}
-              borderRadius={12}
-          />
-        </View>
+    <View flex paddingH-20>
+      {/* Banner skeleton */}
+      <View marginB-20>
+        <SkeletonView
+          height={160}
+          width={WINDOW_WIDTH - 40}
+          borderRadius={12}
+        />
+      </View>
 
-        {/* Category skeleton */}
-        <View row centerH marginB-20 spread>
-          {Array(6)
-              .fill(0)
-              .map((_, index) => (
-                  <View key={index} center marginH-8>
-                    <SkeletonView
-                        height={48}
-                        width={48}
-                        style={{ borderRadius: 24 }}
-                    />
-                    <SkeletonView height={16} width={60} marginT-8 />
-                  </View>
-              ))}
-        </View>
+      {/* Category skeleton */}
+      <View row centerH marginB-20 spread>
+        {Array(6)
+          .fill(0)
+          .map((_, index) => (
+            <View key={index} center marginH-8>
+              <SkeletonView
+                height={48}
+                width={48}
+                style={{ borderRadius: 24 }}
+              />
+              <SkeletonView height={16} width={60} marginT-8 />
+            </View>
+          ))}
+      </View>
 
-        {/* Upcoming Appointment skeleton */}
-        <View marginB-20>
-          <SkeletonView
-              height={120}
-              width={WINDOW_WIDTH - 40}
-              borderRadius={12}
-          />
-        </View>
+      {/* Upcoming Appointment skeleton */}
+      <View marginB-20>
+        <SkeletonView
+          height={120}
+          width={WINDOW_WIDTH - 40}
+          borderRadius={12}
+        />
+      </View>
 
-        {/* Services section skeleton */}
-        <View marginB-20>
-          <View row spread marginB-10>
-            <SkeletonView height={20} width={120} />
-            <SkeletonView height={20} width={80} />
-          </View>
+      {/* Services section skeleton */}
+      <View marginB-20>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={WINDOW_WIDTH * 0.5} />
+          <SkeletonView height={20} width={WINDOW_WIDTH * 0.2} />
         </View>
-
-        {/* Products section skeleton */}
-        <View>
-          <View row spread marginB-10>
-            <SkeletonView height={20} width={120} />
-            <SkeletonView height={20} width={80} />
-          </View>
+        <View row gap-10>
+          {Array(5).fill(0).map((_, index) => (
+            <SkeletonView key={index} height={WINDOW_HEIGHT * 0.378} width={WINDOW_WIDTH * 0.537} />
+          ))}
         </View>
       </View>
+
+      {/* Products section skeleton */}
+      <View>
+        <View row spread marginB-10>
+          <SkeletonView height={20} width={WINDOW_WIDTH * 0.5} />
+          <SkeletonView height={20} width={WINDOW_WIDTH * 0.2} />
+        </View>
+        <View row gap-10>
+          {Array(5).fill(0).map((_, index) => (
+            <SkeletonView key={index} height={WINDOW_HEIGHT * 0.378} width={WINDOW_WIDTH * 0.537} />
+          ))}
+        </View>
+      </View>
+    </View>
   );
 
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
-      Dimensions.get("window");
+    Dimensions.get("window");
 
   const handlePressMore = useCallback((type: "services" | "products") => {
     router.push({
@@ -235,27 +245,27 @@ const HomePage = () => {
   }, []);
 
   const renderServiceItem = useCallback(
-      ({ item }: { item: ServiceResponeModel }) => (
-          <ServiceItem
-              item={item}
-              widthItem={WINDOW_WIDTH * 0.537}
-              heightItem={WINDOW_HEIGHT * 0.378}
-              heightImage={WINDOW_HEIGHT * 0.21}
-          />
-      ),
-      [WINDOW_WIDTH, WINDOW_HEIGHT]
+    ({ item }: { item: ServiceResponeModel }) => (
+      <ServiceItem
+        item={item}
+        widthItem={WINDOW_WIDTH * 0.537}
+        heightItem={WINDOW_HEIGHT * 0.378}
+        heightImage={WINDOW_HEIGHT * 0.21}
+      />
+    ),
+    [WINDOW_WIDTH, WINDOW_HEIGHT]
   );
 
   const renderProductItem = useCallback(
-      ({ item }: { item: Product }) => (
-          <ProductItem
-              item={item}
-              widthItem={WINDOW_WIDTH * 0.468}
-              heightItem={WINDOW_HEIGHT * 0.378}
-              heightImage={WINDOW_HEIGHT * 0.19}
-          />
-      ),
-      [WINDOW_WIDTH, WINDOW_HEIGHT]
+    ({ item }: { item: Product }) => (
+      <ProductItem
+        item={item}
+        widthItem={WINDOW_WIDTH * 0.468}
+        heightItem={WINDOW_HEIGHT * 0.378}
+        heightImage={WINDOW_HEIGHT * 0.19}
+      />
+    ),
+    [WINDOW_WIDTH, WINDOW_HEIGHT]
   );
 
   const loadMoreServices = useCallback(() => {
@@ -275,24 +285,24 @@ const HomePage = () => {
       if (pkg.next_appointment_details) {
         try {
           const [day, month, year] =
-              pkg.next_appointment_details.date.split("/");
+            pkg.next_appointment_details.date.split("/");
           const appointmentDate = new Date(
-              parseInt(year),
-              parseInt(month) - 1,
-              parseInt(day),
-              0,
-              0,
-              0
+            parseInt(year),
+            parseInt(month) - 1,
+            parseInt(day),
+            0,
+            0,
+            0
           );
 
           const [startHour, startMinute] =
-              pkg.next_appointment_details.time.start.split(":");
+            pkg.next_appointment_details.time.start.split(":");
           appointmentDate.setHours(parseInt(startHour), parseInt(startMinute));
 
           if (
-              !isNaN(appointmentDate.getTime()) &&
-              appointmentDate > now &&
-              appointmentDate <= threeDaysFromNow
+            !isNaN(appointmentDate.getTime()) &&
+            appointmentDate > now &&
+            appointmentDate <= threeDaysFromNow
           ) {
             return {
               ...pkg.next_appointment_details,
@@ -310,8 +320,8 @@ const HomePage = () => {
   }, []);
 
   const upcomingAppointment = useMemo(
-      () => getUpcomingAppointment(user?.packages || []),
-      [user?.packages, getUpcomingAppointment]
+    () => getUpcomingAppointment(user?.packages || []),
+    [user?.packages, getUpcomingAppointment]
   );
 
   useEffect(() => {
@@ -332,23 +342,23 @@ const HomePage = () => {
   }
 
   const renderContent = () => (
-      <View flex>
-        <Animated.View entering={FadeIn.duration(500)}>
-          <CarouselBanner />
-        </Animated.View>
+    <View flex>
+      <Animated.View entering={FadeIn.duration(500)}>
+        <CarouselBanner />
+      </Animated.View>
 
-        <Animated.View entering={FadeInDown.duration(400).delay(100)}>
-          <CategoryItem />
+      <Animated.View entering={FadeInDown.duration(400).delay(100)}>
+        <CategoryItem />
+      </Animated.View>
+      {upcomingAppointment && (
+        <Animated.View entering={FadeInUp.duration(600).delay(300)}>
+          <View paddingH-20 gap-10>
+            <View height={0.5} backgroundColor={Colors.primary} />
+            <UpcomingAppointment appointment={upcomingAppointment} />
+            <View height={0.5} backgroundColor={Colors.primary} />
+          </View>
         </Animated.View>
-        {upcomingAppointment && (
-            <Animated.View entering={FadeInUp.duration(600).delay(300)}>
-              <View paddingH-20 gap-10>
-                <View height={0.5} backgroundColor={Colors.primary} />
-                <UpcomingAppointment appointment={upcomingAppointment} />
-                <View height={0.5} backgroundColor={Colors.primary} />
-              </View>
-            </Animated.View>
-        )}
+      )}
 
       {servicesList &&
         Array.isArray(servicesList) &&
@@ -379,110 +389,62 @@ const HomePage = () => {
           />
         </Animated.View>
       )}
-
-        <View paddingH-16>
-          <Text h1_bold marginV-16>Sự kiện nổi bật</Text>
-
-          <FlatList
-            data={Event}
-            renderItem={({ item }) => (
-              <View
-                key={item.id}
-                marginR-16
-                style={{
-                  padding: 8,
-                  backgroundColor: Colors.white,
-                  borderRadius: 16,
-                  marginBottom: 16,
-                  shadowColor: Colors.grey40,
-                  shadowOffset: {
-                    width: 0,
-                    height: 2,
-                  },
-                  borderColor: Colors.primary_light,
-                  borderWidth: 1,
-                  shadowOpacity: 0.1,
-                  shadowRadius: 4,
-                  elevation: 3,
-                }}
-              >
-                <Pressable onPress={() => handleOpenImage(item.id)}>
-                  <View width={300} height={160}>
-                    <Image
-                      source={{ uri: item.url }}
-                      cover
-                      style={{ borderRadius: 12, overflow: "hidden" }}
-                    />
-                  </View>
-                  <View>
-                    <Text h2_bold primary>{item.title}</Text>
-                    <Text>18/11/2024 - 21/11/2024</Text>
-                    <Text>{item.description}</Text>
-                  </View>
-                </Pressable>
-              </View>
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-      </View>
+    </View>
   );
 
   const greetingHeaderStyle = hideStyle(
-      scrollOffset,
-      HEADER_HEIGHT,
-      SCROLL_THRESHOLD,
-      OPACITY_THRESHOLD
+    scrollOffset,
+    HEADER_HEIGHT,
+    SCROLL_THRESHOLD,
+    OPACITY_THRESHOLD
   );
 
   const searchBarStyle = showStyle(
-      scrollOffset,
-      HEADER_HEIGHT,
-      SCROLL_THRESHOLD
+    scrollOffset,
+    HEADER_HEIGHT,
+    SCROLL_THRESHOLD
   );
 
   return (
-      <View bg-$white flex>
-        <AppDialog
-            visible={dialogConfig.visible}
-            title={dialogConfig.title}
-            description={dialogConfig.description}
-            severity={dialogConfig.severity}
-            onClose={handleDialogClose}
-            onConfirm={handleLoginConfirm}
-        />
-        <Animated.View
-            style={[
-              {
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 1,
-                height: HEADER_HEIGHT + 8,
-                backgroundColor: "white",
-                overflow: "hidden",
-              },
-            ]}
-        >
-          {renderHeader()}
-        </Animated.View>
+    <View bg-$white flex>
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        severity={dialogConfig.severity}
+        onClose={handleDialogClose}
+        onConfirm={handleLoginConfirm}
+      />
+      <Animated.View
+        style={[
+          {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1,
+            height: HEADER_HEIGHT + 8,
+            backgroundColor: "white",
+            overflow: "hidden",
+          },
+        ]}
+      >
+        {renderHeader()}
+      </Animated.View>
 
-        <Animated.ScrollView
-            style={{ flex: 1 }}
-            showsVerticalScrollIndicator={false}
-            onScroll={scrollHandler}
-            scrollEventThrottle={1}
-            contentContainerStyle={{
-              paddingTop: HEADER_HEIGHT,
-              marginTop: 24,
-            }}
-        >
-          {isLoading ? renderSkeletonContent() : renderContent()}
-        </Animated.ScrollView>
-      </View>
+      <Animated.ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={1}
+        contentContainerStyle={{
+          paddingTop: HEADER_HEIGHT,
+          marginTop: 24,
+        }}
+      >
+        {isLoading ? renderSkeletonContent() : renderContent()}
+      </Animated.ScrollView>
+    </View>
   );
 };
 

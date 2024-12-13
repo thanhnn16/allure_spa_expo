@@ -100,13 +100,14 @@ const ProfileDetail = (props: ProfileDetailProps) => {
     <View flex bg-white>
       <AppBar back title={t("profile.title")} />
       <View flex paddingH-24>
-        <View center marginT-30 gap-7>
+        <View center marginT-20 gap-12>
           <Image
             width={128}
             height={128}
-            br100
+            center
+            marginB-12
             errorSource={require("@/assets/images/logo/logo.png")}
-            style={{ borderColor: "#D5D6CD", borderWidth: 1 }}
+            style={{ borderColor: "#D5D6CD", borderWidth: 1, borderRadius: 100 }}
             source={
               user?.avatar_url
                 ? {

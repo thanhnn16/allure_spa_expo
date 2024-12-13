@@ -171,7 +171,7 @@ const VoucherDropdown = ({ value, items, onSelect, isLoading }: VoucherDropdownP
       ) : items.length === 0 ? (
         <View padding-12 center>
           <Text text80 grey30>
-            {t("checkout.no_vouchers_available")}
+            {t("checkout.no_voucher_available")}
           </Text>
         </View>
       ) : (
