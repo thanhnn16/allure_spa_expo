@@ -1,8 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import { getUserThunk } from "@/redux";
 
-// Thunk để gửi mã xác thực số điện thoại
 export const sendPhoneVerificationThunk = createAsyncThunk(
     "auth/sendPhoneVerification",
     async ({ lang }: { lang: string }, { rejectWithValue }: any) => {
@@ -45,8 +43,6 @@ export const verifyPhoneThunk = createAsyncThunk(
             });
 
             if (res.data.success) {
-                // Cập nhật thông tin user sau khi xác thực thành công
-                dispatch(getUserThunk());
                 return res.data.data;
             }
 
