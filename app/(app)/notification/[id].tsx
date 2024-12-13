@@ -37,21 +37,34 @@ const NotificationDetail: React.FC = () => {
     )
   );
 
-  console.log(notification);
+  const loading = useSelector((state: RootState) => state.notification.loading);
 
-  const translatedNotification = useTranslatedNotification(notification);
+  // Fetch notification detail khi component mount
+  useEffect(() => {
+    dispatch(fetchNotificationDetail(Number(id)));
+  }, [dispatch, id]);
 
-  const formattedTime = useFormattedTime(notification.created_at_timestamp);
+  if (loading) {
+    return (
+      <View flex center>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   if (!notification) {
     return (
       <View flex center>
         <Text h2_bold color={Colors.grey40}>
-          Không tìm thấy thông báo
+          {t("notification.not_found")}
         </Text>
       </View>
     );
   }
+
+  const translatedNotification = useTranslatedNotification(notification);
+
+  const formattedTime = useFormattedTime(notification.created_at_timestamp);
 
   const { iconName, iconColor, bgColor } =
     notificationTypeMap[notification.type as NotificationType] ||

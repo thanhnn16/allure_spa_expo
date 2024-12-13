@@ -741,7 +741,8 @@
     "view_conversation": "View conversation",
     "view_payment": "View payment",
     "view_promotion": "View promotion",
-    "view_review": "View review"
+    "view_review": "View review",
+    "not_found": "Notification not found"
   },
   "search": {
     "title": "Search",

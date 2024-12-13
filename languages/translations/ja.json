@@ -734,7 +734,8 @@
     "view_conversation": "会話を表示",
     "view_payment": "支払いを表示",
     "view_promotion": "プロモーションを表示",
-    "view_review": "レビューを表示"
+    "view_review": "レビューを表示",
+    "not_found": "通知が見つかりません"
   },
   "search": {
     "title": "検索",

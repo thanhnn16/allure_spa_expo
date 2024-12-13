@@ -717,7 +717,8 @@
     "view_conversation": "Xem cuộc hội thoại",
     "view_payment": "Xem thanh toán",
     "view_promotion": "Xem khuyến mãi",
-    "view_review": "Xem đánh giá"
+    "view_review": "Xem đánh giá",
+    "not_found": "Không tìm thấy thông báo"
   },
   "search": {
     "title": "Tìm kiếm",
