@@ -252,7 +252,7 @@ const AppSearch = forwardRef<AppSearchRef, AppSearchProps>((props, ref) => {
                 props.onChangeText && props.onChangeText(text);
               }}
               onFocus={props.onFocus}
-              placeholder="Tìm kiếm mỹ phẩm, liệu trình ..."
+              placeholder={t("home.placeholder_search")}
               placeholderTextColor={Colors.gray}
               containerStyle={{
                 flex: 1,
