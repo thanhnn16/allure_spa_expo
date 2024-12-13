@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from "react";
-import {FlatList, Dimensions, Modal, Keyboard, Platform, ScrollView, KeyboardAvoidingView} from "react-native";
+import { FlatList, Dimensions, Modal, Keyboard, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
 import AppBar from "@/components/app-bar/AppBar";
 import { router, useLocalSearchParams } from "expo-router";
 import {
@@ -46,44 +46,39 @@ const SuccessModal = ({
   onViewAppointments: () => void;
   t: any;
 }) => (
-    <Modal visible={visible} transparent>
-      <View
-          center
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            flex: 1,
-          }}
-      >
-        <Card padding-20 width="80%" height="30%" br20>
-          <View center>
-            <MaterialIcons name="done" size={64} color={Colors.primary} />
-          </View>
-          <Text text60BO center marginB-36>
-            {title}
-          </Text>
-          <View flex center paddingH-20 marginB-10 style={{gap: 10}}>
-            <View flex-1>
-              <AppButton
-                  title={t("service.back_to_home")}
-                  type="primary"
-                  marginB-10
-                  onPress={onClose}
-                  style={{marginRight: 10}}
-              />
-            </View>
-            <View flex-1 marginT-24 marginB-10 >
-              <AppButton
-                  title={t("service.view_appointments")}
-                  type="outline"
-                  onPress={onViewAppointments}
-              />
-            </View>
-          </View>
-        </Card>
-      </View>
-    </Modal>
+  <Modal visible={visible} transparent>
+    <View
+      center
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        flex: 1,
+      }}
+    >
+      <Card padding-20 width="80%" height="30%" br20>
+        <View center>
+          <MaterialIcons name="done" size={64} color={Colors.primary} />
+        </View>
+        <Text text60BO center marginB-36>
+          {title}
+        </Text>
+        <View flex center paddingH-20 marginB-10 gap-10>
+          <AppButton
+            title={t("service.back_to_home")}
+            type="primary"
+            marginB-10
+            onPress={onClose}
+          />
+          <AppButton
+            title={t("service.view_appointments")}
+            type="outline"
+            onPress={onViewAppointments}
+          />
+        </View>
+      </Card>
+    </View>
+  </Modal>
 );
 
 const BookingPage = () => {
@@ -209,15 +204,15 @@ const BookingPage = () => {
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
       noteRef.current?.measureLayout(
-          // @ts-ignore
-          timeSlotRef.current,
-          (x: number, y: number) => {
-            timeSlotRef.current?.scrollTo({
-              y: y,
-              animated: true,
-            });
-          },
-          () => console.log("measurement failed")
+        // @ts-ignore
+        timeSlotRef.current,
+        (x: number, y: number) => {
+          timeSlotRef.current?.scrollTo({
+            y: y,
+            animated: true,
+          });
+        },
+        () => console.log("measurement failed")
       );
     });
 
@@ -377,276 +372,276 @@ const BookingPage = () => {
 
 
   return (
-      <View flex bg-white>
-        <AppBar back title={t("service.make_appointment")} />
-        <View flex>
-          <KeyboardAvoidingView
-              behavior={Platform.OS === "ios" ? "padding" : "height"}
-              style={{ flex: 1 }}
+    <View flex bg-white>
+      <AppBar back title={t("service.make_appointment")} />
+      <View flex>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView
+            ref={timeSlotRef}
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: 120,
+            }}
           >
-            <ScrollView
-                ref={timeSlotRef}
-                contentContainerStyle={{
-                  flexGrow: 1,
-                  paddingBottom: 120,
-                }}
-            >
-              <View flex paddingH-24>
-            <Card
-              flex
-              br20
-              enableShadow={false}
-              backgroundColor={Colors.surface}
-            >
-              <Calendar
-                current={today}
-                renderArrow={(direction: any) => {
-                  if (direction === "left") {
+            <View flex paddingH-24>
+              <Card
+                flex
+                br20
+                enableShadow={false}
+                backgroundColor={Colors.surface}
+              >
+                <Calendar
+                  current={today}
+                  renderArrow={(direction: any) => {
+                    if (direction === "left") {
+                      return (
+                        <MaterialIcons
+                          name="arrow-back-ios-new"
+                          size={20}
+                          color="#717658"
+                        />
+                      );
+                    }
                     return (
                       <MaterialIcons
-                        name="arrow-back-ios-new"
+                        name="arrow-forward-ios"
                         size={20}
                         color="#717658"
                       />
                     );
-                  }
-                  return (
-                    <MaterialIcons
-                      name="arrow-forward-ios"
-                      size={20}
-                      color="#717658"
-                    />
-                  );
-                }}
-                theme={{
-                  ...calendarTheme,
-                  "stylesheet.calendar.header": {
-                    header: {
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      paddingHorizontal: 12,
-                      paddingVertical: 16,
-                      alignItems: "center",
-                      backgroundColor: Colors.surface,
+                  }}
+                  theme={{
+                    ...calendarTheme,
+                    "stylesheet.calendar.header": {
+                      header: {
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 12,
+                        paddingVertical: 16,
+                        alignItems: "center",
+                        backgroundColor: Colors.surface,
+                      },
+                      monthText: {
+                        fontSize: 18,
+                        fontWeight: "600",
+                        color: Colors.text,
+                      },
                     },
-                    monthText: {
-                      fontSize: 18,
-                      fontWeight: "600",
-                      color: Colors.text,
+                    "stylesheet.day.basic": {
+                      base: {
+                        width: 42,
+                        height: 42,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      },
+                      text: {
+                        fontSize: 16,
+                        fontWeight: "500",
+                      },
                     },
-                  },
-                  "stylesheet.day.basic": {
-                    base: {
-                      width: 42,
-                      height: 42,
-                      alignItems: "center",
-                      justifyContent: "center",
+                  }}
+                  minDate={today}
+                  maxDate={maxDate}
+                  onDayPress={handleDayPress}
+                  markedDates={{
+                    [selectedDate]: {
+                      selected: true,
+                      disableTouchEvent: true,
+                      selectedColor: Colors.primary,
                     },
-                    text: {
-                      fontSize: 16,
-                      fontWeight: "500",
+                    [today]: {
+                      marked: true,
+                      selected: today,
+                      dotColor: "white",
+                      borderWidth: 1,
+                      borderColor: Colors.primary,
                     },
-                  },
-                }}
-                minDate={today}
-                maxDate={maxDate}
-                onDayPress={handleDayPress}
-                markedDates={{
-                  [selectedDate]: {
-                    selected: true,
-                    disableTouchEvent: true,
-                    selectedColor: Colors.primary,
-                  },
-                  [today]: {
-                    marked: true,
-                    selected: today,
-                    dotColor: "white",
-                    borderWidth: 1,
-                    borderColor: Colors.primary,
-                  },
-                }}
-                enableSwipeMonths={true}
-                firstDay={1}
-                hideExtraDays={false}
-              />
-            </Card>
+                  }}
+                  enableSwipeMonths={true}
+                  firstDay={1}
+                  hideExtraDays={false}
+                />
+              </Card>
 
 
 
 
-            {timeSlots.length > 0 && (
+              {timeSlots.length > 0 && (
                 <View marginT-20 marginB-20>
                   <Text text60BO $textDefault marginB-10>
                     {t("service.select_time")}
                   </Text>
                   <View marginT-16>
                     <FlatList
-                        scrollEnabled={false}
-                        data={timeSlots}
-                        renderItem={({ item }) => {
-                          const isPast = selectedDate === currentDate && moment(item.start_time, "HH:mm").isBefore(currentTime);
-                          return (
-                              <TouchableOpacity
-                                  onPress={() => handleTimeSlotSelect(item)}
-                                  disabled={!item.available || isPast}
+                      scrollEnabled={false}
+                      data={timeSlots}
+                      renderItem={({ item }) => {
+                        const isPast = selectedDate === currentDate && moment(item.start_time, "HH:mm").isBefore(currentTime);
+                        return (
+                          <TouchableOpacity
+                            onPress={() => handleTimeSlotSelect(item)}
+                            disabled={!item.available || isPast}
+                          >
+                            <Animated.View
+                              entering={FadeIn.duration(500).delay(item.id * 100)}
+                              style={{
+                                transform: [{ scale: fadeAnim }],
+                              }}
+                            >
+                              <Card
+                                center
+                                enableShadow={false}
+                                br40
+                                paddingV-12
+                                paddingH-16
+                                style={{
+                                  opacity: !item.available || isPast ? 0.5 : 1,
+                                  backgroundColor:
+                                    selectedTime === item.id
+                                      ? Colors.primary_blur
+                                      : Colors.card_bg,
+                                  borderWidth: selectedTime === item.id ? 1 : 0,
+                                  borderColor: Colors.primary_light,
+                                }}
                               >
-                                <Animated.View
-                                    entering={FadeIn.duration(500).delay(item.id * 100)}
-                                    style={{
-                                      transform: [{ scale: fadeAnim }],
-                                    }}
+                                <Text
+                                  style={{
+                                    color: selectedTime === item.id ? Colors.primary : Colors.text,
+                                  }}
+                                  text80BO
                                 >
-                                  <Card
-                                      center
-                                      enableShadow={false}
-                                      br40
-                                      paddingV-12
-                                      paddingH-16
-                                      style={{
-                                        opacity: !item.available || isPast ? 0.5 : 1,
-                                        backgroundColor:
-                                            selectedTime === item.id
-                                                ? Colors.primary_blur
-                                                : Colors.card_bg,
-                                        borderWidth: selectedTime === item.id ? 1 : 0,
-                                        borderColor: Colors.primary_light,
-                                      }}
-                                  >
-                                    <Text
-                                        style={{
-                                          color: selectedTime === item.id ? Colors.primary : Colors.text,
-                                        }}
-                                        text80BO
-                                    >
-                                      {`${item.start_time.substring(0, 5)} - ${item.end_time.substring(0, 5)}`}
-                                    </Text>
+                                  {`${item.start_time.substring(0, 5)} - ${item.end_time.substring(0, 5)}`}
+                                </Text>
 
-                                    <View row centerV marginT-8>
-                                      <Octicons
-                                          name="person"
-                                          size={16}
-                                          color={selectedTime === item.id ? Colors.primary : Colors.icon}
-                                      />
-                                      <Text
-                                          marginL-8
-                                          text80
-                                          style={{
-                                            color: selectedTime === item.id ? Colors.primary : Colors.text,
-                                          }}
-                                      >
-                                        {item.available_slots} {t("service.available")}
-                                      </Text>
-                                    </View>
-                                  </Card>
-                                </Animated.View>
-                              </TouchableOpacity>
-                          );
-                        }}
-                        keyExtractor={(item: any) => item.id.toString()}
-                        numColumns={numColumns}
-                        contentContainerStyle={{
-                          gap: 8,
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                        columnWrapperStyle={{
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                        nestedScrollEnabled
+                                <View row centerV marginT-8>
+                                  <Octicons
+                                    name="person"
+                                    size={16}
+                                    color={selectedTime === item.id ? Colors.primary : Colors.icon}
+                                  />
+                                  <Text
+                                    marginL-8
+                                    text80
+                                    style={{
+                                      color: selectedTime === item.id ? Colors.primary : Colors.text,
+                                    }}
+                                  >
+                                    {item.available_slots} {t("service.available")}
+                                  </Text>
+                                </View>
+                              </Card>
+                            </Animated.View>
+                          </TouchableOpacity>
+                        );
+                      }}
+                      keyExtractor={(item: any) => item.id.toString()}
+                      numColumns={numColumns}
+                      contentContainerStyle={{
+                        gap: 8,
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                      columnWrapperStyle={{
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                      nestedScrollEnabled
                     />
                   </View>
                 </View>
-            )}
+              )}
 
-            {selectedTime && (
-              <View ref={seatRef}>
-                <Text text60BO $textDefault marginB-10>
-                  {t("service.select_seat")}
-                </Text>
-                <View row spread marginT-12>
-                  <TouchableOpacity
-                    flex-1
-                    marginR-6
-                    onPress={() => handleSeatSelect(1)}
-                  >
-                    <View
-                      center
-                      padding-16
-                      br20
-                      style={{
-                        backgroundColor:
-                          slot === 1 ? Colors.primary_blur : Colors.card_bg,
-                        borderWidth: slot === 1 ? 1 : 0,
-                        borderColor: Colors.primary,
-                      }}
+              {selectedTime && (
+                <View ref={seatRef}>
+                  <Text text60BO $textDefault marginB-10>
+                    {t("service.select_seat")}
+                  </Text>
+                  <View row spread marginT-12>
+                    <TouchableOpacity
+                      flex-1
+                      marginR-6
+                      onPress={() => handleSeatSelect(1)}
                     >
-                      <Text color={slot === 1 ? Colors.primary : Colors.text}>
-                        {t("service.1_seat")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    flex-1
-                    marginL-6
-                    onPress={() => handleSeatSelect(2)}
-                    disabled={
-                      timeSlots.find((item: any) => item.id === selectedTime)
-                        ?.available_slots === 1
-                    }
-                  >
-                    <View
-                      center
-                      padding-16
-                      br20
-                      style={{
-                        backgroundColor:
-                          slot === 2 ? Colors.primary_blur : Colors.card_bg,
-                        borderWidth: slot === 2 ? 1 : 0,
-                        borderColor: Colors.primary,
-                      }}
-                    >
-                      <Text color={slot === 2 ? Colors.primary : Colors.text}>
-                        {t("service.2_seat")}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-
-                {slot !== 0 && (
-                    <View ref={noteRef} marginT-20>
-                      <Text text60BO $textDefault marginB-12>
-                        {t("service.note")}
-                      </Text>
-                      <TextArea
-                          value={note}
-                          onChangeText={setNote}
-                          placeholder={t("service.enter_content")}
-                          multiline
-                          numberOfLines={5}
-                          maxLength={200}
-                          br20
-                          bg-$backgroundNeutralLight
-                          padding-16
-                          style={{
-                            height: 120,
-                            textAlignVertical: "top",
-                          }}
-                      />
-                      <View marginT-20>
-                        <AppButton
-                            title={t("service.continue")}
-                            type="primary"
-                            onPress={handleShowModal}
-                        />
+                      <View
+                        center
+                        padding-16
+                        br20
+                        style={{
+                          backgroundColor:
+                            slot === 1 ? Colors.primary_blur : Colors.card_bg,
+                          borderWidth: slot === 1 ? 1 : 0,
+                          borderColor: Colors.primary,
+                        }}
+                      >
+                        <Text color={slot === 1 ? Colors.primary : Colors.text}>
+                          {t("service.1_seat")}
+                        </Text>
                       </View>
-                    </View>
-                )}
-          </View>
-        </ScrollView>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      flex-1
+                      marginL-6
+                      onPress={() => handleSeatSelect(2)}
+                      disabled={
+                        timeSlots.find((item: any) => item.id === selectedTime)
+                          ?.available_slots === 1
+                      }
+                    >
+                      <View
+                        center
+                        padding-16
+                        br20
+                        style={{
+                          backgroundColor:
+                            slot === 2 ? Colors.primary_blur : Colors.card_bg,
+                          borderWidth: slot === 2 ? 1 : 0,
+                          borderColor: Colors.primary,
+                        }}
+                      >
+                        <Text color={slot === 2 ? Colors.primary : Colors.text}>
+                          {t("service.2_seat")}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+
+              {slot !== 0 && (
+                <View ref={noteRef} marginT-20>
+                  <Text text60BO $textDefault marginB-12>
+                    {t("service.note")}
+                  </Text>
+                  <TextArea
+                    value={note}
+                    onChangeText={setNote}
+                    placeholder={t("service.enter_content")}
+                    multiline
+                    numberOfLines={5}
+                    maxLength={200}
+                    br20
+                    bg-$backgroundNeutralLight
+                    padding-16
+                    style={{
+                      height: 120,
+                      textAlignVertical: "top",
+                    }}
+                  />
+                  <View marginT-20>
+                    <AppButton
+                      title={t("service.continue")}
+                      type="primary"
+                      onPress={handleShowModal}
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </View>
 

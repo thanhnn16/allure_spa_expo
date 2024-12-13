@@ -141,7 +141,8 @@ const ProfilePage = () => {
               <Image
                 width={64}
                 height={64}
-                br100
+                center
+                style={{ borderRadius: 100 }}
                 errorSource={require("@/assets/images/logo/logo.png")}
                 source={
                   user?.avatar_url

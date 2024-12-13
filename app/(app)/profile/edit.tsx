@@ -192,6 +192,8 @@ const ProfileEdit = (props: ProfileEditProps) => {
             height={128}
             borderRadius={128}
             style={{ borderColor: "#D5D6CD", borderWidth: 1 }}
+            center
+            errorSource={require("@/assets/images/logo/logo.png")}
             source={
               avatar.uri
                 ? { uri: avatar.uri }
