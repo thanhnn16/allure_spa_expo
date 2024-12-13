@@ -340,6 +340,7 @@ render.experimental.xml
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+allure-spa-app-firebase-adminsdk-r64oy-cb7d4b3249.json
 
 # Android Profiling
 *.hprof
