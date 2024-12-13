@@ -72,6 +72,13 @@ const notificationSlice = createSlice({
             state.hasMore = false;
             state.currentPage = 1;
         },
+        setCurrentNotification: (state: NotificationState, action: any) => {
+            const notification = action.payload;
+            const index = state.notifications.findIndex(n => n.id === notification.id);
+            if (index !== -1) {
+                state.notifications[index] = notification;
+            }
+        },
     },
 });
 
@@ -84,6 +91,7 @@ export const {
     setError,
     setUnreadCount,
     clearNotifications,
+    setCurrentNotification,
 } = notificationSlice.actions;
 
 export default notificationSlice.reducer; 

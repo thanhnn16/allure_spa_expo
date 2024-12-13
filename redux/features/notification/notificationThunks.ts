@@ -7,7 +7,8 @@ import {
     setError,
     setUnreadCount,
     markAsRead as markAsReadAction,
-    markAllAsRead as markAllAsReadAction
+    markAllAsRead as markAllAsReadAction,
+    setCurrentNotification
 } from './notificationSlice';
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { RootState } from '@/redux/store';
@@ -117,6 +118,23 @@ export const markAllNotificationsAsRead = createAsyncThunk(
         } catch (error: any) {
             dispatch(setError(error.message));
             throw error;
+        }
+    }
+);
+
+export const fetchNotificationDetail = createAsyncThunk(
+    'notification/fetchDetail',
+    async (notificationId: number, { dispatch }: any) => {
+        try {
+            dispatch(setLoading(true));
+            const response = await AxiosInstance().get(`/notifications/${notificationId}`);
+            dispatch(setCurrentNotification(response.data.data));
+            return response.data.data;
+        } catch (error: any) {
+            dispatch(setError(error.message));
+            throw error;
+        } finally {
+            dispatch(setLoading(false));
         }
     }
 ); 

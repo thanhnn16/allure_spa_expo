@@ -1,7 +1,7 @@
-import React from "react";
-import { ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, ActivityIndicator } from "react-native";
 import { Colors, Text, View } from "react-native-ui-lib";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useRouter, useLocalSearchParams, Href } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
@@ -18,6 +18,7 @@ import { useLanguage } from "@/hooks/useLanguage";
 import AppButton from "@/components/buttons/AppButton";
 import { useTranslatedNotification } from "@/hooks/useTranslatedNotification";
 import { useFormattedTime } from "@/hooks/useFormattedTime";
+import { fetchNotificationDetail } from "@/redux/features/notification/notificationThunks";
 
 // Thêm type definition cho ngôn ngữ được hỗ trợ
 type SupportedLanguage = "en" | "vi" | "ja";
@@ -27,6 +28,9 @@ const NotificationDetail: React.FC = () => {
 
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const dispatch = useDispatch();
+
+  // Lấy notification từ redux store
   const notification = useSelector((state: RootState) =>
     state.notification.notifications.find(
       (n: Notification) => n.id === Number(id)
