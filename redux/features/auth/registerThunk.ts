@@ -3,6 +3,7 @@ import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import FirebaseService from "@/utils/services/firebase/firebaseService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AuthResponse } from "@/types/auth.type";
+import { setUser } from "../users/userSlice";
 
 interface RegisterRequest {
   fullName: string;
@@ -13,7 +14,7 @@ interface RegisterRequest {
 
 export const registerThunk = createAsyncThunk(
   'user/register',
-  async (body: RegisterRequest, { rejectWithValue }: { rejectWithValue: (value: any) => any }) => {
+  async (body: RegisterRequest, { dispatch, rejectWithValue }: { dispatch: any, rejectWithValue: (value: any) => any }) => {
     try {
       const res = await AxiosInstance().post<AuthResponse>('auth/register', {
         full_name: body.fullName,
@@ -31,11 +32,12 @@ export const registerThunk = createAsyncThunk(
 
         // Save token first
         await AsyncStorage.setItem('userToken', token);
+        dispatch(setUser(user));
 
         // Then handle FCM registration
         try {
           await FirebaseService.requestUserPermission();
-          await FirebaseService.registerTokenWithServer(user.id);
+          await FirebaseService.registerTokenWithServer();
         } catch (fcmError) {
           console.warn('FCM registration failed but registration successful:', fcmError);
           // Continue with registration even if FCM fails
