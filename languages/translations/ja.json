@@ -707,7 +707,7 @@
     "expires_on": "期限",
     "no_expiry": "時間なし",
     "unlimited_time": "時間なし",
-    "session_number": "回 #${number}",
+    "session_number": "回 %{number}",
     "result": "結果",
     "notes": "コメント",
     "next_session": "次のセッション",

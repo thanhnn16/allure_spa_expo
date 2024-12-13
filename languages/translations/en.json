@@ -714,7 +714,7 @@
     "expires_on": "Expires on",
     "no_expiry": "No time limit",
     "unlimited_time": "Unlimited time",
-    "session_number": "Session #${number}",
+    "session_number": "Session %{number}",
     "result": "Result",
     "notes": "Notes",
     "next_session": "Next session",
