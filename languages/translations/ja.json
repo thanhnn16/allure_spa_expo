@@ -890,5 +890,28 @@
     "exchange": "交換",
     "min": "最小",
     "max": "最大"
+  },
+  "phone_verify": {
+    "title": "電話番号の確認",
+    "confirm_phone": "電話番号を確認",
+    "confirm_phone_description": "確認コードを入力してください",
+    "phone_number": "電話番号",
+    "edit_phone": "電話番号を編集",
+    "send_verification": "確認コードを送信",
+    "verify_code": "確認コードを確認",
+    "verify_code_description": "確認コードを入力してください",
+    "verify_code_success": "電話番号が確認されました",
+    "verify_code_fail": "電話番号の確認に失敗しました",
+    "code_placeholder": "確認コードを入力",
+    "enter_code": "確認コードを入力",
+    "description": "確認コードを入力してください",
+    "success": "電話番号が確認されました",
+    "resend_code": "確認コードを再送信",
+    "resend_code_description": "確認コードを再送信",
+    "resend_code_success": "確認コードが再送信されました",
+    "resend_code_fail": "確認コードの再送信に失敗しました",
+    "resend_code_countdown": "確認コードを再送信 ({countdown}s)",
+    "verify": "確認",
+    "verify_success": "電話番号が確認されました"
   }
 }

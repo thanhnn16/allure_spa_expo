@@ -873,5 +873,28 @@
     "exchange": "Đổi",
     "min": "Tối thiểu",
     "max": "Tối đa"
+  },
+  "phone_verify": {
+    "title": "Xác thực số điện thoại",
+    "confirm_phone": "Xác thực số điện thoại",
+    "confirm_phone_description": "Vui lòng nhập mã xác thực được gửi đến số điện thoại của bạn",
+    "phone_number": "Số điện thoại",
+    "edit_phone": "Chỉnh sửa số điện thoại",
+    "send_verification": "Gửi mã xác thực",
+    "verify_code": "Xác thực mã",
+    "verify_code_description": "Vui lòng nhập mã xác thực được gửi đến số điện thoại của bạn",
+    "verify_code_success": "Số điện thoại đã được xác thực thành công",
+    "verify_code_fail": "Xác thực số điện thoại thất bại",
+    "code_placeholder": "Nhập mã xác thực",
+    "enter_code": "Nhập mã",
+    "description": "Vui lòng nhập mã xác thực được gửi đến số điện thoại của bạn",
+    "success": "Số điện thoại đã được xác thực thành công",
+    "resend_code": "Gửi lại mã",
+    "resend_code_description": "Gửi lại mã xác thực",
+    "resend_code_success": "Mã xác thực đã được gửi lại thành công",
+    "resend_code_fail": "Gửi lại mã xác thực thất bại",
+    "resend_code_countdown": "Gửi lại mã ({countdown}s)",
+    "verify": "Xác thực",
+    "verify_success": "Số điện thoại đã được xác thực thành công"
   }
 }

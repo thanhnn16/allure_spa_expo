@@ -23,6 +23,7 @@ import bannerReducer from '@/redux/features/banner/bannerSlice';
 import servicePackageReducer from './features/servicePackage/servicePackageSlice';
 import languageReducer from './features/language/languageSlice';
 import historyLoginReducer from './features/history-login/userHistoryLoginSlice';
+import phoneVerificationReducer from "./features/auth/phoneVerificationSlice";
 
 const persistConfig = {
     key: 'root',
@@ -53,6 +54,7 @@ const rootReducer: any = combineReducers({
     servicePackage: servicePackageReducer,
     language: languageReducer,
     historylogin: historyLoginReducer,
+    phoneVerification: phoneVerificationReducer,
 })
 
 export type RootState = ReturnType<typeof rootReducer>;

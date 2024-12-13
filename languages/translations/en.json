@@ -897,5 +897,28 @@
     "exchange": "Exchange",
     "min": "Min discount",
     "max": "Max"
+  },
+  "phone_verify": {
+    "title": "Phone Verification",
+    "confirm_phone": "Confirm phone number",
+    "confirm_phone_description": "Please enter the verification code sent to your phone number",
+    "phone_number": "Phone number",
+    "edit_phone": "Edit phone number",
+    "send_verification": "Send verification code",
+    "verify_code": "Verify code",
+    "verify_code_description": "Please enter the verification code sent to your phone number",
+    "verify_code_success": "Phone number verified successfully",
+    "verify_code_fail": "Phone number verification failed",
+    "code_placeholder": "Enter verification code",
+    "enter_code": "Enter code",
+    "description": "Please enter the verification code sent to your phone number",
+    "success": "Phone number verified successfully",
+    "resend_code": "Resend code",
+    "resend_code_description": "Resend verification code",
+    "resend_code_success": "Verification code resent successfully",
+    "resend_code_fail": "Failed to resend verification code",
+    "resend_code_countdown": "Resend code ({countdown}s)",
+    "verify": "Verify",
+    "verify_success": "Phone number verified successfully"
   }
 }
