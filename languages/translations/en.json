@@ -203,7 +203,8 @@
     "feel_about_product": "Feel about product",
     "type_content": "Type content",
     "images": "Images",
-    "send_review": "Send review"
+    "send_review": "Send review",
+    "no_review": "This product/service has no reviews"
   },
   "chat": {
     "customer_care": "Customer care",
@@ -255,12 +256,12 @@
     "notifications": "Notifications"
   },
   "voucher": {
-    "title": "クーポン",
-    "all": "すべて",
-    "active": "アクティブ",
-    "expired": "期限切れ",
-    "no_voucher": "クーポンがありません!",
-    "buy_product_for_voucher": "割引を受けるために商品を購入してください",
+    "title": "Voucher",
+    "all": "All",
+    "active": "Active",
+    "expired": "Expired",
+    "no_voucher": "No voucher!",
+    "buy_product_for_voucher": "Buy product to get discount",
     "discount": "Discount",
     "max": "max",
     "min_order": "Min order",

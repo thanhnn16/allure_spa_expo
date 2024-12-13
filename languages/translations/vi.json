@@ -298,7 +298,8 @@
     "feel_about_product": "Cảm nghĩ về sản phẩm",
     "type_content": "Nhập nội dung",
     "images": "Hình ảnh",
-    "send_review": "Gửi đánh giá"
+    "send_review": "Gửi đánh giá",
+    "no_review": "Sản phẩm/dịch vụ này không có đánh giá"
   },
   "chat": {
     "customer_care": "Chăm sóc khách hàng",
