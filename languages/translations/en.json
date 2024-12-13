@@ -247,7 +247,8 @@
     "verification_required": "Verification required",
     "verification_complete": "Verification complete",
     "phone_verified": "Phone verified",
-    "email_verified": "Email verified"
+    "email_verified": "Email verified",
+    "verified_field": "Verified"
   },
   "settings": {
     "title": "Settings",

@@ -198,7 +198,8 @@
     "verification_required": "Vui lòng xác thực số điện thoại và email",
     "verification_complete": "Xác thực hoàn tất",
     "phone_verified": "Số điện thoại đã xác thực",
-    "email_verified": "Email đã xác thực"
+    "email_verified": "Email đã xác thực",
+    "verified_field": "Đã xác thực"
   },
   "settings": {
     "title": "Cài đặt",
