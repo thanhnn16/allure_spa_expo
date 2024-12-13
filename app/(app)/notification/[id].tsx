@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import { Colors, Text, View } from "react-native-ui-lib";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams, Href } from "expo-router";
 import AppBar from "@/components/app-bar/AppBar";
 import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -32,6 +32,8 @@ const NotificationDetail: React.FC = () => {
       (n: Notification) => n.id === Number(id)
     )
   );
+
+  console.log(notification);
 
   const translatedNotification = useTranslatedNotification(notification);
 
@@ -62,17 +64,21 @@ const NotificationDetail: React.FC = () => {
 
     const type = notification.type as NotificationType;
     let actionText = "";
-    let onActionPress = () => {};
+    let onActionPress = () => { };
 
     switch (type) {
       case "new_appointment":
+      case "appointment_new":
       case "appointment_status":
         actionText = t("notification.view_appointment");
-        // onActionPress = () => router.push(`/appointments/${notification.data?.appointment_id}`);
+        onActionPress = () => router.push(`/(app)/appointment/${notification.data?.appointment_id}`);
         break;
 
       case "new_order":
+      case "order_new":
       case "order_status":
+      case "order_cancelled":
+      case "order_completed":
         actionText = t("notification.view_order");
         onActionPress = () =>
           router.push(`/(app)/order/${notification.data?.order_id}`);
@@ -92,7 +98,7 @@ const NotificationDetail: React.FC = () => {
 
       case "new_review":
         actionText = t("notification.view_review");
-        // onActionPress = () => router.push(`/reviews/${notification.data?.review_id}`);
+        onActionPress = () => router.push(`/rating/${notification.data?.review_id}`);
         break;
 
       default:
