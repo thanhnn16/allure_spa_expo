@@ -114,19 +114,14 @@ const ServiceDetailPage = () => {
 
   const handleShare = async () => {
     if (!service) return;
-    if (service.media && service.media.length > 0) {
-      const media = service.media[0];
-      if (media.full_url) {
-        try {
-          await Share.share({
-            message: media.full_url,
-          });
-        } catch (error) {
-          console.error("Error sharing:", error);
-        }
-      }
+    try {
+        await Share.share({
+            url: `allurespa://service/${service.id}`,
+        });
+    } catch (error) {
+        console.error("Error sharing the link:", error);
     }
-  };
+};
 
   const handleToggleFavorite = async () => {
     if (isGuest) {
