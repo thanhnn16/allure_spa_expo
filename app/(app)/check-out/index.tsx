@@ -419,7 +419,7 @@ export default function Checkout() {
         });
 
         if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
-          router.push({
+          router.replace({
             pathname: "/(app)/webview",
             params: {
               url: paymentResponse.data.checkoutUrl,
