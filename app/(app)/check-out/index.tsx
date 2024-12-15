@@ -391,8 +391,23 @@ export default function Checkout() {
         });
       } else if (selectedPayment.id === 3) {
         // Chuyển khoản
-        const returnUrl = Linking.createURL("/invoice/success");
-        const cancelUrl = Linking.createURL("/invoice/failed");
+        const returnUrl = Linking.createURL("/invoice/success", {
+          queryParams: {
+            order_id: orderId,
+            amount: serverCalculatedAmount.toString(),
+            payment_time: new Date().toISOString(),
+            payment_method: "bank_transfer"
+          }
+        });
+
+        const cancelUrl = Linking.createURL("/invoice/failed", {
+          queryParams: {
+            order_id: orderId,
+            type: "cancel",
+            payment_method: "bank_transfer",
+            reason: t("invoice.payment_cancel_message")
+          }
+        });
 
         const paymentResponse = await OrderService.processPayment(orderId, {
           returnUrl,
@@ -402,7 +417,15 @@ export default function Checkout() {
         if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
           await Linking.openURL(paymentResponse.data.checkoutUrl);
         } else {
-          throw new Error("Failed to generate payment link");
+          router.replace({
+            pathname: "/(app)/invoice/failed",
+            params: {
+              order_id: orderId,
+              type: "failed",
+              payment_method: "bank_transfer",
+              reason: t("invoice.payment_failed_message")
+            }
+          });
         }
       }
 
