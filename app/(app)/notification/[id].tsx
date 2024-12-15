@@ -25,12 +25,14 @@ type SupportedLanguage = "en" | "vi" | "ja";
 
 const NotificationDetail: React.FC = () => {
   const { t } = useLanguage();
-
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch();
 
-  // Lấy notification từ redux store
+  const currentLanguage = useSelector(
+    (state: RootState) => state.language.currentLanguage
+  );
+
   const notification = useSelector((state: RootState) =>
     state.notification.notifications.find(
       (n: Notification) => n.id === Number(id)
@@ -39,40 +41,32 @@ const NotificationDetail: React.FC = () => {
 
   const loading = useSelector((state: RootState) => state.notification.loading);
 
-  // Fetch notification detail khi component mount
+  // Di chuyển các hooks lên trên cùng và kiểm tra điều kiện
+  const translatedNotification = notification 
+    ? useTranslatedNotification(notification)
+    : { title: '', content: '' };
+
+  const formattedTime = notification 
+    ? useFormattedTime(notification.created_at_timestamp)
+    : '';
+
   useEffect(() => {
     dispatch(fetchNotificationDetail(Number(id)));
   }, [dispatch, id]);
 
-  if (loading) {
+  const getTranslatedType = (type: NotificationType, language: string) => {
+    if (!["en", "vi", "ja"].includes(language)) {
+      return type;
+    }
     return (
-      <View flex center>
-        <ActivityIndicator size="large" color={Colors.primary} />
-      </View>
+      notificationTypeTranslations[language as SupportedLanguage]?.[type] ||
+      type
     );
-  }
-
-  if (!notification) {
-    return (
-      <View flex center>
-        <Text h2_bold color={Colors.grey40}>
-          {t("notification.not_found")}
-        </Text>
-      </View>
-    );
-  }
-
-  const translatedNotification = useTranslatedNotification(notification);
-
-  const formattedTime = useFormattedTime(notification.created_at_timestamp);
-
-  const { iconName, iconColor, bgColor } =
-    notificationTypeMap[notification.type as NotificationType] ||
-    notificationTypeMap.system;
+  };
 
   const handleUrlPress = () => {
-    if (notification.url) {
-      router.push(notification.url);
+    if (notification?.url) {
+      router.push(notification.url as Href<string>);
     }
   };
 
@@ -139,21 +133,27 @@ const NotificationDetail: React.FC = () => {
     );
   };
 
-  const getTranslatedType = (type: NotificationType) => {
-    const language = useSelector(
-      (state: RootState) => state.language.currentLanguage
-    );
-
-    // Kiểm tra xem ngôn ngữ có được hỗ trợ không
-    if (!["en", "vi", "ja"].includes(language)) {
-      return type; // Trả về type gốc nếu ngôn ngữ không được hỗ trợ
-    }
-
+  if (loading) {
     return (
-      notificationTypeTranslations[language as SupportedLanguage]?.[type] ||
-      type
+      <View flex center>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
     );
-  };
+  }
+
+  if (!notification) {
+    return (
+      <View flex center>
+        <Text h2_bold color={Colors.grey40}>
+          {t("notification.not_found")}
+        </Text>
+      </View>
+    );
+  }
+
+  const { iconName, iconColor, bgColor } =
+    notificationTypeMap[notification.type as NotificationType] ||
+    notificationTypeMap.system;
 
   return (
     <View flex bg-white>
@@ -257,7 +257,7 @@ const NotificationDetail: React.FC = () => {
                   {t("notification.type")}
                 </Text>
                 <Text h3 color={Colors.primary}>
-                  {getTranslatedType(notification.type)}
+                  {getTranslatedType(notification.type, currentLanguage)}
                 </Text>
               </View>
 
