@@ -3,10 +3,13 @@ import axios from 'axios';
 import * as Crypto from 'expo-crypto';
 import * as Linking from 'expo-linking';
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export interface AccessTokenResponse {
   access_token: string;
   refresh_token: string;
   expires_in: number;
+  refresh_token_expires_in: number;
 }
 
 export interface ValidateRefreshTokenResponse {
@@ -61,15 +64,23 @@ export class ZaloAuthError extends Error {
 // Thêm hàm mới để xử lý login
 export const handleZaloLogin = async (
   codeChallenge: string,
-  state: string
+  state: string,
+  codeVerifier: string
 ): Promise<void> => {
-  const zaloUrl = getZaloOauthUrl(codeChallenge, state);
-
   try {
-    // Thử mở app Zalo nếu được cài đặt
-    const canOpenZalo = await Linking.canOpenURL('zalo://');
+    console.log('=== DEBUG ZALO LOGIN ===');
+    console.log('Input params:', {
+      codeChallenge,
+      state,
+      codeVerifier,
+      clientId,
+      redirectUri: getRedirectUri()
+    });
 
-    if (canOpenZalo) {
+    const canOpenZalo = await Linking.canOpenURL('zalo://');
+    console.log('Can open Zalo app:', canOpenZalo);
+    
+    if (canOpenZalo && Platform.OS !== 'web') {
       const zaloDeepLink = Platform.select({
         ios: `zalo://oauth?${new URLSearchParams({
           app_id: clientId!,
@@ -84,19 +95,25 @@ export const handleZaloLogin = async (
           state
         }).toString()}`
       });
-
+      
+      console.log('Opening Zalo deeplink:', zaloDeepLink);
       await Linking.openURL(zaloDeepLink!);
+      
     } else {
-      // Fallback to browser login
+      const webRedirectUrl = 'https://allurespa.io.vn/zalo-login-progress';
+      const webZaloUrl = `${ZALO_CONSTANTS.OAUTH_URL}/permission?app_id=${clientId}&redirect_uri=${encodeURIComponent(webRedirectUrl)}&code_challenge=${codeChallenge}&state=${state}&code_challenge_method=S256&code_verifier=${codeVerifier}`;
+
+      console.log('Redirecting to web URL:', webZaloUrl);
+      
       if (Platform.OS === 'web') {
-        window.location.href = zaloUrl;
-        return;
+        window.location.href = webZaloUrl;
+      } else {
+        throw { type: 'webview_required', url: webZaloUrl };
       }
-      throw { type: 'webview_required', url: zaloUrl };
     }
   } catch (error) {
-    console.log('error', error);
-    throw { type: 'webview_required', url: zaloUrl };
+    console.error('Zalo login error:', error);
+    throw error;
   }
 };
 
