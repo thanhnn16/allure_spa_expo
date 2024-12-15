@@ -96,7 +96,7 @@ export default function DetailsScreen() {
   }, [id]);
 
   useEffect(() => {
-    if (product?.price) {
+    if (product && product.price) {
       setTotalPrice(Number(product.price) * quantity);
     }
   }, [product, quantity]);
@@ -212,9 +212,9 @@ export default function DetailsScreen() {
   };
 
   const handlePurchase = () => {
-    if (!product) return;
+    if (!product || !product.price) return;
 
-    const price = product.price ? parseFloat(product.price.toString()) : 0;
+    const price = parseFloat(product.price.toString());
 
     const orderItem: CheckoutOrderItem = {
       item_id: product.id,
@@ -389,15 +389,16 @@ export default function DetailsScreen() {
             <View row centerV marginB-10>
               <Image source={TagIcon} size={24} />
               <View row gap-4 centerV>
-              <Text h2_medium secondary marginL-5>
-                  {formatCurrency({ price: product.price })}
-                </Text>
-                {quantity > 1 && (
+                {product?.price && (
+                  <Text h2_medium secondary marginL-5>
+                    {formatCurrency({ price: product.price })}
+                  </Text>
+                )}
+                {quantity > 1 && product?.price && (
                   <Text h3 gray marginL-5>
                     {formatCurrency({ price: Number(totalPrice) })}
                   </Text>
                 )}
-                
               </View>
 
               <View flex centerV row gap-15 right>

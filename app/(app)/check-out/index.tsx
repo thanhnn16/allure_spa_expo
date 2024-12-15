@@ -391,9 +391,6 @@ export default function Checkout() {
           },
         });
       } else if (selectedPayment.id === 3) {
-        // Thêm log để debug
-        console.log("Bắt đầu xử lý thanh toán ngân hàng");
-        
         const returnUrl = Linking.createURL("/invoice/success", {
           queryParams: {
             order_id: orderId,
@@ -412,21 +409,13 @@ export default function Checkout() {
           }
         });
 
-        console.log("Return URL:", returnUrl);
-        console.log("Cancel URL:", cancelUrl);
-
         const paymentResponse = await OrderService.processPayment(orderId, {
           returnUrl,
           cancelUrl,
         });
 
-        console.log("Payment Response:", paymentResponse);
-
         if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
-          console.log("Chuyển hướng đến WebView với URL:", paymentResponse.data.checkoutUrl);
-          
-          // Thử sử dụng replace thay vì push
-          router.replace({
+          router.push({
             pathname: "/(app)/webview",
             params: {
               url: paymentResponse.data.checkoutUrl,
@@ -434,8 +423,7 @@ export default function Checkout() {
             }
           });
         } else {
-          console.log("Thanh toán thất bại:", paymentResponse);
-          router.push({
+          router.replace({
             pathname: "/(app)/invoice/failed",
             params: {
               order_id: orderId,
@@ -666,7 +654,7 @@ export default function Checkout() {
             </View>
           </KeyboardAwareScrollView>
           {renderBottomSheet()}
-          <AppDialog {...dialogConfig} onClose={hideDialog} />
+          <AppDialog {...dialogConfig} onClose={hideDialog} onConfirm={hideDialog} />
         </View>
       </Animated.View>
     </GestureHandlerRootView>
