@@ -16,15 +16,15 @@ const OrderSkeleton = () => {
       <AppBar back title={t("orders.detail")} />
       <View padding-16>
         <SkeletonView height={24} width={width - 32} />
-        <SkeletonView height={16} width={width - 32 * 0.4} marginT-8 />
+        <SkeletonView height={16} width={width - 32} marginT-8 />
 
         <View marginT-24>
           {[1, 2, 3].map((i) => (
             <View key={i} style={styles.itemSkeleton} row>
-              <SkeletonView width={60} height={60} borderRadius={8} />
+              <SkeletonView width={width * 0.2} height={width * 0.2} borderRadius={8} />
               <View flex marginL-12>
-                <SkeletonView height={16} width={width - 32 * 0.8} />
-                <SkeletonView height={14} width={width - 32 * 0.4} marginT-8 />
+                <SkeletonView height={16} width={width * 0.6} />
+                <SkeletonView height={14} width={width * 0.6} marginT-8 />
               </View>
             </View>
           ))}
