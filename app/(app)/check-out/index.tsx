@@ -40,6 +40,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setSelectedAddress as setReduxSelectedAddress } from "@/redux/features/address/addressSlice";
 import * as Linking from "expo-linking";
 import AppButton from "@/components/buttons/AppButton";
+import { WebViewType } from "@/utils/constants/webview";
 
 export interface PaymentMethod {
   id: number;
@@ -390,7 +391,7 @@ export default function Checkout() {
           },
         });
       } else if (selectedPayment.id === 3) {
-        // Chuyển khoản
+        // Thanh toán chuyển khoản
         const returnUrl = Linking.createURL("/invoice/success", {
           queryParams: {
             order_id: orderId,
@@ -415,7 +416,14 @@ export default function Checkout() {
         });
 
         if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
-          await Linking.openURL(paymentResponse.data.checkoutUrl);
+          // Thay vì mở URL trong trình duyệt, chuyển hướng đến WebView
+          router.push({
+            pathname: "/(app)/webview",
+            params: {
+              url: paymentResponse.data.checkoutUrl,
+              type: WebViewType.PAYMENT
+            }
+          });
         } else {
           router.replace({
             pathname: "/(app)/invoice/failed",
