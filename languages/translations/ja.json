@@ -550,7 +550,8 @@
     "temp_address_invalid": "すべての住所フィールドを入力してください",
     "street_address": "住所",
     "order_summary": "注文サマリー",
-    "missing_address_info": "住所情報が不足しています"
+    "missing_address_info": "住所情報が不足しています",
+    "processing_payment": "支払い処理中..."
   },
   "transaction": {
     "payment_success": "支払い成功",

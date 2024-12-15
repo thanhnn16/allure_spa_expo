@@ -524,7 +524,8 @@
     "temp_address_invalid": "Vui lòng điền đầy đủ các trường địa chỉ",
     "street_address": "Địa chỉ",
     "order_summary": "Tổng hợp đơn hàng",
-    "missing_address_info": "Thiếu thông tin của"
+    "missing_address_info": "Thiếu thông tin của",
+    "processing_payment": "Đang xử lý thanh toán..."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",

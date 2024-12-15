@@ -550,7 +550,8 @@
     "temp_address_invalid": "Please fill in all address fields",
     "street_address": "Street Address",
     "order_summary": "Order Summary",
-    "missing_address_info": "Missing address information"
+    "missing_address_info": "Missing address information",
+    "processing_payment": "Processing payment..."
   },
   "transaction": {
     "payment_success": "Payment Success",

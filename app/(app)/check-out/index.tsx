@@ -41,6 +41,7 @@ import { setSelectedAddress as setReduxSelectedAddress } from "@/redux/features/
 import * as Linking from "expo-linking";
 import AppButton from "@/components/buttons/AppButton";
 import { WebViewType } from "@/utils/constants/webview";
+import LoadingOverlay from "@/components/loading/LoadingOverlay";
 
 export interface PaymentMethod {
   id: number;
@@ -306,6 +307,7 @@ export default function Checkout() {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
+      setIsProcessingPayment(true);
 
       // Validate địa chỉ
       if (addressType === "saved" && !selectedAddress) {
@@ -391,6 +393,8 @@ export default function Checkout() {
           },
         });
       } else if (selectedPayment.id === 3) {
+        setIsProcessingPayment(true);
+        
         const returnUrl = Linking.createURL("/invoice/success", {
           queryParams: {
             order_id: orderId,
@@ -449,6 +453,7 @@ export default function Checkout() {
       );
     } finally {
       setIsLoading(false);
+      setIsProcessingPayment(false);
     }
   };
 
@@ -639,6 +644,8 @@ export default function Checkout() {
     </BottomSheet>
   );
 
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
@@ -655,6 +662,10 @@ export default function Checkout() {
           </KeyboardAwareScrollView>
           {renderBottomSheet()}
           <AppDialog {...dialogConfig} onClose={hideDialog} onConfirm={hideDialog} />
+          <LoadingOverlay 
+            visible={isProcessingPayment} 
+            message={t("checkout.processing_payment")}
+          />
         </View>
       </Animated.View>
     </GestureHandlerRootView>
