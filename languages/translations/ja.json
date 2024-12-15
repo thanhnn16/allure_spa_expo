@@ -157,6 +157,25 @@
       "no_history": "ログイン履歴がありません",
       "current_device": "現在のデバイス",
       "other_device": "他のデバイス"
+    },
+    "forgot_password": {
+      "title": "パスワードを忘れましたか？",
+      "empty_phone_number": "電話番号が入力されていません",
+      "invalid_phone_number": "無効な電話番号",
+      "empty_password": "パスワードが入力されていません",
+      "invalid_password_special_char": "パスワードに特殊文字を含めることはできません",
+      "invalid_password_length": "パスワードは8文字以上でないといけません",
+      "description": "パスワードをリセットするために、メールを確認してください",
+      "email": "メール",
+      "email_invalid": "無効なメール形式",
+      "email_hint": "メールを入力",
+      "email_required": "メールは必須です",
+      "email_placeholder": "メールを入力",
+      "send": "送信",
+      "success_title": "リクエストが送信されました",
+      "success_description": "パスワードをリセットするために、メールを確認してください",
+      "error_title": "エラー",
+      "error_description": "リクエストの送信中にエラーが発生しました。後でもう一度お試しください"
     }
   },
   "terms": "利用規約",

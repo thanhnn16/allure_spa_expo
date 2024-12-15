@@ -154,6 +154,25 @@
       "no_history": "Không có lịch sử đăng nhập",
       "current_device": "Thiết bị hiện tại",
       "other_device": "Các thiết bị khác"
+    },
+    "forgot_password": {
+      "title": "Quên mật khẩu",
+      "empty_phone_number": "Bạn chưa nhập số điện thoại",
+      "invalid_phone_number": "Số điện thoại không hợp lệ",
+      "empty_password": "Bạn chưa nhập mật khẩu",
+      "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
+      "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự",
+      "description": "Nhập email của bạn để nhận được liên kết để đặt lại mật khẩu",
+      "email": "Email",
+      "email_invalid": "Email không hợp lệ",
+      "email_hint": "Nhập email của bạn",
+      "email_required": "Email là bắt buộc",
+      "email_placeholder": "Nhập email của bạn",
+      "send": "Gửi",
+      "success_title": "Yêu cầu được gửi thành công",
+      "success_description": "Vui lòng kiểm tra email của bạn để đặt lại mật khẩu",
+      "error_title": "Lỗi",
+      "error_description": "Có lỗi xảy ra khi gửi yêu cầu, vui lòng thử lại sau"
     }
   },
   "pageTitle": {

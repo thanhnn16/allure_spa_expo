@@ -157,6 +157,25 @@
       "no_history": "No login history",
       "current_device": "Current Device",
       "other_device": "Other Devices"
+    },
+    "forgot_password": {
+      "title": "Forgot Password",
+      "empty_phone_number": "You have not entered a phone number",
+      "invalid_phone_number": "Invalid phone number",
+      "empty_password": "You have not entered a password",
+      "invalid_password_special_char": "Password must not contain special characters",
+      "invalid_password_length": "Password must be at least 8 characters long",
+      "description": "Enter your email to receive a link to reset your password",
+      "email": "Email",
+      "email_invalid": "Invalid email format",
+      "email_hint": "Enter your email",
+      "email_required": "Email is required",
+      "email_placeholder": "Enter your email",
+      "send": "Send",
+      "success_title": "Request sent successfully",
+      "success_description": "Please check your email to reset your password",
+      "error_title": "Error",
+      "error_description": "An error occurred while sending the request, please try again later"
     }
   },
   "terms": "Terms of Service",
