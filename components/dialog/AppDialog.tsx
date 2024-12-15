@@ -36,6 +36,7 @@ const AppDialog = ({
   closeButtonLabel,
   confirmButtonLabel,
   loading = false,
+  children,
 }: AppDialogProps) => {
   const { t } = useLanguage();
 
@@ -81,10 +82,13 @@ const AppDialog = ({
           <Text h2_bold center marginB-10 color={Colors.text}>
             {title}
           </Text>
-          <View>
-            <Text center>{description}</Text>
-          </View>
+          {description && (
+            <View>
+              <Text center>{description}</Text>
+            </View>
+          )}
         </View>
+        {children && <View marginB-20>{children}</View>}
         <View paddingH-20>
           {confirmButton && (
             <AppButton

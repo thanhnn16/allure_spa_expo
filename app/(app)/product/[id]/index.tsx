@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Dimensions, Pressable, ScrollView } from "react-native";
+import { Alert, Dimensions, Pressable, ScrollView, TextInput } from "react-native";
 import {
   Text,
   AnimatedImage,
@@ -390,7 +390,12 @@ export default function DetailsScreen() {
               <Image source={TagIcon} size={24} />
               <View row gap-4 centerV>
                 {product?.price && (
-                  <Text h2_medium secondary marginL-5>
+                  <Text
+                    h2_medium
+                    secondary
+                    marginL-5
+                    style={product.quantity <= 0 ? { textDecorationLine: 'line-through' } : {}}
+                  >
                     {formatCurrency({ price: product.price })}
                   </Text>
                 )}
@@ -419,8 +424,13 @@ export default function DetailsScreen() {
                 <Text h3_medium>{product?.rating_summary.average_rating}</Text>
               </View>
               <View flex row right>
-                <Text h3_medium>
-                  {product?.quantity} {t("productDetail.available")}
+                <Text
+                  h3_medium
+                  style={product?.quantity <= 0 ? { color: Colors.error } : {}}
+                >
+                  {product?.quantity <= 0
+                    ? t("productDetail.out_of_stock")
+                    : `${product?.quantity} ${t("productDetail.available")}`}
                 </Text>
               </View>
             </View>
@@ -483,6 +493,7 @@ export default function DetailsScreen() {
           onAddToCart={() => {
             handlePressAnimOpacity();
           }}
+          disabled={product?.quantity <= 0}
         />
 
         <AppDialog

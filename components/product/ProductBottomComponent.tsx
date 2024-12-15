@@ -24,19 +24,21 @@ import { clearOrders, setTempOrder } from "@/redux/features/order/orderSlice";
 const windowWidth = Dimensions.get("window").width;
 
 interface ProductBottomComponentProps {
-  isLoading: boolean;
-  product: Product | null;
-  onPurchase?: () => void;
+  isLoading?: boolean;
+  product?: Product;
+  onPurchase: () => void;
+  onAddToCart: () => void;
   quantity: number;
-  onAddToCart?: () => void;
+  disabled?: boolean;
 }
 
 const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
-  isLoading = false,
+  isLoading,
   product,
   onPurchase,
-  quantity,
   onAddToCart,
+  quantity,
+  disabled
 }) => {
   const { t } = useLanguage();
 
@@ -145,6 +147,7 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           br40
           onPress={handlePurchase}
           backgroundColor={Colors.primary}
+          disabled={disabled}
         />
       </View>
       <Incubator.Toast

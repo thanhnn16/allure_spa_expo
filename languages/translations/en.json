@@ -212,7 +212,11 @@
       "product_notes": "Product notes"
     },
     "no_info": "No information",
-    "title": "Product details"
+    "title": "Product details",
+    "out_of_stock": "Out of stock",
+    "enter_quantity": "Enter quantity",
+    "invalid_quantity": "Invalid quantity",
+    "exceed_stock": "Exceed stock"
   },
   "rating": {
     "add_review": "Add review",

@@ -196,8 +196,8 @@ export const refreshAccessToken = async (refreshToken: string): Promise<AccessTo
       },
     });
 
-    const { access_token, refresh_token, expires_in } = response.data;
-    return { access_token, refresh_token, expires_in };
+    const { access_token, refresh_token, expires_in, refresh_token_expires_in } = response.data;
+    return { access_token, refresh_token, expires_in, refresh_token_expires_in };
   } catch (error) {
     console.error('Error refreshing AccessToken:', error);
     return undefined;

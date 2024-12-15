@@ -304,7 +304,11 @@
       "product_notes": "Lưu ý sản phẩm"
     },
     "no_info": "Không có thông tin",
-    "title": "Chi tiết sản phẩm"
+    "title": "Chi tiết sản phẩm",
+    "out_of_stock": "Hết hàng",
+    "enter_quantity": "Nhập số lượng",
+    "invalid_quantity": "Số lượng không hợp lệ",
+    "exceed_stock": "Số lượng vượt quá số lượng có sẵn"
   },
   "serviceDetail": {
     "book_now": "Đặt ngay",

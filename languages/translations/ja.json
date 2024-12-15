@@ -212,7 +212,11 @@
       "product_notes": "商品の注意事項"
     },
     "no_info": "情報がありません",
-    "title": "商品詳細"
+    "title": "商品詳細",
+    "out_of_stock": "在庫切れ",
+    "enter_quantity": "数量を入力",
+    "invalid_quantity": "無効な数量",
+    "exceed_stock": "在庫を超えています"
   },
   "rating": {
     "add_review": "レビューを追加",
