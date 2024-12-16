@@ -126,7 +126,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
             <Text
               style={{
                 color: "#FFFFFF",
-                fontSize: 20,
                 fontFamily: "OpenSans-Regular",
                 fontWeight: "bold",
               }}
