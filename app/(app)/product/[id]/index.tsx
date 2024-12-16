@@ -179,7 +179,7 @@ export default function DetailsScreen() {
     if (!product) return;
     try {
       await Share.share({
-        message: `allurespa://product/${product.id}`,
+        url: `allurespa://product/${product.id}`,
       });
     } catch (error) {
       console.error("Error sharing the link:", error);
