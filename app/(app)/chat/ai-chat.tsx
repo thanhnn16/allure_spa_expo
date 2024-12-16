@@ -20,6 +20,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useAuth } from "@/hooks/useAuth";
 import { convertImageToBase64 } from "@/utils/helpers/imageHelper";
 import { useLanguage } from "@/hooks/useLanguage";
+import { ERROR_KEYS } from "@/constants/errorMessages";
 
 // Add new constant for guiding messages
 const GUIDING_MESSAGES = [
@@ -69,7 +70,7 @@ const AIChatScreen = () => {
     (state: RootState) => state.ai
   );
   const [message, setMessage] = useState("");
-  const [messageStatus, setMessageStatus] = useState("Đã gửi");
+  const [messageStatus, setMessageStatus] = useState(t("chat.sent"));
   const scrollRef = useRef<FlatList>(null);
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
@@ -92,6 +93,7 @@ const AIChatScreen = () => {
       .unwrap()
       .catch((error: any) => {
         console.error("Error fetching configs:", error);
+        setMessageStatus(t(ERROR_KEYS.FETCH_CONFIG_ERROR));
       });
   }, [dispatch]);
 
@@ -108,14 +110,15 @@ const AIChatScreen = () => {
         );
 
         if (!activeConfig) {
-          throw new Error("Chưa có cấu hình AI hoạt động");
+          throw new Error(ERROR_KEYS.NO_ACTIVE_CONFIG);
         }
 
         const userContext = {
-          user_id: user?.id || "guest",
-          name: user?.full_name || "Khách",
+          user_id: user?.id || t("common.guest"),
+          full_name: user?.full_name || t("common.guest"),
+          phone_number: user?.phone_number || "",
+          email: user?.email || "",
           timestamp: new Date().toISOString(),
-          is_guest: !user?.id,
         };
 
         await dispatch(
@@ -126,9 +129,9 @@ const AIChatScreen = () => {
         ).unwrap();
 
         setHasInitialized(true);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to send user context:", error);
-        setMessageStatus("Lỗi: Không thể khởi tạo chat");
+        setMessageStatus(t(ERROR_KEYS.INIT_CHAT_ERROR));
       }
     };
 
@@ -142,7 +145,7 @@ const AIChatScreen = () => {
     dispatch(clearMessages());
     setMessage("");
     setSelectedImages([]);
-    setMessageStatus("Đã gửi");
+    setMessageStatus(t("chat.sent"));
     setHasInitialized(false);
   };
 
@@ -152,7 +155,7 @@ const AIChatScreen = () => {
     const currentMessage = message;
     setMessage("");
     setSelectedImages([]);
-    setMessageStatus("Đã gửi");
+    setMessageStatus(t("chat.sent"));
 
     try {
       const activeConfig = configs.find(
@@ -160,10 +163,10 @@ const AIChatScreen = () => {
       );
 
       if (!activeConfig) {
-        throw new Error("Chưa có cấu hình AI hoạt động");
+        throw new Error(ERROR_KEYS.NO_ACTIVE_CONFIG);
       }
 
-      dispatch(addTemporaryMessage("AI đang suy nghĩ..."));
+      dispatch(addTemporaryMessage(t("chat.thinking")));
 
       if (selectedImages.length > 0) {
         const imageData = [];
@@ -192,7 +195,9 @@ const AIChatScreen = () => {
       dispatch(removeTemporaryMessage());
     } catch (err: any) {
       console.error("Failed to send message:", err);
-      setMessageStatus(`Lỗi: ${err.message}`);
+      const isErrorKey = Object.values(ERROR_KEYS).includes(err.message);
+      const errorMessage = isErrorKey ? t(err.message) : err.message;
+      setMessageStatus(`${t("common.error")}: ${errorMessage}`);
       dispatch(removeTemporaryMessage());
     }
   };
@@ -208,10 +213,10 @@ const AIChatScreen = () => {
             text: guidingMessage,
           })
         ).unwrap();
-        setMessageStatus("Đã gửi");
+        setMessageStatus(t("chat.sent"));
       } catch (err: any) {
         console.error("Failed to send guiding message:", err);
-        setMessageStatus(`Lỗi: ${err.message}`);
+        setMessageStatus(`${t("common.error")}: ${err.message}`);
       }
     }
   };
@@ -332,7 +337,7 @@ const AIChatScreen = () => {
                 <MessageBubble
                   message={{
                     id: 'thinking',
-                    message: 'AI đang suy nghĩ...',
+                    message: t("chat.thinking"),
                     sender_id: 'ai',
                     created_at: new Date().toISOString(),
                     attachments: [],
@@ -374,9 +379,11 @@ const AIChatScreen = () => {
 
   useEffect(() => {
     if (error) {
-      setMessageStatus("Lỗi: " + error);
+      const isErrorKey = Object.values(ERROR_KEYS).includes(error);
+      const errorMessage = isErrorKey ? t(error) : error;
+      setMessageStatus(`${t("common.error")}: ${errorMessage}`);
     }
-  }, [error]);
+  }, [error, t]);
 
   return (
     <View flex bg-white>

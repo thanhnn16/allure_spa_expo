@@ -9,6 +9,15 @@
   "back": "Back",
   "sendOTP": "Send OTP",
   "close": "Close",
+  "error": {
+    "config_not_found": "Config not found",
+    "missing_api_key": "Missing API key",
+    "undefined_error": "An undefined error occurred",
+    "no_active_config": "No active config",
+    "init_chat_error": "Error initializing chat",
+    "send_message_error": "Error sending message",
+    "fetch_config_error": "Error fetching config"
+  },
   "common": {
     "guest": "Guest",
     "cancel": "Cancel",
@@ -237,7 +246,9 @@
     "chat_with": "Chat with",
     "no_message": "No message",
     "type_message": "Type message",
-    "start_conversation": "What would you like to discuss?"
+    "start_conversation": "What would you like to discuss?",
+    "sent": "Sent",
+    "thinking": "🌸🌸 Hana is thinking..."
   },
   "profile": {
     "title": "Profile",

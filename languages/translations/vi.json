@@ -8,6 +8,15 @@
   "back": "Quay lại",
   "sendOTP": "Gửi OTP",
   "close": "Đóng",
+  "error": {
+    "config_not_found": "Không tìm thấy cấu hình",
+    "missing_api_key": "Thiếu API key",
+    "undefined_error": "Lỗi không xác định",
+    "no_active_config": "Không có cấu hình hoạt động",
+    "init_chat_error": "Lỗi khởi tạo chat",
+    "send_message_error": "Lỗi gửi tin nhắn",
+    "fetch_config_error": "Lỗi lấy cấu hình"
+  },
   "common": {
     "guest": "Khách",
     "cancel": "Hủy",
@@ -333,7 +342,9 @@
     "chat_with": "Chat với",
     "no_message": "Không có tin nhắn",
     "type_message": "Nhập tin nhắn",
-    "start_conversation": "Bạn muốn tư vấn về điều gì?"
+    "start_conversation": "Bạn muốn tư vấn về điều gì?",
+    "sent": "Đã gửi",
+    "thinking": "🌸🌸 Hana đang suy nghĩ..."
   },
   "reward": {
     "title": "Phần thưởng",

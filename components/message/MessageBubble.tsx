@@ -1,6 +1,7 @@
 import { StyleSheet, Image, ActivityIndicator, TextStyle } from "react-native";
 import { View, Text, Colors } from "react-native-ui-lib";
 import Markdown from "react-native-markdown-display";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface MessageProps {
   id: string;
@@ -18,6 +19,7 @@ interface MessageBubbleProps {
 }
 
 const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
+  const { t } = useLanguage();
   const formatTime = (date: string) => {
     return new Date(date).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
@@ -99,7 +101,7 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
                         styles.thinkingBubble
                     ]}
                 >
-                    <Text>AI đang suy nghĩ...</Text>
+                    <Text>{t("chat.thinking")}</Text>
                     <ActivityIndicator
                         size="small"
                         color={Colors.primary}
