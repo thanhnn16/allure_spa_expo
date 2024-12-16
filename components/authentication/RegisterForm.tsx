@@ -175,7 +175,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
             <Text
               style={{
                 color: "#FFFFFF",
-                fontSize: 20,
                 fontFamily: "OpenSans-Regular",
                 fontWeight: "bold",
               }}
