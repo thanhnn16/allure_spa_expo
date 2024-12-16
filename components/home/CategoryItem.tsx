@@ -3,7 +3,6 @@ import { FlatList } from "react-native";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import { Href, router } from "expo-router";
 import { translate } from "@/languages/i18n";
-import { route } from "../../../../../PhpstormProjects/allure_spa-server/vendor/tightenco/ziggy/src/js/index";
 
 interface CategoryItem {
   id: string;
@@ -63,10 +62,29 @@ const RenderCategory: React.FC = () => {
         pathname: "/webview",
         params: { url: item.url },
       });
-    } 
+    }
     // else if (item.route) {
     //   router.push(item.route as Href<string>);
     // }
+    switch (item.id.toString()) {
+      case '2':
+        router.push('/(app)/voucher')
+        break;
+      case '3':
+        router.push({
+          pathname: "/(app)/see-more",
+          params: { type: 'services' },
+        });
+        break;
+      case '3':
+        router.push({
+          pathname: "/(app)/see-more",
+          params: { type: 'products' },
+        });
+        break;
+      default:
+        break;
+    }
   };
 
   const renderCateItem = ({ item }: { item: CategoryItem }) => {

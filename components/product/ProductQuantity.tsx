@@ -9,7 +9,7 @@ import {
   SkeletonView,
   Colors,
 } from "react-native-ui-lib";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AppDialog from "../dialog/AppDialog";
 
 const windowWidth = Dimensions.get("window").width;
@@ -34,18 +34,20 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
   const { t } = useLanguage();
   const { showDialog, dialogConfig, hideDialog } = useDialog();
   const [showQuantityDialog, setShowQuantityDialog] = useState(false);
-  const [tempQuantity, setTempQuantity] = useState('');
+  const [tempQuantity, setTempQuantity] = useState<string>('');
 
   const handleQuantityPress = () => {
     if (onQuantityPress) {
       onQuantityPress();
     } else {
       setShowQuantityDialog(true);
+      setTempQuantity(quantity.toString());
     }
   };
 
   const handleQuantityConfirm = () => {
-    const newQuantity = parseInt(tempQuantity);
+    const newQuantity = parseInt(tempQuantity, 10);
+
     if (isNaN(newQuantity) || newQuantity < 1) {
       showDialog(
         t("common.error"),
@@ -55,18 +57,18 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
       return;
     }
 
-    if (newQuantity > maxQuantity) {
-      showDialog(
-        t("common.error"),
-        t("productDetail.exceed_stock"),
-        "error"
-      );
-      return;
-    }
+    // Nếu số lượng vượt quá maxQuantity, đặt là maxQuantity
+    const finalQuantity = Math.min(newQuantity, maxQuantity || 0);
 
-    setQuantity(newQuantity);
+    setQuantity(finalQuantity);
     setShowQuantityDialog(false);
     setTempQuantity('');
+  };
+
+  const handleTextChange = (text: string) => {
+    // Chỉ cho phép nhập số
+    const numericText = text.replace(/[^0-9]/g, '');
+    setTempQuantity(numericText);
   };
 
   if (isLoading) {
@@ -105,8 +107,9 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
           }}
           disabled={quantity <= 1}
           onPress={() => {
-            setQuantity(Math.max(1, quantity - 1));
-            setTotalPrice && setTotalPrice(Math.max(1, quantity - 1) * 1000000);
+            const newQuantity = Math.max(1, quantity - 1);
+            setQuantity(newQuantity);
+            setTotalPrice && setTotalPrice(newQuantity * 1000000);
           }}
         >
           <Text h2>-</Text>
@@ -126,8 +129,9 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
           }}
           disabled={maxQuantity <= 0 || quantity >= maxQuantity}
           onPress={() => {
-            setQuantity(Math.min(maxQuantity, quantity + 1))
-            setTotalPrice && setTotalPrice(Math.min(maxQuantity, quantity + 1) * 1000000);
+            const newQuantity = Math.min(maxQuantity, quantity + 1);
+            setQuantity(newQuantity);
+            setTotalPrice && setTotalPrice(newQuantity * 1000000);
           }}
         >
           <Text h2>+</Text>
@@ -156,7 +160,7 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
             }}
             keyboardType="numeric"
             value={tempQuantity}
-            onChangeText={setTempQuantity}
+            onChangeText={handleTextChange}
             placeholder={t("productDetail.enter_quantity")}
             maxLength={3}
             autoFocus={true}

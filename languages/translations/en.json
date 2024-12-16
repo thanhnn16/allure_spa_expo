@@ -236,7 +236,8 @@
     "type_content": "Type content",
     "images": "Images",
     "send_review": "Send review",
-    "no_review": "This product/service has no reviews"
+    "no_review": "This product/service has no reviews",
+    "evaluate": "Evaluate"
   },
   "chat": {
     "customer_care": "Customer care",

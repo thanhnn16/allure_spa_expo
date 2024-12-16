@@ -21,6 +21,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
 }) => {
   const { t } = useLanguage();
 
+  console.log("item", item);
   // Get first image from media array
   const productImage =
     item.media && item.media.length > 0

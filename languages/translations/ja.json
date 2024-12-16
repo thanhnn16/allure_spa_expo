@@ -236,7 +236,8 @@
     "type_content": "内容を入力",
     "images": "画像",
     "send_review": "レビューを送信",
-    "no_review": "この商品/サービスにはレビューがありません"
+    "no_review": "この商品/サービスにはレビューがありません",
+    "evaluate": "評価する"
   },
   "chat": {
     "customer_care": "カスタマーケア",
