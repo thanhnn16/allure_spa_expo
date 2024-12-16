@@ -78,7 +78,6 @@ const SeeMore = () => {
           type: type as 'services' | 'products'
         })).unwrap()
           .then((response: any) => {
-            console.log("Search response:", response);
             const categoryData = type === 'services' ?
               response.categories.service_categories :
               response.categories.product_categories;
