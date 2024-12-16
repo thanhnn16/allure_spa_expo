@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import ServiceItem from "@/components/home/ServiceItem";
 import ProductItem from "@/components/home/ProductItem";
-import { TouchableOpacity, View, Text, Image, Slider, Chip, Colors, RadioGroup, RadioButton } from "react-native-ui-lib";
+import { TouchableOpacity, View, Text, Image, Slider, Chip, Colors, RadioGroup, RadioButton, SkeletonView, GridView, GridList } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
 import FilterIcon from "@/assets/icons/filter.svg";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -92,41 +92,6 @@ const SeeMore = () => {
     }
   }, [dispatch, type]);
 
-  // Xử lý lọc theo danh mục
-  const handleFilterCategory = async (value: string) => {
-    try {
-      setCategoryValue(value);
-
-      const newParams: SearchParams = {
-        ...searchParams,
-        type: type as 'services' | 'products',
-        category_id: value === 'none' ? undefined : parseInt(value)
-      };
-
-      setSearchParams(newParams);
-      await dispatch(searchItems(newParams)).unwrap();
-      categoryBottomSheetRef.current?.close();
-    } catch (error) {
-      console.error('Lỗi khi lọc danh mục:', error);
-    }
-  };
-
-  // Xử lý sắp xếp
-  const handleSort = async (value: string) => {
-    try {
-      if (['name_asc', 'name_desc', 'price_asc', 'price_desc', 'rating'].includes(value)) {
-        await dispatch(searchItems({
-          ...searchParams,
-          sort_by: value as SearchParams['sort_by']
-        })).unwrap();
-      }
-      sortBottomSheetRef.current?.close();
-    } catch (error) {
-      console.error('Lỗi khi sắp xếp:', error);
-      // Xử lý lỗi tại đây nếu cần
-    }
-  };
-
   // Hàm xử lý thay đổi giá
   const handlePriceChange = (values: { min: number, max: number }) => {
     setSelectedPriceRange({
@@ -210,9 +175,145 @@ const SeeMore = () => {
     }
   }
 
+  const renderSkeleton = () => {
+    const itemWidth = WINDOW_WIDTH * 0.425;
+    const itemHeight = WINDOW_HEIGHT * 0.35;
+    const imageHeight = WINDOW_HEIGHT * 0.18;
+
+    return (
+      <View>
+        <View row spread centerH gap-10>
+          <View>
+            {[1, 2, 3].map((item) => (
+              <View
+                key={`skeleton-left-${item}`}
+                style={{
+                  width: itemWidth,
+                  height: itemHeight,
+                  marginBottom: 10,
+                  backgroundColor: Colors.grey70,
+                  borderRadius: 8,
+                  overflow: 'hidden'
+                }}
+              >
+                <SkeletonView
+                  width={itemWidth}
+                  height={imageHeight}
+                  style={{
+                    borderRadius: 8,
+                    marginBottom: 8
+                  }}
+                />
+                <View padding-12>
+                  <SkeletonView
+                    width={itemWidth * 0.9}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.7}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 12
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.5}
+                    height={20}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <View row centerV>
+                    <SkeletonView
+                      width={itemWidth * 0.4}
+                      height={16}
+                      style={{
+                        borderRadius: 4
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <View>
+            {[1, 2, 3].map((item) => (
+              <View
+                key={`skeleton-right-${item}`}
+                style={{
+                  width: itemWidth,
+                  height: itemHeight,
+                  marginBottom: 10,
+                  backgroundColor: Colors.grey70,
+                  borderRadius: 8,
+                  overflow: 'hidden'
+                }}
+              >
+                <SkeletonView
+                  width={itemWidth}
+                  height={imageHeight}
+                  style={{
+                    borderRadius: 8,
+                    marginBottom: 8
+                  }}
+                />
+                <View padding-12>
+                  <SkeletonView
+                    width={itemWidth * 0.9}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.7}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 12
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.5}
+                    height={20}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <View row centerV>
+                    <SkeletonView
+                      width={itemWidth * 0.4}
+                      height={16}
+                      style={{
+                        borderRadius: 4
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   const renderList = useMemo(() => {
     const data = type === "services" ? results.services : results.products;
     const ItemComponent = type === "services" ? ServiceItem : ProductItem;
+
+    if (loading) {
+      return renderSkeleton();
+    }
 
     if (!data || data.length === 0) {
       return (
@@ -276,7 +377,7 @@ const SeeMore = () => {
       <View marginV-16>
         <Text h3 marginB-8>{t("see_more.price_range")}</Text>
 
-        {/* Hiển thị giá trị đ�� chọn */}
+        {/* Hiển thị giá trị đang chọn */}
         <View row spread marginB-16>
           <Text>{formatCurrency({ price: selectedPriceRange.min })}</Text>
           <Text>{formatCurrency({ price: selectedPriceRange.max })}</Text>
