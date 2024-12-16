@@ -918,7 +918,8 @@
     "apply": "適用",
     "price": "価格",
     "reset": "フィルターをリセット",
-    "all": "すべて"
+    "all": "すべて",
+    "price_range": "価格範囲"
   },
   "exchange_reward": {
     "discount": "割引",

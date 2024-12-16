@@ -9,7 +9,7 @@ export const getAllProductsThunk = createAsyncThunk(
             const res = await AxiosInstance().get<ProductsListResponseParams>('/products');
 
             if (res.data.success) {
-                return res.data.data.data;
+                return res.data.data;
             }
 
             console.log('Get all products failed:', res.data.message);

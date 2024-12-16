@@ -901,7 +901,8 @@
     "apply": "Áp dụng",
     "price": "Giá",
     "reset": "Đặt lại",
-    "all": "Tất cả"
+    "all": "Tất cả",
+    "price_range": "Khoảng giá"
   },
   "exchange_reward": {
     "discount": "Giảm",

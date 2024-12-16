@@ -1,35 +1,22 @@
 import AxiosInstance from '@/utils/services/helper/axiosInstance';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
+export interface SearchParams {
+    query: string;
+    type?: 'all' | 'products' | 'services';
+    limit?: number;
+    sort_by?: 'name_asc' | 'name_desc' | 'price_asc' | 'price_desc' | 'rating';
+    min_price?: number;
+    max_price?: number;
+    category_id?: number;
+}
+
 export const searchItems = createAsyncThunk(
     'search/searchItems',
-    async ({ query, type = 'all', limit = 10 }: { query: string; type?: string; limit?: number }) => {
+    async (params: SearchParams) => {
         try {
             const response = await AxiosInstance().get(`/search`, {
-                params: { query, type, limit }
-            });
-            return response.data.data;
-        } catch (error) {
-            throw error;
-        }
-    }
-);
-
-export const searchMoreItems = createAsyncThunk(
-    'search/searchMoreItems',
-    async ({ query, type, sort_by, limit = 10, min_price, max_price }: 
-        { 
-            query: string; 
-            type?: string; 
-            limit?: number; 
-            sort_by?: string; 
-            min_price?: number; 
-            max_price?: number 
-        }
-    ) => {
-        try {
-            const response = await AxiosInstance().get(`/search`, {
-                params: { query, type, sort_by, limit, min_price, max_price }
+                params: params
             });
             return response.data.data;
         } catch (error) {

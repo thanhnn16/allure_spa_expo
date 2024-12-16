@@ -925,7 +925,8 @@
     "apply": "Apply",
     "price": "Price",
     "reset": "Reset filters",
-    "all": "All"
+    "all": "All",
+    "price_range": "Price Range"
   },
   "exchange_reward": {
     "discount": "Discount",
