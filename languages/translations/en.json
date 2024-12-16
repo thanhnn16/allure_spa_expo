@@ -159,7 +159,9 @@
       "empty_confirm_password": "You have not confirmed your new password",
       "invalid_password_special_char": "Password must not contain special characters",
       "invalid_password_length": "Password must be at least 8 characters long",
-      "password_current_new_mismatch": "Current password and new password must be different"
+      "password_current_new_mismatch": "Current password and new password must be different",
+      "forgot_password_guide": "Forgot password?",
+      "forgot_password_guide_description": "Please logout first to reset your password. You will receive an email to reset your password. Make sure verify your email first."
     },
     "history_login": {
       "title": "Login History",

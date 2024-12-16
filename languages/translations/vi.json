@@ -156,7 +156,9 @@
       "empty_current_password": "Bạn chưa nhập mật khẩu hiện tại",
       "empty_new_password": "Bạn chưa nhập mật khẩu mới",
       "empty_confirm_password": "Bạn chưa xác nhận mật khẩu mới",
-      "password_current_new_mismatch": "Mật khẩu hiện tại và mật khẩu mới không được giống nhau"
+      "password_current_new_mismatch": "Mật khẩu hiện tại và mật khẩu mới không được giống nhau",
+      "forgot_password_guide": "Quên mật khẩu?",
+      "forgot_password_guide_description": "Vui lòng đăng xuất trước để đặt lại mật khẩu của bạn. Bạn sẽ nhận được email để đặt lại mật khẩu. Hãy đảm bảo xác thực email của bạn trước khi đặt lại mật khẩu."
     },
     "history_login": {
       "title": "Lịch sử đăng nhập",

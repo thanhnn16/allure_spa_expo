@@ -15,10 +15,9 @@ export const changePasswordThunk = createAsyncThunk(
         return res.data.data;
       }
 
-      console.log("Change password failed:", res.data.message);
       return rejectWithValue(res.data.message || "Change password failed");
     } catch (error: any) {
-      console.error("Change password error:", error);
+      console.error("Change password error:", error.response?.data?.message);
       return rejectWithValue(error.response?.data?.message || "Change password failed");
     }
   }

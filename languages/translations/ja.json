@@ -159,7 +159,9 @@
       "empty_confirm_password": "新しいパスワードの確認が入力されていません",
       "invalid_password_special_char": "パスワードに特殊文字を含めることはできません",
       "invalid_password_length": "パスワードは8文字以上でないといけません",
-      "password_current_new_mismatch": "現在のパスワードと新しいパスワードは異なる必要があります"
+      "password_current_new_mismatch": "現在のパスワードと新しいパスワードは異なる必要があります",
+      "forgot_password_guide": "パスワードを忘れましたか？",
+      "forgot_password_guide_description": "パスワードをリセットするために、メールを確認してください。メールを確認してください。"
     },
     "history_login": {
       "title": "ログイン履歴",
