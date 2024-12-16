@@ -8,6 +8,15 @@
   "back": "Quay lại",
   "sendOTP": "Gửi OTP",
   "close": "Đóng",
+  "error": {
+    "config_not_found": "Không tìm thấy cấu hình",
+    "missing_api_key": "Thiếu API key",
+    "undefined_error": "Lỗi không xác định",
+    "no_active_config": "Không có cấu hình hoạt động",
+    "init_chat_error": "Lỗi khởi tạo chat",
+    "send_message_error": "Lỗi gửi tin nhắn",
+    "fetch_config_error": "Lỗi lấy cấu hình"
+  },
   "common": {
     "guest": "Khách",
     "cancel": "Hủy",
@@ -154,6 +163,25 @@
       "no_history": "Không có lịch sử đăng nhập",
       "current_device": "Thiết bị hiện tại",
       "other_device": "Các thiết bị khác"
+    },
+    "forgot_password": {
+      "title": "Quên mật khẩu",
+      "empty_phone_number": "Bạn chưa nhập số điện thoại",
+      "invalid_phone_number": "Số điện thoại không hợp lệ",
+      "empty_password": "Bạn chưa nhập mật khẩu",
+      "invalid_password_special_char": "Mật khẩu không được chứa ký tự đặc biệt",
+      "invalid_password_length": "Mật khẩu phải có ít nhất 8 ký tự",
+      "description": "Nhập email của bạn để nhận được liên kết để đặt lại mật khẩu",
+      "email": "Email",
+      "email_invalid": "Email không hợp lệ",
+      "email_hint": "Nhập email của bạn",
+      "email_required": "Email là bắt buộc",
+      "email_placeholder": "Nhập email của bạn",
+      "send": "Gửi",
+      "success_title": "Yêu cầu được gửi thành công",
+      "success_description": "Vui lòng kiểm tra email của bạn để đặt lại mật khẩu",
+      "error_title": "Lỗi",
+      "error_description": "Có lỗi xảy ra khi gửi yêu cầu, vui lòng thử lại sau"
     }
   },
   "pageTitle": {
@@ -285,7 +313,11 @@
       "product_notes": "Lưu ý sản phẩm"
     },
     "no_info": "Không có thông tin",
-    "title": "Chi tiết sản phẩm"
+    "title": "Chi tiết sản phẩm",
+    "out_of_stock": "Hết hàng",
+    "enter_quantity": "Nhập số lượng",
+    "invalid_quantity": "Số lượng không hợp lệ",
+    "exceed_stock": "Số lượng vượt quá số lượng có sẵn"
   },
   "serviceDetail": {
     "book_now": "Đặt ngay",
@@ -310,7 +342,9 @@
     "chat_with": "Chat với",
     "no_message": "Không có tin nhắn",
     "type_message": "Nhập tin nhắn",
-    "start_conversation": "Bạn muốn tư vấn về điều gì?"
+    "start_conversation": "Bạn muốn tư vấn về điều gì?",
+    "sent": "Đã gửi",
+    "thinking": "🌸🌸 Hana đang suy nghĩ..."
   },
   "reward": {
     "title": "Phần thưởng",
@@ -524,7 +558,8 @@
     "temp_address_invalid": "Vui lòng điền đầy đủ các trường địa chỉ",
     "street_address": "Địa chỉ",
     "order_summary": "Tổng hợp đơn hàng",
-    "missing_address_info": "Thiếu thông tin của"
+    "missing_address_info": "Thiếu thông tin của",
+    "processing_payment": "Đang xử lý thanh toán..."
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
@@ -873,5 +908,28 @@
     "exchange": "Đổi",
     "min": "Tối thiểu",
     "max": "Tối đa"
+  },
+  "phone_verify": {
+    "title": "Xác thực số điện thoại",
+    "confirm_phone": "Xác thực số điện thoại",
+    "confirm_phone_description": "Vui lòng nhập mã xác thực được gửi đến số điện thoại của bạn",
+    "phone_number": "Số điện thoại",
+    "edit_phone": "Chỉnh sửa số điện thoại",
+    "send_verification": "Gửi mã xác thực",
+    "verify_code": "Xác thực mã",
+    "verify_code_description": "Vui lòng nhập mã xác thực được gửi đến số điện thoại của bạn",
+    "verify_code_success": "Số điện thoại đã được xác thực thành công",
+    "verify_code_fail": "Xác thực số điện thoại thất bại",
+    "code_placeholder": "Nhập mã xác thực",
+    "enter_code": "Nhập mã",
+    "description": "Vui lòng nhập mã xác thực được gửi đến số điện thoại của bạn",
+    "success": "Số điện thoại đã được xác thực thành công",
+    "resend_code": "Gửi lại mã",
+    "resend_code_description": "Gửi lại mã xác thực",
+    "resend_code_success": "Mã xác thực đã được gửi lại thành công",
+    "resend_code_fail": "Gửi lại mã xác thực thất bại",
+    "resend_code_countdown": "Gửi lại mã ({countdown}s)",
+    "verify": "Xác thực",
+    "verify_success": "Số điện thoại đã được xác thực thành công"
   }
 }

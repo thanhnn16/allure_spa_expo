@@ -622,10 +622,10 @@ const ScheduledPage = () => {
     >
       <SkeletonView height={20} width={width * 0.4} />
       <View marginT-10>
-        <SkeletonView height={120} width={width - 60} />
+        <SkeletonView height={120} width={width * 0.8} />
       </View>
       <View row marginT-10>
-        <SkeletonView height={20} width={width * 0.6} />
+        <SkeletonView height={20} width={width * 0.5} />
       </View>
     </View>
   );

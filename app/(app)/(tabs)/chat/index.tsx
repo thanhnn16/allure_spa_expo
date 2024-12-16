@@ -140,9 +140,9 @@ const ChatListScreen = () => {
   };
 
   const renderSkeletonViewItem = () => (
-    <View row paddingH-12 paddingV-16 centerV>
+    <View row marginH-12 paddingH-12 paddingV-16 marginV-8 centerV br40 style={{ borderWidth: 0.3, borderColor: "#ccc" }}>
       <SkeletonView width={40} height={40} borderRadius={20} />
-      <View flex center marginL-12>
+      <View flex marginL-12>
         <SkeletonView
           width={150}
           height={16}
@@ -181,16 +181,19 @@ const ChatListScreen = () => {
           onConfirm={handleLoginConfirm}
         />
       ) : (
-        <View flex paddingH-20>
-          <FlatList
-            data={isLoading ? [] : chatDataWithAI}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            ListEmptyComponent={isLoading ? renderLoadingState : undefined}
-          />
-        </View>
+        isLoading ? (
+          renderLoadingState()
+        ) : (
+          <View flex paddingH-20>
+            <FlatList
+              data={chatDataWithAI}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+            />
+          </View>
+        )
       )}
     </View>
   );

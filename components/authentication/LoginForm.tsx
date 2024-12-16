@@ -7,6 +7,7 @@ import { ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
 import { useDialog } from "@/hooks/useDialog";
 import AppDialog from "../dialog/AppDialog";
+import { router } from "expo-router";
 
 interface LoginFormProps {
   onBackPress: () => void;
@@ -97,19 +98,19 @@ const LoginForm: React.FC<LoginFormProps> = ({ onBackPress }) => {
         <Text style={{ color: "red" }}>{passwordError}</Text>
       ) : null}
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          marginTop: 20,
-        }}
-      >
-        <Text style={{ color: Colors.primary, fontSize: 16 }}>
-          {t("auth.login.forgot_password")}
-        </Text>
-      </View>
 
-      <View marginV-20 gap-12>
+      <AppButton
+        buttonStyle={{
+          justifyContent: "flex-end",
+        }}
+        type="text"
+        title={t("auth.login.forgot_password")}
+        onPress={() => {
+          router.push("/(auth)/forgot-password");
+        }}
+      />
+
+      <View marginB-20 gap-12>
         <AppButton
           type="primary"
           onPress={handleLogin}

@@ -53,17 +53,15 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
         <View flex-1 gap-5 row centerV>
           <Image source={StarIcon} width={15} height={15} />
           <Text h3 style={{ color: "#8C8585" }}>
-            {item?.rating_summary.average_rating} /{" "}
-            {item?.rating_summary.total_ratings} | {item?.quantity}{" "}
-            {t("productDetail.available")}
+            {item?.rating_summary.average_rating}{" "}| {item?.quantity === 0 ? t("productDetail.out_of_stock") : `${item?.quantity} ${t("productDetail.available")}`}
           </Text>
         </View>
 
         <View bottom paddingB-5>
           {item?.price && (
             <Text h2_bold secondary>
-            {formatCurrency({ price: item.price })}
-          </Text>
+              {formatCurrency({ price: item.price })}
+            </Text>
           )}
         </View>
       </View>

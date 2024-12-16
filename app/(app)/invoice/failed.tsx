@@ -9,6 +9,7 @@ export default function InvoiceFailed() {
   const { t } = useLanguage();
 
   const params = useLocalSearchParams<{
+    order_id: string;
     reason: string;
     type: "cancel" | "failed";
     payment_method: string;
@@ -69,6 +70,13 @@ export default function InvoiceFailed() {
             onPress={() => router.replace("/(app)/")}
             type="primary"
           />
+          {params.order_id && (
+            <AppButton
+              title="Xem chi tiết đơn hàng"
+              onPress={() => router.push(`/order/${params.order_id}`)}
+              type="outline"
+            />
+          )}
         </View>
       </View>
     </View>

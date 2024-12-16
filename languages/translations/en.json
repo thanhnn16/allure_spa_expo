@@ -9,6 +9,15 @@
   "back": "Back",
   "sendOTP": "Send OTP",
   "close": "Close",
+  "error": {
+    "config_not_found": "Config not found",
+    "missing_api_key": "Missing API key",
+    "undefined_error": "An undefined error occurred",
+    "no_active_config": "No active config",
+    "init_chat_error": "Error initializing chat",
+    "send_message_error": "Error sending message",
+    "fetch_config_error": "Error fetching config"
+  },
   "common": {
     "guest": "Guest",
     "cancel": "Cancel",
@@ -157,6 +166,25 @@
       "no_history": "No login history",
       "current_device": "Current Device",
       "other_device": "Other Devices"
+    },
+    "forgot_password": {
+      "title": "Forgot Password",
+      "empty_phone_number": "You have not entered a phone number",
+      "invalid_phone_number": "Invalid phone number",
+      "empty_password": "You have not entered a password",
+      "invalid_password_special_char": "Password must not contain special characters",
+      "invalid_password_length": "Password must be at least 8 characters long",
+      "description": "Enter your email to receive a link to reset your password",
+      "email": "Email",
+      "email_invalid": "Invalid email format",
+      "email_hint": "Enter your email",
+      "email_required": "Email is required",
+      "email_placeholder": "Enter your email",
+      "send": "Send",
+      "success_title": "Request sent successfully",
+      "success_description": "Please check your email to reset your password",
+      "error_title": "Error",
+      "error_description": "An error occurred while sending the request, please try again later"
     }
   },
   "terms": "Terms of Service",
@@ -193,7 +221,11 @@
       "product_notes": "Product notes"
     },
     "no_info": "No information",
-    "title": "Product details"
+    "title": "Product details",
+    "out_of_stock": "Out of stock",
+    "enter_quantity": "Enter quantity",
+    "invalid_quantity": "Invalid quantity",
+    "exceed_stock": "Exceed stock"
   },
   "rating": {
     "add_review": "Add review",
@@ -214,7 +246,9 @@
     "chat_with": "Chat with",
     "no_message": "No message",
     "type_message": "Type message",
-    "start_conversation": "What would you like to discuss?"
+    "start_conversation": "What would you like to discuss?",
+    "sent": "Sent",
+    "thinking": "🌸🌸 Hana is thinking..."
   },
   "profile": {
     "title": "Profile",
@@ -550,7 +584,8 @@
     "temp_address_invalid": "Please fill in all address fields",
     "street_address": "Street Address",
     "order_summary": "Order Summary",
-    "missing_address_info": "Missing address information"
+    "missing_address_info": "Missing address information",
+    "processing_payment": "Processing payment..."
   },
   "transaction": {
     "payment_success": "Payment Success",
@@ -897,5 +932,28 @@
     "exchange": "Exchange",
     "min": "Min discount",
     "max": "Max"
+  },
+  "phone_verify": {
+    "title": "Phone Verification",
+    "confirm_phone": "Confirm phone number",
+    "confirm_phone_description": "Please enter the verification code sent to your phone number",
+    "phone_number": "Phone number",
+    "edit_phone": "Edit phone number",
+    "send_verification": "Send verification code",
+    "verify_code": "Verify code",
+    "verify_code_description": "Please enter the verification code sent to your phone number",
+    "verify_code_success": "Phone number verified successfully",
+    "verify_code_fail": "Phone number verification failed",
+    "code_placeholder": "Enter verification code",
+    "enter_code": "Enter code",
+    "description": "Please enter the verification code sent to your phone number",
+    "success": "Phone number verified successfully",
+    "resend_code": "Resend code",
+    "resend_code_description": "Resend verification code",
+    "resend_code_success": "Verification code resent successfully",
+    "resend_code_fail": "Failed to resend verification code",
+    "resend_code_countdown": "Resend code ({countdown}s)",
+    "verify": "Verify",
+    "verify_success": "Phone number verified successfully"
   }
 }

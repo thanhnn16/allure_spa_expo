@@ -4,6 +4,7 @@ import { RootState } from "../../store";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { AiConfig } from '@/types/ai-config';
 import { useAuth } from '@/hooks/useAuth';
+import { ERROR_KEYS } from '@/constants/errorMessages';
 
 interface AiState {
   messages: Array<{
@@ -29,15 +30,15 @@ const initialState: AiState = {
 // Helper function to handle API errors
 const handleApiError = (error: any) => {
   console.error('API Error:', error);
-  let errorMessage = 'Đã xảy ra lỗi không xác định';
+  let errorKey = ERROR_KEYS.UNDEFINED_ERROR;
 
   if (error.response?.data?.message) {
-    errorMessage = error.response.data.message;
+    return error.response.data.message;
   } else if (error.message) {
-    errorMessage = error.message;
+    return error.message; // Trả về key lỗi
   }
 
-  return errorMessage;
+  return errorKey;
 };
 
 // Helper function to get active config by type
@@ -47,22 +48,19 @@ const getActiveConfigByType = (configs: AiConfig[] | null, type: string): AiConf
 
 // Helper function to get API key from config
 const getApiKey = (config: AiConfig | undefined): string => {
-
   if (!config) {
-    throw new Error('Không tìm thấy cấu hình');
+    throw new Error(ERROR_KEYS.CONFIG_NOT_FOUND);
   }
 
-  // Ưu tiên sử dụng global_api_key nếu có
   if (config.global_api_key) {
     return config.global_api_key;
   }
 
-  // Nếu không có global_api_key, sử dụng api_key của config
   if (config.api_key) {
     return config.api_key;
   }
 
-  throw new Error('Thiếu cấu hình API key');
+  throw new Error(ERROR_KEYS.MISSING_API_KEY);
 };
 
 // Fetch AI configs from server
@@ -154,7 +152,7 @@ export const sendTextMessage = createAsyncThunk(
       }
 
       const model = genAI.getGenerativeModel({
-        model: config?.model_type || 'gemini-1.5-flash',
+        model: 'gemini-1.5-flash',
         systemInstruction: config?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
@@ -292,7 +290,7 @@ export const sendImageMessage = createAsyncThunk(
       }
 
       const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: config?.model_type || 'gemini-1.5-flash',
         systemInstruction: config?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
@@ -306,10 +304,10 @@ export const sendImageMessage = createAsyncThunk(
             parts: [{ text: msg.parts[0]?.text || '' }]
           })),
         generationConfig: {
-          temperature: config?.temperature || 0.9,
-          topK: config?.top_k || 40,
-          topP: config?.top_p || 0.95,
-          maxOutputTokens: config?.max_tokens || 8192,
+          temperature: config?.temperature || 0.6,
+          topK: config?.top_k || 30,
+          topP: config?.top_p || 0.9,
+          maxOutputTokens: config?.max_tokens || 2048,
         },
       });
 

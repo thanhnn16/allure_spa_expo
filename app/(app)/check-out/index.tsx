@@ -40,6 +40,8 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setSelectedAddress as setReduxSelectedAddress } from "@/redux/features/address/addressSlice";
 import * as Linking from "expo-linking";
 import AppButton from "@/components/buttons/AppButton";
+import { WebViewType } from "@/utils/constants/webview";
+import LoadingOverlay from "@/components/loading/LoadingOverlay";
 
 export interface PaymentMethod {
   id: number;
@@ -305,6 +307,7 @@ export default function Checkout() {
   const handlePayment = async () => {
     try {
       setIsLoading(true);
+      setIsProcessingPayment(true);
 
       // Validate địa chỉ
       if (addressType === "saved" && !selectedAddress) {
@@ -390,9 +393,25 @@ export default function Checkout() {
           },
         });
       } else if (selectedPayment.id === 3) {
-        // Chuyển khoản
-        const returnUrl = Linking.createURL("/invoice/success");
-        const cancelUrl = Linking.createURL("/invoice/failed");
+        setIsProcessingPayment(true);
+        
+        const returnUrl = Linking.createURL("/invoice/success", {
+          queryParams: {
+            order_id: orderId,
+            amount: serverCalculatedAmount.toString(),
+            payment_time: new Date().toISOString(),
+            payment_method: "bank_transfer"
+          }
+        });
+
+        const cancelUrl = Linking.createURL("/invoice/failed", {
+          queryParams: {
+            order_id: orderId,
+            type: "cancel",
+            payment_method: "bank_transfer",
+            reason: t("invoice.payment_cancel_message")
+          }
+        });
 
         const paymentResponse = await OrderService.processPayment(orderId, {
           returnUrl,
@@ -400,9 +419,23 @@ export default function Checkout() {
         });
 
         if (paymentResponse.success && paymentResponse.data?.checkoutUrl) {
-          await Linking.openURL(paymentResponse.data.checkoutUrl);
+          router.replace({
+            pathname: "/(app)/webview",
+            params: {
+              url: paymentResponse.data.checkoutUrl,
+              type: WebViewType.PAYMENT
+            }
+          });
         } else {
-          throw new Error("Failed to generate payment link");
+          router.replace({
+            pathname: "/(app)/invoice/failed",
+            params: {
+              order_id: orderId,
+              type: "failed",
+              payment_method: "bank_transfer",
+              reason: t("invoice.payment_failed_message")
+            }
+          });
         }
       }
 
@@ -420,6 +453,7 @@ export default function Checkout() {
       );
     } finally {
       setIsLoading(false);
+      setIsProcessingPayment(false);
     }
   };
 
@@ -610,6 +644,8 @@ export default function Checkout() {
     </BottomSheet>
   );
 
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
@@ -625,7 +661,11 @@ export default function Checkout() {
             </View>
           </KeyboardAwareScrollView>
           {renderBottomSheet()}
-          <AppDialog {...dialogConfig} onClose={hideDialog} />
+          <AppDialog {...dialogConfig} onClose={hideDialog} onConfirm={hideDialog} />
+          <LoadingOverlay 
+            visible={isProcessingPayment} 
+            message={t("checkout.processing_payment")}
+          />
         </View>
       </Animated.View>
     </GestureHandlerRootView>
