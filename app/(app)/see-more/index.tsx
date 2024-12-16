@@ -16,6 +16,7 @@ import AppButton from "@/components/buttons/AppButton";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { searchItems, SearchParams } from "@/redux/features/search/searchThunk";
 import formatCurrency from "@/utils/price/formatCurrency";
+import { ActivityIndicator } from "react-native";
 
 const SeeMore = () => {
   const { t } = useLanguage();
@@ -29,7 +30,7 @@ const SeeMore = () => {
   const [searchParams, setSearchParams] = useState<SearchParams>({
     query: '',
     type: type as 'products' | 'services',
-    limit: 10,
+    limit: 30,
     sort_by: undefined,
     min_price: undefined,
     max_price: undefined,
@@ -56,7 +57,6 @@ const SeeMore = () => {
   const filterBottomSheetRef = useRef<BottomSheet>(null);
   const categoryBottomSheetRef = useRef<BottomSheet>(null);
   const sortBottomSheetRef = useRef<BottomSheet>(null);
-  const slider = useRef<typeof Slider>(null);
 
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get("window");
 
@@ -69,42 +69,63 @@ const SeeMore = () => {
   // Khởi tạo tìm kiếm ban đầu
   useEffect(() => {
     if (type === "services" || type === "products") {
-      setCategoryValue(type);
-      dispatch(searchItems({
-        ...searchParams,
-        type: type as 'services' | 'products'
-      })).then((response: any) => {
-        // Lấy categories từ response API
-        const categoryData = type === 'services' ?
-          response.payload.categories.service_categories :
-          response.payload.categories.product_categories;
-        setCategories(categoryData);
-      });
+      // Reset category value
+      setCategoryValue('none');
+
+      try {
+        dispatch(searchItems({
+          ...searchParams,
+          type: type as 'services' | 'products'
+        })).unwrap()
+          .then((response: any) => {
+            console.log("Search response:", response);
+            const categoryData = type === 'services' ?
+              response.categories.service_categories :
+              response.categories.product_categories;
+            setCategories(categoryData);
+          })
+          .catch((error: any) => {
+            console.error('Lỗi khi tìm kiếm:', error.response?.data?.message);
+          });
+      } catch (error: any) {
+        console.error('Lỗi dispatch:', error.response?.data?.message);
+      }
     }
   }, [dispatch, type]);
 
   // Xử lý lọc theo danh mục
   const handleFilterCategory = async (value: string) => {
-    if (value === 'services' || value === 'products') {
-      await dispatch(searchItems({
+    try {
+      setCategoryValue(value);
+
+      const newParams: SearchParams = {
         ...searchParams,
-        type: value as 'services' | 'products'
-      }));
+        type: type as 'services' | 'products',
+        category_id: value === 'none' ? undefined : parseInt(value)
+      };
+
+      setSearchParams(newParams);
+      await dispatch(searchItems(newParams)).unwrap();
       categoryBottomSheetRef.current?.close();
-    } else {
-      categoryBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Lỗi khi lọc danh mục:', error);
     }
   };
 
   // Xử lý sắp xếp
   const handleSort = async (value: string) => {
-    if (['name_asc', 'name_desc', 'price_asc', 'price_desc', 'rating'].includes(value)) {
-      await dispatch(searchItems({
-        ...searchParams,
-        sort_by: value as SearchParams['sort_by']
-      }));
+    try {
+      if (['name_asc', 'name_desc', 'price_asc', 'price_desc', 'rating'].includes(value)) {
+        await dispatch(searchItems({
+          ...searchParams,
+          sort_by: value as SearchParams['sort_by']
+        })).unwrap();
+      }
+      sortBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Lỗi khi sắp xếp:', error);
+      // Xử lý lỗi tại đây nếu cần
     }
-    sortBottomSheetRef.current?.close();
   };
 
   // Hàm xử lý thay đổi giá
@@ -116,50 +137,63 @@ const SeeMore = () => {
   };
 
   // Reset bộ lọc
-  const resetFilters = () => {
-    setCategoryValue('none');
-    setSortValue('none');
-    setSelectedPriceRange({
-      min: priceRange.min,
-      max: priceRange.max
-    });
+  const resetFilters = async () => {
+    try {
+      setCategoryValue('none');
+      setSortValue('none');
+      setSelectedPriceRange({
+        min: priceRange.min,
+        max: priceRange.max
+      });
 
-    const resetParams: SearchParams = {
-      query: '',
-      type: type as 'products' | 'services',
-      limit: 10
-    };
+      const resetParams: SearchParams = {
+        query: '',
+        type: type as 'products' | 'services',
+        limit: 30
+      };
 
-    setSearchParams(resetParams);
-    dispatch(searchItems(resetParams));
-    filterBottomSheetRef.current?.close();
+      setSearchParams(resetParams);
+      await dispatch(searchItems(resetParams)).unwrap();
+      filterBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Lỗi khi reset bộ lọc:', error);
+      // Xử lý lỗi tại đây nếu cần
+    }
   };
 
   // Áp dụng tất cả bộ lọc
-  const applyFilters = () => {
-    const newParams: SearchParams = {
-      ...searchParams,
-      type: type as 'products' | 'services',
-      category_id: categoryValue === 'none' ? undefined : parseInt(categoryValue),
-      sort_by: sortValue === 'none' ? undefined : sortValue as SearchParams['sort_by'],
-      min_price: selectedPriceRange.min > 0 ? selectedPriceRange.min : undefined,
-      max_price: selectedPriceRange.max < priceRange.max ? selectedPriceRange.max : undefined
-    };
+  const applyFilters = async () => {
+    try {
+      const newParams: SearchParams = {
+        ...searchParams,
+        type: type as 'products' | 'services',
+        category_id: categoryValue === 'none' ? undefined : parseInt(categoryValue),
+        sort_by: sortValue === 'none' ? undefined : sortValue as SearchParams['sort_by'],
+        min_price: selectedPriceRange.min > 0 ? selectedPriceRange.min : undefined,
+        max_price: selectedPriceRange.max < priceRange.max ? selectedPriceRange.max : undefined
+      };
 
-    setSearchParams(newParams);
-    dispatch(searchItems(newParams));
-    filterBottomSheetRef.current?.close();
+      setSearchParams(newParams);
+      await dispatch(searchItems(newParams)).unwrap();
+      filterBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Lỗi khi áp dụng bộ lọc:', error);
+      // Xử lý lỗi tại đây nếu cần
+    }
   };
 
   const getCategoryName = (value: string) => {
-    if (value === 'services') {
-      return t('see_more.services');
-    } else if (value === 'products') {
-      return t('see_more.products');
-    } else {
-      return t('see_more.none');
+    if (value === 'none') {
+      return t('see_more.all');
     }
-  }
+
+    // Tìm category trong mảng categories dựa vào value
+    const selectedCategory: any = categories.find(
+      (category: any) => category.id.toString() === value
+    );
+
+    return selectedCategory ? selectedCategory?.name : t('see_more.all');
+  };
 
   const getSortName = (value: string) => {
     if (value === 'name_asc') {
@@ -178,16 +212,20 @@ const SeeMore = () => {
   }
 
   const renderList = useMemo(() => {
-    const data = results;
+    const data = type === "services" ? results.services : results.products;
     const ItemComponent = type === "services" ? ServiceItem : ProductItem;
 
-    if (type === "services" && !data.services) {
-      return <View height={32} />;
+    if (!data || data.length === 0) {
+      return (
+        <View flex center>
+          <Text>{t("common.no_data")}</Text>
+        </View>
+      );
     }
 
     return (
       <FlatList
-        data={data.services}
+        data={data}
         renderItem={({ item }) => (
           <ItemComponent
             item={item}
@@ -196,12 +234,11 @@ const SeeMore = () => {
             heightImage={WINDOW_HEIGHT * 0.18}
           />
         )}
-        keyExtractor={(item, index) => `${type}-${item.id}-${index}`}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 10 }}
-        // onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           loading ? <View height={52} /> : <View height={52} />
@@ -211,18 +248,15 @@ const SeeMore = () => {
         initialNumToRender={10}
       />
     );
-  }, [
-    type,
-    results,
-    loading,
-    WINDOW_WIDTH,
-    WINDOW_HEIGHT,
-  ]);
+  }, [type, results, loading, WINDOW_WIDTH, WINDOW_HEIGHT]);
 
-  // Render danh mục dựa trên type
+  // Render danh mục dựa trên categories từ API
   const renderCategories = () => {
     return (
-      <RadioGroup initialValue={categoryValue} onValueChange={setCategoryValue}>
+      <RadioGroup
+        initialValue={categoryValue}
+        onValueChange={setCategoryValue}
+      >
         <RadioButton value="none" label={t("see_more.all")} color={Colors.primary} paddingV-8 />
         {categories.map((category: any) => (
           <RadioButton
@@ -243,7 +277,7 @@ const SeeMore = () => {
       <View marginV-16>
         <Text h3 marginB-8>{t("see_more.price_range")}</Text>
 
-        {/* Hiển thị giá trị đã chọn */}
+        {/* Hiển thị giá trị đ�� chọn */}
         <View row spread marginB-16>
           <Text>{formatCurrency({ price: selectedPriceRange.min })}</Text>
           <Text>{formatCurrency({ price: selectedPriceRange.max })}</Text>
@@ -312,7 +346,7 @@ const SeeMore = () => {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View flex bg-white>
+      <View flex bg-white paddingB-20>
         <AppBar back title={title} />
         <View flex paddingH-20 marginB-16>
           <AppSearch />
@@ -383,9 +417,7 @@ const SeeMore = () => {
                 type="primary"
                 title={t("see_more.apply")}
                 onPress={() => {
-                  handleFilterCategory(categoryValue)
-                  handleSort(sortValue)
-                  filterBottomSheetRef.current?.close()
+                  applyFilters();
                 }}
               />
               {(categoryValue !== "none" || sortValue !== "none" || sliderPriceValue !== 0) && (
@@ -414,8 +446,16 @@ const SeeMore = () => {
                 type="primary"
                 title={t("see_more.apply")}
                 onPress={() => {
-                  categoryBottomSheetRef.current?.close()
-                  filterBottomSheetRef.current?.expand()
+                  const newParams = {
+                    ...searchParams,
+                    category_id: categoryValue === 'none' ? undefined : parseInt(categoryValue)
+                  };
+                  setSearchParams(newParams);
+
+                  dispatch(searchItems(newParams));
+
+                  categoryBottomSheetRef.current?.close();
+                  filterBottomSheetRef.current?.expand();
                 }}
               />
             </View>
@@ -430,7 +470,7 @@ const SeeMore = () => {
           enableOverDrag={true}
         >
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
-            <Text h2_bold center>Sắp xếp theo</Text>
+            <Text h2_bold center>{t("see_more.sort")}</Text>
             <RadioGroup initialValue={sortValue} onValueChange={setSortValue}>
               <RadioButton value={'name_asc'} label={t("see_more.from_a_to_z")} color={Colors.primary} paddingV-8 />
               <RadioButton value={'name_desc'} label={t("see_more.from_z_to_a")} color={Colors.primary} paddingV-8 />

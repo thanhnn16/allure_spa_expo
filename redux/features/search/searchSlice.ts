@@ -81,8 +81,8 @@ export const searchSlice = createSlice({
       .addCase(searchItems.fulfilled, (state: SearchState, action: any) => {
         state.loading = false;
         state.results = {
-          products: action.payload?.products || [],
-          services: action.payload?.services || []
+          products: action.payload?.results?.products || [],
+          services: action.payload?.results?.services || []
         };
       })
       .addCase(searchItems.rejected, (state: SearchState, action: any) => {

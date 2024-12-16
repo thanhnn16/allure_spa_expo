@@ -18,9 +18,10 @@ export const searchItems = createAsyncThunk(
             const response = await AxiosInstance().get(`/search`, {
                 params: params
             });
+            console.log('Raw API Response:', response.data);
             return response.data.data;
-        } catch (error) {
-            console.error('API Error:', error);
+        } catch (error: any) {
+            console.error('Search Error:', error.response?.data);
             throw error;
         }
     }

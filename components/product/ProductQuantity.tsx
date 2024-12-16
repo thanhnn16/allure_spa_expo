@@ -155,10 +155,11 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
               marginTop: 10,
             }}
             keyboardType="numeric"
+            inputMode="numeric"
             value={tempQuantity}
             onChangeText={setTempQuantity}
             placeholder={t("productDetail.enter_quantity")}
-            maxLength={3}
+            maxLength={2}
             autoFocus={true}
           />
         }
