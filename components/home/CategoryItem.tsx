@@ -3,7 +3,6 @@ import { FlatList } from "react-native";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import { Href, router } from "expo-router";
 import { translate } from "@/languages/i18n";
-import { route } from "../../../../../PhpstormProjects/allure_spa-server/vendor/tightenco/ziggy/src/js/index";
 
 interface CategoryItem {
   id: string;
@@ -14,7 +13,6 @@ interface CategoryItem {
 }
 
 const RenderCategory: React.FC = () => {
-  // Move categories data into component and use useMemo to prevent unnecessary re-renders
   const categories = useMemo(
     () => [
       {
@@ -33,13 +31,13 @@ const RenderCategory: React.FC = () => {
         id: "3",
         name: translate("home.service"),
         icon: require("@/assets/images/home/icons/Service.png"),
-        route: "/see-more?type=service",
+        route: "/see-more?type=services",
       },
       {
         id: "4",
         name: translate("home.product"),
         icon: require("@/assets/images/home/icons/Product.png"),
-        route: "/see-more?type=product",
+        route: "/see-more?type=products",
       },
       {
         id: "5",
@@ -55,7 +53,7 @@ const RenderCategory: React.FC = () => {
       },
     ],
     []
-  ); // Empty dependency array since translate is stable
+  );
 
   const handleNavigation = (item: CategoryItem) => {
     if (item.url) {
