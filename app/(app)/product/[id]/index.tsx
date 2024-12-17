@@ -53,7 +53,7 @@ import HomeHeaderButton from "@/components/buttons/HomeHeaderButton";
 
 export default function DetailsScreen() {
   const { t } = useLanguage();
-
+  const { signOut } = useAuth();
   const { id } = useLocalSearchParams();
   const [index, setIndex] = useState(0);
   const [imageViewIndex, setImageViewIndex] = useState(0);
@@ -236,7 +236,7 @@ export default function DetailsScreen() {
 
   const handleLoginConfirm = () => {
     setBuyProductDialog(false);
-    router.replace("/(auth)");
+    signOut();
   };
 
   const [showAnimatedImage, setShowAnimatedImage] = useState(false);

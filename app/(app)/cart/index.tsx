@@ -27,15 +27,21 @@ import {
   clearOrder,
 } from "@/redux/features/order/orderSlice";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useDialog } from "@/hooks/useDialog";
+import AppButton from "@/components/buttons/AppButton";
+import { useAuth } from "@/hooks/useAuth";
 
 
 export default function Cart() {
   const { t } = useLanguage();
+  const { signOut } = useAuth();
 
   const dispatch = useDispatch();
   const [cartDialog, setCartDialog] = useState(false);
   const [setItemDelete, setsetItemDelete] = useState<Number>();
   const { items, totalAmount } = useSelector((state: RootState) => state.cart);
+  const { dialogConfig, showDialog, hideDialog } = useDialog();
+  const userProfile = useSelector((state: RootState) => state.user.user);
 
   const CART_ITEMS_KEY = "@cart_items";
   useEffect(() => {
@@ -82,10 +88,10 @@ export default function Cart() {
         >
           <Image source={CartEmptyIcon} style={{ width: 200, height: 200 }} />
           <Text h2_bold marginT-20>
-            Giỏ hàng trống
+            {t("checkout.cart_empty")}
           </Text>
           <View marginT-10>
-            <Text h3>Khám phá sản phẩm khác nhé</Text>
+            <Text h3>{t("checkout.discover_other_products")}</Text>
           </View>
         </Pressable>
       </View>
@@ -98,7 +104,7 @@ export default function Cart() {
         <View right paddingB-5>
           <TouchableOpacity onPress={handleClearCart}>
             <Text h3_bold secondary>
-              Xóa tất cả
+              {t("checkout.clear_all")}
             </Text>
           </TouchableOpacity>
         </View>
@@ -113,25 +119,16 @@ export default function Cart() {
           )}
           keyExtractor={(item, index) => `${item.id}-${index}`}
         />
-        <View row spread br20 paddingV-12 paddingH-20 backgroundColor={Colors.rgba(Colors.primary, 0.08)}>
-          <Text h3_bold>Tổng cộng: </Text>
+        <View row spread br20 paddingV-12 paddingH-20 marginB-20 backgroundColor={Colors.rgba(Colors.primary, 0.08)}>
+          <Text h3_bold>{t("checkout.total_amount")}: </Text>
           <Text h3_bold secondary>
             {formattedPrice}
           </Text>
         </View>
 
-        <Button
-          label="Tiếp Tục"
-          labelStyle={{ fontFamily: "SFProText-Bold", fontSize: 16 }}
-          backgroundColor={Colors.primary}
-          padding-20
-          borderRadius={10}
-          style={{
-            width: 338,
-            height: 50,
-            alignSelf: "center",
-            marginVertical: 10,
-          }}
+        <AppButton
+          type="primary"
+          title={t("continue")}
           onPress={handleCheckout}
         />
       </View>
@@ -139,6 +136,15 @@ export default function Cart() {
   };
 
   const handleCheckout = () => {
+    if (!userProfile) {
+      showDialog(
+        t("auth.login.login_required"),
+        t("auth.login.login_buy_product"),
+        "info",
+      );
+      return;
+    }
+
     const checkoutItems = items.map((item: CartItem) => ({
       id: item.id,
       name: item.name,
@@ -164,34 +170,24 @@ export default function Cart() {
   return (
     <GestureHandlerRootView>
       <View flex bg-white paddingB-20>
-        <AppBar title="Giỏ Hàng" back />
+        <AppBar title={t("checkout.cart")} back />
         {items.length === 0 ? <CartEmpty /> : <CartHaveItems />}
       </View>
 
       <AppDialog
         visible={cartDialog}
-        title={"Xác nhận xóa sản phẩm"}
+        title={t("checkout.delete_cart_confirm")}
         description={
-          "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?"
+          t("checkout.delete_cart_confirm_message")
         }
         closeButtonLabel={t("common.cancel")}
-        confirmButtonLabel={"Xóa"}
+        confirmButtonLabel={t("common.confirm")}
         severity="info"
         onClose={() => setCartDialog(false)}
         onConfirm={() => handleDeleteConfirm()}
       />
+
+      <AppDialog {...dialogConfig} onClose={hideDialog} onConfirm={() => { signOut() }} confirmButtonLabel={t("common.confirm")} />
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  totalText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  totalPrice: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "red",
-  },
-});

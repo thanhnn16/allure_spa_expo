@@ -587,7 +587,14 @@
     "street_address": "住所",
     "order_summary": "注文サマリー",
     "missing_address_info": "住所情報が不足しています",
-    "processing_payment": "支払い処理中..."
+    "processing_payment": "支払い処理中...",
+    "delete_cart_confirm": "この商品をカートから削除してもよろしいですか？",
+    "delete_cart_confirm_message": "このアクションにより、商品がカートから削除され、再度購入する場合はカートに追加する必要があります。",
+    "cart_empty": "カートが空です",
+    "discover_other_products": "他の商品を探してみましょう",
+    "clear_all": "すべてクリア",
+    "total_amount": "合計金額",
+    "cart": "カート"
   },
   "transaction": {
     "payment_success": "支払い成功",

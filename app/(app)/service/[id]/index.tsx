@@ -1,63 +1,59 @@
-import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Dimensions, Share } from "react-native";
-import {
-  AnimatedImage,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  ActionSheet,
-  SkeletonView,
-  Colors,
-  Dialog,
-  PanningProvider,
-} from "react-native-ui-lib";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import { Ionicons } from "@expo/vector-icons";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useLanguage } from "@/hooks/useLanguage";
 import { toggleFavoriteThunk } from "@/redux/features/favorite/favoritesThunk";
-import { router, useLocalSearchParams } from "expo-router";
+import { AppDispatch, RootState } from "@/redux/store";
 import {
   MediaResponeModelParams,
-  ServiceDetailResponeModel,
-  ServiceDetailResponeParams,
 } from "@/types/service.type";
-import AxiosInstance from "@/utils/services/helper/axiosInstance";
-import { useLanguage } from "@/hooks/useLanguage";
+import { Ionicons } from "@expo/vector-icons";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useMemo, useState } from "react";
+import { Alert, Dimensions, ScrollView, Share } from "react-native";
+import {
+  Colors,
+  Dialog,
+  Image,
+  PanningProvider,
+  SkeletonView,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native-ui-lib";
+import { useDispatch, useSelector } from "react-redux";
 
 import AppBar from "@/components/app-bar/AppBar";
-import ImageView from "react-native-image-viewing";
-import ServiceBottomComponent from "@/components/service/ServiceBottomComponent";
-import RatingStar from "@/components/rating/RatingStar";
 import AppDialog from "@/components/dialog/AppDialog";
+import RatingStar from "@/components/rating/RatingStar";
+import ServiceBottomComponent from "@/components/service/ServiceBottomComponent";
 import { useAuth } from "@/hooks/useAuth";
 import formatCurrency from "@/utils/price/formatCurrency";
+import ImageView from "react-native-image-viewing";
 
 // Icons
-import SunIcon from "@/assets/icons/sun.svg";
-import MapMarkerIcon from "@/assets/icons/map_marker.svg";
-import TagIcon from "@/assets/icons/tag.svg";
 import LinkIcon from "@/assets/icons/link.svg";
+import MapMarkerIcon from "@/assets/icons/map_marker.svg";
 import PhoneCallIcon from "@/assets/icons/phone.svg";
+import SunIcon from "@/assets/icons/sun.svg";
+import TagIcon from "@/assets/icons/tag.svg";
 import BlinkingIconText from "@/components/BlinkingIconText";
 import ServiceBookingDialog from "@/components/dialog/ServiceBookingDialog";
 import { setTempOrder } from "@/redux/features/order/orderSlice";
+import { getServiceDetailThunk } from "@/redux/features/service/getServiceDetailThunk";
 import { CheckoutOrderItem } from "@/types/order.type";
+
 const ServiceDetailPage = () => {
   const { t } = useLanguage();
+  const { signOut } = useAuth();
+  const { user } = useSelector((state: RootState) => state.user);
 
   // Hooks and state
   const { id } = useLocalSearchParams();
   const dispatch = useDispatch<AppDispatch>();
-  const favorites = useSelector((state: RootState) => state.favorite.favorites);
-  const { status } = useSelector((state: RootState) => state.favorite);
   const { isGuest } = useAuth();
+  const { serviceDetail, isLoading } = useSelector((state: RootState) => state.service);
 
   // UI state
-  const [service, setService] = useState<ServiceDetailResponeModel>();
   const [visible, setIsVisible] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [imageViewIndex, setImageViewIndex] = useState<number>(0);
   const [index, setIndex] = useState<number>(0);
   const [price, setPrice] = useState<number>();
@@ -74,72 +70,78 @@ const ServiceDetailPage = () => {
   // Window dimensions
   const windowWidth = Dimensions.get("window").width;
 
-  const [isFavoriteState, setIsFavoriteState] = useState<boolean | undefined>(
-    service?.is_favorite
-  );
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
-    const getServiceDetail = async () => {
-      const res: ServiceDetailResponeParams = (
-        await AxiosInstance().get(`services/${id}`)
-      ).data;
-
-      if (res.status_code === 200 && res.data) {
-        setService(res.data);
-        setPrice(res.data.single_price);
-        setMedia(res.data.media);
-        setIsFavoriteState(res.data.is_favorite);
+    const fetchInitialData = async () => {
+      try {
+        await dispatch(getServiceDetailThunk({
+          id,
+          userId: user?.id
+        }));
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      } finally {
+        setIsInitialLoading(false);
       }
-      setIsLoading(false);
     };
-    getServiceDetail();
-  }, [id]);
 
-  // Memoized values
+    fetchInitialData();
+    return () => {
+      // Cleanup if needed
+    };
+  }, [dispatch, id, user?.id]);
+
+  useEffect(() => {
+    if (serviceDetail) {
+      setIsFavorite(serviceDetail?.is_favorite);
+    }
+  }, [serviceDetail]);
+
   const images = useMemo(() => {
     if (!media || media.length === 0) return [];
     return media.map((item) => ({ uri: item.full_url }));
   }, [media]);
 
-  const isFavorite = favorites.some(
-    (fav: { item_id: number | undefined; type: string }) =>
-      fav.item_id === service?.id && fav.type === "service"
-  );
-
-  // Handlers
-  const handleOpenImage = (index: number) => {
-    setImageViewIndex(index);
-    setIsVisible(true);
-  };
 
   const handleShare = async () => {
-    if (!service) return;
+    if (!serviceDetail) return;
     try {
-        await Share.share({
-            url: `allurespa://service/${service.id}`,
-        });
+      await Share.share({
+        url: `allurespa://service/${serviceDetail.id}`,
+      });
     } catch (error) {
-        console.error("Error sharing the link:", error);
+      console.error("Error sharing the link:", error);
     }
-};
+  };
 
   const handleToggleFavorite = async () => {
     if (isGuest) {
       setFavoriteDialog(true);
       return;
     }
-    setIsFavoriteState((prev) => !prev);
-    await dispatch(
-      toggleFavoriteThunk({
-        type: "service",
-        itemId: service?.id,
-      })
-    );
-    setIsFavoriteState(status === "added");
+
+    try {
+      setIsFavorite((prev) => !prev);
+
+      const result = await dispatch(
+        toggleFavoriteThunk({
+          type: "service",
+          itemId: serviceDetail?.id,
+        })
+      ).unwrap();
+
+      setIsFavorite(result.status === "added");
+    } catch (error) {
+      setIsFavorite((prev) => !prev);
+      console.error("Error toggling favorite:", error);
+      Alert.alert(t("common.error"), t("common.something_went_wrong"));
+    }
   };
 
   const renderHeartIcon = () => {
-    return isFavoriteState ? (
+    return isFavorite ? (
       <Ionicons name="heart" size={24} color={Colors.primary} />
     ) : (
       <Ionicons name="heart-outline" size={24} color={Colors.primary} />
@@ -148,51 +150,55 @@ const ServiceDetailPage = () => {
 
   const handleLoginConfirm = () => {
     setBuyProductDialog(false);
-    router.replace("/(auth)");
-  };
-
-  const handleGuestPurchase = () => {
-    if (isGuest) {
-      setBuyProductDialog(true);
-    }
+    signOut();
   };
 
   const handleBooking = () => {
+    if (isGuest) {
+      setBuyProductDialog(true);
+      return;
+    }
+
     setBookingDialog(false);
     router.push({
       pathname: "/(app)/booking",
       params: {
-        service_id: service?.id,
-        service_name: service?.service_name,
+        service_id: serviceDetail?.id,
+        service_name: serviceDetail?.service_name,
         combo: combo,
       },
     });
   };
 
   const handlePayment = () => {
+    if (isGuest) {
+      setBuyProductDialog(true);
+      return;
+    }
+
     setBookingDialog(false);
 
-    if (!service) {
+    if (!serviceDetail) {
       console.error("Service data is missing");
       return;
     }
 
     const price =
       combo === 1
-        ? service.combo_5_price
+        ? serviceDetail.combo_5_price
         : combo === 2
-          ? service.combo_10_price
-          : service.single_price;
+          ? serviceDetail.combo_10_price
+          : serviceDetail.single_price;
 
     const orderItem: CheckoutOrderItem = {
-      item_id: service.id,
+      item_id: serviceDetail.id,
       item_type: "service",
       quantity: 1,
       price: price,
       service_type: combo === 1 ? "combo_5" : combo === 2 ? "combo_10" : "single",
-      service: service,
-      name: service.service_name,
-      image: service.media?.[0]?.full_url
+      service: serviceDetail,
+      name: serviceDetail.service_name,
+      image: serviceDetail.media?.[0]?.full_url
     };
 
     dispatch(
@@ -212,37 +218,24 @@ const ServiceDetailPage = () => {
     </View>
   );
 
-  const renderItem = (item: { uri: string }, idx: number) => (
-    <Pressable
-      onPress={() => handleOpenImage(idx)}
-      key={`carousel-item-${item.uri}-${idx}`}
-    >
-      <AnimatedImage
-        animationDuration={1000}
-        source={{ uri: item.uri }}
-        aspectRatio={16 / 9}
-        cover
-      />
-    </Pressable>
-  );
 
   // Update price based on combo selection
   useMemo(() => {
     switch (combo) {
       case 1:
-        setPrice(service?.combo_5_price);
+        setPrice(serviceDetail?.combo_5_price);
         setComboName(t("package.combo5_discount"));
         break;
       case 2:
-        setPrice(service?.combo_10_price);
+        setPrice(serviceDetail?.combo_10_price);
         setComboName(t("package.combo10_discount"));
         break;
       default:
-        setPrice(service?.single_price);
+        setPrice(serviceDetail?.single_price);
         setComboName(t("package.single_no_discount"));
         break;
     }
-  }, [combo, service, t]);
+  }, [combo, serviceDetail, t]);
 
   // Loading skeleton
   const renderSkeletonView = () => {
@@ -285,73 +278,73 @@ const ServiceDetailPage = () => {
 
 
   const renderDialogContent = () => (
-      <View padding-20 bg-white br30 gap-10>
-        <Text text60BO marginB-10 color={Colors.primary}>
-          {t("package.select_combo")}
+    <View padding-20 bg-white br30 gap-10>
+      <Text text60BO marginB-10 color={Colors.primary}>
+        {t("package.select_combo")}
+      </Text>
+      <TouchableOpacity
+        br20
+        centerV
+        paddingH-20
+        paddingV-15
+        style={{
+          backgroundColor: selectedCombo === 0 ? Colors.primary + "50" : Colors.primary + "10",
+        }}
+        onPress={() => {
+          setCombo(0);
+          setSelectedCombo(0);
+          setShowDialog(false);
+        }}
+      >
+        <Text h3>
+          {t("package.single_no_discount")}
         </Text>
-        <TouchableOpacity
-            br20
-            centerV
-            paddingH-20
-            paddingV-15
-            style={{
-              backgroundColor: selectedCombo === 0 ? Colors.primary + "50" : Colors.primary + "10",
-            }}
-            onPress={() => {
-              setCombo(0);
-              setSelectedCombo(0);
-              setShowDialog(false);
-            }}
-        >
-          <Text h3>
-            {t("package.single_no_discount")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            br20
-            centerV
-            paddingH-20
-            paddingV-15
-            style={{
-              backgroundColor: selectedCombo === 1 ? Colors.primary + "50" : Colors.primary + "10",
-            }}
-            onPress={() => {
-              setCombo(1);
-              setSelectedCombo(1);
-              setShowDialog(false);
-            }}
-        >
-          <Text h3>
-            {t("package.combo5_discount")}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-            br20
-            centerV
-            paddingH-20
-            paddingV-15
-            style={{
-              backgroundColor: selectedCombo === 2 ? Colors.primary + "50" : Colors.primary + "10",
-            }}
-            onPress={() => {
-              setCombo(2);
-              setSelectedCombo(2);
-              setShowDialog(false);
-            }}
-        >
-          <Text h3>
-            {t("package.combo10_discount")}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        br20
+        centerV
+        paddingH-20
+        paddingV-15
+        style={{
+          backgroundColor: selectedCombo === 1 ? Colors.primary + "50" : Colors.primary + "10",
+        }}
+        onPress={() => {
+          setCombo(1);
+          setSelectedCombo(1);
+          setShowDialog(false);
+        }}
+      >
+        <Text h3>
+          {t("package.combo5_discount")}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        br20
+        centerV
+        paddingH-20
+        paddingV-15
+        style={{
+          backgroundColor: selectedCombo === 2 ? Colors.primary + "50" : Colors.primary + "10",
+        }}
+        onPress={() => {
+          setCombo(2);
+          setSelectedCombo(2);
+          setShowDialog(false);
+        }}
+      >
+        <Text h3>
+          {t("package.combo10_discount")}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <View flex bg-$white>
       <AppBar back title={t("service.service_details")} />
-      {isLoading
+      {(isInitialLoading || isLoading)
         ? renderSkeletonView()
-        : service && (
+        : serviceDetail && (
           <View flex>
             <View flex>
               <ScrollView showsVerticalScrollIndicator={false}>
@@ -402,7 +395,7 @@ const ServiceDetailPage = () => {
                 {/* Service Details */}
                 <View padding-20 gap-10>
                   <Text h1_bold marginB-10>
-                    {service?.service_name}
+                    {serviceDetail?.service_name}
                   </Text>
 
                   <View row marginB-10>
@@ -424,15 +417,15 @@ const ServiceDetailPage = () => {
                   <View row centerV>
                     <View row gap-5>
                       <RatingStar
-                        rating={service?.rating_summary.average_rating ?? 0}
+                        rating={serviceDetail?.rating_summary.average_rating ?? 0}
                       />
                       <Text h3_medium>
-                        {service?.rating_summary.average_rating}
+                        {serviceDetail?.rating_summary.average_rating}
                       </Text>
                     </View>
                     <View flex row right>
                       <Text h3_medium>
-                        {service?.rating_summary.total_ratings}{" "}
+                        {serviceDetail?.rating_summary.total_ratings}{" "}
                         {t("productDetail.reviews")}
                       </Text>
                     </View>
@@ -477,7 +470,7 @@ const ServiceDetailPage = () => {
                     </View>
                     <View row>
                       <Text h3>• </Text>
-                      <Text h3>{service?.description}</Text>
+                      <Text h3>{serviceDetail?.description}</Text>
                     </View>
                   </View>
 
@@ -520,7 +513,7 @@ const ServiceDetailPage = () => {
             <ServiceBottomComponent
               isLoading={isLoading}
               onPurchase={() => setBookingDialog(true)}
-              service={{ ...service, combo: selectedCombo }}
+              service={{ ...serviceDetail, combo: selectedCombo }}
             />
 
             {/* Dialogs */}
@@ -547,30 +540,30 @@ const ServiceDetailPage = () => {
             />
 
             <ServiceBookingDialog
-                visible={bookingDialog}
-                title={t("service.serviceDetail.book_now")}
-                closeButtonLabel={t("common.cancel")}
-                confirmButtonLabel={t("service.book_now")}
-                secondaryConfirmButtonLabel={t("checkout.pay_online")}
-                severity="info"
-                onClose={() => {
-                  setBookingDialog(false);
-                }}
-                onConfirm={handleBooking}
-                onConfrimSecondary={handlePayment}
-                closeButton={true}
-                confirmButton={true}
-                secondaryConfirmButton={true}
-                showActionSheet={showDialog}
-                setShowActionSheet={setShowDialog}
-                setCombo={(selectedCombo) => {
-                  setCombo(selectedCombo);
-                  setSelectedCombo(selectedCombo);
-                }}
-                selectedCombo={selectedCombo}
-                singlePrice={service?.single_price}
-                combo5Price={service?.combo_5_price}
-                combo10Price={service?.combo_10_price}
+              visible={bookingDialog}
+              title={t("service.serviceDetail.book_now")}
+              closeButtonLabel={t("common.cancel")}
+              confirmButtonLabel={t("service.book_now")}
+              secondaryConfirmButtonLabel={t("checkout.pay_online")}
+              severity="info"
+              onClose={() => {
+                setBookingDialog(false);
+              }}
+              onConfirm={handleBooking}
+              onConfrimSecondary={handlePayment}
+              closeButton={true}
+              confirmButton={true}
+              secondaryConfirmButton={true}
+              showActionSheet={showDialog}
+              setShowActionSheet={setShowDialog}
+              setCombo={(selectedCombo) => {
+                setCombo(selectedCombo);
+                setSelectedCombo(selectedCombo);
+              }}
+              selectedCombo={selectedCombo}
+              singlePrice={serviceDetail?.single_price}
+              combo5Price={serviceDetail?.combo_5_price}
+              combo10Price={serviceDetail?.combo_10_price}
             />
           </View>
         )}

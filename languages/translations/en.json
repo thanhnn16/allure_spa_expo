@@ -587,7 +587,14 @@
     "street_address": "Street Address",
     "order_summary": "Order Summary",
     "missing_address_info": "Missing address information",
-    "processing_payment": "Processing payment..."
+    "processing_payment": "Processing payment...",
+    "delete_cart_confirm": "Are you sure you want to delete this product from the cart?",
+    "delete_cart_confirm_message": "This action will remove the product from your cart and you will need to re-add it to the cart.",
+    "cart_empty": "Cart empty",
+    "discover_other_products": "Discover other products",
+    "clear_all": "Clear all",
+    "total_amount": "Total amount",
+    "cart": "Cart"
   },
   "transaction": {
     "payment_success": "Payment Success",

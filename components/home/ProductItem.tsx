@@ -29,7 +29,7 @@ const RenderProductItem: React.FC<RenderProductItemProps> = ({
 
   return (
     <TouchableOpacity
-      marginB-10
+      marginV-10
       style={[{ width: widthItem, borderRadius: 12 }, AppStyles.shadowItem]}
       onPress={() => router.push(`/product/${item.id}`)}
     >
