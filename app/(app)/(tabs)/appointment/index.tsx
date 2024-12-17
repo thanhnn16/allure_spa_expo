@@ -126,7 +126,7 @@ const CancelModal = React.memo(
     return (
       <Modal visible={isVisible} transparent animationType="fade">
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={{ flex: 1 }}
         >
           <TouchableOpacity
@@ -138,7 +138,7 @@ const CancelModal = React.memo(
               flex
               center
               backgroundColor={Colors.rgba(Colors.black, 0.5)}
-              style={{ justifyContent: 'center' }}
+              style={{ justifyContent: "center" }}
             >
               <Animated.View
                 entering={FadeInDown}
@@ -149,14 +149,14 @@ const CancelModal = React.memo(
                   padding: 20,
                   ...(Platform.OS === "ios"
                     ? {
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.15,
-                      shadowRadius: 10,
-                    }
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.15,
+                        shadowRadius: 10,
+                      }
                     : {
-                      elevation: 8,
-                    }),
+                        elevation: 8,
+                      }),
                 }}
               >
                 <Text h2_bold marginB-15>
@@ -421,13 +421,15 @@ const AppointmentItem = React.memo(
                     backgroundColor={Colors.rgba(Colors.red30, 0.1)}
                   >
                     <Text h4 color={Colors.red10}>
-                      {`${t("appointment.cancelled_by")}: ${item.cancelled_by_user.full_name
-                        }`}
+                      {`${t("appointment.cancelled_by")}: ${
+                        item.cancelled_by_user.full_name
+                      }`}
                     </Text>
                     {item.cancellation_note && (
                       <Text marginT-5 h4 color={Colors.red10}>
-                        {`${t("appointment.cancel_reason")}: ${item.cancellation_note
-                          }`}
+                        {`${t("appointment.cancel_reason")}: ${
+                          item.cancellation_note
+                        }`}
                       </Text>
                     )}
                   </View>
@@ -533,8 +535,9 @@ const ScheduledPage = () => {
 
   useEffect(() => {
     if (appointments) {
-      const pastAppointments = appointments.filter((appointment: AppointmentResponeModelParams) =>
-        moment(appointment.start).isBefore(moment(), 'day')
+      const pastAppointments = appointments.filter(
+        (appointment: AppointmentResponeModelParams) =>
+          moment(appointment.start).isBefore(moment(), "day")
       );
       setHiddenAppointmentsCount(pastAppointments.length);
     }
@@ -687,17 +690,17 @@ const ScheduledPage = () => {
           marked: true,
           dotColor:
             statusColors[
-            appointment.status.toLowerCase() as keyof typeof statusColors
+              appointment.status.toLowerCase() as keyof typeof statusColors
             ],
           selected: date === selectedDate,
           selectedColor:
             date === selectedDate
               ? Colors.rgba(
-                statusColors[
-                appointment.status.toLowerCase() as keyof typeof statusColors
-                ],
-                0.1
-              )
+                  statusColors[
+                    appointment.status.toLowerCase() as keyof typeof statusColors
+                  ],
+                  0.1
+                )
               : undefined,
         };
       }
@@ -858,7 +861,12 @@ const ScheduledPage = () => {
                   <AppButton
                     type="primary"
                     title={t("service_package.book_appointment")}
-                    onPress={() => router.push("/(app)/service-package")}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(app)/see-more",
+                        params: { type: "services" },
+                      })
+                    }
                     buttonStyle={{ minWidth: 200 }}
                   />
                 </View>
@@ -934,7 +942,7 @@ const ScheduledPage = () => {
 
     return appointments.filter((appointment: AppointmentResponeModelParams) => {
       if (hidePastAppointments) {
-        return !moment(appointment.start).isBefore(moment(), 'day');
+        return !moment(appointment.start).isBefore(moment(), "day");
       }
       return true;
     });
@@ -953,9 +961,10 @@ const ScheduledPage = () => {
         />
         <Text h4 color={Colors.primary}>
           {hidePastAppointments
-            ? `${t("appointment.show_past_appointments")} (${t("appointment.hidden")} ${hiddenAppointmentsCount})`
-            : `${t("appointment.hide_past_appointments")}`
-          }
+            ? `${t("appointment.show_past_appointments")} (${t(
+                "appointment.hidden"
+              )} ${hiddenAppointmentsCount})`
+            : `${t("appointment.hide_past_appointments")}`}
         </Text>
       </View>
     </TouchableOpacity>
@@ -969,7 +978,7 @@ const ScheduledPage = () => {
       />
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         style={{ flex: 1 }}
       >
         <View flex>
@@ -980,9 +989,7 @@ const ScheduledPage = () => {
                   {items.map((item) => renderItem(item))}
                 </ScrollView>
               </View>
-              <View paddingH-24>
-                {renderHidePastAppointmentsButton()}
-              </View>
+              <View paddingH-24>{renderHidePastAppointmentsButton()}</View>
               <View flex paddingH-24>
                 {loading ? (
                   <View>
@@ -1003,17 +1010,18 @@ const ScheduledPage = () => {
                       </Text>
                       <Text h3 center grey30>
                         {t(
-                          `appointment.no_${selectedItem === 1
-                            ? "appointments"
-                            : selectedItem === 6
+                          `appointment.no_${
+                            selectedItem === 1
+                              ? "appointments"
+                              : selectedItem === 6
                               ? "next_7days"
                               : selectedItem === 2
-                                ? "pending"
-                                : selectedItem === 5
-                                  ? "confirmed"
-                                  : selectedItem === 3
-                                    ? "completed"
-                                    : "cancelled"
+                              ? "pending"
+                              : selectedItem === 5
+                              ? "confirmed"
+                              : selectedItem === 3
+                              ? "completed"
+                              : "cancelled"
                           }`
                         )}
                       </Text>
@@ -1027,9 +1035,12 @@ const ScheduledPage = () => {
                       <AppButton
                         type="outline"
                         title={t("appointment.find_service")}
-                        onPress={() => {
-                          router.push("/(app)/see-more?type=service");
-                        }}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/(app)/see-more",
+                            params: { type: "services" },
+                          })
+                        }
                       />
                     </View>
                   </View>
