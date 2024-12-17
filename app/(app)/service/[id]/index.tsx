@@ -8,11 +8,13 @@ import { Ionicons } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Dimensions, ScrollView, Share } from "react-native";
+import { Alert, Dimensions, Pressable, ScrollView, Share } from "react-native";
 import {
+  AnimatedImage,
   Colors,
   Dialog,
   Image,
+  PageControlPosition,
   PanningProvider,
   SkeletonView,
   Text,
@@ -40,6 +42,20 @@ import ServiceBookingDialog from "@/components/dialog/ServiceBookingDialog";
 import { setTempOrder } from "@/redux/features/order/orderSlice";
 import { getServiceDetailThunk } from "@/redux/features/service/getServiceDetailThunk";
 import { CheckoutOrderItem } from "@/types/order.type";
+import { Carousel } from "react-native-ui-lib/src/components/carousel";
+import { Media } from "@/types/media.type";
+
+// Thêm import Animated
+import Animated, {
+  Easing,
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withSequence,
+  withTiming,
+  ReduceMotion,
+} from "react-native-reanimated";
 
 const ServiceDetailPage = () => {
   const { t } = useLanguage();
@@ -73,6 +89,23 @@ const ServiceDetailPage = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+  // Thêm state và animated values cho animation
+  const [showAnimatedImage, setShowAnimatedImage] = useState(false);
+  const translateY = useSharedValue(0);
+  const translateX = useSharedValue(0);
+  const opacity = useSharedValue(1);
+  const scale = useSharedValue(2);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: translateY.value },
+        { translateX: translateX.value },
+      ],
+      opacity: opacity.value,
+    };
+  });
+
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -99,10 +132,16 @@ const ServiceDetailPage = () => {
     }
   }, [serviceDetail]);
 
+  useEffect(() => {
+    if (serviceDetail?.media) {
+      setMedia(serviceDetail.media);
+    }
+  }, [serviceDetail]);
+
   const images = useMemo(() => {
-    if (!media || media.length === 0) return [];
-    return media.map((item) => ({ uri: item.full_url }));
-  }, [media]);
+    if (!serviceDetail?.media || serviceDetail.media.length === 0) return [];
+    return serviceDetail.media.map((item: Media) => ({ uri: item.full_url }));
+  }, [serviceDetail?.media]);
 
 
   const handleShare = async () => {
@@ -339,6 +378,48 @@ const ServiceDetailPage = () => {
     </View>
   );
 
+  // Thêm hàm xử lý animation
+  const handlePressAnimOpacity = () => {
+    "worklet";
+    runOnJS(setShowAnimatedImage)(true);
+    translateY.value = withTiming(
+      -Dimensions.get("window").height * 0.1,
+      {
+        duration: 650,
+        easing: Easing.exp,
+        reduceMotion: ReduceMotion.System,
+      },
+      () => {
+        runOnJS(setShowAnimatedImage)(false);
+      }
+    );
+    scale.value = withTiming(0.01, {
+      duration: 300,
+      easing: Easing.exp,
+      reduceMotion: ReduceMotion.System,
+    });
+    opacity.value = withTiming(
+      0,
+      {
+        duration: 1000,
+        easing: Easing.exp,
+        reduceMotion: ReduceMotion.System,
+      },
+      () => {
+        runOnJS(setShowAnimatedImage)(false);
+        translateY.value = 0;
+        translateX.value = 0;
+        scale.value = 2;
+        opacity.value = 1;
+      }
+    );
+  };
+
+  const handleOpenImage = (index: number) => {
+    setImageViewIndex(index);
+    setIsVisible(true);
+  };
+
   return (
     <View flex bg-$white>
       <AppBar back title={t("service.service_details")} />
@@ -359,25 +440,52 @@ const ServiceDetailPage = () => {
                     alignSelf: "center",
                   }}
                 >
-                  {/* <Carousel
-                                    key={`carousel-${images.length}`}
-                                    autoplay
-                                    loop={images.length > 1}
-                                    onChangePage={(index: number) => setIndex(index)}
-                                    pageControlPosition={PageControlPosition.OVER}
-                                    pageControlProps={{
-                                        size: 10,
-                                        color: "#ffffff",
-                                        inactiveColor: "#c4c4c4",
-                                    }}
-                                >
-                                    {images.map((item, idx) => renderItem(item, idx))}
-                                </Carousel> */}
-                  <Image
-                    source={require("@/assets/images/logo/logo.png")}
-                    style={{ width: "100%", height: 200 }}
-                  />
+                  <Carousel
+                    key={`carousel-${serviceDetail?.media?.length}`}
+                    autoplay
+                    loop={serviceDetail?.media?.length > 1}
+                    onChangePage={(index: number) => setIndex(index)}
+                    pageControlPosition={PageControlPosition.OVER}
+                    pageControlProps={{
+                      size: 10,
+                      color: "#ffffff",
+                      inactiveColor: "#c4c4c4",
+                    }}
+                  >
+                    {serviceDetail?.media?.map((item: Media, index: number) => (
+                      <Pressable onPress={() => handleOpenImage(index)} key={index}>
+                        <AnimatedImage
+                          animationDuration={1000}
+                          source={{ uri: item.full_url }}
+                          aspectRatio={16 / 9}
+                          cover
+                          key={index}
+                        />
+                      </Pressable>
+                    ))}
+                  </Carousel>
+
                 </View>
+
+                {/* Thêm animated image */}
+                {showAnimatedImage && (
+                  <View
+                    backgroundColor={Colors.transparent}
+                    style={{
+                      position: "absolute",
+                      right: 20,
+                      top: 50,
+                    }}
+                  >
+                    <Animated.Image
+                      source={{ uri: serviceDetail?.media?.[index]?.full_url }}
+                      style={[
+                        { width: 60, height: 45, alignSelf: "flex-end", borderRadius: 8, overflow: "hidden" },
+                        animatedStyle,
+                      ]}
+                    />
+                  </View>
+                )}
 
                 {/* Image Viewer */}
                 <ImageView

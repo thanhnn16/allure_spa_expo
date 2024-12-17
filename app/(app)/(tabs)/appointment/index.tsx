@@ -438,7 +438,7 @@ const AppointmentItem = React.memo(
                 )}
 
                 {/* Cancel button */}
-                {item.status === "pending" && (
+                {(item.status === "pending" || item.status === "confirmed") && (
                   <AppButton
                     type="outline"
                     onPress={() => onCancelPress(item.id)}
