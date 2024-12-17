@@ -134,7 +134,10 @@ const ProductBottomComponent: React.FC<ProductBottomComponentProps> = ({
           </View>
           <Text h3_medium>{t("productDetail.reviews")}</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleAddToCart()}>
+        <TouchableOpacity
+          onPress={() => handleAddToCart()}
+          disabled={disabled}
+        >
           <View center marginB-4>
             <Image source={ShoppingCartIcon} size={24} />
           </View>

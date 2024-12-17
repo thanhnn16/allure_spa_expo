@@ -394,7 +394,6 @@ export default function DetailsScreen() {
                     h2_medium
                     secondary
                     marginL-5
-                    style={product.quantity <= 0 ? { textDecorationLine: 'line-through' } : {}}
                   >
                     {formatCurrency({ price: product.price })}
                   </Text>
