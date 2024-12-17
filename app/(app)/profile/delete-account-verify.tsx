@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,31 @@ import { useLanguage } from "@/hooks/useLanguage";
 
 import AppBar from "@/components/app-bar/AppBar";
 import AppButton from "@/components/buttons/AppButton";
+import { useDispatch } from "react-redux";
+import { deleteUserThunk } from "@/redux/features/users/deleteAccount";
+import { User } from "@/types/user.type";
+import { useAuth } from "@/hooks/useAuth";
 
 const DeleteAccountVerifyScreen: React.FC = () => {
   const { t } = useLanguage();
+  const { user, signOut } = useAuth();
+  const dispatch = useDispatch();
+
+  const [userProfile, setUserProfile] = useState<User>();
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const userProfileStr = JSON.stringify(user);
+        if (userProfileStr) {
+          setUserProfile(JSON.parse(userProfileStr));
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    };
+    loadUserData();
+  }, []);
 
   const [verify, setVerify] = useState("Có , gửi dữ liệu của tôi tới email");
   return (
@@ -28,36 +50,39 @@ const DeleteAccountVerifyScreen: React.FC = () => {
           initialValue={verify}
           onValueChange={(value: string) => setVerify(value)}
         >
-          {[
-            t("deleteaccount.verify_yes"),
-            t("deleteaccount.verify_no"),
-          ].map((lang) => (
-            <View
-              key={lang}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingVertical: 10,
-                marginVertical: 5,
-              }}
-            >
-              <Text h2 color={verify === lang ? "black" : "grey"}>
-                {lang}
-              </Text>
-              <RadioButton
-                value={lang}
-                selected={verify === lang}
-                color={"black"}
-              />
-            </View>
-          ))}
+          {[t("deleteaccount.verify_yes"), t("deleteaccount.verify_no")].map(
+            (lang) => (
+              <View
+                key={lang}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  paddingVertical: 10,
+                  marginVertical: 5,
+                }}
+              >
+                <Text h2 color={verify === lang ? "black" : "grey"}>
+                  {lang}
+                </Text>
+                <RadioButton
+                  value={lang}
+                  selected={verify === lang}
+                  color={"black"}
+                />
+              </View>
+            )
+          )}
         </RadioGroup>
       </View>
       <View marginT-40 paddingH-20>
         <AppButton
           type="primary"
           title={t("deleteaccount.title")}
+          onPress={() => {
+            dispatch(deleteUserThunk(userProfile?.id));
+            signOut();
+          }}
         />
       </View>
     </View>
