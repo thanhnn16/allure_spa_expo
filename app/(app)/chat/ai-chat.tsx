@@ -118,7 +118,7 @@ const AIChatScreen = () => {
           full_name: user?.full_name || t("common.guest"),
           phone_number: user?.phone_number || "",
           email: user?.email || "",
-          timestamp: new Date().toISOString(),
+          today: new Date().toLocaleDateString(),
         };
 
         await dispatch(

@@ -3,6 +3,10 @@ import { FlatList } from "react-native";
 import { TouchableOpacity, Image, View, Text } from "react-native-ui-lib";
 import { Href, router } from "expo-router";
 import { translate } from "@/languages/i18n";
+import { useAuth } from "@/hooks/useAuth";
+import AppDialog from "../dialog/AppDialog";
+import { useDialog } from "@/hooks/useDialog";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface CategoryItem {
   id: string;
@@ -13,6 +17,10 @@ interface CategoryItem {
 }
 
 const RenderCategory: React.FC = () => {
+  const { t } = useLanguage();
+  const { isGuest, signOut } = useAuth();
+  const { showDialog, hideDialog, dialogConfig } = useDialog();
+
   const categories = useMemo(
     () => [
       {
@@ -56,7 +64,19 @@ const RenderCategory: React.FC = () => {
   );
 
   const handleNavigation = (item: CategoryItem) => {
-    if (item.url) {
+    if (item.id == "2") {
+      if (isGuest) {
+        showDialog(
+          t("auth.login.login_required"),
+          t("auth.login.login_profile"),
+          "info",
+        );
+      } else {
+        router.push({
+          pathname: "/voucher",
+        });
+      }
+    } else if (item.url) {
       router.push({
         pathname: "/webview",
         params: { url: item.url },
@@ -97,7 +117,18 @@ const RenderCategory: React.FC = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ paddingHorizontal: 12 }}
       />
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("common.confirm")}
+        severity={dialogConfig.severity}
+        onClose={hideDialog}
+        onConfirm={() => signOut()}
+      />
     </View>
+
   );
 };
 
