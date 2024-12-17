@@ -14,6 +14,7 @@ import AddressItem from "@/components/address/AddressItem";
 import AppDialog from "@/components/dialog/AppDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useLocalSearchParams } from "expo-router";
 
 const AddressScreen = () => {
   const { t } = useLanguage();
@@ -34,6 +35,8 @@ const AddressScreen = () => {
     (state: RootState) => state.address
   );
 
+  const { fromCheckout } = useLocalSearchParams<{ fromCheckout: string }>();
+
   const loadUserData = async () => {
     try {
       const userProfileStr = JSON.stringify(user);
@@ -42,7 +45,6 @@ const AddressScreen = () => {
       }
 
       await dispatch(fetchAddresses()).unwrap();
-      console.log("addresses", addresses);
     } catch (error: any) {
       setErrorDescription(error.message || "Không thể cập nhật địa chỉ");
       setErrorDialogVisible(true);
@@ -90,7 +92,7 @@ const AddressScreen = () => {
 
   return (
     <View flex bg-white>
-      <AppBar back title={t("address.address")} />
+      <AppBar back title={fromCheckout === "true" ? t("checkout.select_address") : t("address.address")} />
       <View flex>
         {loading ? (
           <AddressSkeletonView />
@@ -104,19 +106,22 @@ const AddressScreen = () => {
                 setUpdateItem={setUpdateItem}
                 setUpdateDialogVisible={setDialogUpdateVisible}
                 setDeleteDialogVisible={setdialogDeleteVisible}
+                fromCheckout={fromCheckout === "true"}
               />
             ))}
           </ScrollView>
         )}
       </View>
 
-      <View width={"100%"} padding-16>
-        <AppButton
-          type="primary"
-          title={t("address.add_new_address")}
-          onPress={() => router.push("/(app)/address/add")}
-        />
-      </View>
+      {fromCheckout !== "true" && (
+        <View width={"100%"} padding-16>
+          <AppButton
+            type="primary"
+            title={t("address.add_new_address")}
+            onPress={() => router.push("/(app)/address/add")}
+          />
+        </View>
+      )}
 
       <AppDialog
         visible={errorDialogVisible}

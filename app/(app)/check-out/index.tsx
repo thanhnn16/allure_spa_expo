@@ -230,65 +230,39 @@ export default function Checkout() {
     }
   };
 
-  const reduxSelectedAddress = useSelector(
-    (state: RootState) => state.address.selectedAddress
-  );
+  const reduxSelectedAddress = useSelector((state: RootState) => state.address.selectedAddress);
 
   const loadSelectedAddress = async () => {
     try {
-      const addresses = await dispatch(fetchAddresses()).unwrap();
-      if (addresses && addresses.length > 0) {
-        const defaultAddress =
-          addresses.find((addr: Address) => addr.is_default) || addresses[0];
-        if (defaultAddress) {
-          setSelectedAddress(defaultAddress);
-          dispatch(setReduxSelectedAddress(defaultAddress));
-          await AsyncStorage.setItem(
-            "selectedAddress",
-            JSON.stringify(defaultAddress)
-          );
+      // Chỉ fetch addresses nếu không có địa chỉ đã chọn
+      if (!reduxSelectedAddress) {
+        const addresses = await dispatch(fetchAddresses()).unwrap();
+        if (addresses && addresses.length > 0) {
+          const defaultAddress = addresses.find((addr: Address) => addr.is_default) || addresses[0];
+          if (defaultAddress) {
+            setSelectedAddress(defaultAddress);
+            dispatch(setReduxSelectedAddress(defaultAddress));
+          }
         }
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to load addresses";
+      const errorMessage = error instanceof Error ? error.message : "Failed to load addresses";
       showDialog(t("common.error"), errorMessage, "error");
     }
   };
 
+  // Chỉ load địa chỉ lần đầu khi không có địa chỉ đã chọn
   useEffect(() => {
-    const initializeCheckout = async () => {
-      try {
-        if (!userProfile) return;
-
-        try {
-          const addresses = await dispatch(fetchAddresses()).unwrap();
-          if (addresses && addresses.length > 0) {
-            const defaultAddress =
-              addresses.find((addr: Address) => addr.is_default) ||
-              addresses[0];
-            if (defaultAddress) {
-              setSelectedAddress(defaultAddress);
-              dispatch(setReduxSelectedAddress(defaultAddress));
-            }
-          }
-        } catch (addressError) {
-          console.error("Error loading addresses:", addressError);
-        }
-
-        try {
-          await loadVouchers();
-        } catch (voucherError) {
-          console.error("Error loading vouchers:", voucherError);
-        }
-      } catch (error) {
-        console.error("Error initializing checkout:", error);
-      }
-    };
-
-    initializeCheckout();
+    if (!userProfile) return;
+    
+    if (!selectedAddress && !reduxSelectedAddress) {
+      loadSelectedAddress();
+    }
+    
+    loadVouchers();
   }, [userProfile]);
 
+  // Cập nhật địa chỉ khi có thay đổi từ redux
   useEffect(() => {
     if (reduxSelectedAddress) {
       setSelectedAddress(reduxSelectedAddress);
@@ -296,13 +270,13 @@ export default function Checkout() {
     }
   }, [reduxSelectedAddress]);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      loadSelectedAddress();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
+  // Xóa effect không cần thiết
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     loadSelectedAddress();
+  //   });
+  //   return unsubscribe;
+  // }, [navigation]);
 
   const handlePayment = async () => {
     try {
@@ -511,14 +485,15 @@ export default function Checkout() {
         </Text>
         <PaymentAddress
           isPayment={true}
-          onPress={() => router.push("/(app)/address")}
+          onPress={() => router.push({
+            pathname: "/(app)/address",
+            params: { fromCheckout: "true" }
+          })}
           selectAddress={addressToShow}
           addressType={addressType}
           setAddressType={setAddressType}
           tempAddress={tempAddress}
-          setTempAddress={
-            setTempAddress as React.Dispatch<React.SetStateAction<TempAddress>>
-          }
+          setTempAddress={setTempAddress}
           showDialog={showDialog}
           userProfile={userProfile}
         />

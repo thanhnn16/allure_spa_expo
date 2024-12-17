@@ -3,8 +3,14 @@ import { FunctionCallingMode, GoogleGenerativeAI } from "@google/generative-ai";
 import { RootState } from "../../store";
 import AxiosInstance from "@/utils/services/helper/axiosInstance";
 import { AiConfig } from '@/types/ai-config';
-import { useAuth } from '@/hooks/useAuth';
-import { ERROR_KEYS } from '@/constants/errorMessages';
+import {
+  handleFunctionCall,
+  getActiveConfig,
+  handleApiError,
+  FunctionCallResponse,
+  CandidateResponse,
+  AiMessage
+} from './aiFunctions';
 
 interface AiState {
   messages: Array<{
@@ -12,6 +18,10 @@ interface AiState {
     parts: Array<{ text?: string; image?: { data: string; mimeType: string } }>;
     isSystemMessage?: boolean;
     isTemporary?: boolean;
+    actionButton?: {
+      type: 'addToCart' | 'seeCart' | 'seeProductDetail' | 'seeServiceDetail';
+      params?: any;
+    };
   }>;
   isLoading: boolean;
   isThinking: boolean;
@@ -25,42 +35,6 @@ const initialState: AiState = {
   isThinking: false,
   error: null,
   configs: null
-};
-
-// Helper function to handle API errors
-const handleApiError = (error: any) => {
-  console.error('API Error:', error);
-  let errorKey = ERROR_KEYS.UNDEFINED_ERROR;
-
-  if (error.response?.data?.message) {
-    return error.response.data.message;
-  } else if (error.message) {
-    return error.message; // Trả về key lỗi
-  }
-
-  return errorKey;
-};
-
-// Helper function to get active config by type
-const getActiveConfigByType = (configs: AiConfig[] | null, type: string): AiConfig | undefined => {
-  return configs?.find(c => c.type === type && c.is_active);
-};
-
-// Helper function to get API key from config
-const getApiKey = (config: AiConfig | undefined): string => {
-  if (!config) {
-    throw new Error(ERROR_KEYS.CONFIG_NOT_FOUND);
-  }
-
-  if (config.global_api_key) {
-    return config.global_api_key;
-  }
-
-  if (config.api_key) {
-    return config.api_key;
-  }
-
-  throw new Error(ERROR_KEYS.MISSING_API_KEY);
 };
 
 // Fetch AI configs from server
@@ -81,49 +55,21 @@ export const fetchAiConfigs = createAsyncThunk(
   }
 );
 
-// Thêm interface cho function call response
-interface FunctionCallResponse {
-  name: string;
-  args: any;
-}
-
-// Thêm interface cho candidate response
-interface CandidateResponse {
-  content: {
-    parts: Array<{
-      text?: string;
-      functionCall?: FunctionCallResponse;
-    }>;
-  };
-}
-
-// Thêm interface cho message
-interface AiMessage {
-  role: 'user' | 'model';
-  parts: Array<{ text?: string; image?: { data: string; mimeType: string } }>;
-  isSystemMessage?: boolean;
-}
-
-// Cập nhật helper function
-const getActiveConfig = (configs: any[]) => {
-  return configs?.find(config =>
-    config.type === 'general_assistant' &&
-    config.is_active
-  );
-};
-
 // Send text message to AI
 export const sendTextMessage = createAsyncThunk(
   'ai/sendTextMessage',
-  async ({
-    text,
-    isSystemMessage = false
-  }: {
-    text: string;
-    isSystemMessage?: boolean
-  }, { getState, dispatch, rejectWithValue }: any) => {
+  async (
+    {
+      text,
+      isSystemMessage = false
+    }: {
+      text: string;
+      isSystemMessage?: boolean
+    },
+    thunkAPI: any
+  ) => {
     try {
-      const state = getState() as RootState;
+      const state = thunkAPI.getState() as RootState;
       const config = getActiveConfig(state.ai.configs);
 
       if (isSystemMessage) {
@@ -173,95 +119,87 @@ export const sendTextMessage = createAsyncThunk(
         },
       });
 
-      console.log('history: ', JSON.stringify(state.ai.messages, null, 2));
-
       const result = await chat.sendMessage(text.trim());
       const response = result.response;
 
-      // Kiểm tra parts trong response
       const parts = response.candidates?.[0]?.content?.parts;
       if (!parts || parts.length === 0) {
         throw new Error('Invalid response format');
       }
 
-      // Xử lý text response (nếu có)
       let responseText = '';
       if (parts[0]?.text) {
         responseText = parts[0].text;
       }
 
-      // Xử lý function call (nếu có)
       const functionCallPart = parts.find(part => part.functionCall);
       if (functionCallPart?.functionCall) {
         try {
-          // Gọi API function
           const functionResult = await handleFunctionCall(
             functionCallPart.functionCall.name,
-            functionCallPart.functionCall.args || {}
+            functionCallPart.functionCall.args || {},
+            thunkAPI.dispatch,
+            state.auth.user
           );
 
-          // Kiểm tra và format dữ liệu trước khi gửi lại cho AI
-          let formattedData = functionResult;
-          if (functionResult.original) {
-            formattedData = {
-              success: functionResult.original.success,
-              data: functionResult.original.data,
-              message: functionResult.original.message
+          let actionButton = null;
+          if (functionCallPart.functionCall.name === 'addToCart') {
+            actionButton = {
+              type: 'addToCart',
+              params: {
+                product_id: functionResult.data.product?.id,
+                ...functionResult.data.product
+              }
+            };
+          } else if (functionCallPart.functionCall.name === 'seeCart') {
+            actionButton = {
+              type: 'seeCart'
+            };
+          } else if (functionCallPart.functionCall.name === 'seeProductDetail') {
+            actionButton = {
+              type: 'seeProductDetail',
+              params: {
+                id: functionResult.data.id
+              }
+            };
+          } else if (functionCallPart.functionCall.name === 'seeServiceDetail') {
+            actionButton = {
+              type: 'seeServiceDetail',
+              params: {
+                id: functionResult.data.id
+              }
             };
           }
 
-          // Gửi kết quả function call lại cho AI
           const followUpResult = await chat.sendMessage(
-            JSON.stringify(formattedData)
+            JSON.stringify(functionResult)
           );
 
-          // Kết hợp response ban đầu với kết quả function call
           const finalResponse = followUpResult.response.text();
           if (finalResponse && finalResponse.trim() !== '') {
             responseText += '\n' + finalResponse;
           }
+
+          return {
+            text: responseText,
+            actionButton
+          };
+
         } catch (error) {
           console.error('Function call processing error:', error);
           responseText += '\nXin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn.';
+          return { text: responseText };
         }
       }
 
-      // Trả về kết quả cuối cùng
-      return responseText || 'Xin lỗi, tôi không hiểu yêu cầu của bạn. Vui lòng thử lại.';
+      return { text: responseText };
 
     } catch (error: any) {
       console.error("Send text error:", error);
-      return rejectWithValue(error.message || 'Lỗi không xác định khi gửi tin nhắn');
+      return thunkAPI.rejectWithValue(error.message || 'Lỗi không xác định khi gửi tin nhắn');
     }
   }
 );
-
-// Cập nhật hàm xử lý function call
-const handleFunctionCall = async (functionName: string, args: any) => {
-  console.log('Calling function:', functionName, 'with args:', args);
-
-  try {
-    // Thêm user_id vào args nếu là getUserVouchers
-    if (functionName === 'getUserVouchers') {
-      const { user } = useAuth();
-      args = {
-        ...args,
-        user_id: user?.id
-      };
-    }
-
-    const response = await AxiosInstance().post('/ai/function-call', {
-      function: functionName,
-      args: args
-    });
-    console.log('Function call response:', response.data.data);
-    return response.data.data;
-  } catch (error: any) {
-    console.error('Function call error:', error);
-    console.error(`Function call error: ${JSON.stringify(error.response.data)}`);
-    throw error;
-  }
-};
 
 // Send image message to AI
 export const sendImageMessage = createAsyncThunk(
@@ -272,7 +210,7 @@ export const sendImageMessage = createAsyncThunk(
   }: {
     text: string;
     images: Array<{ data: string; mimeType: string }>;
-  }, { getState, rejectWithValue }: any) => {
+  }, { getState, rejectWithValue, dispatch }: any) => {
     try {
       const state = getState() as RootState;
       const config = getActiveConfig(state.ai.configs);
@@ -339,7 +277,9 @@ export const sendImageMessage = createAsyncThunk(
         try {
           const functionResult = await handleFunctionCall(
             functionCallPart.functionCall.name,
-            functionCallPart.functionCall.args || {}
+            functionCallPart.functionCall.args || {},
+            dispatch,
+            getState().auth.user
           );
 
           const followUpResult = await chat.sendMessage(
@@ -411,6 +351,17 @@ const aiSlice = createSlice({
           parts: [{ text: action.payload }]
         };
       }
+    },
+    logChatHistory: (state: AiState) => {
+      const chatHistory = state.messages.map(msg => ({
+        role: msg.role,
+        content: msg.parts[0]?.text || '',
+        isSystemMessage: msg.isSystemMessage || false,
+        hasImage: msg.parts.some(part => part.image),
+        actionButton: msg.actionButton
+      }));
+      
+      console.log('Chat History:', JSON.stringify(chatHistory, null, 2));
     }
   },
   extraReducers: (builder: any) => {
@@ -456,7 +407,8 @@ const aiSlice = createSlice({
         if (!action.payload.skipResponse) {
           state.messages.push({
             role: 'model',
-            parts: [{ text: action.payload }]
+            parts: [{ text: action.payload.text }],
+            actionButton: action.payload.actionButton
           });
         }
       })
@@ -508,7 +460,8 @@ export const {
   clearError,
   addTemporaryMessage,
   removeTemporaryMessage,
-  updateLastMessage
+  updateLastMessage,
+  logChatHistory
 } = aiSlice.actions;
 
 export default aiSlice.reducer;

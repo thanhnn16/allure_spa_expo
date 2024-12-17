@@ -2,6 +2,15 @@ import { StyleSheet, Image, ActivityIndicator, TextStyle } from "react-native";
 import { View, Text, Colors } from "react-native-ui-lib";
 import Markdown from "react-native-markdown-display";
 import { useLanguage } from "@/hooks/useLanguage";
+import { router } from "expo-router";
+import { useDispatch } from "react-redux";
+import { addItemToCart } from "@/redux/features/cart/cartSlice";
+import AppButton from "@/components/buttons/AppButton";
+
+interface ActionButton {
+  type: 'addToCart' | 'seeCart' | 'seeProductDetail' | 'seeServiceDetail';
+  params?: any;
+}
 
 interface MessageProps {
   id: string;
@@ -10,6 +19,7 @@ interface MessageProps {
   created_at: string;
   attachments?: string[];
   sending?: boolean;
+  actionButton?: ActionButton;
 }
 
 interface MessageBubbleProps {
@@ -19,7 +29,9 @@ interface MessageBubbleProps {
 }
 
 const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
+  const dispatch = useDispatch();
   const { t } = useLanguage();
+
   const formatTime = (date: string) => {
     return new Date(date).toLocaleTimeString("vi-VN", {
       hour: "2-digit",
@@ -28,6 +40,33 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
   };
 
   const messageText = typeof message.message === 'string' ? message.message : '';
+
+  const handleAction = (action: ActionButton) => {
+    switch (action.type) {
+      case 'addToCart':
+        if (action.params) {
+          dispatch(addItemToCart({
+            item: action.params,
+            cart_quantity: 1,
+            item_type: 'product'
+          }));
+        }
+        break;
+      case 'seeCart':
+        router.push('/cart');
+        break;
+      case 'seeProductDetail':
+        if (action.params?.id) {
+          router.push(`/product/${action.params.id}`);
+        }
+        break;
+      case 'seeServiceDetail':
+        if (action.params?.id) {
+          router.push(`/service/${action.params.id}`);
+        }
+        break;
+    }
+  };
 
   return (
       <View
@@ -90,6 +129,16 @@ const MessageBubble = ({ message, isOwn, isThinking }: MessageBubbleProps) => {
                   >
                     {formatTime(message.created_at)}
                   </Text>
+
+                  {!isThinking && message.actionButton && (
+                    <View marginT-10>
+                      <AppButton
+                        title={t(`chat.actions.${message.actionButton.type}`)} 
+                        type="text"
+                        onPress={() => handleAction(message.actionButton!)}
+                      />
+                    </View>
+                  )}
                 </>
             )}
 
@@ -205,6 +254,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginTop: 4
+  },
+  actionButton: {
+    marginTop: 8,
   }
 });
 
