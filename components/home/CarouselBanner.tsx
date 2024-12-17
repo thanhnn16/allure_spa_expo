@@ -43,6 +43,7 @@ const CarouselBanner: React.FC = () => {
                             source={{ uri: item.full_image_url }}
                             style={styles.image}
                             animationDuration={1000}
+                            resizeMode="cover"
                         />
                     </TouchableOpacity>
                 ))}
