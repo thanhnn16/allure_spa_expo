@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { View, Text, Colors } from "react-native-ui-lib";
 import { TextInput } from "@/components/inputs/TextInput";
 import { useLanguage } from "@/hooks/useLanguage";
-
 import AppButton from "@/components/buttons/AppButton";
 import { Alert, ActivityIndicator } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
+import { useDialog } from "@/hooks/useDialog";
+import AppDialog from "@/components/dialog/AppDialog";
 
 interface RegisterFormProps {
   onBackPress: () => void;
@@ -13,6 +14,7 @@ interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
   const { t } = useLanguage();
+  const { dialogConfig, showDialog, hideDialog } = useDialog();
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [fullName, setFullName] = useState("");
@@ -85,15 +87,15 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
     const isFullNameValid = validateFullName(fullName);
     const isPasswordValid = validatePassword(password);
     const isConfirmPasswordValid = validateConfirmPassword(
-      password,
-      confirmPassword
+        password,
+        confirmPassword
     );
 
     if (
-      !isPhoneValid ||
-      !isFullNameValid ||
-      !isPasswordValid ||
-      !isConfirmPasswordValid
+        !isPhoneValid ||
+        !isFullNameValid ||
+        !isPasswordValid ||
+        !isConfirmPasswordValid
     ) {
       return;
     }
@@ -103,9 +105,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
     try {
       await signUp({ fullName, phoneNumber, password, confirmPassword });
     } catch (error: any) {
-      Alert.alert(
-        t("auth.register.error"),
-        error.message || t("auth.login.unknown_error")
+      showDialog(
+          t("auth.register.error"),
+          error.message || t("auth.login.unknown_error"),
+          "error"
       );
     } finally {
       setLoading(false);
@@ -113,84 +116,95 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onBackPress }) => {
   };
 
   return (
-    <>
-      <TextInput
-        title={t("auth.register.phone_number")}
-        placeholder={t("auth.register.phone_number")}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-        onBlur={() => validatePhoneNumber(phoneNumber)}
-      />
-      {phoneError ? <Text style={{ color: "red" }}>{phoneError}</Text> : null}
-
-      <TextInput
-        title={t("auth.register.fullname")}
-        placeholder={t("auth.register.fullname")}
-        value={fullName}
-        onChangeText={setFullName}
-        onBlur={() => validateFullName(fullName)}
-      />
-      {fullNameError ? (
-        <Text style={{ color: "red" }}>{fullNameError}</Text>
-      ) : null}
-
-      <TextInput
-        title={t("auth.register.password")}
-        placeholder={t("auth.register.password")}
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        onBlur={() => validatePassword(password)}
-      />
-      {passwordError ? (
-        <Text style={{ color: "red" }}>{passwordError}</Text>
-      ) : null}
-
-      <TextInput
-        title={t("auth.register.confirm_password")}
-        placeholder={t("auth.register.confirm_password")}
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        onBlur={() => validateConfirmPassword(password, confirmPassword)}
-      />
-      {confirmPasswordError ? (
-        <Text style={{ color: "red" }}>{confirmPasswordError}</Text>
-      ) : null}
-
-      <View marginV-20 gap-12>
-        <AppButton
-          type="primary"
-          onPress={handleRegister}
-          disabled={loading}
-          buttonStyle={{
-            backgroundColor: loading ? Colors.grey60 : Colors.primary,
-          }}
-          titleStyle={{ color: Colors.background }}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color={Colors.primary} />
-          ) : (
-            <Text
-              style={{
-                color: "#FFFFFF",
-                fontFamily: "OpenSans-Regular",
-                fontWeight: "bold",
-              }}
-            >
-              {t("auth.register.title")}
-            </Text>
-          )}
-        </AppButton>
-        <AppButton
-          title={t("back")}
-          type="outline"
-          marginT-12
-          onPress={onBackPress}
+      <>
+        <TextInput
+            title={t("auth.register.phone_number")}
+            placeholder={t("auth.register.phone_number")}
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            keyboardType="phone-pad"
+            onBlur={() => validatePhoneNumber(phoneNumber)}
         />
-      </View>
-    </>
+        {phoneError ? <Text style={{ color: "red" }}>{phoneError}</Text> : null}
+
+        <TextInput
+            title={t("auth.register.fullname")}
+            placeholder={t("auth.register.fullname")}
+            value={fullName}
+            onChangeText={setFullName}
+            onBlur={() => validateFullName(fullName)}
+        />
+        {fullNameError ? (
+            <Text style={{ color: "red" }}>{fullNameError}</Text>
+        ) : null}
+
+        <TextInput
+            title={t("auth.register.password")}
+            placeholder={t("auth.register.password")}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+            onBlur={() => validatePassword(password)}
+        />
+        {passwordError ? (
+            <Text style={{ color: "red" }}>{passwordError}</Text>
+        ) : null}
+
+        <TextInput
+            title={t("auth.register.confirm_password")}
+            placeholder={t("auth.register.confirm_password")}
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            onBlur={() => validateConfirmPassword(password, confirmPassword)}
+        />
+        {confirmPasswordError ? (
+            <Text style={{ color: "red" }}>{confirmPasswordError}</Text>
+        ) : null}
+
+        <View marginV-20 gap-12>
+          <AppButton
+              type="primary"
+              onPress={handleRegister}
+              disabled={loading}
+              buttonStyle={{
+                backgroundColor: loading ? Colors.grey60 : Colors.primary,
+              }}
+              titleStyle={{ color: Colors.background }}
+          >
+            {loading ? (
+                <ActivityIndicator size="small" color={Colors.primary} />
+            ) : (
+                <Text
+                    style={{
+                      color: "#FFFFFF",
+                      fontFamily: "OpenSans-Regular",
+                      fontWeight: "bold",
+                    }}
+                >
+                  {t("auth.register.title")}
+                </Text>
+            )}
+          </AppButton>
+          <AppButton
+              title={t("back")}
+              type="outline"
+              marginT-12
+              onPress={onBackPress}
+          />
+        </View>
+
+        <AppDialog
+            visible={dialogConfig.visible}
+            title={dialogConfig.title}
+            description={dialogConfig.description}
+            severity={dialogConfig.severity}
+            onClose={hideDialog}
+            closeButton={true}
+            confirmButton={false}
+            secondaryConfirmButton={false}
+        />
+      </>
   );
 };
 
