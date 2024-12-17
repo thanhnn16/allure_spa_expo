@@ -6,6 +6,7 @@ import { WebViewType } from "@/utils/constants/webview";
 import AppDialog from "@/components/dialog/AppDialog";
 import AppBar from "../app-bar/AppBar";
 import { useLanguage } from "@/hooks/useLanguage";
+import { WebViewNavigation } from "react-native-webview/lib/WebViewTypes";
 
 interface WebViewScreenProps {
   url: string;
@@ -14,7 +15,7 @@ interface WebViewScreenProps {
 
 const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
   const { t } = useLanguage();
-
+  const [isLoading, setIsLoading] = useState(true);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogConfig, setDialogConfig] = useState({
     title: "",
@@ -22,8 +23,7 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
     severity: "error" as "error" | "success" | "info" | "warning",
   });
 
-
-  const handleZaloCallback = (navState: any) => {
+  const handleZaloCallback = (navState: WebViewNavigation) => {
     const urlObj = new URL(navState.url);
     const code = urlObj.searchParams.get("code");
     const state = urlObj.searchParams.get("state");
@@ -36,39 +36,47 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
     }
   };
 
-  const handlePaymentCallback = async (navState: any) => {
-    const url = navState.url;
-    if (url.startsWith("allurespa://") || url.startsWith("exp+allurespa://")) {
-      const urlPath = url.split("://")[1]; // Get path after scheme
-      const [screen] = urlPath.split("?"); // Get screen name
-      const params = new URL(navState.url).searchParams;
+  const handlePaymentCallback = async (navState: WebViewNavigation) => {
+    try {
+      const currentUrl = navState.url;
 
-      if (screen === "invoice/success") {
-        router.replace({
-          pathname: "/(app)/invoice/success",
-          params: Object.fromEntries(params),
-        });
-      } else if (screen === "invoice/failed") {
-        router.replace({
-          pathname: "/(app)/invoice/failed",
-          params: Object.fromEntries(params),
-        });
+      if (currentUrl.startsWith("allurespa://") || currentUrl.startsWith("exp+allurespa://")) {
+        const urlPath = currentUrl.split("://")[1];
+        const [screen] = urlPath.split("?");
+        const params = new URLSearchParams(currentUrl.split("?")[1]);
+
+        if (screen === "invoice/success" || screen === "invoice/failed") {
+          const paramObject = Object.fromEntries(params);
+          if (paramObject.order_id) {
+            router.replace({
+              pathname: screen === "invoice/success"
+                ? "/(app)/invoice/success"
+                : "/(app)/invoice/failed",
+              params: paramObject
+            });
+          }
+        }
       }
+    } catch (error) {
+      console.error("Payment callback error:", error);
     }
   };
 
-  // Handle navigation state change
-  const handleNavigationStateChange = (navState: any) => {
-    switch (type) {
-      case WebViewType.PAYMENT:
-        handlePaymentCallback(navState);
-        break;
-      case WebViewType.ZALO_LOGIN:
-        handleZaloCallback(navState);
-        break;
-      case WebViewType.GENERAL:
-        // No special handling needed for general webview
-        break;
+  const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    try {
+      switch (type) {
+        case WebViewType.PAYMENT:
+          handlePaymentCallback(navState);
+          break;
+        case WebViewType.ZALO_LOGIN:
+          handleZaloCallback(navState);
+          break;
+        case WebViewType.GENERAL:
+          // No special handling needed for general webview
+          break;
+      }
+    } catch (error) {
+      console.error("Navigation state change error:", error);
     }
   };
 
@@ -79,11 +87,20 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         source={{ uri: url }}
         style={{ flex: 1 }}
         onNavigationStateChange={handleNavigationStateChange}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
         incognito={type === WebViewType.ZALO_LOGIN}
         javaScriptEnabled={true}
-        renderLoading={() => <LoaderScreen />}
-        pullToRefreshEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
+        renderLoading={() => <LoaderScreen message={t("common.loading")} />}
+        onError={(syntheticEvent) => {
+          const { nativeEvent } = syntheticEvent;
+          console.warn('WebView error: ', nativeEvent);
+        }}
       />
+
+      {isLoading && <LoaderScreen message={t("common.loading")} />}
 
       <AppDialog
         visible={dialogVisible}

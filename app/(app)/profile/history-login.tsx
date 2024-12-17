@@ -70,7 +70,7 @@ const HistoryLogin = () => {
           </View>
         </View>
         <Text h2_bold>{t("auth.history_login.other_device")}</Text>
-        {userHistory.map((item: any) => (
+        {userHistory?.map((item: any) => (
           <View key={item.id} style={styles.section}>
             <View row gap-12>
               <View

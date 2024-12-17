@@ -37,6 +37,8 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
   const [tempQuantity, setTempQuantity] = useState('');
 
   const handleQuantityPress = () => {
+    if (maxQuantity <= 0) return;
+    
     if (onQuantityPress) {
       onQuantityPress();
     } else {
@@ -101,9 +103,9 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
         <TouchableOpacity
           style={{
             padding: 10,
-            opacity: quantity <= 1 ? 0.5 : 1
+            opacity: quantity <= 1 || maxQuantity <= 0 ? 0.5 : 1
           }}
-          disabled={quantity <= 1}
+          disabled={quantity <= 1 || maxQuantity <= 0}
           onPress={() => {
             setQuantity(Math.max(1, quantity - 1));
             setTotalPrice && setTotalPrice(Math.max(1, quantity - 1) * 1000000);
@@ -114,7 +116,11 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
 
         <TouchableOpacity
           onPress={handleQuantityPress}
-          style={{ padding: 10 }}
+          style={{ 
+            padding: 10,
+            opacity: maxQuantity <= 0 ? 0.5 : 1 
+          }}
+          disabled={maxQuantity <= 0}
         >
           <Text>{quantity}</Text>
         </TouchableOpacity>
@@ -155,10 +161,11 @@ const ProductQuantity: React.FC<ProductQuantityProps> = ({
               marginTop: 10,
             }}
             keyboardType="numeric"
+            inputMode="numeric"
             value={tempQuantity}
             onChangeText={setTempQuantity}
             placeholder={t("productDetail.enter_quantity")}
-            maxLength={3}
+            maxLength={2}
             autoFocus={true}
           />
         }

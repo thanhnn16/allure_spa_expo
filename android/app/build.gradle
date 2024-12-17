@@ -117,12 +117,26 @@ android {
         versionCode 2
         versionName "1.0.0"
     }
+    splits {
+        abi {
+            reset()
+            enable true
+            universalApk false
+            include "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        release {
+            storeFile file('allurespa.keystore')
+            storePassword 'allurespa'
+            keyAlias 'allurespa'
+            keyPassword 'allurespa'
         }
     }
     buildTypes {
@@ -132,7 +146,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"

@@ -14,6 +14,7 @@ export interface CartItem {
   name: string;
   price: number;
   cart_quantity: number;
+  quantity?: number;
   service_type?: 'single' | 'combo_5' | 'combo_10';
   media: Media[];
 }
@@ -48,6 +49,7 @@ export const cartSlice = createSlice({
         name: item_type === 'service' ? item.service_name : item.name,
         price: parseFloat(item.price),
         cart_quantity,
+        quantity: item.quantity,
         service_type,
         media: item.media || [],
       };
@@ -57,13 +59,21 @@ export const cartSlice = createSlice({
       );
 
       if (existingItem) {
+        const newQuantity = existingItem.cart_quantity + cart_quantity;
+        if (newQuantity > (cartItem.quantity || 0)) {
+          return;
+        }
+
         state.items = state.items.map(item => {
           if (item.id === cartItem.id && item.item_type === cartItem.item_type) {
-            item.cart_quantity += cart_quantity;
+            item.cart_quantity = newQuantity;
           }
           return item;
         });
       } else {
+        if (cart_quantity > (cartItem.quantity || 0)) {
+          return;
+        }
         state.items.push(cartItem);
       }
 
@@ -73,9 +83,11 @@ export const cartSlice = createSlice({
     incrementCartItem: (state: CartState, action: any) => {
       state.items = state.items.map(item => {
         if (item.id === action.payload) {
-          item.cart_quantity += 1;
-          state.totalAmount += parseFloat(item.price.toString());
-          AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
+          if (item.cart_quantity < (item.quantity || 0)) {
+            item.cart_quantity += 1;
+            state.totalAmount += parseFloat(item.price.toString());
+            AsyncStorage.setItem(CART_ITEMS_KEY, JSON.stringify(state.items));
+          }
         }
         return item;
       });

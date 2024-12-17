@@ -19,6 +19,7 @@ import 'moment/locale/vi';
 
 const ChatListScreen = () => {
   const { t } = useLanguage();
+  const { signOut } = useAuth();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -130,7 +131,7 @@ const ChatListScreen = () => {
 
   const handleLoginConfirm = () => {
     setLoginDialogVisible(false);
-    router.replace("/(auth)");
+    signOut();
   };
 
   const handleRefresh = async () => {

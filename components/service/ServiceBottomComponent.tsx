@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Button, Image, SkeletonView, Incubator, Colors} from "react-native-ui-lib";
+import { View, Text, TouchableOpacity, Button, Image, SkeletonView, Incubator, Colors } from "react-native-ui-lib";
 import { useDispatch } from "react-redux";
 import { router } from "expo-router";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -9,7 +9,7 @@ import CommentIcon from "@/assets/icons/comment.svg";
 import { setTempOrder } from "@/redux/features/order/orderSlice";
 import { ServiceDetailResponeModel, ServiceResponeModel } from "@/types/service.type";
 import AppDialog from "@/components/dialog/AppDialog";
-import {Dimensions, Linking} from "react-native";
+import { Dimensions, Linking } from "react-native";
 
 type ServiceWithCombo = ServiceResponeModel | (ServiceDetailResponeModel & { combo?: number });
 
@@ -21,14 +21,14 @@ interface ServiceBottomComponentProps {
 
 const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({ isLoading = false, onPurchase, service }) => {
   const { t } = useLanguage();
-  const { isGuest } = useAuth();
+  const { isGuest, signOut } = useAuth();
   const [buyProductDialog, setBuyProductDialog] = useState(false);
   const windowWidth = Dimensions.get("window").width;
   const dispatch = useDispatch();
 
   const handleLoginConfirm = () => {
     setBuyProductDialog(false);
-    router.replace("/(auth)");
+    signOut();
   };
 
   const handlePurchase = () => {
@@ -82,66 +82,66 @@ const ServiceBottomComponent: React.FC<ServiceBottomComponentProps> = ({ isLoadi
 
   if (isLoading) {
     return (
-        <View padding-24>
-          <SkeletonView height={50} width={windowWidth * 0.85} />
-        </View>
+      <View padding-24>
+        <SkeletonView height={50} width={windowWidth * 0.85} />
+      </View>
     );
   }
 
   return (
-      <View
-          row
-          centerV
-          padding-24
-          style={{
-            borderTopStartRadius: 30,
-            borderTopEndRadius: 30,
-            borderWidth: 2,
-            borderColor: "#E0E0E0",
+    <View
+      row
+      centerV
+      padding-24
+      style={{
+        borderTopStartRadius: 30,
+        borderTopEndRadius: 30,
+        borderWidth: 2,
+        borderColor: "#E0E0E0",
+      }}
+    >
+      <View row gap-30>
+        <TouchableOpacity onPress={() => Linking.openURL(`tel:0346542636`)}>
+          <View center marginB-4>
+            <Image source={PhoneCallIcon} size={24} />
+          </View>
+          <Text h3_medium>{t("service.contact")}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            if (service?.id) {
+              router.push({
+                pathname: "/rating/[id]",
+                params: { id: service.id, type: "service" },
+              });
+            }
           }}
-      >
-        <View row gap-30>
-          <TouchableOpacity onPress={() => Linking.openURL(`tel:0346542636`)}>
-            <View center marginB-4>
-              <Image source={PhoneCallIcon} size={24} />
-            </View>
-            <Text h3_medium>{t("service.contact")}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-              onPress={() => {
-                if (service?.id) {
-                  router.push({
-                    pathname: "/rating/[id]",
-                    params: { id: service.id, type: "service" },
-                  });
-                }
-              }}
-          >
-            <View center marginB-4>
-              <Image source={CommentIcon} size={24} />
-            </View>
-            <Text h3_medium>{t("productDetail.reviews")}</Text>
-          </TouchableOpacity>
-        </View>
-        <View flex right>
-          <Button
-              label={t("service.serviceDetail.book_now").toString()}
-              br40
-              onPress={handlePurchase}
-              backgroundColor={Colors.primary}
-          />
-        </View>
-        <AppDialog
-            visible={buyProductDialog}
-            title={t("auth.login.login_required")}
-            description={t("auth.login.login_buy_product")}
-            closeButtonLabel={t("common.cancel")}
-            confirmButtonLabel={t("auth.login.login_now")}
-            severity="info"
-            onClose={() => setBuyProductDialog(false)}
-            onConfirm={handleLoginConfirm}
+        >
+          <View center marginB-4>
+            <Image source={CommentIcon} size={24} />
+          </View>
+          <Text h3_medium>{t("productDetail.reviews")}</Text>
+        </TouchableOpacity>
+      </View>
+      <View flex right>
+        <Button
+          label={t("service.serviceDetail.book_now")}
+          br40
+          onPress={handlePurchase}
+          backgroundColor={Colors.primary}
         />
       </View>
+      <AppDialog
+        visible={buyProductDialog}
+        title={t("auth.login.login_required")}
+        description={t("auth.login.login_buy_product")}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("auth.login.login_now")}
+        severity="info"
+        onClose={() => setBuyProductDialog(false)}
+        onConfirm={handleLoginConfirm}
+      />
+    </View>
   );
 };
 

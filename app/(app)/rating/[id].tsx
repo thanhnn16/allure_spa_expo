@@ -49,7 +49,7 @@ const RatingPage: React.FC = () => {
 
   return (
     <View flex bg-$backgroundDefault>
-      <AppBar back title="Đánh giá" />
+      <AppBar back title={t("rating.reviews")} />
       <View padding-20 row centerV>
         <View>
           <Text h2_bold>{averageRating.toFixed(1)}/5</Text>

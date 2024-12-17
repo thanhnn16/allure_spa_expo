@@ -156,7 +156,9 @@
       "empty_current_password": "Bạn chưa nhập mật khẩu hiện tại",
       "empty_new_password": "Bạn chưa nhập mật khẩu mới",
       "empty_confirm_password": "Bạn chưa xác nhận mật khẩu mới",
-      "password_current_new_mismatch": "Mật khẩu hiện tại và mật khẩu mới không được giống nhau"
+      "password_current_new_mismatch": "Mật khẩu hiện tại và mật khẩu mới không được giống nhau",
+      "forgot_password_guide": "Quên mật khẩu?",
+      "forgot_password_guide_description": "Vui lòng đăng xuất trước để đặt lại mật khẩu của bạn. Bạn sẽ nhận được email để đặt lại mật khẩu. Hãy đảm bảo xác thực email của bạn trước khi đặt lại mật khẩu."
     },
     "history_login": {
       "title": "Lịch sử đăng nhập",
@@ -319,10 +321,6 @@
     "invalid_quantity": "Số lượng không hợp lệ",
     "exceed_stock": "Số lượng vượt quá số lượng có sẵn"
   },
-  "serviceDetail": {
-    "book_now": "Đặt ngay",
-    "make_appointment": "Make an appointment"
-  },
   "rating": {
     "add_review": "Thêm đánh giá",
     "base_on": "Dựa trên",
@@ -426,8 +424,8 @@
     "propose": "Thanh toán ngay để áp dụng Voucher giảm giá",
     "update_information": "Cập nhật thông tin dịch vụ",
     "serviceDetail": {
-      "book_now": "Book now",
-      "make_appointment": "Make an appointment"
+      "book_now": "Đặt ngay",
+      "make_appointment": "Đặt lịch"
     },
     "available": "chỗ còn trống",
     "pay_when_receive": "Thanh toán khi nhận hàng",
@@ -559,7 +557,14 @@
     "street_address": "Địa chỉ",
     "order_summary": "Tổng hợp đơn hàng",
     "missing_address_info": "Thiếu thông tin của",
-    "processing_payment": "Đang xử lý thanh toán..."
+    "processing_payment": "Đang xử lý thanh toán...",
+    "delete_cart_confirm": "Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng không?",
+    "delete_cart_confirm_message": "Thao tác này sẽ xóa sản phẩm khỏi giỏ hàng của bạn và bạn sẽ cần thêm nó lại vào giỏ hàng.",
+    "cart_empty": "Giỏ hàng trống",
+    "discover_other_products": "Khám phá sản phẩm khác nhé",
+    "clear_all": "Xóa tất cả",
+    "total_amount": "Tổng cộng",
+    "cart": "Giỏ hàng"
   },
   "transaction": {
     "payment_success": "Thanh toán thành công",
@@ -901,7 +906,8 @@
     "apply": "Áp dụng",
     "price": "Giá",
     "reset": "Đặt lại",
-    "all": "Tất cả"
+    "all": "Tất cả",
+    "price_range": "Khoảng giá"
   },
   "exchange_reward": {
     "discount": "Giảm",

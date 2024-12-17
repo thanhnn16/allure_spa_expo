@@ -24,7 +24,7 @@ const ServiceItem: React.FC<RenderServiceItemProps> = ({
       : require("@/assets/images/logo/logo.png");
   return (
     <TouchableOpacity
-      marginB-10
+      marginV-10
       style={[
         { width: widthItem, height: heightItem, borderRadius: 12 },
         AppStyles.shadowItem,

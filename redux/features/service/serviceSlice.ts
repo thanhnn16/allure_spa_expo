@@ -1,8 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { getServiceCateThunk } from "@/redux/features/service/getServiceCateThunk";
 import { getServicesThunk } from './getServicesThunk';
-import { ServiceCategoriesResponeParams, ServicesResponeParams } from "@/types/service.type";
-import { RootState } from "../../store";
+import { ServiceCategoriesResponeParams, ServiceDetailResponeModel } from "@/types/service.type";
+import { getServiceDetailThunk } from './getServiceDetailThunk';
 
 interface initialStateType {
     serviceCategories: ServiceCategoriesResponeParams | null;
@@ -11,6 +11,7 @@ interface initialStateType {
     hasMore: boolean;
     isLoading: boolean;
     error: any;
+    serviceDetail: ServiceDetailResponeModel | null;
 }
 
 const initialState: initialStateType = {
@@ -18,41 +19,42 @@ const initialState: initialStateType = {
     servicesList: [],
     currentPage: 1,
     hasMore: true,
-    isLoading: false,
-    error: null
+    isLoading: true,
+    error: null,
+    serviceDetail: null,
 }
 
 export const serviceSlice = createSlice({
     name: 'service',
     initialState: initialState,
     reducers: {
-        setServiceCategories(state: RootState, action: any) {
+        setServiceCategories(state: initialStateType, action: any) {
             state.serviceCategories = action.payload;
         },
-        setServices(state: RootState, action: any) {
+        setServices(state: initialStateType, action: any) {
             state.servicesList = action.payload;
         },
-        setPage(state: RootState, action: any) {
+        setPage(state: initialStateType, action: any) {
             state.currentPage = action.payload;
         }
     },
     extraReducers: (builder: any) => {
         builder
-            .addCase(getServiceCateThunk.pending, (state: RootState) => {
+            .addCase(getServiceCateThunk.pending, (state: initialStateType) => {
                 state.isLoading = true;
             })
-            .addCase(getServiceCateThunk.fulfilled, (state: RootState, action: any) => {
+            .addCase(getServiceCateThunk.fulfilled, (state: initialStateType, action: any) => {
                 state.isLoading = false;
                 state.serviceCategories = action.payload;
             })
-            .addCase(getServiceCateThunk.rejected, (state: RootState, action: any) => {
+            .addCase(getServiceCateThunk.rejected, (state: initialStateType, action: any) => {
                 state.isLoading = false;
                 state.error = action.error
             })
-            .addCase(getServicesThunk.pending, (state: RootState) => {
+            .addCase(getServicesThunk.pending, (state: initialStateType) => {
                 state.isLoading = true;
             })
-            .addCase(getServicesThunk.fulfilled, (state: RootState, action: any) => {
+            .addCase(getServicesThunk.fulfilled, (state: initialStateType, action: any) => {
                 state.isLoading = false;
                 const { data, page, hasMore } = action.payload;
 
@@ -65,7 +67,18 @@ export const serviceSlice = createSlice({
                 state.currentPage = page;
                 state.hasMore = hasMore;
             })
-            .addCase(getServicesThunk.rejected, (state: RootState, action: any) => {
+            .addCase(getServicesThunk.rejected, (state: initialStateType, action: any) => {
+                state.isLoading = false;
+                state.error = action.error;
+            })
+            .addCase(getServiceDetailThunk.pending, (state: initialStateType) => {
+                state.isLoading = true;
+            })
+            .addCase(getServiceDetailThunk.fulfilled, (state: initialStateType, action: any) => {
+                state.isLoading = false;
+                state.serviceDetail = action.payload;
+            })
+            .addCase(getServiceDetailThunk.rejected, (state: initialStateType, action: any) => {
                 state.isLoading = false;
                 state.error = action.error;
             })

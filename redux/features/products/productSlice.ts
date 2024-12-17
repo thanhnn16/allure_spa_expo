@@ -9,6 +9,12 @@ interface ProductState {
   product: Product | null;
   media: Media[];
   products: Product[];
+  pagination: {
+    current_page: number;
+    per_page: number;
+    total: number;
+    last_page: number;
+  };
   isLoading: boolean;
   toggleFavoriteLoading: boolean;
   error: string | null;
@@ -19,6 +25,12 @@ const initialState: ProductState = {
   product: null,
   products: [],
   media: [],
+  pagination: {
+    current_page: 1,
+    per_page: 10,
+    total: 0,
+    last_page: 1
+  },
   isLoading: true,
   toggleFavoriteLoading: false,
   error: null,
@@ -54,7 +66,13 @@ export const productSlice = createSlice({
       })
       .addCase(getAllProductsThunk.fulfilled, (state: ProductState, action: any) => {
         state.isLoading = false;
-        state.products = action.payload;
+        state.products = action.payload.data;
+        state.pagination = {
+          current_page: action.payload.current_page,
+          per_page: action.payload.per_page,
+          total: action.payload.total,
+          last_page: action.payload.last_page
+        };
       })
       .addCase(getAllProductsThunk.rejected, (state: ProductState, action: any) => {
         state.isLoading = false;

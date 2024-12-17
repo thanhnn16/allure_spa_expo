@@ -70,14 +70,16 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
       </View>
       <View flex paddingH-10 paddingV-5 gap-2>
         <Text text70H numberOfLines={2} ellipsizeMode="tail">
-          {type === "product" ? itemData.name : itemData.service_name}
+          {type === "product" 
+            ? (itemData as Product).name 
+            : (itemData as ServiceDetailResponeModel).service_name}
         </Text>
 
         {type === "product" ? (
           <View flex-1 gap-5 row centerV>
             <Image source={StarIcon} width={15} height={15} />
             <Text style={{ color: "#8C8585" }}>
-              5.0 | {itemData.quantity} có sẵn
+              5.0 | {(itemData as Product).quantity} có sẵn
             </Text>
           </View>
         ) : (
@@ -86,15 +88,16 @@ const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, type }) => {
             numberOfLines={2}
             ellipsizeMode="tail"
           >
-            {itemData.description}
+            {(itemData as ServiceDetailResponeModel).description}
           </Text>
         )}
 
         <View bottom paddingB-5>
           <Text text70H style={{ color: "#A85A29" }}>
             {formatCurrency({
-              price:
-                type === "product" ? itemData.price : itemData.single_price,
+              price: type === "product" 
+                ? (itemData as Product).price 
+                : (itemData as ServiceDetailResponeModel).single_price,
             })}
           </Text>
         </View>

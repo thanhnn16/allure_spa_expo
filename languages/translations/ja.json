@@ -159,7 +159,9 @@
       "empty_confirm_password": "新しいパスワードの確認が入力されていません",
       "invalid_password_special_char": "パスワードに特殊文字を含めることはできません",
       "invalid_password_length": "パスワードは8文字以上でないといけません",
-      "password_current_new_mismatch": "現在のパスワードと新しいパスワードは異なる必要があります"
+      "password_current_new_mismatch": "現在のパスワードと新しいパスワードは異なる必要があります",
+      "forgot_password_guide": "パスワードを忘れましたか？",
+      "forgot_password_guide_description": "パスワードをリセットするために、メールを確認してください。メールを確認してください。"
     },
     "history_login": {
       "title": "ログイン履歴",
@@ -585,7 +587,14 @@
     "street_address": "住所",
     "order_summary": "注文サマリー",
     "missing_address_info": "住所情報が不足しています",
-    "processing_payment": "支払い処理中..."
+    "processing_payment": "支払い処理中...",
+    "delete_cart_confirm": "この商品をカートから削除してもよろしいですか？",
+    "delete_cart_confirm_message": "このアクションにより、商品がカートから削除され、再度購入する場合はカートに追加する必要があります。",
+    "cart_empty": "カートが空です",
+    "discover_other_products": "他の商品を探してみましょう",
+    "clear_all": "すべてクリア",
+    "total_amount": "合計金額",
+    "cart": "カート"
   },
   "transaction": {
     "payment_success": "支払い成功",
@@ -918,7 +927,8 @@
     "apply": "適用",
     "price": "価格",
     "reset": "フィルターをリセット",
-    "all": "すべて"
+    "all": "すべて",
+    "price_range": "価格範囲"
   },
   "exchange_reward": {
     "discount": "割引",

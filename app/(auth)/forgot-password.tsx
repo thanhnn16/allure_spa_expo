@@ -1,17 +1,19 @@
-import React, { useState } from "react";
-import { View, Text } from "react-native-ui-lib";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Text, Image } from "react-native-ui-lib";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLanguage } from "@/hooks/useLanguage";
 import { TextInput } from "@/components/inputs/TextInput";
 import AppButton from "@/components/buttons/AppButton";
-import { useRouter, Href } from "expo-router";
+import { useRouter } from "expo-router";
 import { useDispatch } from "react-redux";
 import { forgotPasswordThunk } from "@/redux/features/auth/forgotPasswordThunk";
 import AppDialog from "@/components/dialog/AppDialog";
 import { AppDispatch } from "@/redux/store";
 import Colors from "@/constants/Colors";
-import { ImageBackground } from "react-native";
+import { ImageBackground, KeyboardAvoidingView, Platform, Animated, Dimensions, ActivityIndicator } from "react-native";
 import { useDialog } from "@/hooks/useDialog";
+import Brand from "@/assets/images/common/logo-brand.svg";
+const { width, height } = Dimensions.get("window");
 
 export default function ForgotPassword() {
     const { t, currentLanguage } = useLanguage();
@@ -40,8 +42,8 @@ export default function ForgotPassword() {
         if (!validateEmail(email)) return;
         const data = {
             email: email,
-            lang: currentLanguage
-        }
+            lang: currentLanguage,
+        };
 
         setLoading(true);
         try {
@@ -64,128 +66,140 @@ export default function ForgotPassword() {
     };
 
     return (
-        <ImageBackground
-            source={require("@/assets/images/authen/img_bg_authen.png")}
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}
         >
-            <SafeAreaView style={{ flex: 1 }}>
-                <View flex paddingH-24>
+            <ImageBackground
+                source={require("@/assets/images/authen/img_bg_authen.png")}
+                style={{ flex: 1 }}
+            >
+                <View paddingT-48 centerH marginB-12>
+                    <Image
+                        source={Brand}
+                        style={{ width: width * 0.6, height: height * 0.1 }}
+                    />
+                    <View width={"80%"}>
+                        <Text
+                            onboarding_title={currentLanguage !== "ja"}
+                            onboarding_title_ja={currentLanguage === "ja"}
+                        >
+                            {t("auth.art.title")}
+                        </Text>
+                        <View right>
+                            <Text
+                                onboarding_title={currentLanguage !== "ja"}
+                                onboarding_title_ja={currentLanguage === "ja"}
+                            >
+                                {t("auth.art.subtitle")}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <Animated.View
+                    style={{
+                        backgroundColor: "white",
+                        width: "100%",
+                        paddingHorizontal: 24,
+                        paddingTop: 32,
+                        position: "absolute",
+                        bottom: 0,
+                        borderTopLeftRadius: 30,
+                        borderTopRightRadius: 30,
+                    }}
+                >
                     <View
                         style={{
-                            backgroundColor: Colors.white,
-                            borderRadius: 24,
-                            padding: 24,
-                            marginTop: 40,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 2,
-                            },
-                            shadowOpacity: 0.1,
-                            shadowRadius: 3.84,
-                            elevation: 5,
+                            width: "100%",
+                            justifyContent: "center",
                         }}
                     >
-                        <Text style={{
-                            fontSize: 28,
-                            color: Colors.text,
-                            fontWeight: 'bold',
-                            marginBottom: 12,
-                            width: '100%',
-                            flexWrap: 'wrap'
-                        }}>
+                        <Text
+                            style={{
+                                fontSize: 24,
+                                color: Colors.text,
+                                fontWeight: "bold",
+                                width: "100%",
+                                flexWrap: "wrap",
+                                marginBottom: 12,
+                            }}
+                        >
                             {t("auth.forgot_password.title")}
                         </Text>
-                        <Text style={{
-                            fontSize: 16,
-                            color: Colors.grey30,
-                            lineHeight: 24,
-                            marginBottom: 40
-                        }}>
+                        <Text
+                            style={{
+                                fontSize: 16,
+                                color: Colors.grey30,
+                                marginBottom: 12,
+                            }}
+                        >
                             {t("auth.forgot_password.description")}
                         </Text>
 
-                        <View style={{ width: '100%' }}>
-                            <Text style={{
-                                fontSize: 16,
-                                color: Colors.text,
-                                fontWeight: '600',
-                                marginBottom: 12
-                            }}>
+                        <View style={{ width: "100%" }}>
+                            <Text
+                                style={{
+                                    fontSize: 16,
+                                    color: Colors.text,
+                                    fontWeight: "600",
+                                    marginBottom: 12,
+                                }}
+                            >
                                 {t("auth.forgot_password.email")}
                             </Text>
                             <TextInput
                                 value={email}
-                                onChangeText={setEmail}
+                                onChangeText={(text) => {
+                                    setEmail(text);
+                                    validateEmail(text);
+                                }}
                                 placeholder={t("auth.forgot_password.email_placeholder")}
                                 keyboardType="email-address"
                                 onBlur={() => validateEmail(email)}
-
-                                style={{
-                                    height: 56,
-                                    paddingHorizontal: 20,
-                                    borderWidth: 1.5,
-                                    borderRadius: 16,
-                                    borderColor: emailError ? Colors.red30 : Colors.grey50,
-                                    backgroundColor: Colors.white,
-                                    fontSize: 16,
-                                    color: Colors.text,
-                                }}
                             />
                             {emailError ? (
-                                <Text style={{
-                                    color: Colors.red30,
-                                    marginTop: 8,
-                                    fontSize: 14,
-                                    marginLeft: 4
-                                }}>
+                                <Text
+                                    style={{
+                                        color: Colors.red30,
+                                        marginTop: 8,
+                                        fontSize: 14,
+                                        marginLeft: 4,
+                                    }}
+                                >
                                     {emailError}
                                 </Text>
                             ) : (
-                                <Text style={{
-                                    fontSize: 14,
-                                    color: Colors.grey30,
-                                    marginTop: 8,
-                                    marginLeft: 4,
-                                    lineHeight: 20
-                                }}>
+                                <Text
+                                    style={{
+                                        fontSize: 14,
+                                        color: Colors.grey30,
+                                        marginTop: 8,
+                                        marginLeft: 4,
+                                        lineHeight: 20,
+                                    }}
+                                >
                                     {t("auth.forgot_password.email_hint")}
                                 </Text>
                             )}
+                            <View marginT-20>
+                                <AppButton
+                                    title={t("continue")}
+                                    type="primary"
+                                    onPress={handleForgotPassword}
+                                    loading={loading}
+                                    disabled={loading || !!emailError}
+
+                                />
+                            </View>
+                            <View marginT-12 marginB-32>
+                                <AppButton
+                                    title={t("back")}
+                                    type="outline"
+                                    onPress={() => router.back()}
+                                    disabled={loading}
+                                />
+                            </View>
                         </View>
-                    </View>
-
-                    <View flex bottom marginB-32>
-                        <AppButton
-                            title={t("continue")}
-                            type="primary"
-                            onPress={handleForgotPassword}
-                            loading={loading}
-                            buttonStyle={{
-                                height: 56,
-                                borderRadius: 16,
-                                marginBottom: 16
-                            }}
-                            titleStyle={{
-                                fontSize: 18,
-                                fontWeight: '600',
-                            }}
-                        />
-
-                        <AppButton
-                            title={t("back")}
-                            type="outline"
-                            onPress={() => router.back()}
-                            buttonStyle={{
-                                height: 56,
-                                borderRadius: 16,
-                                borderWidth: 1.5
-                            }}
-                            titleStyle={{
-                                fontSize: 16,
-                                fontWeight: '600'
-                            }}
-                        />
                     </View>
 
                     <AppDialog
@@ -200,8 +214,8 @@ export default function ForgotPassword() {
                         }}
                         confirmButton={true}
                     />
-                </View>
-            </SafeAreaView>
-        </ImageBackground>
+                </Animated.View>
+            </ImageBackground>
+        </KeyboardAvoidingView>
     );
-} 
+}

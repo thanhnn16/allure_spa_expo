@@ -83,7 +83,7 @@ const ProfilePage = () => {
 
   const handleLoginConfirm = () => {
     setLoginDialogVisible(false);
-    router.replace("/(auth)");
+    signOut();
   };
 
   useEffect(() => {

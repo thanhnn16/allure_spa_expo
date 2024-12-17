@@ -7,195 +7,157 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import ServiceItem from "@/components/home/ServiceItem";
 import ProductItem from "@/components/home/ProductItem";
-import { getServicesThunk } from "@/redux/features/service/getServicesThunk";
-import { TouchableOpacity, View, Text, Image, Slider, Chip, Colors, Picker, PickerProps, RenderCustomModalProps, Incubator, PanningProvider, RadioGroup, RadioButton } from "react-native-ui-lib";
+import { TouchableOpacity, View, Text, Image, Slider, Chip, Colors, RadioGroup, RadioButton, SkeletonView, GridView, GridList } from "react-native-ui-lib";
 import { useLanguage } from "@/hooks/useLanguage";
-import { ServiceResponeModel } from "@/types/service.type";
-
 import FilterIcon from "@/assets/icons/filter.svg";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import AppButton from "@/components/buttons/AppButton";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { searchMoreItems } from "@/redux/features/search/searchThunk";
+import { searchItems, SearchParams } from "@/redux/features/search/searchThunk";
+import formatCurrency from "@/utils/price/formatCurrency";
+import { ActivityIndicator } from "react-native";
 
 const SeeMore = () => {
   const { t } = useLanguage();
-
   const dispatch = useDispatch();
   const { type } = useLocalSearchParams();
+
+  // Thêm state cho categories
+  const [categories, setCategories] = useState([]);
+
+  // State cho các bộ lọc
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    query: '',
+    type: type as 'products' | 'services',
+    limit: 30,
+    sort_by: undefined,
+    min_price: undefined,
+    max_price: undefined,
+    category_id: undefined
+  });
 
   const [sliderPriceValue, setSliderPriceValue] = useState(0);
   const [categoryValue, setCategoryValue] = useState('none');
   const [sortValue, setSortValue] = useState('none');
 
+  // Thêm state cho price range
+  const [priceRange, setPriceRange] = useState({
+    min: 0,
+    max: 10000000 // 10 triệu VND
+  });
+
+  // State cho giá trị đang chọn
+  const [selectedPriceRange, setSelectedPriceRange] = useState({
+    min: priceRange.min,
+    max: priceRange.max
+  });
+
+  // Refs cho bottom sheets
   const filterBottomSheetRef = useRef<BottomSheet>(null);
   const categoryBottomSheetRef = useRef<BottomSheet>(null);
   const sortBottomSheetRef = useRef<BottomSheet>(null);
-  const slider = useRef<typeof Slider>(null);
+
   const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get("window");
 
   const title = useMemo(() => {
     return type === "services" ? t("home.service") : t("home.product");
   }, [type, t]);
 
-  const { results, loading } = useSelector(
-    (state: RootState) => state.search
-  );
+  const { results, loading } = useSelector((state: RootState) => state.search);
 
+  // Khởi tạo tìm kiếm ban đầu
   useEffect(() => {
-    if (type === "services") {
-      setCategoryValue('services');
-      dispatch(searchMoreItems({
-        type: "services",
-        limit: 100,
-      }))
-    } else if (type === "products") {
-      setCategoryValue('products');
-      dispatch(searchMoreItems({
-        type: "products",
-        limit: 100,
-      }))
+    if (type === "services" || type === "products") {
+      // Reset category value
+      setCategoryValue('none');
+
+      try {
+        dispatch(searchItems({
+          ...searchParams,
+          type: type as 'services' | 'products'
+        })).unwrap()
+          .then((response: any) => {
+            const categoryData = type === 'services' ?
+              response.categories.service_categories :
+              response.categories.product_categories;
+            setCategories(categoryData);
+          })
+          .catch((error: any) => {
+            console.error('Lỗi khi tìm kiếm:', error.response?.data?.message);
+          });
+      } catch (error: any) {
+        console.error('Lỗi dispatch:', error.response?.data?.message);
+      }
     }
-  }, [dispatch]);
+  }, [dispatch, type]);
 
-  // const { servicesList, currentPage, hasMore, isLoading } = useSelector(
-  //   (state: RootState) => {
-  //     return state.service;
-  //   }
-  // );
+  // Hàm xử lý thay đổi giá
+  const handlePriceChange = (values: { min: number, max: number }) => {
+    setSelectedPriceRange({
+      min: values.min,
+      max: values.max
+    });
+  };
 
-  // const [accumulatedServices, setAccumulatedServices] = useState<
-  //   ServiceResponeModel[]
-  // >([]);
+  // Reset bộ lọc
+  const resetFilters = async () => {
+    try {
+      setCategoryValue('none');
+      setSortValue('none');
+      setSelectedPriceRange({
+        min: priceRange.min,
+        max: priceRange.max
+      });
 
-  // const [isFirstLoading, setIsFirstLoading] = useState(false);
+      const resetParams: SearchParams = {
+        query: '',
+        type: type as 'products' | 'services',
+        limit: 30
+      };
 
-  // const productList = useSelector((state: RootState) => state.product.products);
-
-  // useEffect(() => {
-  //   if (Array.isArray(servicesList)) {
-  //     if (currentPage === 1) {
-  //       setAccumulatedServices(servicesList);
-  //     } else {
-  //       setAccumulatedServices((prev) => [...prev, ...servicesList]);
-  //     }
-  //   }
-  // }, [servicesList, currentPage]);
-
-  // const handleLoadMore = () => {
-  //   console.log("Load more triggered", {
-  //     isLoading,
-  //     hasMore,
-  //     isFirstLoading,
-  //     currentPage,
-  //   });
-  //   if (isLoading || !hasMore || isFirstLoading) return;
-
-  //   if (type === "service") {
-  //     dispatch(
-  //       searchMoreItems({
-  //         page: currentPage + 1,
-  //         type: "services",
-  //         limit: 20,
-  //       })
-  //     );
-  //   } else if (type === "product") {
-  //     dispatch({
-  //       type: "product/fetchProducts",
-  //       payload: { page: currentPage + 1 },
-  //     });
-  //   }
-  // };
-
-  const handleFilterCategory = async (value: string) => {
-    if (value === 'services') {
-      await dispatch(searchMoreItems({
-        type: value,
-        limit: 100,
-      }));
-      categoryBottomSheetRef.current?.close();
-      return;
-    } else if (value === 'products') {
-      await dispatch(searchMoreItems({
-        type: value,
-        limit: 100,
-      }))
-      categoryBottomSheetRef.current?.close();
-      return;
-    } else {
-      categoryBottomSheetRef.current?.close();
-      return;
+      setSearchParams(resetParams);
+      await dispatch(searchItems(resetParams)).unwrap();
+      filterBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Lỗi khi reset bộ lọc:', error);
+      // Xử lý lỗi tại đây nếu cần
     }
-  }
+  };
 
-  const handleSort = async (value: string) => {
-    if (value === 'name_asc') {
-      dispatch(searchMoreItems({
-        type: type,
-        sort_by: 'name_asc',
-        limit: 100,
-      }))
-      sortBottomSheetRef.current?.close();
-      return;
-    } else if (value === 'name_desc') {
-      dispatch(searchMoreItems({
-        type: type,
-        sort_by: 'name_desc',
-        limit: 100,
-      }))
-      sortBottomSheetRef.current?.close();
-      return;
-    } else if (value === 'price_asc') {
-      dispatch(searchMoreItems({
-        type: type,
-        sort_by: 'price_asc',
-        limit: 100,
-      }))
-      sortBottomSheetRef.current?.close();
-      return;
-    } else if (value === 'price_desc') {
-      dispatch(searchMoreItems({
-        type: type,
-        sort_by: 'price_desc',
-        limit: 100,
-      }))
-      sortBottomSheetRef.current?.close();
-      return;
-    } else if (value === 'rating') {
-      dispatch(searchMoreItems({
-        type: type,
-        sort_by: 'rating',
-        limit: 100,
-      }))
-      sortBottomSheetRef.current?.close();
-      return;
-    } else {
-      dispatch(searchMoreItems({
-        type: type,
-        limit: 100,
-      }))
-      sortBottomSheetRef.current?.close();
-      return;
+  // Áp dụng tất cả bộ lọc
+  const applyFilters = async () => {
+    try {
+      const newParams: SearchParams = {
+        ...searchParams,
+        type: type as 'products' | 'services',
+        category_id: categoryValue === 'none' ? undefined : parseInt(categoryValue),
+        sort_by: sortValue === 'none' ? undefined : sortValue as SearchParams['sort_by'],
+        min_price: selectedPriceRange.min > 0 ? selectedPriceRange.min : undefined,
+        max_price: selectedPriceRange.max < priceRange.max ? selectedPriceRange.max : undefined
+      };
+
+      setSearchParams(newParams);
+      await dispatch(searchItems(newParams)).unwrap();
+      filterBottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Lỗi khi áp dụng bộ lọc:', error);
+      // Xử lý lỗi tại đây nếu cần
     }
-  }
-
-  const resetFilters = () => {
-    setCategoryValue('none');
-    setSortValue('none');
-    setSliderPriceValue(0);
-    filterBottomSheetRef.current?.close();
-  }
+  };
 
   const getCategoryName = (value: string) => {
-    if (value === 'services') {
-      return t('see_more.services');
-    } else if (value === 'products') {
-      return t('see_more.products');
-    } else {
-      return t('see_more.none');
+    if (value === 'none') {
+      return t('see_more.all');
     }
-  }
+
+    // Tìm category trong mảng categories dựa vào value
+    const selectedCategory: any = categories.find(
+      (category: any) => category.id.toString() === value
+    );
+
+    return selectedCategory ? selectedCategory?.name : t('see_more.all');
+  };
 
   const getSortName = (value: string) => {
     if (value === 'name_asc') {
@@ -213,17 +175,157 @@ const SeeMore = () => {
     }
   }
 
+  const renderSkeleton = () => {
+    const itemWidth = WINDOW_WIDTH * 0.425;
+    const itemHeight = WINDOW_HEIGHT * 0.35;
+    const imageHeight = WINDOW_HEIGHT * 0.18;
+
+    return (
+      <View>
+        <View row spread centerH gap-10>
+          <View>
+            {[1, 2, 3].map((item) => (
+              <View
+                key={`skeleton-left-${item}`}
+                style={{
+                  width: itemWidth,
+                  height: itemHeight,
+                  marginBottom: 10,
+                  backgroundColor: Colors.grey70,
+                  borderRadius: 8,
+                  overflow: 'hidden'
+                }}
+              >
+                <SkeletonView
+                  width={itemWidth}
+                  height={imageHeight}
+                  style={{
+                    borderRadius: 8,
+                    marginBottom: 8
+                  }}
+                />
+                <View padding-12>
+                  <SkeletonView
+                    width={itemWidth * 0.9}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.7}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 12
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.5}
+                    height={20}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <View row centerV>
+                    <SkeletonView
+                      width={itemWidth * 0.4}
+                      height={16}
+                      style={{
+                        borderRadius: 4
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          <View>
+            {[1, 2, 3].map((item) => (
+              <View
+                key={`skeleton-right-${item}`}
+                style={{
+                  width: itemWidth,
+                  height: itemHeight,
+                  marginBottom: 10,
+                  backgroundColor: Colors.grey70,
+                  borderRadius: 8,
+                  overflow: 'hidden'
+                }}
+              >
+                <SkeletonView
+                  width={itemWidth}
+                  height={imageHeight}
+                  style={{
+                    borderRadius: 8,
+                    marginBottom: 8
+                  }}
+                />
+                <View padding-12>
+                  <SkeletonView
+                    width={itemWidth * 0.9}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.7}
+                    height={16}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 12
+                    }}
+                  />
+                  <SkeletonView
+                    width={itemWidth * 0.5}
+                    height={20}
+                    style={{
+                      borderRadius: 4,
+                      marginBottom: 8
+                    }}
+                  />
+                  <View row centerV>
+                    <SkeletonView
+                      width={itemWidth * 0.4}
+                      height={16}
+                      style={{
+                        borderRadius: 4
+                      }}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   const renderList = useMemo(() => {
-    const data = results;
+    const data = type === "services" ? results.services : results.products;
     const ItemComponent = type === "services" ? ServiceItem : ProductItem;
 
-    if (type === "services" && !data.services) {
-      return <View height={32} />;
+    if (loading) {
+      return renderSkeleton();
+    }
+
+    if (!data || data.length === 0) {
+      return (
+        <View flex center>
+          <Text>{t("common.no_data")}</Text>
+        </View>
+      );
     }
 
     return (
       <FlatList
-        data={data.services}
+        data={data}
         renderItem={({ item }) => (
           <ItemComponent
             item={item}
@@ -232,12 +334,11 @@ const SeeMore = () => {
             heightImage={WINDOW_HEIGHT * 0.18}
           />
         )}
-        keyExtractor={(item, index) => `${type}-${item.id}-${index}`}
+        keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 10 }}
-        // onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           loading ? <View height={52} /> : <View height={52} />
@@ -247,17 +348,105 @@ const SeeMore = () => {
         initialNumToRender={10}
       />
     );
-  }, [
-    type,
-    results,
-    loading,
-    WINDOW_WIDTH,
-    WINDOW_HEIGHT,
-  ]);
+  }, [type, results, loading, WINDOW_WIDTH, WINDOW_HEIGHT]);
+
+  // Render danh mục dựa trên categories từ API
+  const renderCategories = () => {
+    return (
+      <RadioGroup
+        initialValue={categoryValue}
+        onValueChange={setCategoryValue}
+      >
+        <RadioButton value="none" label={t("see_more.all")} color={Colors.primary} paddingV-8 />
+        {categories.map((category: any) => (
+          <RadioButton
+            key={category.id}
+            value={category.id.toString()}
+            label={category.name}
+            color={Colors.primary}
+            paddingV-8
+          />
+        ))}
+      </RadioGroup>
+    );
+  };
+
+  // Render price filter
+  const renderPriceFilter = () => {
+    return (
+      <View marginV-16>
+        <Text h3 marginB-8>{t("see_more.price_range")}</Text>
+
+        {/* Hiển thị giá trị đang chọn */}
+        <View row spread marginB-16>
+          <Text>{formatCurrency({ price: selectedPriceRange.min })}</Text>
+          <Text>{formatCurrency({ price: selectedPriceRange.max })}</Text>
+        </View>
+
+        <View marginH-4>
+          <Slider
+            useRange
+            value={selectedPriceRange.min}
+            initialMinimumValue={selectedPriceRange.min}
+            initialMaximumValue={selectedPriceRange.max}
+            minimumValue={priceRange.min}
+            maximumValue={priceRange.max}
+            step={100000}
+            onRangeChange={handlePriceChange}
+            thumbTintColor={Colors.primary}
+            minimumTrackTintColor={Colors.primary}
+            maximumTrackTintColor={Colors.grey40}
+            thumbStyle={{
+              width: 20,
+              height: 20,
+              borderRadius: 10,
+              backgroundColor: Colors.primary
+            }}
+            trackStyle={{
+              height: 4,
+              borderRadius: 2
+            }}
+          />
+        </View>
+
+        {/* Hiển thị các mốc giá phổ biến */}
+        <View row spread marginT-16 style={{ flexWrap: 'wrap', gap: 8 }}>
+          <Chip
+            label={`< ${formatCurrency({ price: 1000000 })}`}
+            onPress={() => setSelectedPriceRange({ min: 0, max: 1000000 })}
+            backgroundColor={selectedPriceRange.max === 1000000 ? Colors.primary : Colors.grey60}
+          />
+          <Chip
+            label={`${formatCurrency({ price: 1000000 })} - ${formatCurrency({ price: 3000000 })}`}
+            onPress={() => setSelectedPriceRange({ min: 1000000, max: 3000000 })}
+            backgroundColor={
+              selectedPriceRange.min === 1000000 && selectedPriceRange.max === 3000000
+                ? Colors.primary
+                : Colors.grey60
+            }
+          />
+          <Chip
+            label={`${formatCurrency({ price: 3000000 })} - ${formatCurrency({ price: 5000000 })}`}
+            onPress={() => setSelectedPriceRange({ min: 3000000, max: 5000000 })}
+            backgroundColor={
+              selectedPriceRange.min === 3000000 && selectedPriceRange.max === 5000000
+                ? Colors.primary
+                : Colors.grey60
+            }
+          />
+          <Chip
+            label={`> ${formatCurrency({ price: 5000000 })}`}
+            onPress={() => setSelectedPriceRange({ min: 5000000, max: priceRange.max })}
+            backgroundColor={selectedPriceRange.min === 5000000 ? Colors.primary : Colors.grey60}
+          />
+        </View>
+      </View>
+    );
+  };
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View flex bg-white>
+      <View flex bg-white paddingB-20>
         <AppBar back title={title} />
         <View flex paddingH-20 marginB-16>
           <AppSearch />
@@ -322,31 +511,13 @@ const SeeMore = () => {
                 }}
               />
             </View>
-            <View row spread centerV paddingV-8>
-              <Text h3>{t("see_more.price")}</Text>
-              <Text h3>{t("see_more.all")}</Text>
-            </View>
-            <View>
-              <Slider
-                onValueChange={(value) => setSliderPriceValue(value)}
-                value={sliderPriceValue}
-                minimumValue={0}
-                maximumValue={5}
-                step={1}
-                ref={slider}
-                thumbTintColor={Colors.primary}
-                minimumTrackTintColor={Colors.primary}
-              // onReset={.onSliderReset}
-              />
-            </View>
+            {renderPriceFilter()}
             <View paddingV-8 gap-8>
               <AppButton
                 type="primary"
                 title={t("see_more.apply")}
                 onPress={() => {
-                  handleFilterCategory(categoryValue)
-                  handleSort(sortValue)
-                  filterBottomSheetRef.current?.close()
+                  applyFilters();
                 }}
               />
               {(categoryValue !== "none" || sortValue !== "none" || sliderPriceValue !== 0) && (
@@ -368,19 +539,23 @@ const SeeMore = () => {
           enableOverDrag={true}
         >
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
-            <Text h2_bold center>Danh mục</Text>
-            <RadioGroup initialValue={categoryValue} onValueChange={setCategoryValue}>
-              <RadioButton value={'none'} label={t("see_more.services")} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'products'} label={t("see_more.products")} color={Colors.primary} paddingV-8 />
-              <RadioButton value={'services'} label={t("see_more.none")} color={Colors.primary} paddingV-8 />
-            </RadioGroup>
+            <Text h2_bold center>{t("see_more.category")}</Text>
+            {renderCategories()}
             <View paddingV-12 gap-8>
               <AppButton
                 type="primary"
                 title={t("see_more.apply")}
                 onPress={() => {
-                  categoryBottomSheetRef.current?.close()
-                  filterBottomSheetRef.current?.expand()
+                  const newParams = {
+                    ...searchParams,
+                    category_id: categoryValue === 'none' ? undefined : parseInt(categoryValue)
+                  };
+                  setSearchParams(newParams);
+
+                  dispatch(searchItems(newParams));
+
+                  categoryBottomSheetRef.current?.close();
+                  filterBottomSheetRef.current?.expand();
                 }}
               />
             </View>
@@ -395,7 +570,7 @@ const SeeMore = () => {
           enableOverDrag={true}
         >
           <BottomSheetView style={{ paddingHorizontal: 16 }}>
-            <Text h2_bold center>Sắp xếp theo</Text>
+            <Text h2_bold center>{t("see_more.sort")}</Text>
             <RadioGroup initialValue={sortValue} onValueChange={setSortValue}>
               <RadioButton value={'name_asc'} label={t("see_more.from_a_to_z")} color={Colors.primary} paddingV-8 />
               <RadioButton value={'name_desc'} label={t("see_more.from_z_to_a")} color={Colors.primary} paddingV-8 />

@@ -115,7 +115,7 @@ const SearchScreen = () => {
 
     return (
       <>
-        {results.products?.length > 0 && (
+        {results?.products?.length > 0 && (
           <View marginB-20>
             <Text h2_bold marginB-10>
               {t("search.product")}
@@ -130,7 +130,7 @@ const SearchScreen = () => {
           </View>
         )}
 
-        {results.services?.length > 0 && (
+        {results?.services?.length > 0 && (
           <View>
             <Text h2_bold marginB-10>
               {t("search.service")}
@@ -146,8 +146,7 @@ const SearchScreen = () => {
         )}
 
         {searchQuery.length > 2 &&
-          !results.products?.length &&
-          !results.services?.length && (
+          (!results?.products?.length && !results?.services?.length) && (
             <View center marginT-40>
               <Text h3>{t("search.no_result")}</Text>
             </View>
