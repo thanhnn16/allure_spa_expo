@@ -152,7 +152,7 @@ export const sendTextMessage = createAsyncThunk(
       }
 
       const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: config?.model_type || 'gemini-1.5-flash',
         systemInstruction: config?.context,
         tools: toolsConfig,
         toolConfig: toolsConfig ? { functionCallingConfig: { mode: "AUTO" as FunctionCallingMode } } : undefined
@@ -173,9 +173,7 @@ export const sendTextMessage = createAsyncThunk(
         },
       });
 
-      console.log('history: ', state.ai.messages);
-
-      console.log('text: ', text.trim());
+      console.log('history: ', JSON.stringify(state.ai.messages, null, 2));
 
       const result = await chat.sendMessage(text.trim());
       const response = result.response;
@@ -202,12 +200,19 @@ export const sendTextMessage = createAsyncThunk(
             functionCallPart.functionCall.args || {}
           );
 
+          // Kiểm tra và format dữ liệu trước khi gửi lại cho AI
+          let formattedData = functionResult;
+          if (functionResult.original) {
+            formattedData = {
+              success: functionResult.original.success,
+              data: functionResult.original.data,
+              message: functionResult.original.message
+            };
+          }
+
           // Gửi kết quả function call lại cho AI
           const followUpResult = await chat.sendMessage(
-            JSON.stringify({
-              success: true,
-              data: functionResult.data
-            })
+            JSON.stringify(formattedData)
           );
 
           // Kết hợp response ban đầu với kết quả function call
