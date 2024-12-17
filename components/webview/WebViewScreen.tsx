@@ -93,14 +93,11 @@ const WebViewScreen: React.FC<WebViewScreenProps> = ({ url, type }) => {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         startInLoadingState={true}
-        renderLoading={() => <LoaderScreen message={t("common.loading")} />}
         onError={(syntheticEvent) => {
           const { nativeEvent } = syntheticEvent;
           console.warn('WebView error: ', nativeEvent);
         }}
       />
-
-      {isLoading && <LoaderScreen message={t("common.loading")} />}
 
       <AppDialog
         visible={dialogVisible}
