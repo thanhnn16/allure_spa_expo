@@ -125,7 +125,7 @@
     },
     "edit_profile": {
       "male": "Male",
-      "femaile": "Femail",
+      "female": "Female",
       "other": "Other",
       "agree": "Agree",
       "success": "Update successful",

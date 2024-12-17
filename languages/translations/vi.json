@@ -124,7 +124,7 @@
     },
     "edit_profile": {
       "male": "Nam",
-      "femaile": "Nữ",
+      "female": "Nữ",
       "other": "Khác",
       "agree": "Đồng ý",
       "success": "Cập nhật thành công",

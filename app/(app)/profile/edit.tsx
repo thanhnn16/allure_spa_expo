@@ -320,7 +320,7 @@ const ProfileEdit = (props: ProfileEditProps) => {
                     value="male"
                   />
                   <Picker.Item
-                    label={t("auth.edit_profile.femail")}
+                    label={t("auth.edit_profile.female")}
                     value="female"
                   />
                   <Picker.Item
