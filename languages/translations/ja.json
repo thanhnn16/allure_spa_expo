@@ -284,7 +284,9 @@
     "verification_complete": "確認完了",
     "phone_verified": "電話番号確認済み",
     "email_verified": "メールアドレス確認済み",
-    "verified_field": "確認済み"
+    "verified_field": "確認済み",
+    "confirm_email_title": "メールを送信",
+    "confirm_email_description": "ヘルプ＆サポートにメールを送信しますか？"
   },
   "settings": {
     "title": "設定",

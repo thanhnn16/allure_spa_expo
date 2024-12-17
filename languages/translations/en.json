@@ -284,7 +284,9 @@
     "verification_complete": "Verification complete",
     "phone_verified": "Phone verified",
     "email_verified": "Email verified",
-    "verified_field": "Verified"
+    "verified_field": "Verified",
+    "confirm_email_title": "Confirm email",
+    "confirm_email_description": "Are you sure you want to send an email to customer care?"
   },
   "settings": {
     "title": "Settings",

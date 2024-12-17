@@ -229,7 +229,9 @@
     "verification_complete": "Xác thực hoàn tất",
     "phone_verified": "Số điện thoại đã xác thực",
     "email_verified": "Email đã xác thực",
-    "verified_field": "Đã xác thực"
+    "verified_field": "Đã xác thực",
+    "confirm_email_title": "Xác nhận email",
+    "confirm_email_description": "Bạn có chắc chắn muốn gửi email đến chăm sóc khách hàng?"
   },
   "settings": {
     "title": "Cài đặt",

@@ -20,9 +20,10 @@ import { getUserThunk } from "@/redux/features/users/getUserThunk";
 import { useDispatch } from "react-redux";
 import * as MailComposer from "expo-mail-composer";
 import { Ionicons } from '@expo/vector-icons';
+import { useDialog } from "@/hooks/useDialog";
 
 const ProfilePage = () => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const dispatch = useDispatch();
   const { user, signOut, isGuest } = useAuth();
   const [loginDialogVisible, setLoginDialogVisible] = useState(false);
@@ -99,12 +100,35 @@ const ProfilePage = () => {
     }
   };
 
-  const handleSentEmail = () => {
+  const { dialogConfig, showDialog, hideDialog } = useDialog();
+
+  const handleSentEmail = async () => {
+    const subject = currentLanguage === "vi" ? "Hỗ trợ & Tư vấn Allure Spa"
+      : currentLanguage === 'en'
+        ? "Help & Support Allure Spa"
+        : currentLanguage === 'ja' ? "ヘルプ＆サポート Allure Spa"
+          : "Help & Support Allure Spa";
+
+    const body = currentLanguage === "vi"
+      ? "Vui lòng mô tả vấn đề hoặc câu hỏi của bạn ở đây:"
+      : currentLanguage === 'en'
+        ? "Please describe your problem or question here:"
+        : currentLanguage === 'ja' ? "問題や質問をここに説明してください:"
+          : "Please describe your problem or question here:";
+    hideDialog();
     return MailComposer.composeAsync({
-      subject: "Help & Support Allure Spa",
-      body: "Please describe your problem or question here:",
+      subject: subject,
+      body: body,
       recipients: ["thanhnn16.work@gmail.com"],
     });
+  };
+
+  const handleEmailPress = () => {
+    showDialog(
+      t("profile.confirm_email_title"),
+      t("profile.confirm_email_description"),
+      "info"
+    );
   };
 
   const needsVerification = user && (!user.phone_verified_at || !user.email_verified_at);
@@ -350,7 +374,7 @@ const ProfilePage = () => {
               {
                 title: t("profile.help_support"),
                 icon: require("@/assets/images/ring.png"),
-                onPress: () => handleSentEmail(),
+                onPress: handleEmailPress,
               },
               {
                 title: t("profile.about_app"),
@@ -396,6 +420,16 @@ const ProfilePage = () => {
         severity="info"
         onClose={() => setLoginDialogVisible(false)}
         onConfirm={handleLoginConfirm}
+      />
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("common.confirm")}
+        severity={dialogConfig.severity}
+        onClose={hideDialog}
+        onConfirm={handleSentEmail}
       />
     </View>
   );
