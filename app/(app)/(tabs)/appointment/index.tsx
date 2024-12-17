@@ -41,6 +41,8 @@ import "moment/locale/vi";
 import "moment/locale/ja";
 import { useLanguage } from "@/hooks/useLanguage";
 import i18n from "@/languages/i18n";
+import { useAuth } from "@/hooks/useAuth";
+import AppDialog from "@/components/dialog/AppDialog";
 
 const { width } = Dimensions.get("window");
 
@@ -493,6 +495,7 @@ const ScheduledPage = () => {
   const { t } = useLanguage();
 
   const [selectedItem, setSelectedItem] = useState<number>(1);
+  const { isGuest, signOut } = useAuth();
   const [isModalVisible, setModalVisible] = useState(false);
   const [note, setNote] = useState("");
   const [currentItemId, setCurrentItemId] = useState<number | null>(null);
@@ -509,6 +512,7 @@ const ScheduledPage = () => {
   >([]);
   const [hidePastAppointments, setHidePastAppointments] = useState(false);
   const [hiddenAppointmentsCount, setHiddenAppointmentsCount] = useState(0);
+  const [loginDialogVisible, setLoginDialogVisible] = useState(false);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -526,7 +530,11 @@ const ScheduledPage = () => {
       }
     };
 
-    fetchInitialData();
+    if (!isGuest) {
+      fetchInitialData();
+    } else {
+      setLoginDialogVisible(true);
+    }
 
     return () => {
       dispatch(resetAppointmentState());
@@ -991,7 +999,21 @@ const ScheduledPage = () => {
               </View>
               <View paddingH-24>{renderHidePastAppointmentsButton()}</View>
               <View flex paddingH-24>
-                {loading ? (
+                {isGuest ? (
+                  <AppDialog
+                    visible={loginDialogVisible}
+                    title={t("auth.login.login_required")}
+                    description={t("auth.login.login_chat")}
+                    closeButtonLabel={t("common.cancel")}
+                    confirmButtonLabel={t("auth.login.login_now")}
+                    severity="info"
+                    onClose={() => setLoginDialogVisible(false)}
+                    onConfirm={() => {
+                      setLoginDialogVisible(false);
+                      signOut();
+                    }}
+                  />
+                ) : loading ? (
                   <View>
                     {[1, 2, 3].map((_, index) => (
                       <View key={index}>{renderSkeletonItem()}</View>
