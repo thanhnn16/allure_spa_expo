@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { User } from "@/types/user.type";
 import { getUserThunk } from "./getUserThunk";
 import { updateUserThunk } from "./updateUserThunk";
+import { deleteUserThunk } from "./deleteAccount";
 
 interface UserState {
   user: User | null;
@@ -52,6 +53,18 @@ export const userSlice = createSlice({
       })
       .addCase(updateUserThunk.rejected, (state: any, action: any) => {
         state.error = action.error.message || "Failed to update profile";
+        state.isLoading = false;
+      })
+      .addCase(deleteUserThunk.pending, (state: any) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(deleteUserThunk.fulfilled, (state: any, action: any) => {
+        state.user = null;
+        state.isLoading = false;
+      })
+      .addCase(deleteUserThunk.rejected, (state: any, action: any) => {
+        state.error = action.error.message || "Failed to delete account";
         state.isLoading = false;
       });
   },

@@ -30,12 +30,13 @@ import AppDialog from "@/components/dialog/AppDialog";
 import { User } from "@/types/user.type";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 type AddressType = "home" | "work" | "others";
 
 const Add = () => {
   const { t } = useLanguage();
-  
+
   const addressTypeItems = [
     { id: 1, name: t("address.home"), type: "home" as AddressType },
     { id: 2, name: t("address.work"), type: "work" as AddressType },
@@ -273,109 +274,155 @@ const Add = () => {
             {t("address.address")}
           </Text>
 
-          <Picker
-            placeholder={t("address.province")}
-            floatingPlaceholder
-            value={province?.id}
-            label={province?.name}
-            enableModalBlur={true}
-            onChange={(value: PickerValue) => {
-              if (typeof value === "string") {
-                const selectedProvince = provinceList.find(
-                  (item) => item.id === value
-                );
-                if (selectedProvince) {
-                  setProvince({
-                    id: selectedProvince.id,
-                    name: selectedProvince.name,
-                  } as AddressProvince);
-                  getDistrict(Number(selectedProvince?.id));
-                }
-              }
-            }}
-            topBarProps={{ title: t("address.province") }}
-            showSearch
-            searchPlaceholder={t("address.search_a_province")}
-            searchStyle={{ placeholderTextColor: Colors.grey50 }}
-            items={provinceList.map((item: AddressProvince) => ({
-              value: item.id,
-              label: item.name,
-            }))}
-          />
-
-          {province?.id && (
-            <Picker
-              placeholder={t("address.district")}
-              searchPlaceholder={t("address.search_a_district")}
-              topBarProps={{ title: t("address.district") }}
-              floatingPlaceholder
-              value={district?.id}
-              label={district?.name}
-              enableModalBlur={true}
-              onChange={(value: PickerValue) => {
-                if (typeof value === "string") {
-                  const selectedDistrict = districtList.find(
-                    (item) => item.id === value
-                  );
-                  if (selectedDistrict) {
-                    setDistrict({
-                      id: selectedDistrict.id,
-                      name: selectedDistrict.name,
-                    } as AddressDistrict);
-                    getWard(Number(selectedDistrict?.id));
+          <View gap-10>
+            <View
+              style={{ borderWidth: 0.5, borderRadius: 8, borderColor: Colors.grey50 }}
+              paddingH-8
+              row spread
+              centerV
+            >
+              <Picker
+                placeholder={t("address.province")}
+                floatingPlaceholder
+                value={province?.id}
+                label={province?.name}
+                enableModalBlur={true}
+                onChange={(value: PickerValue) => {
+                  if (typeof value === "string") {
+                    const selectedProvince = provinceList.find(
+                      (item) => item.id === value
+                    );
+                    if (selectedProvince) {
+                      setProvince({
+                        id: selectedProvince.id,
+                        name: selectedProvince.name,
+                      } as AddressProvince);
+                      getDistrict(Number(selectedProvince?.id));
+                    }
                   }
-                }
-              }}
-              showSearch
-              searchStyle={{ placeholderTextColor: Colors.grey50 }}
-              items={districtList.map((item: AddressDistrict) => ({
-                value: item.id,
-                label: item.name,
-              }))}
-            />
-          )}
+                }}
+                topBarProps={{ title: t("address.province") }}
+                showSearch
+                searchPlaceholder={t("address.search_a_province")}
+                searchStyle={{ placeholderTextColor: Colors.grey50 }}
+                items={provinceList.map((item: AddressProvince) => ({
+                  value: item.id,
+                  label: item.name,
+                }))}
+              />
+              <MaterialCommunityIcons
+                name="chevron-right"
+                size={20}
+                color={Colors.grey30}
+              />
+            </View>
 
-          {district?.id && (
-            <Picker
-              placeholder={t("address.ward")}
-              floatingPlaceholder
-              value={ward?.id}
-              label={ward?.name}
-              enableModalBlur={true}
-              onChange={(value: PickerValue) => {
-                if (typeof value === "string") {
-                  const selectedWard = wardList.find(
-                    (item) => item.id === value
-                  );
-                  if (selectedWard) {
-                    setWard({
-                      id: selectedWard.id,
-                      name: selectedWard.name,
-                    } as AddressWard);
-                  }
-                }
-              }}
-              topBarProps={{ title: t("address.ward") }}
-              showSearch
-              searchPlaceholder={t("address.search_a_ward")}
-              searchStyle={{ placeholderTextColor: Colors.grey50 }}
-              items={wardList.map((item: AddressWard) => ({
-                value: item.id,
-                label: item.name,
-              }))}
-            />
-          )}
+            {province?.id && (
+              <View
+                style={{ borderWidth: 0.5, borderRadius: 8, borderColor: Colors.grey50 }}
+                paddingH-8
+                row spread
+                centerV
+              >
+                <Picker
+                  placeholder={t("address.district")}
+                  searchPlaceholder={t("address.search_a_district")}
+                  topBarProps={{ title: t("address.district") }}
+                  floatingPlaceholder
+                  value={district?.id}
+                  label={district?.name}
+                  enableModalBlur={true}
+                  onChange={(value: PickerValue) => {
+                    if (typeof value === "string") {
+                      const selectedDistrict = districtList.find(
+                        (item) => item.id === value
+                      );
+                      if (selectedDistrict) {
+                        setDistrict({
+                          id: selectedDistrict.id,
+                          name: selectedDistrict.name,
+                        } as AddressDistrict);
+                        getWard(Number(selectedDistrict?.id));
+                      }
+                    }
+                  }}
+                  showSearch
+                  searchStyle={{ placeholderTextColor: Colors.grey50 }}
+                  items={districtList.map((item: AddressDistrict) => ({
+                    value: item.id,
+                    label: item.name,
+                  }))}
+                />
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={20}
+                  color={Colors.grey30}
+                />
+              </View>
+            )}
 
-          {ward?.id && (
-            <AddressTextInput
-              value={formData.address}
-              placeholder={t("address.address")}
-              onChangeText={(value) => {
-                console.log("value", value === "");
-                handleChange("address", value);
-              }}
-            />
-          )}
+            {district?.id && (
+              <View
+                style={{ borderWidth: 0.5, borderRadius: 8, borderColor: Colors.grey50 }}
+                paddingH-8
+                row spread
+                centerV
+              >
+                <Picker
+                  placeholder={t("address.ward")}
+                  floatingPlaceholder
+                  value={ward?.id}
+                  label={ward?.name}
+                  enableModalBlur={true}
+                  onChange={(value: PickerValue) => {
+                    if (typeof value === "string") {
+                      const selectedWard = wardList.find(
+                        (item) => item.id === value
+                      );
+                      if (selectedWard) {
+                        setWard({
+                          id: selectedWard.id,
+                          name: selectedWard.name,
+                        } as AddressWard);
+                      }
+                    }
+                  }}
+                  topBarProps={{ title: t("address.ward") }}
+                  showSearch
+                  searchPlaceholder={t("address.search_a_ward")}
+                  searchStyle={{ placeholderTextColor: Colors.grey50 }}
+                  items={wardList.map((item: AddressWard) => ({
+                    value: item.id,
+                    label: item.name,
+                  }))}
+                />
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={20}
+                  color={Colors.grey30}
+                />
+              </View>
+
+            )}
+
+            {ward?.id && (
+              <View
+                style={{ borderWidth: 0.5, borderRadius: 8, borderColor: Colors.grey50 }}
+                paddingH-8
+                centerV
+              >
+                <AddressTextInput
+                  value={formData.address}
+                  placeholder={t("address.address")}
+                  onChangeText={(value) => {
+                    console.log("value", value === "");
+                    handleChange("address", value);
+                  }}
+                />
+              </View>
+
+            )}
+          </View>
 
           <TextInput
             value={formData.note}
