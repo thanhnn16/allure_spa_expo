@@ -10,26 +10,20 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { useLanguage } from "@/hooks/useLanguage";
+import formatCurrency from "@/utils/price/formatCurrency";
 
 interface VoucherDropdownProps {
   value: Voucher | null;
   items: Voucher[];
   onSelect: (voucher: Voucher | null) => void;
   isLoading?: boolean;
+  totalAmount: number;
+  showDialog: (title: string, message: string, severity: "success" | "error" | "info" | "warning") => void;
 }
 
-const VoucherDropdown = ({ value, items, onSelect, isLoading }: VoucherDropdownProps) => {
+const VoucherDropdown = ({ value, items, onSelect, isLoading, totalAmount, showDialog }: VoucherDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useLanguage();
-
-  const handleSelect = (voucher: Voucher) => {
-    if (value?.id === voucher.id) {
-      onSelect(null);
-    } else {
-      onSelect(voucher);
-    }
-    setIsOpen(false);
-  };
 
   const isVoucherValid = (voucher: Voucher): boolean => {
     const now = new Date();
@@ -37,9 +31,59 @@ const VoucherDropdown = ({ value, items, onSelect, isLoading }: VoucherDropdownP
     return endDate > now && voucher.remaining_uses > 0;
   };
 
+  const isVoucherValidForAmount = (voucher: Voucher): boolean => {
+    if (voucher.min_order_value && totalAmount < voucher.min_order_value) {
+      return false;
+    }
+
+    const discountAmount = voucher.discount_type === 'percentage'
+      ? (totalAmount * voucher.discount_value / 100)
+      : voucher.discount_value;
+
+    if (voucher.max_discount_amount && discountAmount > voucher.max_discount_amount) {
+      return true;
+    }
+
+    return true;
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("vi-VN");
+  };
+
+  const handleVoucherSelect = (voucher: Voucher) => {
+    if (value?.id === voucher.id) {
+      onSelect(null);
+      setIsOpen(false);
+      return;
+    }
+
+    if (!isVoucherValid(voucher)) {
+      showDialog(
+        "Voucher không hợp lệ",
+        "Voucher này đã hết hạn hoặc hết lượt sử dụng",
+        "warning"
+      );
+      return;
+    }
+
+    if (!isVoucherValidForAmount(voucher)) {
+      let message = "";
+      if (voucher.min_order_value && totalAmount < voucher.min_order_value) {
+        message = `Giá trị đơn hàng tối thiểu phải từ ${formatCurrency({ price: voucher.min_order_value })}`;
+      }
+
+      showDialog(
+        "Không thể áp dụng voucher",
+        message,
+        "warning"
+      );
+      return;
+    }
+
+    onSelect(voucher);
+    setIsOpen(false);
   };
 
   const renderHeader = () => (
@@ -97,16 +141,17 @@ const VoucherDropdown = ({ value, items, onSelect, isLoading }: VoucherDropdownP
 
   const renderVoucherItem = (item: Voucher) => {
     const isValid = isVoucherValid(item);
+    const isValidAmount = isVoucherValidForAmount(item);
     const isSelected = value?.id === item.id;
 
     return (
       <TouchableOpacity
         key={item.id}
-        onPress={() => isValid && handleSelect(item)}
-        disabled={!isValid}
+        onPress={() => handleVoucherSelect(item)}
+        // disabled={!isValid || (!isValidAmount && !isSelected)}
         style={[
           styles.voucherItem,
-          !isValid && styles.disabledVoucher,
+          (!isValid || !isValidAmount) && styles.disabledVoucher,
           isSelected && styles.selectedVoucher,
         ]}
       >
@@ -142,6 +187,19 @@ const VoucherDropdown = ({ value, items, onSelect, isLoading }: VoucherDropdownP
               />
               <Text text90 grey40>
                 HSD: {formatDate(item.end_date)}
+              </Text>
+            </View>
+            <View row centerV marginT-4>
+              <MaterialCommunityIcons
+                name="information-outline"
+                size={12}
+                color={Colors.grey40}
+                style={{ marginRight: 4 }}
+              />
+              <Text text90 grey40 numberOfLines={1}>
+                {item.min_order_value
+                  ? `Đơn tối thiểu ${formatCurrency({ price: item.min_order_value })}`
+                  : "Không giới hạn giá trị đơn hàng"}
               </Text>
             </View>
           </View>

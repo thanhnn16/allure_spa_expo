@@ -568,6 +568,8 @@ export default function Checkout() {
         items={activeVouchers}
         onSelect={handleVoucherSelect}
         isLoading={isLoadingVouchers}
+        totalAmount={totalPrice}
+        showDialog={showDialog}
       />
     </View>
   );
