@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { LoginCredentials, RegisterCredentials, AuthErrorCode } from '@/types/auth.type';
 import AuthService from '@/utils/services/auth/authService';
 import { translate } from '@/languages/i18n';
+import { clearCart } from '@/redux/features/cart/cartSlice';
 
 export const useAuth = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -64,6 +65,7 @@ export const useAuth = () => {
   const signOut = async () => {
     try {
       await dispatch(logoutThunk()).unwrap();
+      dispatch(clearCart());
       dispatch(clearAuth());
       dispatch(clearGuestUser());
     } catch (error: any) {
