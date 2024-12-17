@@ -5,9 +5,10 @@ import {
   TouchableOpacity,
   Button,
   Checkbox,
+  Colors,
 } from "react-native-ui-lib";
 import { Dimensions, StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   CartItem,
   incrementCartItem,
@@ -17,6 +18,10 @@ import {
 import { useDispatch } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import formatCurrency from "@/utils/price/formatCurrency";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useDialog } from "@/hooks/useDialog";
+import AppDialog from "@/components/dialog/AppDialog";
+import { TextInput } from "react-native";
 
 interface CartProductItemProps {
   product: CartItem;
@@ -31,6 +36,10 @@ const CartProductItem = ({
 }: CartProductItemProps) => {
   const dispatch = useDispatch();
   const windowWidth = Dimensions.get("window").width;
+  const { t } = useLanguage();
+  const { showDialog, dialogConfig, hideDialog } = useDialog();
+  const [showQuantityDialog, setShowQuantityDialog] = useState(false);
+  const [tempQuantity, setTempQuantity] = useState('');
 
   const handleGetId = (id: number) => {
     setItemDelete && setItemDelete(id);
@@ -74,6 +83,45 @@ const CartProductItem = ({
     handleGetId(product.id);
   }, [product.id]);
 
+  const handleQuantityPress = () => {
+    setShowQuantityDialog(true);
+  };
+
+  const handleQuantityConfirm = () => {
+    const newQuantity = parseInt(tempQuantity);
+    if (isNaN(newQuantity) || newQuantity < 1) {
+      showDialog(
+        t("common.error"),
+        t("productDetail.invalid_quantity"),
+        "error"
+      );
+      return;
+    }
+
+    // Cập nhật số lượng mới
+    const currentQuantity = product.cart_quantity;
+    const diff = newQuantity - currentQuantity;
+
+    if (diff > 0) {
+      // Tăng số lượng
+      for (let i = 0; i < diff; i++) {
+        handleIncreaseQuantity(product.id);
+      }
+    } else if (diff < 0) {
+      // Giảm số lượng
+      for (let i = 0; i < Math.abs(diff); i++) {
+        if (newQuantity === 0) {
+          dialogVisible && dialogVisible(true);
+          break;
+        }
+        handleDecreaseQuantity(product.id);
+      }
+    }
+
+    setShowQuantityDialog(false);
+    setTempQuantity('');
+  };
+
   return (
     <Swipeable renderRightActions={renderRightActions}>
       <View marginB-10>
@@ -113,7 +161,9 @@ const CartProductItem = ({
                     <Text h2_medium>-</Text>
                   </TouchableOpacity>
                 </View>
-                <Text h2>{product.cart_quantity}</Text>
+                <TouchableOpacity onPress={handleQuantityPress}>
+                  <Text h2>{product.cart_quantity}</Text>
+                </TouchableOpacity>
                 <View style={styles.quantityButtonContainer}>
                   <TouchableOpacity
                     style={styles.quantityButton}
@@ -145,6 +195,47 @@ const CartProductItem = ({
           </Text>
         </View>
       </View>
+
+      <AppDialog
+        visible={showQuantityDialog}
+        title={t("productDetail.enter_quantity")}
+        closeButtonLabel={t("common.cancel")}
+        confirmButtonLabel={t("common.confirm")}
+        severity="info"
+        onClose={() => {
+          setShowQuantityDialog(false);
+          setTempQuantity('');
+        }}
+        onConfirm={handleQuantityConfirm}
+        children={
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: Colors.border,
+              borderRadius: 8,
+              padding: 10,
+              marginTop: 10,
+            }}
+            keyboardType="numeric"
+            inputMode="numeric"
+            value={tempQuantity}
+            onChangeText={setTempQuantity}
+            placeholder={t("productDetail.enter_quantity")}
+            maxLength={2}
+            autoFocus={true}
+          />
+        }
+      />
+
+      <AppDialog
+        visible={dialogConfig.visible}
+        title={dialogConfig.title}
+        description={dialogConfig.description}
+        closeButtonLabel={t("close")}
+        severity={dialogConfig.severity}
+        onClose={hideDialog}
+        confirmButton={false}
+      />
     </Swipeable>
   );
 };
