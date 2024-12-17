@@ -42,11 +42,11 @@ const NotificationDetail: React.FC = () => {
   const loading = useSelector((state: RootState) => state.notification.loading);
 
   // Di chuyển các hooks lên trên cùng và kiểm tra điều kiện
-  const translatedNotification = notification 
+  const translatedNotification = notification
     ? useTranslatedNotification(notification)
     : { title: '', content: '' };
 
-  const formattedTime = notification 
+  const formattedTime = notification
     ? useFormattedTime(notification.created_at_timestamp)
     : '';
 
@@ -77,12 +77,21 @@ const NotificationDetail: React.FC = () => {
     let actionText = "";
     let onActionPress = () => { };
 
+    // Hàm helper để trích xuất ID từ nội dung
+    const extractIdFromContent = (content: string): string | null => {
+      const match = content.match(/#(\d+)/);
+      return match ? match[1] : null;
+    };
+
+    // Lấy ID từ nội dung thông báo
+    const extractedId = extractIdFromContent(notification.content);
+
     switch (type) {
       case "new_appointment":
       case "appointment_new":
       case "appointment_status":
         actionText = t("notification.view_appointment");
-        onActionPress = () => router.push(`/(app)/appointment/${notification.data?.appointment_id}`);
+        onActionPress = () => router.push(`/(app)/appointment/${notification.data?.appointment_id || extractedId}`);
         break;
 
       case "new_order":
@@ -91,25 +100,22 @@ const NotificationDetail: React.FC = () => {
       case "order_cancelled":
       case "order_completed":
         actionText = t("notification.view_order");
-        onActionPress = () =>
-          router.push(`/(app)/order/${notification.data?.order_id}`);
+        onActionPress = () => router.push(`/(app)/order/${notification.data?.order_id || extractedId}`);
         break;
 
       case "new_message":
         actionText = t("notification.view_conversation");
-        onActionPress = () =>
-          router.push(`/chat/${notification.data?.conversation_id}`);
+        onActionPress = () => router.push(`/chat/${notification.data?.conversation_id || extractedId}`);
         break;
 
       case "promotion":
         actionText = t("notification.view_promotion");
-        onActionPress = () =>
-          router.push(`/reward/${notification.data?.promotion_id}`);
+        onActionPress = () => router.push(`/reward/${notification.data?.promotion_id || extractedId}`);
         break;
 
       case "new_review":
         actionText = t("notification.view_review");
-        onActionPress = () => router.push(`/rating/${notification.data?.review_id}`);
+        onActionPress = () => router.push(`/rating/${notification.data?.review_id || extractedId}`);
         break;
 
       default:
